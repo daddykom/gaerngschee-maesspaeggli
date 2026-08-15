@@ -3,6 +3,7 @@
 @import '@fontsource/inter/400.css';
 @import '@fontsource/inter/500.css';
 @import '@fontsource/inter/700.css';
+@import '@fontsource/material-icons';
 
 @include mat.core();
 
@@ -25,4 +26,8 @@ body {
   overflow: hidden;
   height: 100%;
   font-family: 'Inter', sans-serif;
+}
+
+mat-icon {
+  font-family: 'Material Icons', sans-serif;
 }
