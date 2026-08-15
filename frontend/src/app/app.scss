@@ -1,6 +1,5 @@
 .app-container {
-  height: 100vh;
-  overflow: hidden;
+  min-height: 100vh;
 }
 
 mat-toolbar {
@@ -46,7 +45,8 @@ mat-toolbar {
 
 mat-sidenav {
   width: 250px;
-  background: rgb(245, 245, 245);
+  background: rgba(255, 255, 255, 0.9);
+  backdrop-filter: blur(10px);
 }
 
 mat-nav-list a.active {
@@ -54,5 +54,5 @@ mat-nav-list a.active {
 }
 
 .main-container {
-  height: calc(100vh - 64px);
+  min-height: calc(100vh - 64px);
 }

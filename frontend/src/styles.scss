@@ -16,16 +16,28 @@ $gaerngschee-theme: mat.define-theme((
 
 html {
   @include mat.all-component-themes($gaerngschee-theme);
-  overflow: hidden;
   height: 100%;
   font-family: 'Inter', sans-serif;
 }
 
-body {
+html, body {
   margin: 0;
-  overflow: hidden;
-  height: 100%;
+  padding: 0;
+  min-height: 100%;
   font-family: 'Inter', sans-serif;
+}
+
+body {
+  background-image: url('/herbstmesse.png');
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  background-attachment: fixed;
+}
+
+app-root {
+  display: block;
+  min-height: 100%;
 }
 
 mat-icon {

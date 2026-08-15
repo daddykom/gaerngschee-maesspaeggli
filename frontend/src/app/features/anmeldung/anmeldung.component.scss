@@ -1,6 +1,5 @@
 .page-container {
   min-height: 100vh;
-  background: linear-gradient(to bottom right, #fff7ed 0%, #fef2f2 100%);
   padding: 2rem;
 }
 
@@ -31,8 +30,9 @@
   margin: 0 auto;
   padding: 1.5rem;
   border-radius: 12px;
-  background: linear-gradient(135deg, #fff8f0 0%, #ffffff 100%);
-  border: 1px solid #ff9800;
+  background: rgba(255, 255, 255, 0.95);
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 152, 0, 0.3);
 
   mat-card-header {
     margin-bottom: 1rem;
