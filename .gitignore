@@ -3,3 +3,5 @@
 /frontend/.nx
 /frontend/.angular
 /frontend/dist
+/backend/supervisord.pid
+/backend/supervisord.log

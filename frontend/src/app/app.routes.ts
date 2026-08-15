@@ -3,19 +3,12 @@ import { Routes } from '@angular/router';
 export const appRoutes: Routes = [
   {
     path: '',
-    redirectTo: '/offers/list',
+    redirectTo: '/anmeldung',
     pathMatch: 'full',
   },
   {
-    path: 'offers',
-    redirectTo: '/offers/list',
-    pathMatch: 'full',
-  },
-  {
-    path: 'offers/list',
+    path: 'anmeldung',
     loadComponent: () =>
-      import('./features/offers/offer-list/offer-list.container.component').then(
-        (m) => m.OfferListContainerComponent,
-      ),
+      import('./features/anmeldung/anmeldung.component').then((m) => m.AnmeldungComponent),
   },
 ];

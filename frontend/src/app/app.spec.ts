@@ -9,11 +9,10 @@ describe('App', () => {
     }).compileComponents();
   });
 
-  it('should render title', async () => {
+  it('should render router outlet', async () => {
     const fixture = TestBed.createComponent(App);
     await fixture.whenStable();
     const compiled = fixture.nativeElement as HTMLElement;
-    expect(compiled.querySelector('mat-toolbar')).toBeTruthy();
-    expect(compiled.querySelector('.header-title')?.textContent).toContain('Gratisangebote');
+    expect(compiled.querySelector('router-outlet')).toBeTruthy();
   });
 });

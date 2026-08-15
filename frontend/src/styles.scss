@@ -1,5 +1,9 @@
 @use '@angular/material' as mat;
 
+@import '@fontsource/inter/400.css';
+@import '@fontsource/inter/500.css';
+@import '@fontsource/inter/700.css';
+
 @include mat.core();
 
 $gaerngschee-theme: mat.define-theme((
@@ -13,10 +17,12 @@ html {
   @include mat.all-component-themes($gaerngschee-theme);
   overflow: hidden;
   height: 100%;
+  font-family: 'Inter', sans-serif;
 }
 
 body {
   margin: 0;
   overflow: hidden;
   height: 100%;
+  font-family: 'Inter', sans-serif;
 }
