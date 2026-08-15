@@ -1,0 +1,58 @@
+.app-container {
+  height: 100vh;
+  overflow: hidden;
+}
+
+mat-toolbar {
+  position: sticky;
+  top: 0;
+  z-index: 1000;
+}
+
+.spacer {
+  flex: 1 1 auto;
+}
+
+.header-logo {
+  height: 40px;
+  width: auto;
+  margin-right: 0.5rem;
+}
+
+.header-title {
+  font-size: 1.2rem;
+
+  @media (max-width: 480px) {
+    display: none;
+  }
+}
+
+.desktop-nav {
+  display: flex;
+  gap: 0.5rem;
+
+  @media (max-width: 768px) {
+    display: none;
+  }
+}
+
+.mobile-menu-button {
+  display: none;
+
+  @media (max-width: 768px) {
+    display: inline-flex;
+  }
+}
+
+mat-sidenav {
+  width: 250px;
+  background: rgb(245, 245, 245);
+}
+
+mat-nav-list a.active {
+  background: rgba(0, 0, 0, 0.04);
+}
+
+.main-container {
+  height: calc(100vh - 64px);
+}

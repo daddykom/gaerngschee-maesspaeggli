@@ -1,0 +1,47 @@
+services:
+  backend:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: gaerngschee-backend
+    ports:
+      - "8080:80"
+    volumes:
+      - ./backend:/var/www/html
+      - ./db:/var/www/db
+    environment:
+      - PHP_DISPLAY_ERRORS=1
+      - DB_HOST=database
+      - DB_PORT=3306
+      - DB_NAME=gaerngschee_dev
+      - DB_USER=gaerngschee
+      - DB_PASS=changeme
+
+  database:
+    image: mariadb:10.11
+    container_name: gaerngschee-database
+    environment:
+      - MYSQL_ROOT_PASSWORD=rootpassword
+      - MYSQL_DATABASE=gaerngschee_dev
+      - MYSQL_USER=gaerngschee
+      - MYSQL_PASSWORD=changeme
+    ports:
+      - "3306:3306"
+    volumes:
+      - db_data:/var/lib/mysql
+
+  phpmyadmin:
+    image: phpmyadmin:latest
+    container_name: gaerngschee-phpmyadmin
+    ports:
+      - "8081:80"
+    environment:
+      - PMA_HOST=database
+      - PMA_PORT=3306
+      - PMA_USER=gaerngschee
+      - PMA_PASSWORD=changeme
+    depends_on:
+      - database
+
+volumes:
+  db_data:

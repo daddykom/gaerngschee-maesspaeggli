@@ -1,0 +1,18 @@
+@if (loading()) {
+  <mat-spinner></mat-spinner>
+} @else {
+  <div class="offer-grid">
+    @for (offer of offers(); track offer.id) {
+      <mat-card class="offer-card" (click)="cardClick.emit(offer)">
+        <mat-card-header>
+          <mat-card-title>{{ offer.title }}</mat-card-title>
+          <mat-card-subtitle>{{ offer.category }}</mat-card-subtitle>
+        </mat-card-header>
+        <mat-card-content>
+          <p>{{ offer.description }}</p>
+          <span class="location">{{ offer.location.address }}</span>
+        </mat-card-content>
+      </mat-card>
+    }
+  </div>
+}
