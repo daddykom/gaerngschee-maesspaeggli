@@ -13,11 +13,18 @@
                            │ REST API (JSON)
 ┌──────────────────────────┼──────────────────────────────────┐
 │                        Backend                              │
-│  ┌─────────────┐  ┌──────┴──────┐  ┌─────────────────────┐  │
-│  │   Slim 4    │  │   Routes    │  │   MariaDB           │  │
-│  │   PHP 8     │  │  (PSR-15)   │  │   (planned)         │  │
-│  └─────────────┘  └─────────────┘  └─────────────────────┘  │
+│  ┌─────────────┐  ┌──────┴──────┐  ┌─────────────────────┐ │
+│  │   Slim 4    │  │   Routes    │  │   MariaDB           │ │
+│  │   PHP 8     │  │  (PSR-15)   │  │                     │ │
+│  └─────────────┘  └─────────────┘  └─────────────────────┘ │
 └─────────────────────────────────────────────────────────────┘
+                           │
+              ┌────────────┴────────────┐
+              │                         │
+         ┌────▼────┐            ┌──────▼──────┐
+         │ Payrexx │            │  Fairgate   │
+         │(Payment)│            │(Eligibility)│
+         └─────────┘            └─────────────┘
 ```
 
 ## Frontend Architecture
@@ -29,19 +36,19 @@ Components follow the View/Container pattern for clear separation of concerns:
 ```
 ┌─────────────────────────────────────────────────────────────┐
 │                   ContainerComponent                        │
-│  - Injects NgRx Store and services                          │
-│  - Selects state via selectors                              │
-│  - Dispatches actions                                       │
-│  - Handles events from View                                 │
+│  - Injects NgRx Store and services                         │
+│  - Selects state via selectors                             │
+│  - Dispatches actions                                      │
+│  - Handles events from View                                │
 └─────────────────────────────────────────────────────────────┘
-                            │ @Input() / @Output()
-                            ▼
+                             │ @Input() / @Output()
+                             ▼
 ┌─────────────────────────────────────────────────────────────┐
-│                     ViewComponent                           │
-│  - Pure presentation (no side effects)                      │
-│  - Receives data via @Input()                               │
-│  - Emits events via @Output()                               │
-│  - No service injections                                    │
+│                     ViewComponent                          │
+│  - Pure presentation (no side effects)                     │
+│  - Receives data via @Input()                              │
+│  - Emits events via @Output()                              │
+│  - No service injections                                   │
 └─────────────────────────────────────────────────────────────┘
 ```
 
@@ -49,24 +56,22 @@ Components follow the View/Container pattern for clear separation of concerns:
 
 | Type | Suffix | Example |
 |------|--------|---------|
-| View (pure) | `ViewComponent` | `OfferListViewComponent` |
-| Container | `ContainerComponent` | `OfferListContainerComponent` |
-
+| View (pure) | `ViewComponent` | `RegistrationListViewComponent` |
+| Container | `ContainerComponent` | `RegistrationListContainerComponent` |
 
 ### Functional Effects
 
 Effects use the functional pattern with `createEffect` and `{ functional: true }`:
 
 ```typescript
-export const loadOffersEffect = createEffect(
-    (actions$ = inject(Actions), store = inject(Store), offersService = inject(OffersService)) => {
+export const loadRegistrationsEffect = createEffect(
+    (actions$ = inject(Actions), store = inject(Store), registrationService = inject(RegistrationService)) => {
         return actions$.pipe(
-            ofType(OffersActions.loadOffers),
-            withLatestFrom(store.select(selectCurrentPosition)),
-            switchMap(([, currentPosition]) =>
-                offersService.getOffers().pipe(
-                    map((offers) => OffersActions.loadOffersSuccess({ offers })),
-                    catchError((error) => of(OffersActions.loadOffersFailure({ error: error.message })))
+            ofType(RegistrationsActions.loadRegistrations),
+            switchMap(() =>
+                registrationService.getRegistrations().pipe(
+                    map((registrations) => RegistrationsActions.loadRegistrationsSuccess({ registrations })),
+                    catchError((error) => of(RegistrationsActions.loadRegistrationsFailure({ error: error.message })))
                 )
             )
         );
@@ -74,12 +79,12 @@ export const loadOffersEffect = createEffect(
     { functional: true }
 );
 
-export const offersEffects = [loadOffersEffect];
+export const registrationsEffects = [loadRegistrationsEffect];
 ```
 
 Effects are registered in `app.config.ts`:
 ```typescript
-provideEffects(offersEffects)
+provideEffects(registrationsEffects)
 ```
 
 ## Backend Architecture
@@ -92,14 +97,19 @@ backend/
 │   └── index.php          # Entry point
 ├── src/
 │   ├── Application.php    # App configuration
-│   ├── Routes/            # API route definitions
-│   │   └── OfferRoutes.php
-│   └── Data/              # JSON data files
-│       └── offers.json
+│   └── Routes/           # API route definitions
+│       ├── RegistrationRoutes.php
+│       ├── DonationRoutes.php
+│       └── ...
 └── vendor/                # Dependencies
 ```
 
-### API Design
+### External Integrations
+
+| Service | Purpose |
+|---------|---------|
+| Payrexx | Payment processing for donations |
+| Fairgate | Eligibility verification for registrations |
 
 ## Technology Choices
 
@@ -117,14 +127,37 @@ backend/
 - FastRoute included for routing
 - No ORM coupling
 
-### Why MapLibre + OpenFreeMap?
-
-- Open-source (no licensing costs)
-- OpenFreeMap provides free vector tiles
-- MapTiler for geocoding
-
 ### Why MariaDB?
 
 - Recommended in project requirements
 - Cyon supports MariaDB
-- Relational model fits offer/category relationship
+- Relational model fits registrations/children relationship
+
+## Reactive Architecture
+
+### Frontend
+
+The frontend uses reactive patterns throughout:
+
+- **NgRx Effects**: Handle side effects reactively using RxJS Observables
+- **Store**: Centralized state with immutable updates
+- **Components**: Use signals for synchronous state, observables for async
+
+```
+User Action → Action Dispatch → Effect (RxJS) → Service Call →
+→ Success/Failure Action → Reducer (Immutable) → State Update → Component Re-render
+```
+
+### Backend
+
+- Request/Response is synchronous (Slim handles this)
+- Business logic uses functional style: array_map, array_filter, array_reduce
+- Side effects (database, email) are isolated in dedicated functions
+- Return immutable data structures (arrays, value objects)
+
+### Data Flow Example
+
+```
+Frontend:  Action → Effect (switchMap) → HTTP → Success Action → Reducer → State
+Backend:   Request → Route Handler → Pure Function → Response
+```

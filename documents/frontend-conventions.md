@@ -17,24 +17,24 @@ Separate pure presentation (View) from stateful logic (Container).
 
 ```typescript
 @Component({
-  selector: 'app-offer-list-view',
+  selector: 'app-registration-list-view',
   standalone: true,
-  templateUrl: './offer-list-view.component.html',
+  templateUrl: './registration-list-view.component.html',
 })
-export class OfferListViewComponent {
-  offers = input<Offer[]>([]);
+export class RegistrationListViewComponent {
+  registrations = input<Registration[]>([]);
   loading = input<boolean>(false);
-  cardClick = output<Offer>();
+  itemClick = output<Registration>();
 }
 ```
 
-**Template (`offer-list-view.component.html`):**
+**Template (`registration-list-view.component.html`):**
 ```html
 @if (loading()) {
   <mat-spinner></mat-spinner>
 } @else {
-  @for (offer of offers(); track offer.id) {
-    <app-offer-card [offer]="offer" (cardClick)="cardClick.emit($event)" />
+  @for (registration of registrations(); track registration.id) {
+    <app-registration-card [registration]="registration" (cardClick)="itemClick.emit($event)" />
   }
 }
 ```
@@ -49,18 +49,18 @@ export class OfferListViewComponent {
 
 ```typescript
 @Component({
-  selector: 'app-offer-list-container',
+  selector: 'app-registration-list-container',
   standalone: true,
-  template: `<app-offer-list-view [offers]="offers()" (cardClick)="onCardClick($event)" />`
+  template: `<app-registration-list-view [registrations]="registrations()" (itemClick)="onItemClick($event)" />`
 })
-export class OfferListContainerComponent {
+export class RegistrationListContainerComponent {
   private store = inject(Store);
 
-  offers = this.store.selectSignal(selectOffers);
-  loading = this.store.selectSignal(selectOffersLoading);
+  registrations = this.store.selectSignal(selectRegistrations);
+  loading = this.store.selectSignal(selectRegistrationsLoading);
 
-  onCardClick(offer: Offer) {
-    this.store.dispatch(OfferActions.selectOffer({ offer }));
+  onItemClick(registration: Registration) {
+    this.store.dispatch(RegistrationActions.selectRegistration({ registration }));
   }
 }
 ```
@@ -71,14 +71,14 @@ ViewComponents **must** use Angular's signal-based inputs instead of `@Input()`:
 
 ```typescript
 // GOOD - Signal inputs
-offers = input<Offer[]>([]);
+registrations = input<Registration[]>([]);
 loading = input<boolean>(false);
-cardClick = output<Offer>();
+itemClick = output<Registration>();
 
 // BAD - @Input() decorator
-@Input() offers: Offer[] = [];
+@Input() registrations: Registration[] = [];
 @Input() loading = false;
-@Output() cardClick = new EventEmitter<Offer>();
+@Output() itemClick = new EventEmitter<Registration>();
 ```
 
 **Rule:** Signals are preferred in components. For store access, use `selectSignal()` instead of `store.select()`. Effects must use RxJS Observables (this is intentional and correct).
@@ -102,52 +102,28 @@ cardClick = output<Offer>();
 
 ```
 store/
-├── app.state.ts           # Root state interface
-├── offers/
-│   ├── offers.actions.ts  # ofType actions
-│   ├── offers.feature.ts  # createFeature + selectors
-│   ├── offers.effects.ts  # Side effects
-│   └── offers.state.ts    # State interface + initialState
-└── categories/
-    └── ...
-```
-
-## State Interface Example
-
-```typescript
-interface OffersState {
-  offers: Offer[];
-  selectedOffer: Offer | null;
-  loading: boolean;
-  error: string | null;
-  currentPosition: OfferLocation;
-}
-
-export const initialState: OffersState = {
-  offers: [],
-  selectedOffer: null,
-  loading: false,
-  error: null,
-  currentPosition: {
-    latitude: 47.556431,
-    longitude: 7.591641,
-    address: 'Münsterplatz, Basel',
-  },
-};
+├── app.state.ts              # Root state interface
+├── registrations/
+│   ├── registrations.actions.ts
+│   ├── registrations.feature.ts
+│   ├── registrations.effects.ts
+│   └── registrations.state.ts
+├── donations/
+│   └── ...
+└── ...
 ```
 
 ## Functional Effects Pattern
 
 ```typescript
-export const loadOffersEffect = createEffect(
-    (actions$ = inject(Actions), store = inject(Store), offersService = inject(OffersService)) => {
+export const loadRegistrationsEffect = createEffect(
+    (actions$ = inject(Actions), store = inject(Store), registrationService = inject(RegistrationService)) => {
         return actions$.pipe(
-            ofType(OffersActions.loadOffers),
-            withLatestFrom(store.select(selectCurrentPosition)),
-            switchMap(([, currentPosition]) =>
-                offersService.getOffers().pipe(
-                    map((offers) => OffersActions.loadOffersSuccess({ offers })),
-                    catchError((error) => of(OffersActions.loadOffersFailure({ error: error.message })))
+            ofType(RegistrationsActions.loadRegistrations),
+            switchMap(() =>
+                registrationService.getRegistrations().pipe(
+                    map((registrations) => RegistrationsActions.loadRegistrationsSuccess({ registrations })),
+                    catchError((error) => of(RegistrationsActions.loadRegistrationsFailure({ error: error.message })))
                 )
             )
         );
@@ -155,12 +131,68 @@ export const loadOffersEffect = createEffect(
     { functional: true }
 );
 
-export const offersEffects = [loadOffersEffect];
+export const registrationsEffects = [loadRegistrationsEffect];
 ```
 
 Registration in `app.config.ts`:
 ```typescript
-provideEffects(offersEffects)
+provideEffects(registrationsEffects)
+```
+
+## Reactive Patterns
+
+### RxJS Usage
+
+- Prefer Observables for async operations
+- Use operators: map, filter, switchMap, catchError, withLatestFrom
+- Avoid subscriptions where possible; use effects instead
+- Complete observables properly to prevent memory leaks
+
+### Functional Style
+
+```typescript
+// GOOD - Functional style with array methods
+export const getActiveRegistrations = (registrations: Registration[]): Registration[] =>
+    registrations.filter(r => r.status === 'active');
+
+export const groupByStatus = (registrations: Registration[]): Record<string, Registration[]> =>
+    registrations.reduce((acc, reg) => {
+        const key = reg.status;
+        return { ...acc, [key]: [...(acc[key] || []), reg] };
+    }, {} as Record<string, Registration[]>);
+
+// GOOD - Composing functions
+export const getQualifiedCount = (registrations: Registration[]): number =>
+    registrations
+        .filter(r => r.status === 'qualified')
+        .length;
+
+// BAD - Imperative style
+let count = 0;
+for (const reg of registrations) {
+    if (reg.status === 'qualified') count++;
+}
+```
+
+### Effect Patterns
+
+Effects handle side effects reactively:
+
+```typescript
+export const loadRegistrationsEffect = createEffect(
+    (actions$ = inject(Actions), registrationService = inject(RegistrationService)) => {
+        return actions$.pipe(
+            ofType(RegistrationsActions.loadRegistrations),
+            switchMap(() =>
+                registrationService.getRegistrations().pipe(
+                    map(registrations => RegistrationsActions.loadRegistrationsSuccess({ registrations })),
+                    catchError(error => of(RegistrationsActions.loadRegistrationsFailure({ error: error.message })))
+                )
+            )
+        );
+    },
+    { functional: true }
+);
 ```
 
 ## Coding Style
@@ -170,13 +202,13 @@ provideEffects(offersEffects)
 ```typescript
 // BAD
 @Component()
-class OfferListComponent {
-    filteredOffers = this.offers.filter(o => o.status === 'published');
+class RegistrationListComponent {
+    activeRegistrations = this.registrations.filter(r => r.status === 'active');
 }
 
 // GOOD
-export const filterPublishedOffers = (offers: Offer[]): Offer[] =>
-    offers.filter(o => o.status === 'published');
+export const filterActiveRegistrations = (registrations: Registration[]): Registration[] =>
+    registrations.filter(r => r.status === 'active');
 ```
 
 ### Use Strong Typing

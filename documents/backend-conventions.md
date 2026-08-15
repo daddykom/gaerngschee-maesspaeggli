@@ -12,10 +12,11 @@ backend/
 │   └── index.php          # Entry point
 ├── src/
 │   ├── Application.php    # App factory and middleware
-│   ├── Routes/            # API routes
-│   │   └── OfferRoutes.php
-│   └── Data/              # JSON data files
-│       └── offers.json
+│   └── Routes/           # API routes
+│       ├── RegistrationRoutes.php
+│       ├── DonationRoutes.php
+│       ├── WaitlistRoutes.php
+│       └── PickupRoutes.php
 ├── vendor/                # Composer dependencies
 └── composer.json
 ```
@@ -62,7 +63,8 @@ declare(strict_types=1);
 
 namespace App;
 
-use App\Routes\OfferRoutes;
+use App\Routes\RegistrationRoutes;
+use App\Routes\DonationRoutes;
 use Psr\Http\Message\ResponseInterface;
 use Slim\App;
 use Slim\Factory\AppFactory;
@@ -82,46 +84,52 @@ final class Application
         });
 
         $app->get('/', function ($request, ResponseInterface $response) {
-            $response->getBody()->write(json_encode(['message' => 'Gaerngschee API']));
+            $response->getBody()->write(json_encode(['message' => 'Gärngschee Mässpäggli API']));
             return $response->withHeader('Content-Type', 'application/json');
         });
 
-        OfferRoutes::register($app);
+        RegistrationRoutes::register($app);
+        DonationRoutes::register($app);
+        WaitlistRoutes::register($app);
+        PickupRoutes::register($app);
 
         return $app;
     }
 }
 ```
 
-## Route Definition
+## API Endpoints
 
-```php
-<?php
-declare(strict_types=1);
+### Registrations
 
-namespace App\Routes;
+| Method | Endpoint | Description |
+|--------|----------|-------------|
+| GET | `/api/registrations` | List all registrations |
+| GET | `/api/registrations/{id}` | Get single registration |
+| POST | `/api/registrations` | Create new registration |
+| PUT | `/api/registrations/{id}` | Update registration |
+| DELETE | `/api/registrations/{id}` | Delete registration |
 
-use Psr\Http\Message\ResponseInterface;
-use Slim\App;
-use Slim\Psr7\Response;
+### Donations
 
-final class OfferRoutes
-{
-    private const DATA_FILE = __DIR__ . '/../Data/offers.json';
+| Method | Endpoint | Description |
+|--------|----------|-------------|
+| GET | `/api/donations` | List all donations |
+| POST | `/api/donations` | Create donation (from Payrexx webhook) |
 
-    public static function register(App $app): void
-    {
-        $app->get('/api/offers', function ($request, ResponseInterface $response) {
-            $json = file_get_contents(self::DATA_FILE);
-            $offers = json_decode($json, true, 512, JSON_THROW_ON_ERROR);
+### Waitlist
 
-            $body = json_encode($offers, JSON_THROW_ON_ERROR);
-            $response->getBody()->write($body);
-            return $response->withHeader('Content-Type', 'application/json');
-        });
-    }
-}
-```
+| Method | Endpoint | Description |
+|--------|----------|-------------|
+| GET | `/api/waitlist` | List waitlisted registrations |
+| POST | `/api/waitlist/{registrationId}/qualify` | Qualify from waitlist |
+
+### Pickup
+
+| Method | Endpoint | Description |
+|--------|----------|-------------|
+| POST | `/api/pickup/verify` | Verify QR code |
+| POST | `/api/pickup/confirm` | Confirm pickup |
 
 ## Coding Standards
 
@@ -146,41 +154,76 @@ declare(strict_types=1);
 - JSON encode errors with appropriate HTTP status codes
 - Don't expose internal details in production
 
-## API Endpoints
+## Functional Style
 
-| Method | Endpoint | Description |
-|--------|----------|-------------|
-| GET | `/api/offers` | List all offers |
-| GET | `/api/offers/{id}` | Get single offer |
-| POST | `/api/offers` | Create new offer |
-| PUT | `/api/offers/{id}` | Update offer |
-| DELETE | `/api/offers/{id}` | Delete offer |
+### Principles
 
-## Data Format
+- Prefer pure functions over procedures
+- Avoid side effects where possible
+- Use immutable data structures
+- Compose small functions into larger logic
 
-All API responses use JSON:
+### Examples
 
-```json
+```php
+// GOOD - Pure function
+function calculateAvailableMaspaeggli(int $total, int $reserved): int
 {
-  "id": "1",
-  "title": "Free Meals",
-  "description": "Every Thursday...",
-  "category": "essen",
-  "location": {
-    "address": "Münsterplatz, Basel",
-    "longitude": 7.591641,
-    "latitude": 47.556431
-  },
-  "status": "published",
-  "createdAt": "2024-01-15T10:00:00Z",
-  "updatedAt": "2024-01-15T10:00:00Z",
-  "contact": {
-    "name": "Food Bank Basel",
-    "email": "info@foodbank.ch",
-    "phone": "+41 61 123 45 67"
-  },
-  "imageUrl": null
+    return max(0, $total - $reserved);
 }
+
+// GOOD - Using array_map for transformation
+$donationAmounts = array_map(
+    fn(Donation $donation) => $donation->getAmount(),
+    $donations
+);
+
+// GOOD - Using array_filter
+$completedDonations = array_filter(
+    $donations,
+    fn(Donation $donation) => $donation->isCompleted()
+);
+
+// GOOD - Using array_reduce for aggregation
+$totalAmount = array_reduce(
+    $donations,
+    fn(int $carry, Donation $donation) => $carry + $donation->getAmount(),
+    0
+);
+
+// GOOD - Using array_column for key extraction
+$registrationIds = array_column($registrations, 'id');
+
+// GOOD - Method chaining with arrow functions
+$result = array_values(array_filter($array, fn($item) => $item['active']));
+
+// BAD - Procedural style with side effects
+foreach ($donations as $donation) {
+    if ($donation->status === 'completed') {
+        $total += $donation->amount;
+    }
+}
+```
+
+### Collections (PHP 8+)
+
+Use iterators and generator functions for large datasets:
+
+```php
+// Generator for memory efficiency
+function getRegistrationsGenerator(PDO $pdo): \Generator
+{
+    $stmt = $pdo->query('SELECT * FROM registrations');
+    while ($row = $stmt->fetch(\PDO::FETCH_ASSOC)) {
+        yield Registration::fromArray($row);
+    }
+}
+
+// Using array_map with arrow functions
+$emails = array_map(
+    fn(Registration $r) => $r->getEmail(),
+    array_filter($registrations, fn(Registration $r) => $r->isQualified())
+);
 ```
 
 ## Database

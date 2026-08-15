@@ -22,16 +22,13 @@ composer require --dev phpunit/phpunit
 db/
 ├── phinx.php                    # Phinx configuration
 ├── migrations/                  # Database migrations
-│   ├── 20260614080000_create_offers_table.php
-│   └── 20260614081000_create_categories_table.php
+│   ├── 20260614080000_create_registrations_table.php
+│   ├── 20260614081000_create_children_table.php
+│   └── ...
 └── seeds/
     ├── development/             # Development and test data
-    │   ├── OfferTestSeeder.php
-    │   └── CategoryTestSeeder.php
-    ├── test/                    # Minimal test data for CI
-    │   └── OfferTestSeeder.php
-    └── production/              # Production initial data
-        └── InitialCategorySeeder.php
+    ├── test/                   # Minimal test data for CI
+    └── production/             # Production initial data
 ```
 
 ## Phinx Configuration
@@ -91,14 +88,6 @@ return [
 | `phinx seed:run -e <environment>` | Run seeds for specific environment |
 | `phinx break` | Rollback all migrations |
 
-### Environment-Specific Seeding
-
-```bash
-phinx seed:run -e development   # Seeds all data (dev + test + prod seeders)
-phinx seed:run -e test          # Seeds test environment only
-phinx seed:run -e production    # Seeds production environment only
-```
-
 ## Migration Example
 
 ```php
@@ -107,19 +96,16 @@ declare(strict_types=1);
 
 use Phinx\Migration\AbstractMigration;
 
-final class CreateOffersTable extends AbstractMigration
+final class CreateRegistrationsTable extends AbstractMigration
 {
     public function change(): void
     {
-        $table = $this->table('offers', ['id' => false, 'primary_key' => 'id']);
+        $table = $this->table('registrations', ['id' => false, 'primary_key' => 'id']);
         $table->addColumn('id', 'uuid')
-              ->addColumn('title', 'string', ['limit' => 255])
-              ->addColumn('description', 'text')
-              ->addColumn('category', 'string', ['limit' => 50])
-              ->addColumn('address', 'string', ['limit' => 500])
-              ->addColumn('latitude', 'decimal', ['precision' => 10, 'scale' => 8])
-              ->addColumn('longitude', 'decimal', ['precision' => 11, 'scale' => 8])
-              ->addColumn('status', 'enum', ['values' => ['draft', 'pending', 'published', 'archived']])
+              ->addColumn('status', 'string', ['limit' => 50])
+              ->addColumn('eligibility_status', 'string', ['limit' => 50])
+              ->addColumn('qr_code', 'string', ['limit' => 255])
+              ->addColumn('pickup_confirmed', 'boolean', ['default' => false])
               ->addColumn('created_at', 'timestamp', ['default' => 'CURRENT_TIMESTAMP'])
               ->addColumn('updated_at', 'timestamp', ['update' => 'CURRENT_TIMESTAMP'])
               ->create();
@@ -133,45 +119,13 @@ final class CreateOffersTable extends AbstractMigration
 
 Contains seeders with realistic test data for local development and manual testing.
 
-```php
-<?php
-declare(strict_types=1);
-
-use Phinx\Seed\AbstractSeed;
-
-final class OfferTestSeeder extends AbstractSeed
-{
-    public function run(): void
-    {
-        $data = [
-            [
-                'id' => 'a1b2c3d4-e5f6-7890-abcd-ef1234567890',
-                'title' => 'Free Lunch',
-                'description' => 'Free lunch for everyone',
-                'category' => 'essen',
-                'status' => 'published',
-            ],
-            [
-                'id' => 'b2c3d4e5-f6a7-8901-bcde-f12345678901',
-                'title' => 'Yoga Class',
-                'description' => 'Free yoga every Thursday',
-                'category' => 'sport',
-                'status' => 'published',
-            ],
-        ];
-
-        $this->table('offers')->insert($data)->save();
-    }
-}
-```
-
 ### test/
 
 Minimal seeders for CI/testing. Only essential data needed for tests to run.
 
 ### production/
 
-Seeders for production initial data only (e.g., default categories).
+Seeders for production initial data only.
 
 ## Docker Integration
 
@@ -215,26 +169,6 @@ DB_PASS=root
 4. Use meaningful migration names: `create_<table>_table`, `add_<column>_to_<table>`
 5. Timestamp format: `YYYYMMDDHHMMSS` (e.g., `20260614080000`)
 
-### Example: Adding a Column
-
-```php
-<?php
-declare(strict_types=1);
-
-use Phinx\Migration\AbstractMigration;
-
-final class AddContactEmailToOffersTable extends AbstractMigration
-{
-    public function change(): void
-    {
-        $this->table('offers')
-             ->addColumn('contact_email', 'string', ['limit' => 255, 'null' => true])
-             ->update();
-    }
-}
-```
-
 ## See Also
 
 - [backend-conventions.md](./backend-conventions.md) - PHP backend conventions
-- [openspec/specs/database/spec.md](../openspec/specs/database/spec.md) - Database capability spec

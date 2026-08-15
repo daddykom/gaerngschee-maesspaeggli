@@ -2,50 +2,53 @@
 
 ## Overview
 
-User authentication and authorization for the platform.
+User authentication and authorization for the Gärngschee-Mässpäggli platform.
 
-## Target Groups
+## Benutzerrollen
 
-| Group                  | Needs                                    |
-|------------------------|------------------------------------------|
-| Anonymous users        | View published offers                    |
-| Authenticated users    | Submit offers, manage own offers         |
-| Editors                | Moderate offers                          |
-| Admins                 | Manage users and system settings         |
+| Rolle | Beschreibung |
+|-------|--------------|
+| Besucher | Nicht angemeldete Benutzer |
+| Klient | Personen/Familien mit knappen Mitteln |
+| Spender | Finanzen Mässpäggli |
+| Mitarbeiter | Vereinsmitarbeiter |
+| Administrator | Systemverwaltung |
 
 ## Features
 
-### F1: User Registration
+### F1: Besucher (Anonymous)
 
-- Email-based registration
-- Email verification (optional)
-- No social login (privacy-first)
+- View public information
+- Access donation page
+- Submit registration
 
-### F2: User Login
+### F2: Klient (Client)
 
-- Email + password authentication
-- Session management
-- "Remember me" option
+- Manage own registration
+- View registration status
+- Receive QR code after qualification
+- Update personal information
 
-### F3: Password Reset
+### F3: Spender (Donor)
 
-- Forgot password flow
-- Email-based reset link
-- Token expiration
+- Select number of Mässpäggli
+- Redirect to Payrexx for payment
+- No account required (payment handles identity)
 
-### F4: Role Management
+### F4: Mitarbeiter (Staff)
 
-| Role     | Can Do                                       |
-|----------|----------------------------------------------|
-| user     | View offers, submit offers, edit own offers  |
-| editor   | All user + moderate any offer                |
-| admin    | All editor + manage users, system settings   |
+- Manage all registrations
+- Manage waitlist
+- Verify QR codes
+- Confirm pickups
+- Manage email templates
+- Manage reminder rules
 
-### F5: User Profile
+### F5: Administrator
 
-- View/edit profile information
-- Change password
-- View own submitted offers
+- Manage master data
+- System configuration
+- User management
 
 ## Security Considerations
 
@@ -58,16 +61,14 @@ User authentication and authorization for the platform.
 
 | Component | Status |
 |-----------|--------|
-| User model | ✗ Not implemented |
-| Registration | ✗ Not implemented |
-| Login | ✗ Not implemented |
-| Password reset | ✗ Not implemented |
-| Role management | ✗ Not implemented |
-| Session handling | ✗ Not implemented |
+| Besucher (public access) | ✗ Not implemented |
+| Klient authentication | ✗ Not implemented |
+| Spender (Payrexx handles) | ✗ Not implemented |
+| Mitarbeiter auth | ✗ Not implemented |
+| Admin auth | ✗ Not implemented |
 
 ## Open Decisions
 
-- Use existing auth library or custom?
 - Session vs JWT tokens?
-- Multi-instance support needed?
-- OAuth providers (Google, etc.)?
+- Fairgate integration for eligibility?
+- Existing Fairgate accounts or separate?

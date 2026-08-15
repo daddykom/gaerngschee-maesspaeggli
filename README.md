@@ -1,175 +1,183 @@
-# Gratisangebote-Karte
+# Gärngschee-Mässpäggli
 
-Open-Source-Webapplikation zur Unterstützung von Menschen mit wenig finanziellen Mitteln bei der Suche nach kostenlosen Angeboten, sowie zur Hilfe für einsame Menschen beim Entdecken von Aktivitäten und sozialen Kontakten in ihrer Region.
+Open-Source-Webplattform für die Verwaltung von Spenden und die Verteilung von Mässpäggli an Menschen mit knappen finanziellen Mitteln.
 
-## Zielgruppe
+## Über das Projekt
 
-- Menschen mit geringem Einkommen
-- Einsame oder sozial isolierte Menschen
-- Gemeinden
-- Soziale Organisationen
-- Vereine
+Die Gärngschee-Mässpäggli-Plattform ermöglicht es Spendern, Mässpäggli zu finanzieren, und Klienten, sich für den Erhalt von Mässpäggli zu registrieren. Die Anwendung verwaltet Anmeldungen, Wartelisten und die QR-code-basierte Abgabe.
 
-## Hauptfunktionen
+## Benutzerrollen
 
-### Angebotssuche
+### Besucher
+Nicht angemeldete Benutzer können öffentliche Informationen ansehen, zur Spendenseite wechseln und sich für Mässpäggli anmelden.
 
-Kostenlose Angebote können über folgende Ansichten gesucht werden:
+### Klient
+Personen oder Familien mit knappen finanziellen Mitteln. Klienten können ihre Anmeldung bearbeiten, den Status verfolgen, Benachrichtigungen empfangen und erhalten einen QR-Code für die Abholung.
 
-- **Kartenansicht** - Angebote auf einer interaktiven Karte
-- **Listenansicht** - Angebote als Liste
+### Spender
+Personen, welche Mässpäggli finanzieren. Spender wählen die Anzahl Mässpäggli aus und werden zur Payrexx-Spendenseite weitergeleitet.
 
-Zwischen beiden Ansichten kann jederzeit gewechselt werden.
+### Mitarbeiter
+Mitarbeiter des Vereins Gärngschee mit Zugriff auf alle administrativen Funktionen: Anmeldungen verwalten, Warteliste führen, QR-Codes prüfen, Abgaben bestätigen und E-Mail-Vorlagen konfigurieren.
 
-### Filterung
+### Administrator
+Verwaltung der Anwendung: Stammdaten, Systemkonfiguration und Benutzerverwaltung.
 
-Angebote können über Kategorien gefiltert werden:
+## Kernfunktionen
 
-- Essen
-- Freizeit
-- Kultur
-- Sport
-- Beratung
-- Treffpunkte
-- Bildung
+### Spenden
+- Weiterleitung zu Payrexx für sichere Zahlungsabwicklung
+- Auswahl der Anzahl Mässpäggli
+- Automatische Erfassung erfolgreicher Spenden
 
-### Angebotsdetails
+### Anmeldung
+- Erfassung und Bearbeitung von Anmeldungen
+- Erfassung mehrerer Kinder pro Anmeldung
+- Altersgruppen-Zuordnung pro Kind
+- Zusätzliche Informationen
 
-Angebote werden auf der Karte dargestellt. Zu jedem Angebot können Detailinformationen angezeigt werden.
+### Berechtigungsprüfung
+- Übernahme der Berechtigungsinformationen aus Fairgate
+- Anzeige des Prüfungsstatus
 
-### Erfassung und Redaktion
+### Warteliste
+- Automatische Aufnahme bei ungenügender Verfügbarkeit
+- Nachträgliche Qualifikation bei Verfügbarkeit
 
-Benutzer können eigene Angebote erfassen. Neu erfasste Angebote erhalten zuerst den Status `pending` und werden erst nach Prüfung durch einen Redaktor öffentlich angezeigt.
+### Qualifikation
+- Automatische Zusage bei genügend Mässpäggli
+- Versand der Informations-E-Mail mit QR-Code
 
-Ein Redaktor kann:
+### Abgabe
+- QR-Code-Prüfung
+- Anzeige der Anmeldung
+- Bestätigung der Abgabe (auch teilweise)
+- Rückgängig-Machen durch berechtigte Mitarbeitende
 
-- das Angebot freigeben
-- das Angebot ablehnen
-- das Angebot bearbeiten
-- Kategorien ergänzen oder ändern
-- Texte, Orte, Zeiten und andere Angaben korrigieren
+### Benachrichtigungen
+- Bestätigungs-E-Mail nach Anmeldung
+- Information für Wartelisten-Klienten
+- Informations-E-Mail mit QR-Code nach Qualifikation
+- Konfigurierbare Erinnerungs-E-Mails
+
+### E-Mail-Verwaltung
+- Verwaltung aller E-Mail-Vorlagen
+- Bearbeitung von Betreff und Inhalt
+- Platzhalter-Unterstützung
+- Konfiguration der Erinnerungsintervalle
 
 ## Technologiestack
 
 ### Frontend
-
-- Angular
-- NgRx
+- Angular 21
+- NgRx (Store, Effects)
+- Angular Material
 - TypeScript
+- Progressive Web App (PWA)
+- Nx Build-System
 
 ### Backend
-
-- PHP
-- Slim Framework
+- PHP 8
+- Slim Framework 4
+- Phinx (Database Migrations)
 
 ### Datenbank
-
 - MariaDB
 
-### Kartenlösung
-
-- OpenFreeMap als Kartenquelle
-- MapLibre für die Kartendarstellung
-
-## Plattform
-
-Die Anwendung wird als Progressive Web App (PWA) umgesetzt:
-
-- Installation auf Desktop und Mobilgeräten
-- Responsive Design
-- Barrierefreiheit (Accessibility First)
-- Mehrsprachigkeit
+### Integrationen
+- Payrexx (Zahlungsabwicklung)
+- Fairgate (Berechtigungsprüfung)
 
 ## Entwicklung
 
-### Entwicklungsumgebung
-
-- macOS
-- WebStorm
+### Voraussetzungen
 - Docker
+- Node.js
+- PHP 8
+- Composer
 
-Die lokale Docker-Umgebung soll dem Zielsystem bei Cyon möglichst ähnlich sein.
+### Setup
 
-### Hosting
+```bash
+# Docker-Umgebung starten
+docker-compose up -d
 
-- Cyon.ch (Webhosting Double)
+# Datenbank migrieren
+cd frontend && npm run db:migrate
 
-### Versionsverwaltung
+# Datenbank seeden (Entwicklungsdaten)
+cd frontend && npm run db:seed
 
-- Git
-- GitHub
+# Dependencies installieren
+cd frontend && npm install
+cd backend && composer install
+```
 
-Das Projekt wird als Open Source veröffentlicht.
+### Verfügbare Scripts
 
-## Qualitätssicherung
+#### Frontend (frontend/package.json)
+```bash
+npm start              # Entwicklungserver starten
+npm run build          # Produktions-Build
+npm run test           # Unit Tests
+npm run e2e            # End-to-End Tests
+npm run lint           # Linting
+npm run db:start       # Docker Datenbank starten
+npm run db:stop        # Docker Datenbank stoppen
+npm run db:migrate     # Migrationen ausführen
+npm run db:seed        # Seed-Daten laden
+npm run db:setup       # Datenbank initialisieren
+npm run db:reset       # Datenbank zurücksetzen
+```
 
-### Teststrategie
+#### Backend (backend/composer.json)
+```bash
+composer install       # Dependencies installieren
+composer update        # Dependencies aktualisieren
+vendor/bin/phinx       # Phinx CLI für Migrationen
+```
 
-Unit Tests sind vorgesehen für:
+### Tests
+```bash
+# Unit Tests (Frontend)
+npm test
 
-- Angular Components
-- Angular Services
-- NgRx Reducer
-- NgRx Selectors
-- NgRx Effects
-- PHP Backend-Code
-- Pure Functions
-- Validierungslogik
-- Mapping- und Transformationslogik
+# Unit Tests (Backend)
+cd backend && vendor/bin/phpunit
 
-Zusätzlich soll Playwright für End-to-End-Tests geprüft werden.
-
-### Continuous Integration
-
-Vor einem Merge in den Hauptbranch müssen automatisch ausgeführt werden:
-
-- Unit Tests
-- Linting
-- Build-Prüfung
-- Backend-Tests
-- optional Playwright-Tests
-
-GitHub Actions werden für die automatischen Prüfungen verwendet.
-
-## Deployment
-
-Nach Änderungen auf dem Hauptbranch soll die Anwendung automatisch auf den Server deployt werden:
-
-- Automatisches Deployment über GitHub Actions
-- Deployment auf Cyon
-
-## Programmierstil
-
-Der Programmierstil soll möglichst funktional sein:
-
-- Functional Style bevorzugen
-- Pure Functions bevorzugen
-- Immutable Data bevorzugen
-- Klassen nur verwenden, wo sie sinnvoll oder frameworkbedingt nötig sind
-- Geschäftslogik möglichst aus Components und Services herauslösen
-- Seiteneffekte klar begrenzen
-- Typen explizit und streng verwenden
-- Keine unnötige Objektorientierung
+# End-to-End Tests
+npm run e2e
+```
 
 ## Architekturprinzipien
 
-- Open Source
-- Einfach installierbar
-- Für Gemeinden und Organisationen wiederverwendbar
-- Wartbar und langfristig betreibbar
-- Mobile First
-- Accessibility First
-- Datenschutzfreundlich
-- Möglichst geringe Betriebskosten
-- Klare Trennung zwischen Frontend, Backend und Datenbank
-- API-first zwischen Frontend und Backend
+- **Mobile First** – Optimiert für mobile Geräte
+- **Accessibility First** – Barrierefreiheit als Priorität
+- **Privacy-friendly** – Datenschutzfreundlich
+- **Open Source** – Frei verfügbar und transparent
+- **API-first** – Klare Trennung zwischen Frontend und Backend
+- **Low operating costs** – Minimale Betriebskosten
+- **Clear separation** – Frontend, Backend und Datenbank sind unabhängig
 
-## Noch offene Entscheidungen
+## Projektstruktur
 
-- Benutzer- und Rollenmodell im Detail
-- Workflow für Ablehnung und Rückfragen zu Angeboten
-- Mehrsprachigkeitskonzept
-- Import- und Exportmöglichkeiten
-- Moderations- und Prüfprozesse
-- Playwright-Setup
-- Deployment-Strategie zu Cyon
+```
+├── frontend/               # Angular SPA
+│   ├── src/
+│   │   ├── app/           # Angular Application Code
+│   │   └── environments/  # Environment-Konfiguration
+│   ├── project.json       # Nx Konfiguration
+│   └── package.json       # Node.js Dependencies
+├── backend/               # PHP Slim API
+│   ├── src/              # PHP Application Code
+│   └── composer.json      # PHP Dependencies
+├── db/                   # Datenbank
+│   ├── migrations/       # Phinx Migrationen
+│   └── seeds/            # Seed-Daten
+├── docker-compose.yml    # Docker Konfiguration
+└── openspec/            # OpenSpec Spezifikationen
+```
+
+## Lizenz
+
+MIT

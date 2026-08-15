@@ -4,9 +4,9 @@ Project information for AI assistants. This file is an **index** - see linked do
 
 ## Project Overview
 
-**Gratisangebote-Karte** - Open-source web application helping people with limited financial means find free offers and discover activities and social contacts in their region.
+**Gärngschee-Mässpäggli** - Open-source Webplattform für die Verwaltung von Spenden und die Verteilung von Mässpäggli an Menschen mit knappen finanziellen Mitteln.
 
-→ See: [documents/project.md](./documents/project.md)
+→ See: [openspec/specs/maesspaeggli.md](./openspec/specs/maesspaeggli.md)
 
 ## Documentation Structure
 
@@ -15,10 +15,10 @@ gaerngschee/
 ├── AGENTS.md                    # This file (index)
 ├── documents/                   # Human-readable documentation
 │   ├── project.md              # Project overview
-│   ├── directory-structure.md  # Directory layout
-│   ├── architecture.md         # Architecture decisions
+│   ├── architecture.md         # System architecture
 │   ├── frontend-conventions.md # Angular patterns (View/Container)
-│   └── backend-conventions.md  # PHP patterns
+│   ├── backend-conventions.md  # PHP patterns
+│   └── database-conventions.md # Database migrations
 └── openspec/
     └── specs/                   # Capability specifications
 ```
@@ -26,13 +26,14 @@ gaerngschee/
 ## Quick Links
 
 ### For Humans
-- [documents/project.md](./documents/project.md) - Project goals and features
+- [openspec/specs/maesspaeggli.md](./openspec/specs/maesspaeggli.md) - Fachkonzept
+- [documents/project.md](./documents/project.md) - Project overview
 - [documents/architecture.md](./documents/architecture.md) - System architecture
-- [documents/frontend-conventions.md](./documents/frontend-conventions.md) - Angular development
-- [documents/backend-conventions.md](./documents/backend-conventions.md) - PHP + Database development
 
 ### For AI Assistants
-- [openspec/specs/authentication/spec.md](./openspec/specs/authentication/spec.md) - User authentication
+- [openspec/specs/authentication/spec.md](./openspec/specs/authentication/spec.md) - User authentication & roles
+- [openspec/specs/registrations/spec.md](./openspec/specs/registrations/spec.md) - Anmeldungen
+- [openspec/specs/donations/spec.md](./openspec/specs/donations/spec.md) - Spenden
 - [openspec/specs/platform/spec.md](./openspec/specs/platform/spec.md) - PWA, i18n, a11y
 
 ## View/Container Pattern
@@ -46,24 +47,6 @@ Angular components follow the View/Container pattern:
 
 See: [documents/frontend-conventions.md](./documents/frontend-conventions.md#viewcontainer-pattern)
 
-## OpenSpec Workflow
-
-Use these commands to work with changes:
-
-| Command | Purpose |
-|---------|---------|
-| `/opsx-explore [topic]` | Explore ideas, investigate problems |
-| `/opsx-propose <name>` | Create new change proposal |
-| `/opsx-apply [name]` | Implement change tasks |
-| `/opsx-archive [name]` | Archive completed change |
-| `/opsx-sync-specs [name]` | Sync delta specs to main specs |
-
-See: [openspec/specs/agents-md-workflow/spec.md](./openspec/specs/agents-md-workflow/spec.md)
-
-## Active Changes
-
-Run `openspec list --json` to see active changes.
-
 ## Key Principles
 
 - Open Source
@@ -72,3 +55,6 @@ Run `openspec list --json` to see active changes.
 - Low operating costs
 - API-first between Frontend and Backend
 - Clear separation of layers
+- Lean Documentation - less, but correct and redundancy-free
+- Reactive Frontend - NgRx with RxJS for async operations
+- Functional Style - map/reduce/filter for data transformations

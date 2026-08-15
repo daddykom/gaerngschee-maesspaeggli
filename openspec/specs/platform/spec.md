@@ -9,7 +9,7 @@ Cross-cutting platform concerns: PWA, i18n, accessibility, responsive design.
 ### F1: Progressive Web App (PWA)
 
 - Installable on desktop and mobile devices
-- Offline capability (read cached offers)
+- Offline capability (read cached data)
 - Background sync when connection restored
 - Push notifications (optional)
 
@@ -32,7 +32,6 @@ Cross-cutting platform concerns: PWA, i18n, accessibility, responsive design.
 - UI labels and buttons
 - Error messages
 - Email templates
-- Category names (already stored per-language in spec)
 
 ### F4: Accessibility (a11y)
 
@@ -54,9 +53,9 @@ Cross-cutting platform concerns: PWA, i18n, accessibility, responsive design.
 
 ### F6: Database Migrations
 
-All database schema changes SHALL be managed via Phinx migrations.
+All database schema changes via Phinx migrations.
 
-- All migrations stored in `backend/migrations/`
+- All migrations stored in `db/migrations/`
 - Migrations are reversible via `phinx rollback`
 - Environment-based database credentials
 - No direct SQL modifications in production
@@ -66,7 +65,7 @@ All database schema changes SHALL be managed via Phinx migrations.
 | Requirement | Implementation |
 |-------------|----------------|
 | PWA | Service Worker, manifest.json |
-| i18n | @angular/localize or similar |
+| i18n | @angular/localize |
 | a11y | Angular CDK a11y, semantic HTML |
 | Privacy | No third-party analytics, minimal cookies |
 
@@ -87,7 +86,7 @@ All database schema changes SHALL be managed via Phinx migrations.
 |-----------|-------|
 | Unit Tests | Components, Services, NgRx, Pure Functions |
 | Integration Tests | API endpoints, data flow |
-| E2E Tests | Playwright (planned) |
+| E2E Tests | Playwright |
 | Accessibility Tests | axe-core integration |
 
 ### CI/CD Pipeline

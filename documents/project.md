@@ -1,35 +1,45 @@
 # Project Overview
 
-**Name** - Open-Source-Webapplikation
+**Gärngschee-Mässpäggli** - Open-source Webplattform für die Verwaltung von Spenden und die Verteilung von Mässpäggli an Menschen mit knappen finanziellen Mitteln.
 
-## Target Groups
+## Benutzerrollen
 
+| Rolle | Beschreibung |
+|-------|--------------|
+| Besucher | Nicht angemeldete Benutzer |
+| Klient | Personen/Familien mit knappen finanziellen Mitteln |
+| Spender | Finanzieren Mässpäggli |
+| Mitarbeiter | Vereinsmitarbeiter, Zugriff auf administrative Funktionen |
+| Administrator | Systemverwaltung |
 
-## Main Features
+## Kernfunktionen
 
+- Spendenverwaltung (Payrexx)
+- Anmeldungen mit Kindern
+- Berechtigungsprüfung (Fairgate)
+- Warteliste
+- Qualifikation & QR-Codes
+- QR-basierte Abgabe
+- E-Mail-Benachrichtigungen
+- E-Mail-Vorlagenverwaltung
 
-## Technology Stack
+## Technologiestack
 
-| Area | Technology                                        |
-|------|---------------------------------------------------|
-| Frontend | Angular, NgRx, Angular Material + CDK, TypeScript |
-| Testing | Jest (Unit Tests), Playwright (E2E, planned)      |
-| Backend | PHP, Slim Framework                               |
-| Database | MariaDB                                           |
-| Hosting | cyon.ch                                           |
+| Bereich | Technologie |
+|---------|-------------|
+| Frontend | Angular 21, NgRx, Angular Material, TypeScript, PWA |
+| Backend | PHP 8, Slim 4, Phinx |
+| Datenbank | MariaDB |
+| Hosting | Cyon.ch |
 
-## Platform Requirements
+## Vollständige Dokumentation
 
-- Progressive Web App (PWA)
-- Responsive Design
-- Accessibility First
-- Internationalization (i18n)
+→ Siehe [openspec/specs/maesspaeggli.md](../openspec/specs/maesspaeggli.md) für das Fachkonzept.
 
-## Important Principles
+→ Siehe [architecture.md](./architecture.md) für die Systemarchitektur.
 
-- Open Source
-- Mobile First / Accessibility First
-- Privacy-friendly (no tracking)
-- Low operating costs
-- API-first between Frontend and Backend
-- Clear separation of layers
+→ Siehe [frontend-conventions.md](./frontend-conventions.md) für Angular-Entwicklungskonventionen.
+
+→ Siehe [backend-conventions.md](./backend-conventions.md) für PHP-Entwicklungskonventionen.
+
+→ Siehe [database-conventions.md](./database-conventions.md) für Datenbank-Migrationskonventionen.
