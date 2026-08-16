@@ -5,10 +5,10 @@ import { MatCardModule } from '@angular/material/card';
 import { MatCheckbox } from '@angular/material/checkbox';
 import { MatInputModule } from '@angular/material/input';
 import { Router } from '@angular/router';
-import { InfoBoxComponent } from '../../shared/components/info-box/info-box';
+import { InfoBoxComponent } from '../../src/app/shared/components/info-box/info-box';
 
 @Component({
-  selector: 'app-anmeldung',
+  selector: 'app-start',
   imports: [
     MatCardModule,
     MatInputModule,
@@ -17,10 +17,10 @@ import { InfoBoxComponent } from '../../shared/components/info-box/info-box';
     ReactiveFormsModule,
     InfoBoxComponent,
   ],
-  templateUrl: './anmeldung.component.html',
-  styleUrl: './anmeldung.component.scss',
+  templateUrl: './start.component.html',
+  styleUrl: './start.component.scss',
 })
-export class AnmeldungComponent {
+export class StartComponent {
   private router = inject(Router);
 
   anmeldungForm = new FormGroup({

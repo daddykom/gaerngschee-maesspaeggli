@@ -9,7 +9,7 @@ export const appRoutes: Routes = [
   {
     path: 'anmeldung',
     loadComponent: () =>
-      import('./features/anmeldung/anmeldung.component').then((m) => m.AnmeldungComponent),
+      import('../../features/start/start.component').then((m) => m.StartComponent),
   },
   {
     path: 'login',
