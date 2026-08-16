@@ -74,6 +74,12 @@ Konkrete Regeln:
 - Angular: `ng generate`, `ng add`, `ng update` verwenden
 - Niemals manuell Dateien ändern, wenn ein CLI-Tool existiert
 
+### 2b. DB-Migrationen
+
+Für alle Datenbank-Migrationen SOLL zwingend [Phinx](https://phinx.org/) verwendet werden. Niemals manuell SQL schreiben oder die DB-Struktur direkt ändern.
+
+Siehe: [database-conventions.md](./documents/database-conventions.md)
+
 **Beispiele:**
 
 | Task | FALSCH | RICHTIG |
