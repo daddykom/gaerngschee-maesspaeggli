@@ -143,3 +143,19 @@ Beispiele:
 - ✅ `mat-form-field` hat keinen 100%-Width-Default → `width: 100%` ist nötig
 - ❌ `mat-form-field appearance="outline"` bringt fertige Border-Styles mit → kein eigenes Border-CSS nötig
 - ❌ Focus/Error-States von Material → keine eigenen Colors nötig
+
+### 8. Eigene Verzeichnisse für Components
+
+Jede Component SOLL in ein eigenes Verzeichnis mit gleichnamigen Files:
+
+```
+components/
+├── component-name/
+│   ├── component-name.ts
+│   ├── component-name.html
+│   └── component-name.scss
+```
+
+### 9. SCSS statt CSS
+
+Alle Component-Styles SOLLEN als SCSS (`.scss`) statt CSS (`.css`) geschrieben werden.

@@ -5,60 +5,36 @@
   </div>
 
   <mat-card appearance="outlined" class="anmeldung-card">
-    <mat-card-header>
-      <mat-card-title>
-        Anmeldeformular geschlossen
-      </mat-card-title>
-    </mat-card-header>
     <mat-card-content>
-      <div class="info-box">
-        <mat-icon>info</mat-icon>
-        <div class="info-content">
-          <p class="intro-text">Liebe Klient*innen</p>
-          <p class="body-text">
-            Wir freuen uns sehr über das grosse Interesse an unserer Mässpäggli-Aktion
-            2025. Aufgrund der zahlreichen Anmeldungen ist das Anmeldeformular leider
-            bereits geschlossen.
-          </p>
+        <div class="info-box">
+            <mat-icon>info</mat-icon>
+            <div class="info-content">
+                <p class="intro-text">Liebe Klient*innen</p>
+                <p class="body-text">
+                    Wir freuen uns sehr über das grosse Interesse an unserer Mässpäggli-Aktion
+                    2025. Aufgrund der zahlreichen Anmeldungen ist das Anmeldeformular leider
+                    bereits geschlossen.
+                </p>
+            </div>
         </div>
-      </div>
-      <img src="/baj_maess_visual.svg" alt="Mässpäggli" class="hero-image" />
+        <img src="/baj_maess_visual.svg" alt="Mässpäggli" class="hero-image" />
 
-      <mat-tab-group>
-        <mat-tab label="Anmelden">
-          <form [formGroup]="anmeldungForm" class="auth-form">
-            <mat-form-field appearance="outline">
-              <mat-label>Email</mat-label>
-              <input matInput type="email" formControlName="email"
-                     (blur)="onEmailBlurAnmeldung(anmeldungForm.get('email')?.value)" />
-            </mat-form-field>
-            <mat-form-field appearance="outline">
-              <mat-label>Passwort</mat-label>
-              <input matInput type="password" formControlName="password" />
-            </mat-form-field>
-            <button mat-flat-button color="primary" type="submit">Anmelden</button>
-          </form>
-        </mat-tab>
+        <div class="info-box">
+            <div class="info-content">
+                <p class="body-text">Um ein Mässpäggli erhalten zu können, musst Du ein gültiges Konto bei Fairgate haben.</p>
+                <p class="body-text">Falls Du keines hast, kannst Du Dich <a>hier anmelden</a></p>
+                <p class="body-text">Um zu überprüfen, ob Du ein Konto hast, benötigen wir Deine Email-Adresse.</p>
+            </div>
+        </div>
+        <form [formGroup]="anmeldungForm" class="auth-form" (ngSubmit)="onSubmit()">
+        <mat-form-field appearance="outline">
+          <mat-label>Email</mat-label>
+          <input matInput type="email" formControlName="email" />
+         </mat-form-field>
+            <p><mat-checkbox formControlName="accept">Ich bin damit einverstanden, dass meine Email zur Überprüfung bei Faiegate verwendet wird.</mat-checkbox></p>
 
-        <mat-tab label="Registrieren">
-          <form [formGroup]="registrierungForm" class="auth-form">
-            <mat-form-field appearance="outline">
-              <mat-label>Email</mat-label>
-              <input matInput type="email" formControlName="email"
-                     (blur)="onEmailBlurRegistrierung(registrierungForm.get('email')?.value)" />
-            </mat-form-field>
-            <mat-form-field appearance="outline">
-              <mat-label>Passwort</mat-label>
-              <input matInput type="password" formControlName="password" />
-            </mat-form-field>
-            <mat-form-field appearance="outline">
-              <mat-label>Passwort bestätigen</mat-label>
-              <input matInput type="password" formControlName="passwordConfirm" />
-            </mat-form-field>
-            <button mat-flat-button color="primary" type="submit">Registrieren</button>
-          </form>
-        </mat-tab>
-      </mat-tab-group>
+            <button mat-flat-button color="primary" type="submit">Weiter</button>
+      </form>
     </mat-card-content>
   </mat-card>
 </div>
