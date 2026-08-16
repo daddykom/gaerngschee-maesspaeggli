@@ -13,7 +13,7 @@ services:
       - PHP_DISPLAY_ERRORS=1
       - DB_HOST=database
       - DB_PORT=3306
-      - DB_NAME=gaerngschee_dev
+      - DB_NAME=gaerngschee_maesspaeggli
       - DB_USER=gaerngschee
       - DB_PASS=changeme
 
@@ -22,7 +22,7 @@ services:
     container_name: gaerngschee-database
     environment:
       - MYSQL_ROOT_PASSWORD=rootpassword
-      - MYSQL_DATABASE=gaerngschee_dev
+      - MYSQL_DATABASE=gaerngschee_maesspaeggli
       - MYSQL_USER=gaerngschee
       - MYSQL_PASSWORD=changeme
     ports:
