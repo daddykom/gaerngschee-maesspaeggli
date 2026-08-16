@@ -14,11 +14,11 @@ export const appRoutes: Routes = [
   {
     path: 'login',
     loadComponent: () =>
-      import('../../features/auth/components/login/login').then((m) => m.Login),
+      import('../../features/auth/components/login/login.component').then((m) => m.Login),
   },
   {
     path: 'register',
     loadComponent: () =>
-      import('../../features/auth/components/register/register').then((m) => m.Register),
+      import('../../features/auth/components/register/register.component').then((m) => m.Register),
   },
 ];

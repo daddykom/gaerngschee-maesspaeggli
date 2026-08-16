@@ -8,8 +8,8 @@ import { ActivatedRoute } from '@angular/router';
 @Component({
   selector: 'app-login',
   imports: [MatCardModule, MatInputModule, MatButtonModule, ReactiveFormsModule],
-  templateUrl: './login.html',
-  styleUrl: './login.scss',
+  templateUrl: './login.component.html',
+  styleUrl: './login.component.scss',
 })
 export class Login implements OnInit {
   private route = inject(ActivatedRoute);

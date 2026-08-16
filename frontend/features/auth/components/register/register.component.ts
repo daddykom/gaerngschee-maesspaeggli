@@ -8,8 +8,8 @@ import { ActivatedRoute } from '@angular/router';
 @Component({
   selector: 'app-register',
   imports: [MatCardModule, MatInputModule, MatButtonModule, ReactiveFormsModule],
-  templateUrl: './register.html',
-  styleUrl: './register.scss',
+  templateUrl: './register.component.html',
+  styleUrl: './register.component.scss',
 })
 export class Register implements OnInit {
   private route = inject(ActivatedRoute);
