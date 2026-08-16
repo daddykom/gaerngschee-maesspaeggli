@@ -116,3 +116,24 @@ Wenn du dir nicht sicher bist, was der User will:
 - Lean Documentation - less, but correct and redundancy-free
 - Reactive Frontend - NgRx with RxJS for async operations
 - Functional Style - map/reduce/filter for data transformations
+
+## Coding Rules
+
+### 5. Immer Reactive Forms verwenden
+
+Alle Formulare in Angular SOLLEN mit Reactive Forms (`FormGroup`, `FormControl`) erstellt werden, nicht mit Template-driven Forms.
+
+Siehe: [Angular Reactive Forms](https://angular.io/guide/reactive-forms)
+
+### 6. Immer globale Funktionen/Styles verwenden
+
+Wiederverwendbare Funktionen, Services und Styles SOLLEN in globale Dateien ausgelagert werden (z.B. `styles.scss`, shared services), nicht in Komponenten dupliziert werden.
+
+### 7. Immer Material-Template-Vorlagen prüfen
+
+Bevor eigene Styles geschrieben werden, SOLL geprüft werden, ob Material-Components bereits Default-Styles mitbringen. Eigenes CSS ist nur zu schreiben, wenn Material keinen Default bietet.
+
+Beispiele:
+- ✅ `mat-form-field` hat keinen 100%-Width-Default → `width: 100%` ist nötig
+- ❌ `mat-form-field appearance="outline"` bringt fertige Border-Styles mit → kein eigenes Border-CSS nötig
+- ❌ Focus/Error-States von Material → keine eigenen Colors nötig
