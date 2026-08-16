@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace App;
 
-use App\Routes\OfferRoutes;
+use App\Routes\AdminRoutes;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Slim\App;
@@ -15,6 +15,10 @@ final class Application
 {
     public static function create(): App
     {
+        if (session_status() === PHP_SESSION_NONE) {
+            session_start();
+        }
+
         $app = AppFactory::create();
 
         $app->addRoutingMiddleware();
@@ -40,7 +44,7 @@ final class Application
             return $response->withHeader('Content-Type', 'application/json');
         });
 
-        OfferRoutes::register($app);
+        AdminRoutes::register($app);
 
         return $app;
     }

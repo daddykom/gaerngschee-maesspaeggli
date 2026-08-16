@@ -36,3 +36,4 @@ final class Database
         self::$pdo = null;
     }
 }
+
