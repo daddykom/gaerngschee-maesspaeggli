@@ -5,7 +5,7 @@ import { MatCardModule } from '@angular/material/card';
 import { MatCheckbox } from '@angular/material/checkbox';
 import { MatInputModule } from '@angular/material/input';
 import { Router } from '@angular/router';
-import { InfoBoxComponent } from '../../src/app/shared/components/info-box/info-box';
+import { InfoBoxComponent } from '../../../../src/app/shared/components/info-box/info-box';
 
 @Component({
   selector: 'app-start',
