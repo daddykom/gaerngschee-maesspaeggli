@@ -159,3 +159,27 @@ components/
 ### 9. SCSS statt CSS
 
 Alle Component-Styles SOLLEN als SCSS (`.scss`) statt CSS (`.css`) geschrieben werden.
+
+### 10. Wiederverwendbare Componenten für gemeinsame UI-Patterns
+
+Gemeinsame UI-Patterns SOLLEN als wiederverwendbare Componenten erstellt werden.
+
+Diese Componenten SOLLEN im Verzeichnis `shared/components/` erstellt werden:
+
+```
+shared/components/
+├── info-box/
+│   ├── info-box.ts
+│   ├── info-box.html
+│   └── info-box.scss
+├── loading-spinner/
+│   └── ...
+└── empty-state/
+    └── ...
+```
+
+Beispiele:
+- **InfoBoxComponent** mit Varianten: `info`, `warning`, `error`, `success`
+- Loading-Spinner
+- Empty-State
+- Page-Header

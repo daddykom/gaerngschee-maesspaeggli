@@ -1,39 +1,35 @@
 <div class="page-container">
   <div class="page-header">
     <img src="/android-chrome-512x512.png" alt="Logo" class="header-icon" />
-    <h1 class="page-title">Mässpäggli anfragen</h1>
+    <h1 class="mat-headline-5">Mässpäggli anfragen</h1>
   </div>
 
   <mat-card appearance="outlined" class="anmeldung-card">
     <mat-card-content>
-        <div class="info-box">
-            <mat-icon>info</mat-icon>
-            <div class="info-content">
-                <p class="intro-text">Liebe Klient*innen</p>
-                <p class="body-text">
-                    Wir freuen uns sehr über das grosse Interesse an unserer Mässpäggli-Aktion
-                    2025. Aufgrund der zahlreichen Anmeldungen ist das Anmeldeformular leider
-                    bereits geschlossen.
-                </p>
-            </div>
-        </div>
-        <img src="/baj_maess_visual.svg" alt="Mässpäggli" class="hero-image" />
+      <img src="/baj_maess_visual.svg" alt="Mässpäggli" class="hero-image" />
 
-        <div class="info-box">
-            <div class="info-content">
-                <p class="body-text">Um ein Mässpäggli erhalten zu können, musst Du ein gültiges Konto bei Fairgate haben.</p>
-                <p class="body-text">Falls Du keines hast, kannst Du Dich <a>hier anmelden</a></p>
-                <p class="body-text">Um zu überprüfen, ob Du ein Konto hast, benötigen wir Deine Email-Adresse.</p>
-            </div>
-        </div>
-        <form [formGroup]="anmeldungForm" class="auth-form" (ngSubmit)="onSubmit()">
+      <app-info-box variant="warning" title="Liebe Klient*innen">
+        <p class="mat-body-1">
+          Wir freuen uns sehr über das grosse Interesse an unserer Mässpäggli-Aktion
+          2025. Aufgrund der zahlreichen Anmeldungen ist das Anmeldeformular leider
+          bereits geschlossen.
+        </p>
+      </app-info-box>
+
+      <app-info-box variant="info">
+        <p class="mat-body-1">Um ein Mässpäggli erhalten zu können, musst Du ein gültiges Konto bei Fairgate haben.</p>
+        <p class="mat-body-1">Falls Du keines hast, kannst Du Dich <a href="/register">hier anmelden</a></p>
+        <p class="mat-body-1">Um zu überprüfen, ob Du ein Konto hast, benötigen wir Deine Email-Adresse.</p>
+      </app-info-box>
+
+      <form [formGroup]="anmeldungForm" class="auth-form" (ngSubmit)="onSubmit()">
         <mat-form-field appearance="outline">
           <mat-label>Email</mat-label>
           <input matInput type="email" formControlName="email" />
-         </mat-form-field>
-            <p><mat-checkbox formControlName="accept">Ich bin damit einverstanden, dass meine Email zur Überprüfung bei Faiegate verwendet wird.</mat-checkbox></p>
+        </mat-form-field>
+        <p><mat-checkbox formControlName="accept">Ich bin damit einverstanden, dass meine Email zur Überprüfung bei Faiegate verwendet wird.</mat-checkbox></p>
 
-            <button mat-flat-button color="primary" type="submit">Weiter</button>
+        <button mat-flat-button color="primary" type="submit">Weiter</button>
       </form>
     </mat-card-content>
   </mat-card>

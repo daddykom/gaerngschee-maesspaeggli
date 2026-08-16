@@ -1,0 +1,9 @@
+<div class="info-box" [class]="'info-box--' + variant">
+  <mat-icon class="info-box__icon">{{ iconToShow }}</mat-icon>
+  <div class="info-box__content">
+    @if (title) {
+      <p class="info-box__title">{{ title }}</p>
+    }
+    <ng-content></ng-content>
+  </div>
+</div>

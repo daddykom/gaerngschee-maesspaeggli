@@ -6,6 +6,7 @@ import { MatCheckbox } from '@angular/material/checkbox';
 import { MatIconModule } from '@angular/material/icon';
 import { MatInputModule } from '@angular/material/input';
 import { Router } from '@angular/router';
+import { InfoBoxComponent } from '../../shared/components/info-box/info-box';
 
 @Component({
   selector: 'app-anmeldung',
@@ -16,6 +17,7 @@ import { Router } from '@angular/router';
     MatButtonModule,
     MatCheckbox,
     ReactiveFormsModule,
+    InfoBoxComponent,
   ],
   templateUrl: './anmeldung.component.html',
   styleUrl: './anmeldung.component.scss',

@@ -1,0 +1,60 @@
+:host {
+  display: block;
+}
+
+.info-box {
+  display: flex;
+  gap: 1rem;
+  padding: 1rem;
+  border-radius: 8px;
+  border-left: 4px solid;
+
+  &__icon {
+    flex-shrink: 0;
+  }
+
+  &__content {
+    flex: 1;
+  }
+
+  &__title {
+    font-weight: 500;
+    margin: 0 0 0.5rem 0;
+  }
+
+  &--info {
+    background: #e3f2fd;
+    border-color: #1976d2;
+
+    .info-box__icon {
+      color: #1976d2;
+    }
+  }
+
+  &--warning {
+    background: #fff3e0;
+    border-color: #ff9800;
+
+    .info-box__icon {
+      color: #ff9800;
+    }
+  }
+
+  &--error {
+    background: #ffebee;
+    border-color: #d32f2f;
+
+    .info-box__icon {
+      color: #d32f2f;
+    }
+  }
+
+  &--success {
+    background: #e8f5e9;
+    border-color: #388e3c;
+
+    .info-box__icon {
+      color: #388e3c;
+    }
+  }
+}
