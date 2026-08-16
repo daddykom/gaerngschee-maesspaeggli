@@ -201,3 +201,37 @@ variant = input<'info' | 'warning' | 'error' | 'success'>('info');
 private router = inject(Router);
 defaultIcon = computed(() => { ... });
 ```
+
+### 12. Standard HTML/CSS-Struktur
+
+Für alle Pages mit Formularen:
+
+```html
+<div class="page-container">
+  <div class="page-header">
+    <img src="/android-chrome-512x512.png" alt="Logo" class="header-icon" />
+    <h1 class="mat-headline-5">Titel</h1>
+  </div>
+
+  <mat-card appearance="outlined" class="standard-card">
+    <h2>Section Title</h2>
+    <mat-card-content>
+      <form class="auth-form">
+        <mat-form-field appearance="outline">
+          <mat-label>Label</mat-label>
+          <input matInput />
+        </mat-form-field>
+        <button mat-flat-button color="primary">Submit</button>
+      </form>
+    </mat-card-content>
+  </mat-card>
+</div>
+```
+
+**Regeln:**
+- Globale CSS-Klassen verwenden: `.page-container`, `.page-header`, `.header-icon`, `.standard-card`, `.auth-form`
+- Material Typography: `mat-headline-5`, `mat-body-1`, etc.
+- `mat-card appearance="outlined"` mit Klasse `standard-card`
+- `mat-form-field appearance="outline"`
+- `mat-flat-button color="primary"`
+- SCSS bleibt leer wenn keine komponentenspezifischen Styles nötig
