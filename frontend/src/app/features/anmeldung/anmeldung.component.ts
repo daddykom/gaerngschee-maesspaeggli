@@ -1,4 +1,4 @@
-import { Component, inject } from '@angular/core';
+import { Component, inject, signal } from '@angular/core';
 import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
 import { MatCardModule } from '@angular/material/card';
@@ -27,6 +27,8 @@ export class AnmeldungComponent {
     email: new FormControl('', [Validators.required, Validators.email]),
     accept: new FormControl('', [Validators.required]),
   });
+
+  registerClosed = signal(false);
 
   onSubmit(): void {
     if (this.anmeldungForm.valid) {

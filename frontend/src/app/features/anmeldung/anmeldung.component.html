@@ -6,7 +6,7 @@
 
   <mat-card appearance="outlined" class="anmeldung-card">
     <mat-card-content>
-
+        @if(registerClosed()){
       <app-info-box variant="warning" title="Liebe Klient*innen">
         <p class="mat-body-1">
           Wir freuen uns sehr über das grosse Interesse an unserer Mässpäggli-Aktion
@@ -15,7 +15,7 @@
         </p>
       </app-info-box>
         <img src="/baj_maess_visual.svg" alt="Mässpäggli" class="hero-image" />
-
+        }
       <app-info-box variant="info">
         <p class="mat-body-1">Um ein Mässpäggli erhalten zu können, musst Du ein gültiges Konto bei Fairgate haben.</p>
         <p class="mat-body-1">Falls Du keines hast, kannst Du Dich <a href="/register">hier anmelden</a></p>
