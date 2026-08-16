@@ -1,8 +1,5 @@
-import { Component, Input } from '@angular/core';
-import { MatButtonModule } from '@angular/material/button';
-import { MatCardModule } from '@angular/material/card';
+import { Component, computed, input } from '@angular/core';
 import { MatIconModule } from '@angular/material/icon';
-import { MatInputModule } from '@angular/material/input';
 
 export type InfoBoxVariant = 'info' | 'warning' | 'error' | 'success';
 
@@ -15,20 +12,18 @@ export type InfoBoxVariant = 'info' | 'warning' | 'error' | 'success';
   styleUrl: './info-box.scss',
 })
 export class InfoBoxComponent {
-  @Input() variant: InfoBoxVariant = 'info';
-  @Input() icon?: string;
-  @Input() title?: string;
+  variant = input<InfoBoxVariant>('info');
+  icon = input<string>();
+  title = input<string>();
 
-  get defaultIcon(): string {
-    switch (this.variant) {
+  defaultIcon = computed(() => {
+    switch (this.variant()) {
       case 'info': return 'info';
       case 'warning': return 'warning';
       case 'error': return 'error';
       case 'success': return 'check_circle';
     }
-  }
+  });
 
-  get iconToShow(): string {
-    return this.icon ?? this.defaultIcon;
-  }
+  iconToShow = computed(() => this.icon() ?? this.defaultIcon());
 }

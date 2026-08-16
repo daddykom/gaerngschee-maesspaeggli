@@ -1,32 +1,24 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, inject, OnInit } from '@angular/core';
 import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
 import { MatCardModule } from '@angular/material/card';
 import { MatInputModule } from '@angular/material/input';
-import { ActivatedRoute, Router } from '@angular/router';
+import { ActivatedRoute } from '@angular/router';
 
 @Component({
   selector: 'app-register',
-  imports: [
-    MatCardModule,
-    MatInputModule,
-    MatButtonModule,
-    ReactiveFormsModule,
-  ],
+  imports: [MatCardModule, MatInputModule, MatButtonModule, ReactiveFormsModule],
   templateUrl: './register.html',
   styleUrl: './register.scss',
 })
 export class Register implements OnInit {
+  private route = inject(ActivatedRoute);
+
   registrierungForm = new FormGroup({
     email: new FormControl('', [Validators.required, Validators.email]),
     password: new FormControl({ value: '', disabled: true }, [Validators.required]),
     passwordConfirm: new FormControl({ value: '', disabled: true }, [Validators.required]),
   });
-
-  constructor(
-    private router: Router,
-    private route: ActivatedRoute
-  ) {}
 
   ngOnInit(): void {
     const email = this.route.snapshot.queryParamMap.get('email');

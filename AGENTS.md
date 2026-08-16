@@ -183,3 +183,21 @@ Beispiele:
 - Loading-Spinner
 - Empty-State
 - Page-Header
+
+### 11. Signals für reaktive Daten verwenden
+
+Inputs SOLLEN als `input()` Signal definiert werden.
+Berechnete Werte SOLLEN als `computed()` definiert werden.
+Constructor Injection SOLL durch `inject()` ersetzt werden.
+
+```typescript
+// FALSCH
+@Input() variant: string = 'info';
+constructor(private router: Router) {}
+get defaultIcon(): string { ... }
+
+// RICHTIG
+variant = input<'info' | 'warning' | 'error' | 'success'>('info');
+private router = inject(Router);
+defaultIcon = computed(() => { ... });
+```
