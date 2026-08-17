@@ -123,6 +123,27 @@ Wenn du dir nicht sicher bist, was der User will:
 - Reactive Frontend - NgRx with RxJS for async operations
 - Functional Style - map/reduce/filter for data transformations
 
+## Entwicklungsphilosophie
+
+Bei Architektur- und Implementierungsentscheidungen gelten folgende Grundsätze:
+
+- **Einfachheit vor Cleverness:** Bevorzuge die einfachste Lösung, die das aktuelle Problem vollständig löst.
+- **Lean:** Führe keine Abstraktionen, Schichten, Dependencies oder Framework-Mechanismen ein, solange sie keinen konkreten Nutzen haben.
+- **Keine hypothetische Zukunft implementieren:** Code soll gut erweiterbar sein, aber Anforderungen, die noch nicht existieren, werden nicht vorweggenommen.
+- **Kleine, klar abgegrenzte Einheiten:** Funktionen, Components, Effects und Services sollen eine klar erkennbare Verantwortung haben.
+- **Expliziter Datenfluss:** Bevorzuge nachvollziehbare, explizite Abläufe gegenüber versteckten Seiteneffekten und implizitem Verhalten.
+- **Funktional und deklarativ:** Bevorzuge Pure Functions, immutable Daten und `map`/`filter`/`reduce` gegenüber imperativer Mutation, sofern dies den Code einfacher macht.
+- **Composition over Complexity:** Komplexeres Verhalten soll möglichst durch die Kombination kleiner, einfacher Bausteine entstehen.
+- **Resilienz:** Änderungen und Fehler in einem Teil des Systems sollen möglichst wenig Auswirkungen auf andere Teile haben. Klare Grenzen und geringe Kopplung sind wichtiger als maximale Wiederverwendung.
+- **Testbarkeit ist Teil des Designs:** Fachlogik soll möglichst unabhängig von UI, Datenbank, Netzwerk und Framework-Infrastruktur testbar sein.
+- **Keine Abstraktion um der Abstraktion willen:** Wiederverwendung erst abstrahieren, wenn tatsächlich gemeinsame Funktionalität vorhanden ist.
+- **Bestehendes respektieren:** Bei Änderungen zuerst die vorhandene Architektur und deren Absicht verstehen. Keine ungefragten Refactorings oder Modernisierungen.
+- **Lesbarkeit vor Kürze:** Wenige Zeilen Code sind kein Ziel. Der Ablauf und die Absicht des Codes sollen leicht verständlich sein.
+- **Kommentare erklären das Warum:** Kommentare sollen Entscheidungen und nicht offensichtliche Gründe dokumentieren, nicht den Code paraphrasieren.
+
+Als Leitlinie gilt:
+
+> **Design for change, but do not implement the future in advance.**
 ## Coding Rules
 
 ### 5. Immer Reactive Forms verwenden

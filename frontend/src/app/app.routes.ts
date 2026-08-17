@@ -9,7 +9,9 @@ export const appRoutes: Routes = [
   {
     path: 'anmeldung',
     loadComponent: () =>
-      import('../../features/auth/pages/start/start.component').then((m) => m.StartComponent),
+      import('../../features/auth/pages/start/maesspaeggli-start.component').then(
+        (m) => m.MaesspaeggliStartComponent,
+      ),
   },
   {
     path: 'login',
