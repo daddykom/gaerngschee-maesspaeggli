@@ -1,0 +1,46 @@
+<?php
+
+declare(strict_types=1);
+
+namespace Tests\Services;
+
+use App\Services\SessionService;
+use PHPUnit\Framework\TestCase;
+
+final class SessionServiceTest extends TestCase
+{
+    protected function setUp(): void
+    {
+        if (session_status() === PHP_SESSION_ACTIVE) {
+            session_destroy();
+        }
+
+        session_id('test-session');
+        session_start();
+    }
+
+    protected function tearDown(): void
+    {
+        if (session_status() === PHP_SESSION_ACTIVE) {
+            $_SESSION = [];
+            session_destroy();
+        }
+    }
+
+    public function testUserIdCanBeStoredAndRead(): void
+    {
+        $service = new SessionService();
+        $service->setUserId('user-123');
+
+        self::assertSame('user-123', $service->getUserId());
+    }
+
+    public function testClearRemovesUserId(): void
+    {
+        $service = new SessionService();
+        $service->setUserId('user-123');
+        $service->clear();
+
+        self::assertNull($service->getUserId());
+    }
+}
