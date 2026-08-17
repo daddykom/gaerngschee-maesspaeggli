@@ -5,6 +5,8 @@ declare(strict_types=1);
 namespace App;
 
 use App\Routes\AdminRoutes;
+use App\Routes\AuthRoutes;
+use App\Routes\PublicRoutes;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Slim\App;
@@ -39,11 +41,8 @@ final class Application
                 ->withHeader('Access-Control-Allow-Origin', '*');
         });
 
-        $app->get('/', function ($request, ResponseInterface $response) {
-            $response->getBody()->write(json_encode(['message' => 'API']));
-            return $response->withHeader('Content-Type', 'application/json');
-        });
-
+        PublicRoutes::register($app);
+        AuthRoutes::register($app);
         AdminRoutes::register($app);
 
         return $app;
