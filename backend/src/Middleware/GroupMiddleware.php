@@ -12,8 +12,10 @@ use Slim\Psr7\Response;
 
 final class GroupMiddleware
 {
-    public function __construct(private readonly string $requiredGroup)
-    {
+    public function __construct(
+        private readonly string $requiredGroup,
+        private readonly ?UserRepository $userRepository = null,
+    ) {
     }
 
     public function __invoke(
@@ -25,7 +27,7 @@ final class GroupMiddleware
             return $this->notFound();
         }
 
-        $user = (new UserRepository())->findById($userId);
+        $user = ($this->userRepository ?? new UserRepository())->findById($userId);
         if ($user === null || $user['group'] !== $this->requiredGroup) {
             return $this->notFound();
         }

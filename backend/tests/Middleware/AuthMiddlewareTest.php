@@ -55,4 +55,17 @@ final class AuthMiddlewareTest extends TestCase
 
         self::assertSame(200, (new AuthMiddleware())->__invoke($request, $handler)->getStatusCode());
     }
+
+    public function testInvalidBearerTokenIsRejected(): void
+    {
+        $handler = $this->createMock(RequestHandlerInterface::class);
+        $handler->expects(self::never())->method('handle');
+        $request = (new ServerRequestFactory())
+            ->createServerRequest('GET', '/admin/users')
+            ->withHeader('Authorization', 'Bearer invalid-token');
+
+        $response = (new AuthMiddleware())->__invoke($request, $handler);
+
+        self::assertSame(401, $response->getStatusCode());
+    }
 }

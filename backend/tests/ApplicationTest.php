@@ -23,4 +23,14 @@ final class ApplicationTest extends TestCase
 
         self::assertSame(200, $response->getStatusCode());
     }
+
+    public function testCorsPreflightAllowsAuthorizationHeader(): void
+    {
+        $response = Application::create()->handle(
+            (new ServerRequestFactory())->createServerRequest('OPTIONS', '/public'),
+        );
+
+        self::assertSame(204, $response->getStatusCode());
+        self::assertStringContainsString('Authorization', $response->getHeaderLine('Access-Control-Allow-Headers'));
+    }
 }
