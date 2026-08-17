@@ -2,157 +2,124 @@
 
 ## Overview
 
-User authentication and authorization for the Gärngschee-Mässpäggli platform.
+Authentication and URL-based authorization for the Gärngschee-Mässpäggli
+platform. This capability currently covers the Slim backend.
 
-## Benutzerrollen
+## Zugriffmodell
 
-| Rolle | Beschreibung |
-|-------|--------------|
-| Besucher | Nicht angemeldete Benutzer |
-| Klient | Personen/Familien mit knappen Mitteln |
-| Spender | Finanzen Mässpäggli |
-| Mitarbeiter | Vereinsmitarbeiter |
-| Administrator | Systemverwaltung |
+Public and protected endpoints are separated by URL:
 
-## Features
+| URL | Access |
+|-----|--------|
+| `/public/*` | Public access without authentication |
+| `/auth/*` | Authentication endpoints |
+| `/client/*` | Authenticated users in group `client` |
+| `/user/*` | Authenticated users in group `user` |
+| `/admin/*` | Authenticated users in group `admin` |
 
-### F1: Besucher (Anonymous)
+An unknown or unauthorized group resource is not exposed as an available
+resource. Authentication failures return `401`; a user without the required
+group receives `404`.
 
-- View public information
-- Access donation page
-- Submit registration
+## Benutzergruppen
 
-### F2: Klient (Client)
+There are exactly three authenticated user groups. Each user belongs to one
+group:
 
-- Manage own registration
-- View registration status
-- Receive QR code after qualification
-- Update personal information
+| Gruppe | Beschreibung |
+|--------|--------------|
+| `client` | Personen, die Mässpäggli anfragen oder ihre Registrierung verwalten |
+| `user` | Authenticated platform users |
+| `admin` | System administration and user management |
 
-### F3: Spender (Donor)
+Public registration always creates users in group `client`. The client cannot
+choose or submit a different group.
 
-- Select number of Mässpäggli
-- Redirect to Payrexx for payment
-- No account required (payment handles identity)
+## Backend Implementation
 
-### F4: Mitarbeiter (Staff)
+### User data
 
-- Manage all registrations
-- Manage waitlist
-- Verify QR codes
-- Confirm pickups
-- Manage email templates
-- Manage reminder rules
+`UserRepository` provides:
 
-### F5: Administrator
+- Lookup by ID and email without returning the password hash
+- Password verification with `password_verify()`
+- User creation with `password_hash()` and `PASSWORD_DEFAULT`
+- Validation of the groups `client`, `user`, and `admin`
 
-- Manage master data
-- System configuration
-- User management
+### JWT and sessions
+
+- JWTs are created and verified with `firebase/php-jwt` installed through
+  Composer.
+- The JWT contains `sub` (user ID), `iat`, and `exp`.
+- JWT configuration is provided through `JWT_SECRET`, `JWT_ALGORITHM`, and
+  `JWT_TTL` environment variables.
+- HS256 secrets must contain at least 32 bytes.
+- Successful login and registration store `user_id` in the PHP session.
+- Login regenerates the session ID.
+- Logout clears and destroys the PHP session.
+- Bearer tokens are read from the `Authorization` header.
+
+### Routes
+
+Implemented routes:
+
+| Method | URL | Purpose |
+|--------|-----|---------|
+| `GET` | `/public` | Public API endpoint |
+| `POST` | `/auth/register` | Register a new `client` user |
+| `POST` | `/auth/login` | Authenticate a user and issue a JWT |
+| `POST` | `/auth/logout` | Destroy the current session |
+| `GET` | `/auth/me` | Return the authenticated user |
+| `GET` | `/admin/users` | List users for administrators |
+
+### Middleware
+
+- `AuthMiddleware` accepts either the authenticated PHP session or a valid
+  Bearer JWT and attaches the user ID to the request.
+- `GroupMiddleware` resolves the user through the user ID and enforces the
+  required group.
+- The existing administrator route is protected by both middleware layers.
+- Client and user route groups have no concrete endpoints yet; the middleware
+  is ready for their future routes.
 
 ## Security Considerations
 
-- Password hashing (bcrypt)
-- Session tokens (secure, httpOnly cookies)
-- CSRF protection
-- Rate limiting on auth endpoints
+- Passwords are never returned by the repository or API responses.
+- Passwords use PHP's `password_hash()` and `password_verify()`.
+- JWT secrets are supplied through environment variables and must not be
+  committed.
+- JWTs are sent through the `Authorization: Bearer` header.
+- CORS preflight allows the `Authorization` header.
+- CSRF protection and rate limiting are not implemented yet.
+- JWT revocation is currently session-based; issued JWTs remain valid until
+  expiry unless additional revocation is introduced.
 
 ## Implementation Status
 
 | Component | Status |
 |-----------|--------|
-| Besucher (public access) | ✗ Not implemented |
-| Klient authentication | ✗ Not implemented |
-| Spender (Payrexx handles) | ✗ Not implemented |
-| Mitarbeiter auth | ✗ Not implemented |
-| Admin auth | ✗ Not implemented |
+| Public route structure | Implemented |
+| User repository and password handling | Implemented |
+| JWT service | Implemented |
+| PHP session service | Implemented |
+| Login and registration routes | Implemented |
+| Logout and current-user routes | Implemented |
+| Authentication middleware | Implemented |
+| Group middleware | Implemented |
+| Admin user route | Implemented |
+| Client routes | Not implemented |
+| User routes | Not implemented |
+| CSRF protection | Not implemented |
+| Rate limiting | Not implemented |
+
+## Frontend Integration
+
+Frontend JWT storage and API integration are not part of the current Slim
+backend implementation. The planned client integration uses Local Storage for
+the JWT and sends it as a Bearer token.
 
 ## Open Decisions
 
-- Session vs JWT tokens?
-- Fairgate integration for eligibility?
-- Existing Fairgate accounts or separate?
-
-## Implementation Plan: Slim Backend Authorization
-
-Dieser Plan betrifft ausschließlich den Slim-Backend-Teil. Die Umsetzung beginnt
-erst nach einer separaten Freigabe von Schritt 1.
-
-### Zielmodell
-
-- Öffentliche Endpunkte liegen unter `/public/*`.
-- Geschützte Endpunkte liegen unter einem Gruppenpfad: `/client/*`, `/user/*`
-  oder `/admin/*`.
-- Es gibt genau drei angemeldete Benutzergruppen: `client`, `user`, `admin`.
-- Jeder Benutzer gehört genau einer Gruppe an.
-- Öffentliche Registrierungen erhalten immer die Gruppe `client`.
-- Das Registrierungsformular darf keine Benutzergruppe vorgeben.
-- Nach erfolgreicher Authentifizierung wird die `user_id` in der Session abgelegt.
-- Die Benutzergruppe wird über die `user_id` aus der Datenbank ermittelt.
-- Geschützte Zugriffe werden über die URL-Struktur und Middleware geregelt.
-  Nicht registrierte URLs liefern keinen Zugriff.
-- Die API verwendet signierte JWTs. Die JWT-Bibliothek wird über Composer
-  installiert und verwaltet.
-- Das Frontend kann das JWT später im Local Storage speichern und als Bearer-Token
-  senden. Diese Frontend-Integration ist nicht Teil dieses Plans.
-
-### Umsetzungsschritte
-
-#### Schritt 1: Backend-Grundlagen und Abhängigkeiten
-
-- Vorhandene Slim-Struktur, Session-Initialisierung und Route-Registrierung prüfen.
-- `firebase/php-jwt` über Composer installieren.
-- Konfiguration für JWT-Schlüssel, Algorithmus und Ablaufzeit über
-  Umgebungsvariablen vorbereiten.
-- Noch keine Authentifizierungslogik implementieren.
-
-**Freigabe erforderlich:** Dieser Schritt wird erst nach ausdrücklicher Bestätigung
-gestartet.
-
-#### Schritt 2: Benutzerzugriff im Repository
-
-- `UserRepository::findById()` ergänzen.
-- Benutzergruppe anhand der `user_id` laden.
-- Registrierung mit `password_hash()` und `PASSWORD_DEFAULT` vorbereiten.
-- Login-Prüfung mit `password_verify()` vorbereiten.
-- Keine Passwörter in API-Antworten ausgeben.
-
-#### Schritt 3: JWT- und Session-Service
-
-- Service für JWT-Erstellung und -Prüfung erstellen.
-- JWT enthält mindestens `sub` mit der Benutzer-ID sowie `iat` und `exp`.
-- Nach erfolgreichem Login `user_id` in der Session speichern.
-- Logout löscht die Session und invalidiert die serverseitige Anmeldung.
-- Bearer-Token aus dem `Authorization`-Header lesen und prüfen.
-
-#### Schritt 4: Öffentliche und Auth-Routen
-
-- Öffentliche Route-Struktur unter `/public/*` registrieren.
-- `POST /auth/register` für die Registrierung erstellen.
-- Öffentliche Registrierungen immer mit der Gruppe `client` anlegen; ein vom
-  Client übermitteltes Gruppenfeld wird ignoriert oder abgelehnt.
-- `POST /auth/login` für Login und JWT-Ausgabe erstellen.
-- `POST /auth/logout` für Session-Löschung erstellen.
-- `GET /auth/me` für den aktuell angemeldeten Benutzer erstellen.
-- Fehlerantworten und HTTP-Statuscodes einheitlich definieren.
-
-#### Schritt 5: Gruppen-Middleware
-
-- Authentifizierungs-Middleware für gültige Session oder gültiges JWT erstellen.
-- Gruppen-Middleware für `client`, `user` und `admin` erstellen.
-- Gruppen-Middleware nur auf die jeweiligen URL-Gruppen anwenden.
-- `AdminRoutes` auf `/admin/*` umstellen und die Inline-Prüfung entfernen.
-- Sicherstellen, dass kein Benutzer auf eine fremde Gruppenroute zugreifen kann.
-
-#### Schritt 6: Anwendung integrieren und prüfen
-
-- Alle Routen in der Slim-Anwendung registrieren.
-- Session- und CORS-Verhalten für Authorization-Header prüfen.
-- Tests für öffentliche Route, Login, Logout, ungültiges JWT und jede Benutzergruppe
-  ergänzen.
-- Phinx-/PHP- und Anwendungstests ausführen.
-
-#### Schritt 7: Plan entfernen
-
-- Erst wenn Schritt 6 abgeschlossen und geprüft ist, diesen
-  `Implementation Plan`-Abschnitt aus dieser Spec entfernen.
+- Fairgate integration for eligibility
+- Whether JWT revocation needs to be supported before token expiry
+- Implementation of client and user route groups
