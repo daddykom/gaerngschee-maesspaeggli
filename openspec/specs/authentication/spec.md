@@ -85,6 +85,8 @@ erst nach einer separaten Freigabe von Schritt 1.
   oder `/admin/*`.
 - Es gibt genau drei angemeldete Benutzergruppen: `client`, `user`, `admin`.
 - Jeder Benutzer gehört genau einer Gruppe an.
+- Öffentliche Registrierungen erhalten immer die Gruppe `client`.
+- Das Registrierungsformular darf keine Benutzergruppe vorgeben.
 - Nach erfolgreicher Authentifizierung wird die `user_id` in der Session abgelegt.
 - Die Benutzergruppe wird über die `user_id` aus der Datenbank ermittelt.
 - Geschützte Zugriffe werden über die URL-Struktur und Middleware geregelt.
@@ -127,6 +129,8 @@ gestartet.
 
 - Öffentliche Route-Struktur unter `/public/*` registrieren.
 - `POST /auth/register` für die Registrierung erstellen.
+- Öffentliche Registrierungen immer mit der Gruppe `client` anlegen; ein vom
+  Client übermitteltes Gruppenfeld wird ignoriert oder abgelehnt.
 - `POST /auth/login` für Login und JWT-Ausgabe erstellen.
 - `POST /auth/logout` für Session-Löschung erstellen.
 - `GET /auth/me` für den aktuell angemeldeten Benutzer erstellen.
