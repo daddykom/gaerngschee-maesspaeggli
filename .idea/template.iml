@@ -86,6 +86,7 @@
       <excludeFolder url="file://$MODULE_DIR$/backend/vendor/symfony/stopwatch" />
       <excludeFolder url="file://$MODULE_DIR$/backend/vendor/symfony/string" />
       <excludeFolder url="file://$MODULE_DIR$/backend/vendor/theseer/tokenizer" />
+      <excludeFolder url="file://$MODULE_DIR$/backend/vendor/firebase/php-jwt" />
     </content>
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />
