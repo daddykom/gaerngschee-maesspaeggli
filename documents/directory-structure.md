@@ -19,14 +19,12 @@ gaerngschee-maesspaeggli/
 frontend/
 ├── src/
 │   ├── app/
-│   │   ├── app.component.ts          # Root component
+│   │   ├── app.ts                    # Root component
 │   │   ├── app.config.ts             # App configuration
 │   │   ├── app.routes.ts             # Routing configuration
 │   │   ├── store/                   # NgRx store
 │   │   │   ├── app.state.ts
-│   │   │   ├── registrations/
-│   │   │   ├── donations/
-│   │   │   └── ...
+│   │   │   └── ...                   # Feature-specific NgRx state
 │   │   ├── features/
 │   │   │   ├── registrations/        # Registration feature
 │   │   │   ├── donations/           # Donation feature

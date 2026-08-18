@@ -9,18 +9,17 @@ export const appRoutes: Routes = [
   {
     path: 'anmeldung',
     loadComponent: () =>
-      import('../../features/auth/pages/start/maesspaeggli-start.component').then(
+      import('./features/auth/pages/start/maesspaeggli-start.component').then(
         (m) => m.MaesspaeggliStartComponent,
       ),
   },
   {
     path: 'login',
-    loadComponent: () =>
-      import('../../features/auth/pages/login/login.component').then((m) => m.Login),
+    loadComponent: () => import('./features/auth/pages/login/login.component').then((m) => m.Login),
   },
   {
     path: 'register',
     loadComponent: () =>
-      import('../../features/auth/pages/register/register.component').then((m) => m.Register),
+      import('./features/auth/pages/register/register.component').then((m) => m.Register),
   },
 ];
