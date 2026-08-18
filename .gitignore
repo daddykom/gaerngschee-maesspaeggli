@@ -3,5 +3,7 @@
 /frontend/.nx
 /frontend/.angular
 /frontend/dist
+/frontend/coverage
 /backend/supervisord.pid
 /backend/supervisord.log
+/backend/.phpunit.cache
