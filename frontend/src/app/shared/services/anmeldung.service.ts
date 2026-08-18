@@ -3,7 +3,7 @@ import { inject, Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 
 export interface AnmeldungResponse {
-  message: string;
+  sent: boolean;
 }
 
 @Injectable({ providedIn: 'root' })

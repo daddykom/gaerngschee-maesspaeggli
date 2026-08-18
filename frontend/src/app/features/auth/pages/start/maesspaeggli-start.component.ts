@@ -6,6 +6,8 @@ import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatIconModule } from '@angular/material/icon';
 import { MatInputModule } from '@angular/material/input';
 import { TranslatePipe } from '@ngx-translate/core';
+import { Store } from '@ngrx/store';
+import { AnmeldungActions } from '../../../../store/anmeldung/anmeldung.actions';
 
 @Component({
   selector: 'app-maesspaeggli-start',
@@ -25,6 +27,7 @@ import { TranslatePipe } from '@ngx-translate/core';
 })
 export class MaesspaeggliStartComponent {
   private readonly fb = inject(FormBuilder);
+  private readonly store = inject(Store);
 
   readonly form = this.fb.nonNullable.group({
     email: ['', [Validators.required, Validators.email]],
@@ -36,9 +39,6 @@ export class MaesspaeggliStartComponent {
       return;
     }
 
-    // Hier euren bestehenden Flow / Store-Dispatch aufrufen.
-    // Wichtig: Die UI zeigt nicht an, ob die Adresse bei Fairgate
-    // oder im Mässpäggli-System bereits existiert.
-    console.log(this.form.getRawValue());
+    this.store.dispatch(AnmeldungActions.submit({ email: this.form.getRawValue().email }));
   }
 }

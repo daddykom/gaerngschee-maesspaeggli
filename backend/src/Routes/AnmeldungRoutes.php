@@ -35,7 +35,7 @@ final class AnmeldungRoutes
 
                 return self::json(
                     $response,
-                    ['message' => 'If the information is correct, you will receive an email with the next steps.'],
+                    ['sent' => true],
                     202,
                 );
             });

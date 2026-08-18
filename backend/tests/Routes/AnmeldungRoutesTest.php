@@ -38,7 +38,7 @@ final class AnmeldungRoutesTest extends TestCase
 
         self::assertSame(202, $response->getStatusCode());
         self::assertSame(
-            '{"message":"If the information is correct, you will receive an email with the next steps."}',
+            '{"sent":true}',
             (string) $response->getBody(),
         );
     }
