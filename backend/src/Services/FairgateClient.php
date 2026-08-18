@@ -15,7 +15,7 @@ use Lcobucci\JWT\Validation\Constraint\SignedWith;
 use Lcobucci\JWT\Validation\Validator;
 use Psr\Http\Client\ClientInterface;
 
-final class FairgateClient
+final class FairgateClient implements FairgateContactProvider
 {
     private const CONTACTS_PATH = '/fsa/v1.1/contact/%s/contacts/list';
     private const TOKEN_PATH = '/fsa/v1.1/auth/create/%s/token';

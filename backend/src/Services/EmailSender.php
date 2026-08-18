@@ -11,7 +11,7 @@ use Symfony\Component\Mailer\Exception\TransportExceptionInterface;
 use Symfony\Component\Mime\Address;
 use Symfony\Component\Mime\Email;
 
-final class EmailSender
+final class EmailSender implements EmailSenderInterface
 {
     private readonly MailerInterface $mailer;
     private readonly string $fromAddress;
