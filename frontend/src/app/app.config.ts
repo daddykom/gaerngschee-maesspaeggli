@@ -4,6 +4,8 @@ import { provideState, provideStore } from '@ngrx/store';
 import { provideEffects } from '@ngrx/effects';
 import { provideStoreDevtools } from '@ngrx/store-devtools';
 import { provideAnimations } from '@angular/platform-browser/animations';
+import { provideTranslateService } from '@ngx-translate/core';
+import { provideTranslateHttpLoader } from '@ngx-translate/http-loader';
 import { appRoutes } from './app.routes';
 import { offersEffects } from './store/offers/offers.effects';
 import { offersFeature } from './store/offers/offers.feature';
@@ -17,5 +19,13 @@ export const appConfig: ApplicationConfig = {
     provideEffects(offersEffects),
     provideStoreDevtools(),
     provideAnimations(),
+    provideTranslateService({
+      fallbackLang: 'de',
+      lang: 'de',
+      loader: provideTranslateHttpLoader({
+        prefix: './i18n/',
+        suffix: '.json',
+      }),
+    }),
   ],
 };
