@@ -3,17 +3,17 @@
     <mat-card-content>
       <section class="intro">
         <div class="intro__content">
-          <h1>Mässpäggli anfordern</h1>
+          <h1>Mässpäggli bekommen</h1>
 
           <p class="lead">
-            Bitte gib deine E-Mail-Adresse ein, damit wir dir weitere Instruktionen senden können.
+            Schreib deine E-Mail-Adresse hier hinein. Wir schicken dir dann die nächsten Schritte per
+            E-Mail.
           </p>
 
           <div class="info-box">
             <mat-icon aria-hidden="true">info</mat-icon>
             <p>
-              Wenn du bei <strong>Fairgate</strong> registriert bist, verwende bitte die
-              E-Mail-Adresse, die mit deinem Fairgate-Konto verbunden ist.
+              Hast du ein Konto bei <strong>Fairgate</strong>? Dann gib hier dieselbe E-Mail-Adresse ein.
             </p>
           </div>
         </div>
@@ -43,7 +43,7 @@
             @if (form.controls.email.hasError('required')) {
               <mat-error>Bitte gib deine E-Mail-Adresse ein.</mat-error>
             } @else if (form.controls.email.hasError('email')) {
-              <mat-error>Bitte gib eine gültige E-Mail-Adresse ein.</mat-error>
+              <mat-error>Bitte prüfe deine E-Mail-Adresse.</mat-error>
             }
           </mat-form-field>
 
@@ -58,54 +58,18 @@
 
         <p class="privacy-hint">
           <mat-icon aria-hidden="true">lock</mat-icon>
-          Deine Daten werden vertraulich behandelt.
+          Wir behandeln deine Daten vertraulich.
         </p>
       </section>
 
-      <section class="steps" aria-labelledby="steps-heading">
-        <h2 id="steps-heading">So geht es weiter:</h2>
-
-        <div class="steps__grid">
-          <article class="step step--green">
-            <div class="step__header">
-              <span class="step__number">1</span>
-              <h3>E-Mail senden</h3>
-            </div>
-            <p>
-              Du gibst deine E-Mail-Adresse ein und klickst auf „Weiter“.
-            </p>
-          </article>
-
-          <article class="step step--blue">
-            <div class="step__header">
-              <span class="step__number">2</span>
-              <h3>E-Mail erhalten</h3>
-            </div>
-            <p>
-              Wir senden dir eine E-Mail mit weiteren Instruktionen an die angegebene Adresse.
-            </p>
-          </article>
-
-          <article class="step step--orange">
-            <div class="step__header">
-              <span class="step__number">3</span>
-              <h3>Nächste Schritte</h3>
-            </div>
-            <p>
-              Folge den Anweisungen in der E-Mail, um deine Anfrage abzuschliessen.
-            </p>
-          </article>
-        </div>
-      </section>
 
       <section class="privacy-box">
         <mat-icon aria-hidden="true">shield</mat-icon>
         <div>
-          <h2>Deine Privatsphäre ist uns wichtig</h2>
+          <h2>Deine Daten bleiben privat</h2>
           <p>
-            Wir prüfen deine Angaben im Hintergrund und geben auf der Webseite keine Auskunft darüber,
-            ob eine E-Mail-Adresse bei uns oder bei Fairgate registriert ist.
-            Die weiteren Informationen erhältst nur du per E-Mail.
+            Wir prüfen deine Angaben. Auf dieser Seite zeigen wir nicht, ob diese E-Mail-Adresse bei uns
+            oder bei Fairgate gespeichert ist. Die nächsten Schritte schicken wir dir per E-Mail.
           </p>
         </div>
       </section>
