@@ -87,6 +87,8 @@
       <excludeFolder url="file://$MODULE_DIR$/backend/vendor/symfony/stopwatch" />
       <excludeFolder url="file://$MODULE_DIR$/backend/vendor/symfony/string" />
       <excludeFolder url="file://$MODULE_DIR$/backend/vendor/theseer/tokenizer" />
+      <excludeFolder url="file://$MODULE_DIR$/backend/.phpunit.cache" />
+      <excludeFolder url="file://$MODULE_DIR$/backend/vendor" />
       <excludeFolder url="file://$MODULE_DIR$/backend/vendor/doctrine/lexer" />
       <excludeFolder url="file://$MODULE_DIR$/backend/vendor/egulias/email-validator" />
       <excludeFolder url="file://$MODULE_DIR$/backend/vendor/firebase/php-jwt" />
@@ -98,6 +100,8 @@
       <excludeFolder url="file://$MODULE_DIR$/backend/vendor/symfony/mailer" />
       <excludeFolder url="file://$MODULE_DIR$/backend/vendor/symfony/mime" />
       <excludeFolder url="file://$MODULE_DIR$/backend/vendor/symfony/polyfill-intl-idn" />
+      <excludeFolder url="file://$MODULE_DIR$/frontend/.nx" />
+      <excludeFolder url="file://$MODULE_DIR$/frontend/coverage" />
     </content>
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />

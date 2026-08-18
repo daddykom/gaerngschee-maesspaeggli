@@ -6,4 +6,4 @@
 /frontend/coverage
 /backend/supervisord.pid
 /backend/supervisord.log
-/backend/.phpunit.cache/*
+/backend/.phpunit.cache/
