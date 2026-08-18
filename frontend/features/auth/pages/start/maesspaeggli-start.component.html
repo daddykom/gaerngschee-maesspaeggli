@@ -3,17 +3,16 @@
     <mat-card-content>
       <section class="intro">
         <div class="intro__content">
-          <h1>Mässpäggli bekommen</h1>
+          <h1>{{ 'app.anmeldung.title' | translate }}</h1>
 
           <p class="lead">
-            Schreib deine E-Mail-Adresse hier hinein. Wir schicken dir dann die nächsten Schritte per
-            E-Mail.
+            {{ 'app.anmeldung.lead' | translate }}
           </p>
 
           <div class="info-box">
             <mat-icon aria-hidden="true">info</mat-icon>
             <p>
-              Hast du ein Konto bei <strong>Fairgate</strong>? Dann gib hier dieselbe E-Mail-Adresse ein.
+              {{ 'app.anmeldung.fairgate' | translate }}
             </p>
           </div>
         </div>
@@ -25,11 +24,11 @@
       </section>
 
       <section class="email-section" aria-labelledby="email-heading">
-        <h2 id="email-heading">Deine E-Mail-Adresse</h2>
+        <h2 id="email-heading">{{ 'app.anmeldung.emailHeading' | translate }}</h2>
 
         <form [formGroup]="form" (ngSubmit)="submit()" class="email-form">
           <mat-form-field appearance="outline" class="email-field">
-            <mat-label>E-Mail-Adresse</mat-label>
+            <mat-label>{{ 'app.anmeldung.emailLabel' | translate }}</mat-label>
             <mat-icon matPrefix>mail</mat-icon>
 
             <input
@@ -37,13 +36,13 @@
               type="email"
               formControlName="email"
               autocomplete="email"
-              placeholder="name@example.com"
+              [placeholder]="'app.anmeldung.emailPlaceholder' | translate"
             >
 
             @if (form.controls.email.hasError('required')) {
-              <mat-error>Bitte gib deine E-Mail-Adresse ein.</mat-error>
+              <mat-error>{{ 'app.anmeldung.requiredError' | translate }}</mat-error>
             } @else if (form.controls.email.hasError('email')) {
-              <mat-error>Bitte prüfe deine E-Mail-Adresse.</mat-error>
+              <mat-error>{{ 'app.anmeldung.invalidEmailError' | translate }}</mat-error>
             }
           </mat-form-field>
 
@@ -52,13 +51,13 @@
             type="submit"
             class="continue-button"
           >
-            Weiter
+            {{ 'app.anmeldung.continue' | translate }}
           </button>
         </form>
 
         <p class="privacy-hint">
           <mat-icon aria-hidden="true">lock</mat-icon>
-          Wir behandeln deine Daten vertraulich.
+          {{ 'app.anmeldung.privacyHint' | translate }}
         </p>
       </section>
 
@@ -66,10 +65,9 @@
       <section class="privacy-box">
         <mat-icon aria-hidden="true">shield</mat-icon>
         <div>
-          <h2>Deine Daten bleiben privat</h2>
+          <h2>{{ 'app.anmeldung.privacyTitle' | translate }}</h2>
           <p>
-            Wir prüfen deine Angaben. Auf dieser Seite zeigen wir nicht, ob diese E-Mail-Adresse bei uns
-            oder bei Fairgate gespeichert ist. Die nächsten Schritte schicken wir dir per E-Mail.
+            {{ 'app.anmeldung.privacyText' | translate }}
           </p>
         </div>
       </section>

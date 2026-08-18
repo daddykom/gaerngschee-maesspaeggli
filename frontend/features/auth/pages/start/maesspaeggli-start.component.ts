@@ -5,6 +5,7 @@ import { MatCardModule } from '@angular/material/card';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatIconModule } from '@angular/material/icon';
 import { MatInputModule } from '@angular/material/input';
+import { TranslatePipe } from '@ngx-translate/core';
 
 @Component({
   selector: 'app-maesspaeggli-start',
@@ -16,6 +17,7 @@ import { MatInputModule } from '@angular/material/input';
     MatFormFieldModule,
     MatIconModule,
     MatInputModule,
+    TranslatePipe,
   ],
   templateUrl: './maesspaeggli-start.component.html',
   styleUrl: './maesspaeggli-start.component.scss',

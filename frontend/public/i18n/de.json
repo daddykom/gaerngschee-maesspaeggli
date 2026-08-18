@@ -1,5 +1,19 @@
 {
   "app": {
-    "title": "Gärngschee-Mässpäggli"
+    "title": "Gärngschee-Mässpäggli",
+    "anmeldung": {
+      "title": "Mässpäggli bekommen",
+      "lead": "Schreib deine E-Mail-Adresse hier hinein. Wir schicken dir dann die nächsten Schritte per E-Mail.",
+      "fairgate": "Hast du ein Konto bei Fairgate? Dann gib hier dieselbe E-Mail-Adresse ein.",
+      "emailHeading": "Deine E-Mail-Adresse",
+      "emailLabel": "E-Mail-Adresse",
+      "emailPlaceholder": "name@example.com",
+      "requiredError": "Bitte gib deine E-Mail-Adresse ein.",
+      "invalidEmailError": "Bitte prüfe deine E-Mail-Adresse.",
+      "continue": "Weiter",
+      "privacyHint": "Wir behandeln deine Daten vertraulich.",
+      "privacyTitle": "Deine Daten bleiben privat",
+      "privacyText": "Wir prüfen deine Angaben. Auf dieser Seite zeigen wir nicht, ob diese E-Mail-Adresse bei uns oder bei Fairgate gespeichert ist. Die nächsten Schritte schicken wir dir per E-Mail."
+    }
   }
 }
