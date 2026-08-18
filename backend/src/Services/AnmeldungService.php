@@ -23,9 +23,10 @@ final class AnmeldungService
             throw new InvalidArgumentException('Invalid email address.');
         }
 
-        // Both checks determine the future mail template. The first version uses one proforma template.
-        $this->userRepository->findByEmail($email);
-        $this->fairgate->hasContactByEmail($email);
-        $this->emailSender->sendProforma($email);
+        $userExists = $this->userRepository->findByEmail($email) !== null;
+        $fairgateExists = $this->fairgate->hasContactByEmail($email);
+        $variant = AnmeldungMailVariant::fromChecks($userExists, $fairgateExists);
+
+        $this->emailSender->sendAnmeldung($email, $variant);
     }
 }

@@ -66,7 +66,7 @@ final class AnmeldungRoutesTest extends TestCase
                 }
             },
             new class () implements EmailSenderInterface {
-                public function sendProforma(string $recipient): void
+                public function sendAnmeldung(string $recipient, \App\Services\AnmeldungMailVariant $variant): void
                 {
                 }
             },

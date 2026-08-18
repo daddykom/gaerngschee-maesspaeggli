@@ -7,6 +7,7 @@ namespace Tests\Services;
 use App\Data\UserRepository;
 use App\Services\AnmeldungService;
 use App\Services\EmailSenderInterface;
+use App\Services\AnmeldungMailVariant;
 use App\Services\FairgateContactProvider;
 use PDO;
 use PHPUnit\Framework\Attributes\DataProvider;
@@ -52,6 +53,7 @@ final class AnmeldungServiceTest extends TestCase
         $service->sendInformationEmail($email);
 
         self::assertSame([$email], $sender->recipients);
+        self::assertSame([AnmeldungMailVariant::fromChecks($userExists, $fairgateExists)], $sender->variants);
     }
 
     public static function emailStates(): array
@@ -74,10 +76,13 @@ final class RecordingEmailSender implements EmailSenderInterface
 {
     /** @var list<string> */
     public array $recipients = [];
+    /** @var list<AnmeldungMailVariant> */
+    public array $variants = [];
 
-    public function sendProforma(string $recipient): void
+    public function sendAnmeldung(string $recipient, AnmeldungMailVariant $variant): void
     {
         $this->recipients[] = $recipient;
+        $this->variants[] = $variant;
     }
 }
 

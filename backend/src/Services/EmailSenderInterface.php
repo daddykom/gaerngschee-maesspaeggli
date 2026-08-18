@@ -6,5 +6,5 @@ namespace App\Services;
 
 interface EmailSenderInterface
 {
-    public function sendProforma(string $recipient): void;
+    public function sendAnmeldung(string $recipient, AnmeldungMailVariant $variant): void;
 }
