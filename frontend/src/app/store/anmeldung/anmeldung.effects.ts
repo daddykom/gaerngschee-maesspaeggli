@@ -15,6 +15,7 @@ export const submitAnmeldungEffect = createEffect(
         ),
       ),
     ),
+  { functional: true },
 );
 
 export const anmeldungEffects = [submitAnmeldungEffect];
