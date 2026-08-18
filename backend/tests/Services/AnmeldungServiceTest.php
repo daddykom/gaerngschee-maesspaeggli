@@ -87,8 +87,8 @@ final class StubFairgateContactProvider implements FairgateContactProvider
     {
     }
 
-    public function findContactByEmail(string $email): ?array
+    public function hasContactByEmail(string $email): bool
     {
-        return $this->exists ? ['id' => 'fairgate-id', 'email' => $email, 'status' => 'active'] : null;
+        return $this->exists;
     }
 }

@@ -6,8 +6,5 @@ namespace App\Services;
 
 interface FairgateContactProvider
 {
-    /**
-     * @return array{id: string, email: string, status: string|null}|null
-     */
-    public function findContactByEmail(string $email): ?array;
+    public function hasContactByEmail(string $email): bool;
 }

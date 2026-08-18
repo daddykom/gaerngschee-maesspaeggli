@@ -15,7 +15,7 @@ use PHPUnit\Framework\TestCase;
 
 final class FairgateClientTest extends TestCase
 {
-    public function testFindContactByEmailAuthenticatesAndReturnsMinimalContact(): void
+    public function testHasContactByEmailAuthenticatesAndReturnsTrueWhenFound(): void
     {
         $history = [];
         $handler = HandlerStack::create(new MockHandler([
@@ -37,17 +37,14 @@ final class FairgateClientTest extends TestCase
             static fn (string $token): bool => $token === 'test-token',
         );
 
-        self::assertSame(
-            ['id' => '42', 'email' => 'person@example.com', 'status' => 'active'],
-            $client->findContactByEmail(' Person@Example.com '),
-        );
+        self::assertTrue($client->hasContactByEmail(' Person@Example.com '));
         self::assertCount(2, $history);
         self::assertSame('/fsa/v1.1/auth/create/org-123/token', $history[0]['request']->getUri()->getPath());
         self::assertSame('/fsa/v1.1/contact/org-123/contacts/list', $history[1]['request']->getUri()->getPath());
         self::assertSame('test-token', $history[1]['request']->getHeaderLine('Authorization'));
     }
 
-    public function testFindContactByEmailReturnsNullWhenContactIsNotFound(): void
+    public function testHasContactByEmailReturnsFalseWhenContactIsNotFound(): void
     {
         $handler = HandlerStack::create(new MockHandler([
             new Response(200, [], '{"success":true,"data":{"token":"test-token"}}'),
@@ -62,7 +59,7 @@ final class FairgateClientTest extends TestCase
             static fn (string $token): bool => true,
         );
 
-        self::assertNull($client->findContactByEmail('missing@example.com'));
+        self::assertFalse($client->hasContactByEmail('missing@example.com'));
     }
 
     public function testInvalidAuthenticationResponseThrowsFairgateException(): void
@@ -80,6 +77,6 @@ final class FairgateClientTest extends TestCase
         );
 
         $this->expectException(FairgateException::class);
-        $client->findContactByEmail('person@example.com');
+        $client->hasContactByEmail('person@example.com');
     }
 }

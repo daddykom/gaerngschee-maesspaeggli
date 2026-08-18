@@ -60,9 +60,9 @@ final class AnmeldungRoutesTest extends TestCase
         return new AnmeldungService(
             new UserRepository($pdo),
             new class () implements FairgateContactProvider {
-                public function findContactByEmail(string $email): ?array
+                public function hasContactByEmail(string $email): bool
                 {
-                    return null;
+                    return false;
                 }
             },
             new class () implements EmailSenderInterface {

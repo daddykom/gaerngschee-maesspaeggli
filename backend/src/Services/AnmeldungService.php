@@ -25,7 +25,7 @@ final class AnmeldungService
 
         // Both checks determine the future mail template. The first version uses one proforma template.
         $this->userRepository->findByEmail($email);
-        $this->fairgate->findContactByEmail($email);
+        $this->fairgate->hasContactByEmail($email);
         $this->emailSender->sendProforma($email);
     }
 }

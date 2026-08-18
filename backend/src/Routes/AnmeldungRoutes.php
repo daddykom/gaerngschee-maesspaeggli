@@ -7,7 +7,7 @@ namespace App\Routes;
 use App\Data\UserRepository;
 use App\Services\AnmeldungService;
 use App\Services\EmailSender;
-use App\Services\FairgateClient;
+use App\Services\FairgateContactProviderFactory;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Slim\App;
@@ -44,7 +44,11 @@ final class AnmeldungRoutes
 
     private static function createAnmeldungService(): AnmeldungService
     {
-        return new AnmeldungService(new UserRepository(), new FairgateClient(), new EmailSender());
+        return new AnmeldungService(
+            new UserRepository(),
+            FairgateContactProviderFactory::create(),
+            new EmailSender(),
+        );
     }
 
     private static function json(ResponseInterface $response, array $data, int $status): ResponseInterface

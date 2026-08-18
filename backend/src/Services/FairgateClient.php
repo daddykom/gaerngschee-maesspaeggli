@@ -39,14 +39,11 @@ final class FairgateClient implements FairgateContactProvider
     /** @var callable(string): bool */
     private $tokenValidator;
 
-    /**
-     * @return array{id: string, email: string, status: string|null}|null
-     */
-    public function findContactByEmail(string $email): ?array
+    public function hasContactByEmail(string $email): bool
     {
         $email = strtolower(trim($email));
         if ($email === '') {
-            return null;
+            return false;
         }
 
         try {
@@ -71,19 +68,10 @@ final class FairgateClient implements FairgateContactProvider
                 continue;
             }
 
-            $contactId = $contact['basefields']['contact_id'] ?? $contact['contact_id'] ?? null;
-            if ($contactId === null) {
-                throw new FairgateException('FSA contact response does not contain a contact ID.');
-            }
-
-            return [
-                'id' => (string) $contactId,
-                'email' => $contactEmail,
-                'status' => isset($contact['status']) ? (string) $contact['status'] : null,
-            ];
+            return true;
         }
 
-        return null;
+        return false;
     }
 
     private function client(): ClientInterface
