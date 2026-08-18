@@ -10,19 +10,19 @@ export const anmeldungFeature = createFeature({
       ...state,
       loading: true,
       sent: null,
-      error: null,
+      sendError: false,
     })),
     on(AnmeldungActions.submitSuccess, (state, { sent }) => ({
       ...state,
       loading: false,
       sent,
-      error: null,
+      sendError: false,
     })),
-    on(AnmeldungActions.submitFailure, (state, { error }) => ({
+    on(AnmeldungActions.submitFailure, (state) => ({
       ...state,
       loading: false,
       sent: false,
-      error,
+      sendError: true,
     })),
   ),
 });
@@ -33,5 +33,5 @@ export const {
   selectAnmeldungState,
   selectLoading: selectAnmeldungLoading,
   selectSent: selectAnmeldungSent,
-  selectError: selectAnmeldungError,
+  selectSendError: selectAnmeldungSendError,
 } = anmeldungFeature;

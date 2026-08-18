@@ -1,11 +1,11 @@
 export interface AnmeldungState {
   loading: boolean;
   sent: boolean | null;
-  error: string | null;
+  sendError: boolean;
 }
 
 export const initialState: AnmeldungState = {
   loading: false,
   sent: null,
-  error: null,
+  sendError: false,
 };

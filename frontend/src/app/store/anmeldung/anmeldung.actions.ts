@@ -1,10 +1,10 @@
-import { createActionGroup, props } from '@ngrx/store';
+import { createActionGroup, emptyProps, props } from '@ngrx/store';
 
 export const AnmeldungActions = createActionGroup({
   source: 'Anmeldung',
   events: {
     Submit: props<{ email: string }>(),
     'Submit Success': props<{ sent: boolean }>(),
-    'Submit Failure': props<{ error: string }>(),
+    'Submit Failure': emptyProps(),
   },
 });

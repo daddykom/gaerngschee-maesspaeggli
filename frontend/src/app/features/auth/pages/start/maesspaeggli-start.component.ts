@@ -8,6 +8,8 @@ import { MatInputModule } from '@angular/material/input';
 import { TranslatePipe } from '@ngx-translate/core';
 import { Store } from '@ngrx/store';
 import { AnmeldungActions } from '../../../../store/anmeldung/anmeldung.actions';
+import { selectAnmeldungSendError } from '../../../../store/anmeldung/anmeldung.feature';
+import { InfoBoxComponent } from '../../../../shared/components/info-box/info-box';
 
 @Component({
   selector: 'app-maesspaeggli-start',
@@ -20,6 +22,7 @@ import { AnmeldungActions } from '../../../../store/anmeldung/anmeldung.actions'
     MatIconModule,
     MatInputModule,
     TranslatePipe,
+    InfoBoxComponent,
   ],
   templateUrl: './maesspaeggli-start.component.html',
   styleUrl: './maesspaeggli-start.component.scss',
@@ -28,6 +31,8 @@ import { AnmeldungActions } from '../../../../store/anmeldung/anmeldung.actions'
 export class MaesspaeggliStartComponent {
   private readonly fb = inject(FormBuilder);
   private readonly store = inject(Store);
+
+  readonly sendError = this.store.selectSignal(selectAnmeldungSendError);
 
   readonly form = this.fb.nonNullable.group({
     email: ['', [Validators.required, Validators.email]],

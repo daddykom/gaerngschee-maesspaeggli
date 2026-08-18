@@ -11,7 +11,7 @@ export const submitAnmeldungEffect = createEffect(
       exhaustMap(({ email }) =>
         anmeldungService.requestInformation(email).pipe(
           map(({ sent }) => AnmeldungActions.submitSuccess({ sent })),
-          catchError(() => of(AnmeldungActions.submitFailure({ error: 'Request failed' }))),
+          catchError(() => of(AnmeldungActions.submitFailure())),
         ),
       ),
     ),

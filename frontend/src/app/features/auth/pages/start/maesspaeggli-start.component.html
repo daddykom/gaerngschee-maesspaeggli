@@ -55,6 +55,14 @@
           </button>
         </form>
 
+        @if (sendError()) {
+          <div role="alert" aria-live="assertive">
+            <app-info-box variant="error">
+              {{ 'app.anmeldung.sendError' | translate }}
+            </app-info-box>
+          </div>
+        }
+
         <p class="privacy-hint">
           <mat-icon aria-hidden="true">lock</mat-icon>
           {{ 'app.anmeldung.privacyHint' | translate }}
