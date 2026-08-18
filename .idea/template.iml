@@ -87,12 +87,17 @@
       <excludeFolder url="file://$MODULE_DIR$/backend/vendor/symfony/stopwatch" />
       <excludeFolder url="file://$MODULE_DIR$/backend/vendor/symfony/string" />
       <excludeFolder url="file://$MODULE_DIR$/backend/vendor/theseer/tokenizer" />
+      <excludeFolder url="file://$MODULE_DIR$/backend/vendor/doctrine/lexer" />
+      <excludeFolder url="file://$MODULE_DIR$/backend/vendor/egulias/email-validator" />
       <excludeFolder url="file://$MODULE_DIR$/backend/vendor/firebase/php-jwt" />
       <excludeFolder url="file://$MODULE_DIR$/backend/vendor/guzzlehttp/guzzle" />
       <excludeFolder url="file://$MODULE_DIR$/backend/vendor/guzzlehttp/promises" />
       <excludeFolder url="file://$MODULE_DIR$/backend/vendor/guzzlehttp/psr7" />
       <excludeFolder url="file://$MODULE_DIR$/backend/vendor/lcobucci/jwt" />
       <excludeFolder url="file://$MODULE_DIR$/backend/vendor/psr/http-client" />
+      <excludeFolder url="file://$MODULE_DIR$/backend/vendor/symfony/mailer" />
+      <excludeFolder url="file://$MODULE_DIR$/backend/vendor/symfony/mime" />
+      <excludeFolder url="file://$MODULE_DIR$/backend/vendor/symfony/polyfill-intl-idn" />
     </content>
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />
