@@ -98,6 +98,36 @@ final class Application
 }
 ```
 
+## Testumgebung und Fairgate-Fake
+
+Die lokale Docker-Umgebung verwendet:
+
+```env
+APP_ENV=test
+```
+
+In der Testumgebung wird kein echter Fairgate-Service aufgerufen. Stattdessen
+entscheidet `FakeFairgateClient` anhand der E-Mail-Adresse:
+
+| E-Mail-Adresse | Fairgate-Ergebnis |
+|---|---|
+| `person+fair@example.com` | `true` |
+| `person+FAIR-test@example.com` | `true` |
+| `person+test@example.com` | `false` |
+| `person@example.com` | `false` |
+
+Die Buchstabenfolge `fair` muss im lokalen Teil der E-Mail-Adresse nach dem
+`+` vorkommen. Die Prüfung ist unabhängig von Gross-/Kleinschreibung.
+
+Für die Produktionsumgebung muss gesetzt werden:
+
+```env
+APP_ENV=prod
+```
+
+Dann wird der echte `FairgateClient` verwendet. Ein fehlender oder unbekannter
+Wert von `APP_ENV` führt zu einem Konfigurationsfehler.
+
 ## API Endpoints
 
 ### Registrations

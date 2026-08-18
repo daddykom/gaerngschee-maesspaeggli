@@ -113,6 +113,11 @@ cd frontend && npm install
 cd backend && composer install
 ```
 
+Die lokale Docker-Umgebung läuft mit `APP_ENV=test` und verwendet deshalb den
+Fairgate-Fake. Eine E-Mail wie `person+fair@example.com` simuliert einen
+gefundenen Fairgate-Kontakt. Details stehen in den
+[Backend-Konventionen](./documents/backend-conventions.md#testumgebung-und-fairgate-fake).
+
 ### Verfügbare Scripts
 
 #### Frontend (frontend/package.json)
