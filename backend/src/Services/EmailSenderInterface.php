@@ -6,5 +6,5 @@ namespace App\Services;
 
 interface EmailSenderInterface
 {
-    public function sendAnmeldung(string $recipient, AnmeldungMailVariant $variant): void;
+    public function sendAnmeldung(string $recipient, AnmeldungMailVariant $variant, string $locale = 'de'): void;
 }

@@ -8,8 +8,8 @@ export const submitAnmeldungEffect = createEffect(
   (actions$ = inject(Actions), anmeldungService = inject(AnmeldungService)) =>
     actions$.pipe(
       ofType(AnmeldungActions.submit),
-      exhaustMap(({ email }) =>
-        anmeldungService.requestInformation(email).pipe(
+      exhaustMap(({ email, language }) =>
+        anmeldungService.requestInformation(email, language).pipe(
           map(({ sent }) => AnmeldungActions.submitSuccess({ sent })),
           catchError(() => of(AnmeldungActions.submitFailure())),
         ),

@@ -40,7 +40,7 @@ describe('MaesspaeggliStartComponent', () => {
     component.submit();
 
     expect(store.dispatch).toHaveBeenCalledWith(
-      AnmeldungActions.submit({ email: 'person@example.com' }),
+      AnmeldungActions.submit({ email: 'person@example.com', language: 'de' }),
     );
   });
 

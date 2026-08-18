@@ -27,10 +27,10 @@ describe('submitAnmeldungEffect', () => {
     const effect$ = TestBed.runInInjectionContext(() => submitAnmeldungEffect());
     const result = firstValueFrom(effect$);
 
-    actions$.next(AnmeldungActions.submit({ email: 'person@example.com' }));
+    actions$.next(AnmeldungActions.submit({ email: 'person@example.com', language: 'de' }));
 
     await expect(result).resolves.toEqual(AnmeldungActions.submitSuccess({ sent: true }));
-    expect(anmeldungService.requestInformation).toHaveBeenCalledWith('person@example.com');
+    expect(anmeldungService.requestInformation).toHaveBeenCalledWith('person@example.com', 'de');
   });
 
   it('maps a service error to a failure action', async () => {
@@ -38,7 +38,7 @@ describe('submitAnmeldungEffect', () => {
     const effect$ = TestBed.runInInjectionContext(() => submitAnmeldungEffect());
     const result = firstValueFrom(effect$);
 
-    actions$.next(AnmeldungActions.submit({ email: 'person@example.com' }));
+    actions$.next(AnmeldungActions.submit({ email: 'person@example.com', language: 'de' }));
 
     await expect(result).resolves.toEqual(AnmeldungActions.submitFailure());
   });

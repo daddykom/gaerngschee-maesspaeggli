@@ -79,7 +79,7 @@ final class RecordingEmailSender implements EmailSenderInterface
     /** @var list<AnmeldungMailVariant> */
     public array $variants = [];
 
-    public function sendAnmeldung(string $recipient, AnmeldungMailVariant $variant): void
+    public function sendAnmeldung(string $recipient, AnmeldungMailVariant $variant, string $locale = 'de'): void
     {
         $this->recipients[] = $recipient;
         $this->variants[] = $variant;

@@ -6,6 +6,7 @@ import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatIconModule } from '@angular/material/icon';
 import { MatInputModule } from '@angular/material/input';
 import { TranslatePipe } from '@ngx-translate/core';
+import { TranslateService } from '@ngx-translate/core';
 import { Store } from '@ngrx/store';
 import { AnmeldungActions } from '../../../../store/anmeldung/anmeldung.actions';
 import { selectAnmeldungSendError } from '../../../../store/anmeldung/anmeldung.feature';
@@ -31,6 +32,7 @@ import { InfoBoxComponent } from '../../../../shared/components/info-box/info-bo
 export class MaesspaeggliStartComponent {
   private readonly fb = inject(FormBuilder);
   private readonly store = inject(Store);
+  private readonly translate = inject(TranslateService);
 
   readonly sendError = this.store.selectSignal(selectAnmeldungSendError);
 
@@ -44,6 +46,11 @@ export class MaesspaeggliStartComponent {
       return;
     }
 
-    this.store.dispatch(AnmeldungActions.submit({ email: this.form.getRawValue().email }));
+    this.store.dispatch(
+      AnmeldungActions.submit({
+        email: this.form.getRawValue().email,
+        language: this.translate.getCurrentLang() ?? 'de',
+      }),
+    );
   }
 }

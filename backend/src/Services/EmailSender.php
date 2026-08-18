@@ -14,6 +14,7 @@ use Symfony\Component\Mime\Email;
 use Symfony\Component\Translation\Loader\ArrayLoader;
 use Symfony\Component\Translation\Loader\PhpFileLoader;
 use Symfony\Component\Translation\Translator;
+use Symfony\Contracts\Translation\LocaleAwareInterface;
 use Symfony\Contracts\Translation\TranslatorInterface;
 use Twig\Environment;
 use Twig\Loader\FilesystemLoader;
@@ -46,8 +47,11 @@ final class EmailSender implements EmailSenderInterface
         $this->twig->addExtension(new TranslationExtension($this->translator));
     }
 
-    public function sendAnmeldung(string $recipient, AnmeldungMailVariant $variant): void
+    public function sendAnmeldung(string $recipient, AnmeldungMailVariant $variant, string $locale = 'de'): void
     {
+        if ($this->translator instanceof LocaleAwareInterface) {
+            $this->translator->setLocale($locale);
+        }
         $frontendBaseUrl = rtrim(getenv('FRONTEND_BASE_URL') ?: 'http://localhost:4200', '/');
         $html = $this->twig->render($variant->value . '.html.twig', [
             'LOGIN_URL' => $frontendBaseUrl . '/login',
@@ -58,7 +62,7 @@ final class EmailSender implements EmailSenderInterface
         $message = (new Email())
             ->from(new Address($this->fromAddress, $this->fromName))
             ->to($recipient)
-            ->subject($this->translator->trans('anmeldung.' . $variant->value . '.subject'))
+            ->subject($this->translator->trans('anmeldung.' . $variant->value . '.subject', [], null, $locale))
             ->text($this->plainText($html))
             ->html($html);
 

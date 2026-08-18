@@ -10,7 +10,7 @@ export interface AnmeldungResponse {
 export class AnmeldungService {
   private readonly http = inject(HttpClient);
 
-  requestInformation(email: string): Observable<AnmeldungResponse> {
-    return this.http.post<AnmeldungResponse>('http://localhost:8080/public/anmeldung', { email });
+  requestInformation(email: string, language: string): Observable<AnmeldungResponse> {
+    return this.http.post<AnmeldungResponse>('http://localhost:8080/public/anmeldung', { email, language });
   }
 }

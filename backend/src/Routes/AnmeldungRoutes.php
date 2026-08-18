@@ -16,19 +16,28 @@ use Throwable;
 
 final class AnmeldungRoutes
 {
+    private const SUPPORTED_LOCALES = ['de'];
+
     public static function register(App $app, ?AnmeldungService $anmeldungService = null): void
     {
         $app->group('/public', function (RouteCollectorProxy $group) use ($anmeldungService): void {
             $group->post('/anmeldung', function (ServerRequestInterface $request, ResponseInterface $response) use ($anmeldungService) {
                 $data = json_decode((string) $request->getBody(), true);
                 $email = is_array($data) && is_string($data['email'] ?? null) ? $data['email'] : null;
+                $locale = is_array($data) && is_string($data['language'] ?? null)
+                    ? strtolower($data['language'])
+                    : 'de';
 
                 if ($email === null || filter_var(trim($email), FILTER_VALIDATE_EMAIL) === false) {
                     return self::json($response, ['error' => 'Invalid email address.'], 422);
                 }
 
+                if (!in_array($locale, self::SUPPORTED_LOCALES, true)) {
+                    return self::json($response, ['error' => 'Unsupported language.'], 422);
+                }
+
                 try {
-                    ($anmeldungService ?? self::createAnmeldungService())->sendInformationEmail($email);
+                    ($anmeldungService ?? self::createAnmeldungService())->sendInformationEmail($email, $locale);
                 } catch (Throwable) {
                     return self::json($response, ['error' => 'The request could not be processed.'], 503);
                 }
