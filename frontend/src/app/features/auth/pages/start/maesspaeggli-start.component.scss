@@ -100,7 +100,8 @@ h1 {
 .email-form {
   display: grid;
   grid-template-columns: 1fr auto;
-  gap: 14px;
+  column-gap: 14px;
+  row-gap: 24px;
   align-items: start;
 }
 

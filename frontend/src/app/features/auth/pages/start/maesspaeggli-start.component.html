@@ -28,7 +28,7 @@
 
         <form [formGroup]="form" (ngSubmit)="submit()" class="email-form">
           <div class="email-field-group">
-            <mat-form-field appearance="outline" class="email-field">
+            <mat-form-field appearance="outline" subscriptSizing="dynamic" class="email-field">
               <mat-label>{{ 'app.anmeldung.emailLabel' | translate }}</mat-label>
               <mat-icon matPrefix>mail</mat-icon>
 
