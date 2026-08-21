@@ -22,4 +22,11 @@ export const appRoutes: Routes = [
     loadComponent: () =>
       import('./features/auth/pages/register/register.component').then((m) => m.Register),
   },
+  {
+    path: 'admin/overview',
+    loadComponent: () =>
+      import('./features/admin/pages/overview/admin-overview.component').then(
+        (m) => m.AdminOverviewComponent,
+      ),
+  },
 ];
