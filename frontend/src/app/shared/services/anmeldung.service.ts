@@ -11,6 +11,6 @@ export class AnmeldungService {
   private readonly http = inject(HttpClient);
 
   requestInformation(email: string, language: string): Observable<AnmeldungResponse> {
-    return this.http.post<AnmeldungResponse>('http://localhost:8080/public/anmeldung', { email, language });
+    return this.http.post<AnmeldungResponse>('http://localhost:8080/public/start', { email, language });
   }
 }

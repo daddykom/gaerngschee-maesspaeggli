@@ -14,14 +14,14 @@ use Slim\App;
 use Slim\Routing\RouteCollectorProxy;
 use Throwable;
 
-final class AnmeldungRoutes
+final class StartRoutes
 {
     private const SUPPORTED_LOCALES = ['de'];
 
     public static function register(App $app, ?AnmeldungService $anmeldungService = null): void
     {
         $app->group('/public', function (RouteCollectorProxy $group) use ($anmeldungService): void {
-            $group->post('/anmeldung', function (ServerRequestInterface $request, ResponseInterface $response) use ($anmeldungService) {
+            $group->post('/start', function (ServerRequestInterface $request, ResponseInterface $response) use ($anmeldungService) {
                 $data = json_decode((string) $request->getBody(), true);
                 $email = is_array($data) && is_string($data['email'] ?? null) ? $data['email'] : null;
                 $locale = is_array($data) && is_string($data['language'] ?? null)

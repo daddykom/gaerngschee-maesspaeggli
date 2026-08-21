@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace App;
 
 use App\Routes\AdminRoutes;
-use App\Routes\AnmeldungRoutes;
+use App\Routes\StartRoutes;
 use App\Routes\AuthRoutes;
 use App\Routes\PublicRoutes;
 use Psr\Http\Message\ResponseInterface;
@@ -43,7 +43,7 @@ final class Application
         });
 
         PublicRoutes::register($app);
-        AnmeldungRoutes::register($app);
+        StartRoutes::register($app);
         AuthRoutes::register($app);
         AdminRoutes::register($app);
 

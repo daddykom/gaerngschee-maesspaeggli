@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace Tests\Routes;
 
 use App\Data\UserRepository;
-use App\Routes\AnmeldungRoutes;
+use App\Routes\StartRoutes;
 use App\Services\AnmeldungService;
 use App\Services\EmailSenderInterface;
 use App\Services\FairgateContactProvider;
@@ -15,24 +15,24 @@ use Slim\Factory\AppFactory;
 use Slim\Psr7\Factory\ServerRequestFactory;
 use Slim\Psr7\Stream;
 
-final class AnmeldungRoutesTest extends TestCase
+final class StartRoutesTest extends TestCase
 {
-    public function testAnmeldungRequestReturnsValidationErrorForInvalidEmail(): void
+    public function testStartRequestReturnsValidationErrorForInvalidEmail(): void
     {
         $app = AppFactory::create();
         $app->addRoutingMiddleware();
-        AnmeldungRoutes::register($app, $this->service());
+        StartRoutes::register($app, $this->service());
 
         $response = $app->handle($this->request('not-an-email'));
 
         self::assertSame(422, $response->getStatusCode());
     }
 
-    public function testAnmeldungRequestReturnsNeutralAcceptedResponse(): void
+    public function testStartRequestReturnsNeutralAcceptedResponse(): void
     {
         $app = AppFactory::create();
         $app->addRoutingMiddleware();
-        AnmeldungRoutes::register($app, $this->service());
+        StartRoutes::register($app, $this->service());
 
         $response = $app->handle($this->request('person@example.com'));
 
@@ -80,7 +80,7 @@ final class AnmeldungRoutesTest extends TestCase
         rewind($stream);
 
         return (new ServerRequestFactory())
-            ->createServerRequest('POST', '/public/anmeldung')
+            ->createServerRequest('POST', '/public/start')
             ->withHeader('Content-Type', 'application/json')
             ->withBody(new Stream($stream));
     }
