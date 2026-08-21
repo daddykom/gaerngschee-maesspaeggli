@@ -44,6 +44,11 @@ export class App {
   );
 
   readonly authErrorCode = this.store.selectSignal(selectAuthErrorCode);
+  readonly isAdminRoute = computed(() => {
+    this.navigation();
+    return this.router.url.startsWith('/admin');
+  });
+
   readonly pageTitleKey = computed(() => {
     this.navigation();
 

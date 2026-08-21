@@ -1,6 +1,12 @@
 import { expect, test } from '@playwright/test';
 
 test.describe('Login route', () => {
+  test('shows the administration menu on a direct admin route', async ({ page }) => {
+    await page.goto('/admin/overview');
+
+    await expect(page.getByRole('button', { name: 'Administrationsmenü öffnen' })).toBeVisible();
+  });
+
   test('logs in and navigates to the admin overview', async ({ page }) => {
     await page.route('http://localhost:8080/auth/login', async (route) => {
       await route.fulfill({
@@ -22,6 +28,11 @@ test.describe('Login route', () => {
 
     await page.waitForURL('**/admin/overview');
     await expect(page.locator('h1')).toHaveText('Admin-Übersicht');
+    await expect(page.getByRole('button', { name: 'Administrationsmenü öffnen' })).toBeVisible();
+
+    await page.getByRole('button', { name: 'Administrationsmenü öffnen' }).click();
+    await expect(page.getByRole('link', { name: 'Startseite' })).toBeVisible();
+    await expect(page.getByRole('link', { name: 'Admin-Übersicht' })).toBeVisible();
   });
 
   test('shows a translated error for invalid credentials', async ({ page }) => {

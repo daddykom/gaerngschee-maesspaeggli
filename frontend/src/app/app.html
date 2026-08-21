@@ -1,21 +1,64 @@
 <div class="app-container">
-  @if (authErrorCode(); as errorCode) {
-    <div role="alert" aria-live="assertive">
-      <app-info-box variant="error" [title]="'app.auth.loginErrorTitle' | translate">
-        <span>{{ errorCode }}: {{ ('app.auth.errors.' + errorCode) | translate }}</span>
-      </app-info-box>
-    </div>
-  }
+  <mat-sidenav-container class="app-shell">
+    <mat-sidenav #adminMenu mode="over" class="admin-menu">
+      @if (isAdminRoute()) {
+        <nav aria-label="{{ 'app.navigation.menuLabel' | translate }}">
+          <mat-nav-list>
+            <a
+              mat-list-item
+              routerLink="/start"
+              routerLinkActive="active"
+              (click)="adminMenu.close()"
+            >
+              {{ 'app.navigation.start' | translate }}
+            </a>
+            <a
+              mat-list-item
+              routerLink="/admin/overview"
+              routerLinkActive="active"
+              (click)="adminMenu.close()"
+            >
+              {{ 'app.navigation.adminOverview' | translate }}
+            </a>
+          </mat-nav-list>
+        </nav>
+      }
+    </mat-sidenav>
 
-  @if (pageTitleKey(); as titleKey) {
-    <header
-      class="page-header app-page-header"
-      [class.app-page-header--wide]="pageHeaderLayout() === 'wide'"
-    >
-      <img src="/android-chrome-512x512.png" alt="Logo" class="header-icon" />
-      <h1 class="mat-headline-5">{{ titleKey | translate }}</h1>
-    </header>
-  }
+    <mat-sidenav-content>
+      @if (authErrorCode(); as errorCode) {
+        <div role="alert" aria-live="assertive">
+          <app-info-box variant="error" [title]="'app.auth.loginErrorTitle' | translate">
+            <span>{{ errorCode }}: {{ ('app.auth.errors.' + errorCode) | translate }}</span>
+          </app-info-box>
+        </div>
+      }
 
-  <router-outlet></router-outlet>
+      @if (pageTitleKey(); as titleKey) {
+        <header
+          class="page-header app-page-header"
+          [class.app-page-header--wide]="pageHeaderLayout() === 'wide'"
+          [class.app-page-header--admin]="isAdminRoute()"
+        >
+          <div class="app-page-header__content">
+            <img src="/android-chrome-512x512.png" alt="Logo" class="header-icon" />
+            <h1 class="mat-headline-5">{{ titleKey | translate }}</h1>
+            @if (isAdminRoute()) {
+              <button
+                mat-icon-button
+                type="button"
+                class="admin-menu-button"
+                [attr.aria-label]="'app.navigation.openMenu' | translate"
+                (click)="adminMenu.open()"
+              >
+                <mat-icon>menu</mat-icon>
+              </button>
+            }
+          </div>
+        </header>
+      }
+
+      <router-outlet></router-outlet>
+    </mat-sidenav-content>
+  </mat-sidenav-container>
 </div>
