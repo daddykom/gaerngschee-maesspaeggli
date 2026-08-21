@@ -42,6 +42,11 @@
         "INVALID_CREDENTIALS": "E-Mail-Adresse oder Passwort ist ungültig.",
         "LOGIN_FAILED": "Die Anmeldung konnte nicht durchgeführt werden. Bitte versuche es später erneut."
       }
+    },
+    "admin": {
+      "overview": {
+        "title": "Admin-Übersicht"
+      }
     }
   }
 }

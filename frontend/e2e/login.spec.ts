@@ -21,7 +21,7 @@ test.describe('Login route', () => {
     await page.locator('button[type="submit"]').click();
 
     await page.waitForURL('**/admin/overview');
-    await expect(page.locator('h1')).toBeVisible();
+    await expect(page.locator('h1')).toHaveText('Admin-Übersicht');
   });
 
   test('shows a translated error for invalid credentials', async ({ page }) => {

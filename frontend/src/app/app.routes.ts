@@ -26,6 +26,7 @@ export const appRoutes: Routes = [
   },
   {
     path: 'admin/overview',
+    data: { pageTitle: 'app.admin.overview.title' },
     loadComponent: () =>
       import('./features/admin/pages/overview/admin-overview.component').then(
         (m) => m.AdminOverviewComponent,
