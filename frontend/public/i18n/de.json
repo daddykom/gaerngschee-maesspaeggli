@@ -22,6 +22,13 @@
       "emailLabel": "E-Mail-Adresse",
       "passwordLabel": "Passwort",
       "submit": "Anmelden"
+    },
+    "auth": {
+      "loginErrorTitle": "Anmeldung fehlgeschlagen",
+      "errors": {
+        "INVALID_CREDENTIALS": "E-Mail-Adresse oder Passwort ist ungültig.",
+        "LOGIN_FAILED": "Die Anmeldung konnte nicht durchgeführt werden. Bitte versuche es später erneut."
+      }
     }
   }
 }
