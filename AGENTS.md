@@ -108,8 +108,37 @@ Du bemerkst, dass dein generierter Code geändert wurde. Frage:
 
 Wenn du dir nicht sicher bist, was der User will:
 - FRAGE. Stelle Clarifying Questions.
+- Nummeriere mehrere Rückfragen eindeutig, damit der User jede Frage separat beantworten kann.
 - NICHT: Annahmen treffen und handeln
 - NICHT: Mehrere Optionen gleichzeitig implementieren
+
+## API-Konventionen
+
+### Fehlerantworten
+
+API-Fehler werden als JSON mit einem standardisierten Fehlerobjekt zurückgegeben:
+
+```json
+{
+  "error": {
+    "code": "ERROR_CODE",
+    "details": {}
+  }
+}
+```
+
+Wenn sinnvoll, wird zusätzlich der passende HTTP-Statuscode gesetzt.
+
+### Login
+
+Der Login verwendet `POST /auth/login` mit `email` und `password`.
+
+- Die Zugangsdaten werden gegen einen Benutzer in der Datenbank geprüft.
+- Das Passwort wird mit dem gespeicherten Hash verifiziert.
+- Nur Benutzer mit der Gruppe `admin` oder `user` dürfen sich anmelden.
+- Bei ungültigen Zugangsdaten oder nicht erlaubter Gruppe wird der Fehlercode `INVALID_CREDENTIALS` verwendet.
+- Bei erfolgreichem Login werden `user_id` und `group` in die Session geschrieben.
+- Die erfolgreiche Antwort enthält weiterhin ein JWT und die Benutzergruppe.
 
 ## Key Principles
 
