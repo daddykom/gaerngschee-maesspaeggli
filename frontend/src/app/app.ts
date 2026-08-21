@@ -1,5 +1,6 @@
 import { Component, computed, inject } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
+import { MatDividerModule } from '@angular/material/divider';
 import { MatIconModule } from '@angular/material/icon';
 import { MatMenuModule } from '@angular/material/menu';
 import { MatToolbarModule } from '@angular/material/toolbar';
@@ -18,6 +19,7 @@ import { selectAuthErrorCode } from './store/auth/auth.feature';
     RouterLinkActive,
     MatToolbarModule,
     MatButtonModule,
+    MatDividerModule,
     MatMenuModule,
     MatIconModule,
     TranslatePipe,

@@ -1,5 +1,4 @@
 import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
-import { MatCardModule } from '@angular/material/card';
 import { Store } from '@ngrx/store';
 import {
   selectAdminOverviewKategories,
@@ -8,7 +7,7 @@ import {
 
 @Component({
   selector: 'app-admin-overview',
-  imports: [MatCardModule],
+  imports: [],
   templateUrl: './admin-overview.component.html',
   styleUrl: './admin-overview.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,

@@ -19,6 +19,10 @@ html {
   @include mat.typography-hierarchy($gaerngschee-theme);
   height: 100%;
   font-family: 'Inter', sans-serif;
+
+  @media (min-width: 769px) {
+    font-size: 1.4em;
+  }
 }
 
 html, body {

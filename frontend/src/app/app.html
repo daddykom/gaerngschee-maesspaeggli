@@ -13,7 +13,7 @@
       }
     </mat-menu>
 
-    <main>
+    <main [class.admin-page-shell]="isAdminRoute()">
       @if (authErrorCode(); as errorCode) {
         <div role="alert" aria-live="assertive">
           <app-info-box variant="error" [title]="'app.auth.loginErrorTitle' | translate">
@@ -44,6 +44,10 @@
             }
           </div>
         </header>
+      }
+
+      @if (isAdminRoute()) {
+        <mat-divider></mat-divider>
       }
 
       <router-outlet></router-outlet>

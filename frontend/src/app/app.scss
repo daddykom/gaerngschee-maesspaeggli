@@ -7,6 +7,16 @@
   background: transparent;
 }
 
+.admin-page-shell {
+  width: min(1180px, calc(100% - 32px));
+  margin: 2rem auto;
+  border: 1px solid var(--mat-sys-outline-variant);
+  border-radius: 24px;
+  background: rgba(255, 255, 255, 0.95);
+  box-shadow: 0 4px 18px rgba(0, 0, 0, 0.08);
+  overflow: hidden;
+}
+
 .app-page-header h1 {
   margin: 0;
 }
@@ -21,10 +31,6 @@
 .app-page-header--admin {
   padding: 1rem 0;
   margin-bottom: 0;
-  border: 1px solid var(--mat-sys-outline-variant);
-  border-radius: 24px;
-  background: rgba(255, 255, 255, 0.95);
-  box-shadow: 0 4px 18px rgba(0, 0, 0, 0.08);
 }
 
 .app-page-header--admin .app-page-header__content {
@@ -64,6 +70,10 @@
 
 .app-page-header--admin {
   padding-block: 1rem;
+}
+
+.admin-page-shell .admin-page-content {
+  padding: clamp(24px, 4vw, 54px);
 }
 
 mat-toolbar {
