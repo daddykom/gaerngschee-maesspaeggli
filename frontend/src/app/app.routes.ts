@@ -8,6 +8,7 @@ export const appRoutes: Routes = [
   },
   {
     path: 'start',
+    data: { pageTitle: 'app.anmeldung.title' },
     loadComponent: () =>
       import('./features/auth/pages/start/maesspaeggli-start.component').then(
         (m) => m.MaesspaeggliStartComponent,
@@ -15,6 +16,7 @@ export const appRoutes: Routes = [
   },
   {
     path: 'login',
+    data: { pageTitle: 'app.login.pageTitle' },
     loadComponent: () => import('./features/auth/pages/login/login.component').then((m) => m.Login),
   },
   {

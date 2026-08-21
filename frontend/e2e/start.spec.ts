@@ -5,10 +5,12 @@ test.describe('Start route', () => {
     await page.goto('/');
     await page.waitForURL('**/start');
     await expect(page.locator('app-root')).toBeVisible();
+    await expect(page.locator('h1')).toHaveText('Mässpäggli bekommen');
   });
 
   test('displays the email form', async ({ page }) => {
     await page.goto('/start');
+    await expect(page.locator('h1')).toHaveText('Mässpäggli bekommen');
     await expect(page.locator('input[type="email"]')).toBeVisible();
     await expect(page.locator('button[type="submit"]')).toBeVisible();
   });

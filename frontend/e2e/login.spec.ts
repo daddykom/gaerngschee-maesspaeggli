@@ -15,6 +15,7 @@ test.describe('Login route', () => {
     });
 
     await page.goto('/login');
+    await expect(page.locator('h1')).toHaveText('Mässpäggli verwalten');
     await page.locator('input[type="email"]').fill('admin@example.com');
     await page.locator('input[type="password"]').fill('secret');
     await page.locator('button[type="submit"]').click();
@@ -35,6 +36,7 @@ test.describe('Login route', () => {
     });
 
     await page.goto('/login');
+    await expect(page.locator('h1')).toHaveText('Mässpäggli verwalten');
     await page.locator('input[type="email"]').fill('admin@example.com');
     await page.locator('input[type="password"]').fill('wrong-password');
     await page.locator('button[type="submit"]').click();

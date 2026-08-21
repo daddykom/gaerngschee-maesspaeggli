@@ -7,5 +7,12 @@
     </div>
   }
 
+  @if (pageTitleKey(); as titleKey) {
+    <header class="page-header app-page-header">
+      <img src="/android-chrome-512x512.png" alt="Logo" class="header-icon" />
+      <h1 class="mat-headline-5">{{ titleKey | translate }}</h1>
+    </header>
+  }
+
   <router-outlet></router-outlet>
 </div>

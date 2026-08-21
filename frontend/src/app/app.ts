@@ -1,12 +1,14 @@
-import { Component, inject } from '@angular/core';
+import { Component, computed, inject } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { MatListModule } from '@angular/material/list';
 import { MatSidenavModule } from '@angular/material/sidenav';
 import { MatToolbarModule } from '@angular/material/toolbar';
-import { RouterLink, RouterLinkActive, RouterOutlet } from '@angular/router';
+import { ActivatedRoute, NavigationEnd, Router, RouterLink, RouterLinkActive, RouterOutlet } from '@angular/router';
 import { Store } from '@ngrx/store';
 import { TranslatePipe } from '@ngx-translate/core';
+import { toSignal } from '@angular/core/rxjs-interop';
+import { filter, startWith } from 'rxjs';
 import { InfoBoxComponent } from './shared/components/info-box/info-box';
 import { selectAuthErrorCode } from './store/auth/auth.feature';
 
@@ -30,6 +32,26 @@ import { selectAuthErrorCode } from './store/auth/auth.feature';
 export class App {
   protected title = 'Gaerngschee';
   private readonly store = inject(Store);
+  private readonly router = inject(Router);
+  private readonly activatedRoute = inject(ActivatedRoute);
+
+  private readonly navigation = toSignal(
+    this.router.events.pipe(
+      filter((event) => event instanceof NavigationEnd),
+      startWith(null),
+    ),
+    { initialValue: null },
+  );
 
   readonly authErrorCode = this.store.selectSignal(selectAuthErrorCode);
+  readonly pageTitleKey = computed(() => {
+    this.navigation();
+
+    let route = this.activatedRoute;
+    while (route.firstChild) {
+      route = route.firstChild;
+    }
+
+    return route.snapshot.data['pageTitle'] as string | undefined;
+  });
 }
