@@ -8,10 +8,18 @@ import { TranslatePipe } from '@ngx-translate/core';
 import { Store } from '@ngrx/store';
 import { AuthActions } from '../../../../store/auth/auth.actions';
 import { selectAuthLoading } from '../../../../store/auth/auth.feature';
+import { ControlErrorComponent } from '../../../../shared/components/control-error/control-error';
 
 @Component({
   selector: 'app-login',
-  imports: [MatCardModule, MatInputModule, MatButtonModule, ReactiveFormsModule, TranslatePipe],
+  imports: [
+    MatCardModule,
+    MatInputModule,
+    MatButtonModule,
+    ReactiveFormsModule,
+    TranslatePipe,
+    ControlErrorComponent,
+  ],
   templateUrl: './login.component.html',
   styleUrl: './login.component.scss',
 })

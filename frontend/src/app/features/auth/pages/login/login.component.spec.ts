@@ -57,6 +57,13 @@ describe('Login', () => {
     expect(component.loginForm.controls.password.touched).toBe(true);
   });
 
+  it('shows validation errors after submitting an invalid form', () => {
+    component.onSubmit();
+    fixture.detectChanges();
+
+    expect(fixture.nativeElement.querySelectorAll('[role="alert"]')).toHaveLength(2);
+  });
+
   it('disables the submit button while loading', () => {
     store.setState({ auth: { ...initialState.auth, loading: true } });
     fixture.detectChanges();

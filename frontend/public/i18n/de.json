@@ -25,7 +25,16 @@
       "heading": "Anmelden",
       "emailLabel": "E-Mail-Adresse",
       "passwordLabel": "Passwort",
-      "submit": "Anmelden"
+      "submit": "Anmelden",
+      "errors": {
+        "email": {
+          "required": "Bitte gib deine E-Mail-Adresse ein.",
+          "email": "Bitte prüfe deine E-Mail-Adresse."
+        },
+        "password": {
+          "required": "Bitte gib dein Passwort ein."
+        }
+      }
     },
     "auth": {
       "loginErrorTitle": "Anmeldung fehlgeschlagen",
