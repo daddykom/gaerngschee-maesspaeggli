@@ -152,6 +152,31 @@ Der Login verwendet `POST /auth/login` mit `email` und `password`.
 - Reactive Frontend - NgRx with RxJS for async operations
 - Functional Style - map/reduce/filter for data transformations
 
+## Page Layout and E2E Conventions
+
+### Page Layout
+
+Alle Seiten SOLLEN dieselbe grundlegende Card-Struktur verwenden:
+
+- Seitenüberschrift, Logo und Seiteninhalt liegen innerhalb derselben Card.
+- Zwischen Header und Seiteninhalt steht ein `mat-divider`.
+- Die horizontale Ausrichtung des Headers entspricht der Ausrichtung des Card-Inhalts.
+- Die vertikalen Innenabstände von Header und Seiteninhalt sind ausgewogen und konsistent.
+- Admin-Seiten unter `/admin` zeigen zusätzlich das Administrationsmenü im Header.
+- Seiten ausserhalb von `/admin` zeigen keinen Menübutton.
+- Die Desktop-Basisschrift beträgt `1.4em`; die mobile Darstellung bleibt davon unberührt.
+
+### E2E-Teststruktur
+
+Playwright-E2E-Specs testen jeweils nur eine Route:
+
+- `overview.spec.ts` testet `/admin/overview`.
+- `login.spec.ts` testet `/login`.
+- `start.spec.ts` testet `/start`.
+- Tests für `/` liegen in einer separaten `root.spec.ts`.
+
+Eine Spec DARF keine Tests für mehrere unterschiedliche Routen enthalten.
+
 ## Entwicklungsphilosophie
 
 Bei Architektur- und Implementierungsentscheidungen gelten folgende Grundsätze:

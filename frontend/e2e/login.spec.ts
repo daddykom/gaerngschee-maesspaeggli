@@ -1,12 +1,6 @@
 import { expect, test } from '@playwright/test';
 
 test.describe('Login route', () => {
-  test('shows the administration menu on a direct admin route', async ({ page }) => {
-    await page.goto('/admin/overview');
-
-    await expect(page.getByRole('button', { name: 'Administrationsmenü öffnen' })).toBeVisible();
-  });
-
   test('logs in and navigates to the admin overview', async ({ page }) => {
     await page.route('http://localhost:8080/auth/login', async (route) => {
       await route.fulfill({
