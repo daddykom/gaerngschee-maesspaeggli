@@ -4,6 +4,14 @@
 
 .app-page-header {
   padding: 2rem 2rem 0;
+  margin-bottom: 0;
+}
+
+.app-page-header--wide {
+  width: min(1180px, calc(100% - 32px));
+  max-width: none;
+  padding-right: 0;
+  padding-left: 0;
 }
 
 mat-toolbar {

@@ -54,4 +54,15 @@ export class App {
 
     return route.snapshot.data['pageTitle'] as string | undefined;
   });
+
+  readonly pageHeaderLayout = computed(() => {
+    this.navigation();
+
+    let route = this.activatedRoute;
+    while (route.firstChild) {
+      route = route.firstChild;
+    }
+
+    return route.snapshot.data['pageHeaderLayout'] as string | undefined;
+  });
 }

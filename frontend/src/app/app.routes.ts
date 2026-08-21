@@ -8,7 +8,7 @@ export const appRoutes: Routes = [
   },
   {
     path: 'start',
-    data: { pageTitle: 'app.anmeldung.title' },
+    data: { pageTitle: 'app.anmeldung.title', pageHeaderLayout: 'wide' },
     loadComponent: () =>
       import('./features/auth/pages/start/maesspaeggli-start.component').then(
         (m) => m.MaesspaeggliStartComponent,
