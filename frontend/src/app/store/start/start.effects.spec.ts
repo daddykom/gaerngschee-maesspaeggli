@@ -3,10 +3,10 @@ import { provideMockActions } from '@ngrx/effects/testing';
 import { Action } from '@ngrx/store';
 import { firstValueFrom, of, Subject, throwError } from 'rxjs';
 import { AnmeldungService } from '../../shared/services/anmeldung.service';
-import { AnmeldungActions } from './anmeldung.actions';
-import { submitAnmeldungEffect } from './anmeldung.effects';
+import { StartActions } from './start.actions';
+import { submitStartEffect } from './start.effects';
 
-describe('submitAnmeldungEffect', () => {
+describe('submitStartEffect', () => {
   let actions$: Subject<Action>;
   let anmeldungService: { requestInformation: jest.Mock };
 
@@ -24,22 +24,22 @@ describe('submitAnmeldungEffect', () => {
 
   it('maps a successful service response to a success action', async () => {
     anmeldungService.requestInformation.mockReturnValue(of({ sent: true }));
-    const effect$ = TestBed.runInInjectionContext(() => submitAnmeldungEffect());
+    const effect$ = TestBed.runInInjectionContext(() => submitStartEffect());
     const result = firstValueFrom(effect$);
 
-    actions$.next(AnmeldungActions.submit({ email: 'person@example.com', language: 'de' }));
+    actions$.next(StartActions.submit({ email: 'person@example.com', language: 'de' }));
 
-    await expect(result).resolves.toEqual(AnmeldungActions.submitSuccess({ sent: true }));
+    await expect(result).resolves.toEqual(StartActions.submitSuccess({ sent: true }));
     expect(anmeldungService.requestInformation).toHaveBeenCalledWith('person@example.com', 'de');
   });
 
   it('maps a service error to a failure action', async () => {
     anmeldungService.requestInformation.mockReturnValue(throwError(() => new Error('SMTP failed')));
-    const effect$ = TestBed.runInInjectionContext(() => submitAnmeldungEffect());
+    const effect$ = TestBed.runInInjectionContext(() => submitStartEffect());
     const result = firstValueFrom(effect$);
 
-    actions$.next(AnmeldungActions.submit({ email: 'person@example.com', language: 'de' }));
+    actions$.next(StartActions.submit({ email: 'person@example.com', language: 'de' }));
 
-    await expect(result).resolves.toEqual(AnmeldungActions.submitFailure());
+    await expect(result).resolves.toEqual(StartActions.submitFailure());
   });
 });

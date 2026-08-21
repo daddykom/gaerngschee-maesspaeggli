@@ -3,7 +3,7 @@ import { Store } from '@ngrx/store';
 import { signal } from '@angular/core';
 import { TestBed } from '@angular/core/testing';
 import { MaesspaeggliStartComponent } from './maesspaeggli-start.component';
-import { AnmeldungActions } from '../../../../store/anmeldung/anmeldung.actions';
+import { StartActions } from '../../../../store/start/start.actions';
 
 describe('MaesspaeggliStartComponent', () => {
   const store = {
@@ -40,7 +40,7 @@ describe('MaesspaeggliStartComponent', () => {
     component.submit();
 
     expect(store.dispatch).toHaveBeenCalledWith(
-      AnmeldungActions.submit({ email: 'person@example.com', language: 'de' }),
+      StartActions.submit({ email: 'person@example.com', language: 'de' }),
     );
   });
 

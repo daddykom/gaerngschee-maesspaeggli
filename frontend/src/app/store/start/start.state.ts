@@ -1,10 +1,10 @@
-export interface AnmeldungState {
+export interface StartState {
   loading: boolean;
   sent: boolean | null;
   sendError: boolean;
 }
 
-export const initialState: AnmeldungState = {
+export const initialState: StartState = {
   loading: false,
   sent: null,
   sendError: false,

@@ -1,27 +1,27 @@
-import { AnmeldungActions } from './anmeldung.actions';
-import { anmeldungReducer } from './anmeldung.feature';
-import { initialState } from './anmeldung.state';
+import { StartActions } from './start.actions';
+import { startReducer } from './start.feature';
+import { initialState } from './start.state';
 
-describe('anmeldungReducer', () => {
+describe('startReducer', () => {
   it('sets loading when an email is submitted', () => {
-    const state = anmeldungReducer(initialState, AnmeldungActions.submit({ email: 'person@example.com' }));
+    const state = startReducer(initialState, StartActions.submit({ email: 'person@example.com' }));
 
     expect(state).toEqual({ loading: true, sent: null, sendError: false });
   });
 
   it('stores a successful response', () => {
-    const state = anmeldungReducer(
+    const state = startReducer(
       { loading: true, sent: null, sendError: false },
-      AnmeldungActions.submitSuccess({ sent: true }),
+      StartActions.submitSuccess({ sent: true }),
     );
 
     expect(state).toEqual({ loading: false, sent: true, sendError: false });
   });
 
   it('stores a failed response', () => {
-    const state = anmeldungReducer(
+    const state = startReducer(
       { loading: true, sent: null, sendError: false },
-      AnmeldungActions.submitFailure(),
+      StartActions.submitFailure(),
     );
 
     expect(state).toEqual({ loading: false, sent: false, sendError: true });
