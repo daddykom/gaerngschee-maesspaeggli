@@ -31,8 +31,8 @@ test.describe('Login route', () => {
     await expect(page.getByRole('button', { name: 'Administrationsmenü öffnen' })).toBeVisible();
 
     await page.getByRole('button', { name: 'Administrationsmenü öffnen' }).click();
-    await expect(page.getByRole('link', { name: 'Startseite' })).toBeVisible();
-    await expect(page.getByRole('link', { name: 'Admin-Übersicht' })).toBeVisible();
+    await expect(page.getByRole('menuitem', { name: 'Startseite' })).toBeVisible();
+    await expect(page.getByRole('menuitem', { name: 'Admin-Übersicht' })).toBeVisible();
   });
 
   test('shows a translated error for invalid credentials', async ({ page }) => {

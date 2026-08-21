@@ -7,10 +7,6 @@
   background: transparent;
 }
 
-.admin-menu {
-  width: 260px;
-}
-
 .app-page-header h1 {
   margin: 0;
 }
@@ -111,14 +107,8 @@ mat-toolbar {
   }
 }
 
-mat-sidenav {
-  width: 250px;
-  background: rgba(255, 255, 255, 0.9);
-  backdrop-filter: blur(10px);
-}
-
-mat-nav-list a.active {
-  background: rgba(0, 0, 0, 0.04);
+.admin-menu {
+  min-width: 260px;
 }
 
 .main-container {

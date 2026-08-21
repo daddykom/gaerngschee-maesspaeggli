@@ -1,31 +1,19 @@
 <div class="app-container">
-  <mat-sidenav-container class="app-shell">
-    <mat-sidenav #adminMenu mode="over" class="admin-menu">
+  <div class="app-shell">
+    <mat-menu #adminMenu="matMenu" class="admin-menu" xPosition="before">
       @if (isAdminRoute()) {
         <nav aria-label="{{ 'app.navigation.menuLabel' | translate }}">
-          <mat-nav-list>
-            <a
-              mat-list-item
-              routerLink="/start"
-              routerLinkActive="active"
-              (click)="adminMenu.close()"
-            >
-              {{ 'app.navigation.start' | translate }}
-            </a>
-            <a
-              mat-list-item
-              routerLink="/admin/overview"
-              routerLinkActive="active"
-              (click)="adminMenu.close()"
-            >
-              {{ 'app.navigation.adminOverview' | translate }}
-            </a>
-          </mat-nav-list>
+          <a mat-menu-item routerLink="/start" routerLinkActive="active">
+            {{ 'app.navigation.start' | translate }}
+          </a>
+          <a mat-menu-item routerLink="/admin/overview" routerLinkActive="active">
+            {{ 'app.navigation.adminOverview' | translate }}
+          </a>
         </nav>
       }
-    </mat-sidenav>
+    </mat-menu>
 
-    <mat-sidenav-content>
+    <main>
       @if (authErrorCode(); as errorCode) {
         <div role="alert" aria-live="assertive">
           <app-info-box variant="error" [title]="'app.auth.loginErrorTitle' | translate">
@@ -49,7 +37,7 @@
                 type="button"
                 class="admin-menu-button"
                 [attr.aria-label]="'app.navigation.openMenu' | translate"
-                (click)="adminMenu.open()"
+                [matMenuTriggerFor]="adminMenu"
               >
                 <mat-icon>menu</mat-icon>
               </button>
@@ -59,6 +47,6 @@
       }
 
       <router-outlet></router-outlet>
-    </mat-sidenav-content>
-  </mat-sidenav-container>
+    </main>
+  </div>
 </div>
