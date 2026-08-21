@@ -5,6 +5,9 @@ import { MatCardModule } from '@angular/material/card';
 import { MatInputModule } from '@angular/material/input';
 import { ActivatedRoute } from '@angular/router';
 import { TranslatePipe } from '@ngx-translate/core';
+import { Store } from '@ngrx/store';
+import { AuthActions } from '../../../../store/auth/auth.actions';
+import { selectAuthLoading } from '../../../../store/auth/auth.feature';
 
 @Component({
   selector: 'app-login',
@@ -13,7 +16,10 @@ import { TranslatePipe } from '@ngx-translate/core';
   styleUrl: './login.component.scss',
 })
 export class Login implements OnInit {
-  private route = inject(ActivatedRoute);
+  private readonly route = inject(ActivatedRoute);
+  private readonly store = inject(Store);
+
+  readonly loading = this.store.selectSignal(selectAuthLoading);
 
   loginForm = new FormGroup({
     email: new FormControl('', [Validators.required, Validators.email]),
@@ -28,8 +34,16 @@ export class Login implements OnInit {
   }
 
   onSubmit(): void {
-    if (this.loginForm.valid) {
-      console.log('Login:', this.loginForm.value);
+    if (!this.loginForm.valid) {
+      this.loginForm.markAllAsTouched();
+      return;
     }
+
+    const { email, password } = this.loginForm.getRawValue();
+    if (email === null || password === null) {
+      return;
+    }
+
+    this.store.dispatch(AuthActions.login({ email, password }));
   }
 }
