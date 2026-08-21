@@ -40,7 +40,7 @@ final class GroupMiddlewareTest extends TestCase
         $handler = $this->createMock(RequestHandlerInterface::class);
         $handler->expects(self::never())->method('handle');
 
-        $response = (new GroupMiddleware('admin', $this->repository))->__invoke(
+        $response = (new GroupMiddleware(['admin'], $this->repository))->__invoke(
             (new ServerRequestFactory())->createServerRequest('GET', '/admin/users'),
             $handler,
         );
@@ -58,7 +58,7 @@ final class GroupMiddlewareTest extends TestCase
         $handler = $this->createMock(RequestHandlerInterface::class);
         $handler->expects(self::never())->method('handle');
 
-        $response = (new GroupMiddleware('admin', $this->repository))->__invoke(
+        $response = (new GroupMiddleware(['admin'], $this->repository))->__invoke(
             (new ServerRequestFactory())
                 ->createServerRequest('GET', '/admin/users')
                 ->withAttribute('user_id', $user['id']),
@@ -66,6 +66,23 @@ final class GroupMiddlewareTest extends TestCase
         );
 
         self::assertSame(404, $response->getStatusCode());
+    }
+
+    public function testOneOfSeveralAllowedGroupsCanAccessRoute(): void
+    {
+        $user = $this->repository->createUser('user@example.com', 'secret', 'user');
+        $handler = $this->createMock(RequestHandlerInterface::class);
+        $handler->expects(self::once())
+            ->method('handle')
+            ->willReturn(new Response());
+
+        $request = (new ServerRequestFactory())
+            ->createServerRequest('GET', '/admin/users')
+            ->withAttribute('user_id', $user['id']);
+
+        $response = (new GroupMiddleware(['admin', 'user'], $this->repository))->__invoke($request, $handler);
+
+        self::assertSame(200, $response->getStatusCode());
     }
 
     #[DataProvider('userGroups')]
@@ -81,7 +98,7 @@ final class GroupMiddlewareTest extends TestCase
             ->createServerRequest('GET', '/' . $group)
             ->withAttribute('user_id', $user['id']);
 
-        $response = (new GroupMiddleware($group, $this->repository))->__invoke($request, $handler);
+        $response = (new GroupMiddleware([$group], $this->repository))->__invoke($request, $handler);
 
         self::assertSame(200, $response->getStatusCode());
     }

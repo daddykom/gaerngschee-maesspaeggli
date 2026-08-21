@@ -25,7 +25,7 @@ final class AdminRoutes
                     ->withHeader('Content-Type', 'application/json');
             });
 
-            $route->add(new GroupMiddleware('admin', $userRepository));
+            $route->add(new GroupMiddleware(['admin', 'user'], $userRepository));
             $route->add(new AuthMiddleware());
         });
     }

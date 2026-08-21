@@ -27,7 +27,7 @@ final class AuthMiddleware
         }
 
         if ($userId === null) {
-            return $this->jsonError('UNAUTHORIZED', 401);
+            return $this->jsonError('NOT_FOUND', 404);
         }
 
         return $handler->handle($request->withAttribute('user_id', $userId));

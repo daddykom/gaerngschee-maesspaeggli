@@ -75,10 +75,12 @@ Implemented routes:
 ### Middleware
 
 - `AuthMiddleware` accepts either the authenticated PHP session or a valid
-  Bearer JWT and attaches the user ID to the request.
+  Bearer JWT and attaches the user ID to the request. Unauthenticated or
+  invalid requests return `404`.
 - `GroupMiddleware` resolves the user through the user ID and enforces the
-  required group.
-- The existing administrator route is protected by both middleware layers.
+  allowed groups.
+- Administrator routes are protected by both middleware layers and allow the
+  `admin` and `user` groups. Other groups return `404`.
 - Client and user route groups have no concrete endpoints yet; the middleware
   is ready for their future routes.
 

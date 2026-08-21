@@ -37,9 +37,9 @@ final class AuthMiddlewareTest extends TestCase
                 $handler,
             );
 
-        self::assertSame(401, $response->getStatusCode());
+        self::assertSame(404, $response->getStatusCode());
         self::assertSame(
-            '{"error":{"code":"UNAUTHORIZED","details":[]}}',
+            '{"error":{"code":"NOT_FOUND","details":[]}}',
             (string) $response->getBody(),
         );
     }
@@ -87,6 +87,6 @@ final class AuthMiddlewareTest extends TestCase
 
         $response = (new AuthMiddleware())->__invoke($request, $handler);
 
-        self::assertSame(401, $response->getStatusCode());
+        self::assertSame(404, $response->getStatusCode());
     }
 }

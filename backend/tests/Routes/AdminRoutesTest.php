@@ -47,7 +47,7 @@ final class AdminRoutesTest extends TestCase
             (new ServerRequestFactory())->createServerRequest('GET', '/admin/users'),
         );
 
-        self::assertSame(401, $response->getStatusCode());
+        self::assertSame(404, $response->getStatusCode());
     }
 
     public function testAdminCanListUsersWithSession(): void
@@ -65,10 +65,23 @@ final class AdminRoutesTest extends TestCase
         self::assertCount(2, json_decode((string) $response->getBody(), true, 512, JSON_THROW_ON_ERROR));
     }
 
-    public function testUserCannotListAdminUsers(): void
+    public function testUserCanListAdminUsers(): void
     {
         $user = $this->repository->createUser('user@example.com', 'secret', 'user');
         (new SessionService())->setUser($user['id'], 'user');
+        $app = AppFactory::create();
+        $app->addRoutingMiddleware();
+        AdminRoutes::register($app, $this->repository);
+
+        $response = $app->handle((new ServerRequestFactory())->createServerRequest('GET', '/admin/users'));
+
+        self::assertSame(200, $response->getStatusCode());
+    }
+
+    public function testClientCannotListAdminUsers(): void
+    {
+        $client = $this->repository->createUser('client@example.com', 'secret', 'client');
+        (new SessionService())->setUser($client['id'], 'client');
         $app = AppFactory::create();
         $app->addRoutingMiddleware();
         AdminRoutes::register($app, $this->repository);

@@ -13,7 +13,7 @@ use Slim\Psr7\Response;
 final class GroupMiddleware
 {
     public function __construct(
-        private readonly string $requiredGroup,
+        private readonly array $allowedGroups,
         private readonly ?UserRepository $userRepository = null,
     ) {
     }
@@ -28,7 +28,7 @@ final class GroupMiddleware
         }
 
         $user = ($this->userRepository ?? new UserRepository())->findById($userId);
-        if ($user === null || $user['group'] !== $this->requiredGroup) {
+        if ($user === null || !in_array($user['group'] ?? null, $this->allowedGroups, true)) {
             return $this->notFound();
         }
 
