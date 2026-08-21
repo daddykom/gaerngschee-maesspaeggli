@@ -58,4 +58,19 @@ final class UserRepositoryTest extends TestCase
         self::assertSame($created, $this->repository->findById($created['id']));
         self::assertSame($created, $this->repository->findByEmail('admin@example.com'));
     }
+
+    public function testInvalidGroupIsRejected(): void
+    {
+        $this->expectException(\InvalidArgumentException::class);
+
+        $this->repository->createUser('person@example.com', 'secret', 'invalid');
+    }
+
+    public function testDuplicateEmailIsRejectedByDatabase(): void
+    {
+        $this->repository->createUser('person@example.com', 'secret');
+
+        $this->expectException(\PDOException::class);
+        $this->repository->createUser('person@example.com', 'another-secret');
+    }
 }

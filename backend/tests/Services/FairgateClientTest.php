@@ -79,4 +79,116 @@ final class FairgateClientTest extends TestCase
         $this->expectException(FairgateException::class);
         $client->hasContactByEmail('person@example.com');
     }
+
+    public function testAuthenticationWithUnsuccessfulResponseThrowsFairgateException(): void
+    {
+        $handler = HandlerStack::create(new MockHandler([
+            new Response(200, [], '{"success":false}'),
+        ]));
+        $client = new FairgateClient(
+            new Client(['handler' => $handler, 'base_uri' => 'https://fsa-test.fairgate.ch']),
+            'https://fsa-test.fairgate.ch',
+            'org-123',
+            'access-key',
+            null,
+            static fn (string $token): bool => true,
+        );
+
+        $this->expectException(FairgateException::class);
+        $client->hasContactByEmail('person@example.com');
+    }
+
+    public function testAuthenticationWithInvalidTokenThrowsFairgateException(): void
+    {
+        $handler = HandlerStack::create(new MockHandler([
+            new Response(200, [], '{"success":true,"data":{"token":"invalid-token"}}'),
+        ]));
+        $client = new FairgateClient(
+            new Client(['handler' => $handler, 'base_uri' => 'https://fsa-test.fairgate.ch']),
+            'https://fsa-test.fairgate.ch',
+            'org-123',
+            'access-key',
+            null,
+        );
+
+        $this->expectException(FairgateException::class);
+        $client->hasContactByEmail('person@example.com');
+    }
+
+    public function testEmptyEmailDoesNotCallFairgate(): void
+    {
+        $handler = HandlerStack::create(new MockHandler([
+            new Response(500),
+        ]));
+        $client = new FairgateClient(
+            new Client(['handler' => $handler, 'base_uri' => 'https://fsa-test.fairgate.ch']),
+            'https://fsa-test.fairgate.ch',
+            'org-123',
+            'access-key',
+            null,
+            static fn (string $token): bool => true,
+        );
+
+        self::assertFalse($client->hasContactByEmail('   '));
+    }
+
+    public function testInvalidContactJsonThrowsFairgateException(): void
+    {
+        $handler = HandlerStack::create(new MockHandler([
+            new Response(200, [], '{invalid-json'),
+        ]));
+        $client = new FairgateClient(
+            new Client(['handler' => $handler, 'base_uri' => 'https://fsa-test.fairgate.ch']),
+            'https://fsa-test.fairgate.ch',
+            'org-123',
+            'access-key',
+            null,
+            static fn (string $token): bool => true,
+        );
+
+        $this->expectException(FairgateException::class);
+        $client->hasContactByEmail('person@example.com');
+    }
+
+    public function testContactHttpErrorThrowsFairgateException(): void
+    {
+        $handler = HandlerStack::create(new MockHandler([
+            new Response(200, [], '{"success":true,"data":{"token":"test-token"}}'),
+            new Response(500, [], '{"success":false}'),
+        ]));
+        $client = new FairgateClient(
+            new Client(['handler' => $handler, 'base_uri' => 'https://fsa-test.fairgate.ch']),
+            'https://fsa-test.fairgate.ch',
+            'org-123',
+            'access-key',
+            null,
+            static fn (string $token): bool => true,
+        );
+
+        $this->expectException(FairgateException::class);
+        $client->hasContactByEmail('person@example.com');
+    }
+
+    public function testBearerTokenIsReusedForSubsequentRequests(): void
+    {
+        $handler = HandlerStack::create(new MockHandler([
+            new Response(200, [], '{"success":true,"data":{"token":"test-token"}}'),
+            new Response(200, [], '{"success":true,"data":{"contacts":[]}}'),
+            new Response(200, [], '{"success":true,"data":{"contacts":[]}}'),
+        ]));
+        $history = [];
+        $handler->push(Middleware::history($history));
+        $client = new FairgateClient(
+            new Client(['handler' => $handler, 'base_uri' => 'https://fsa-test.fairgate.ch']),
+            'https://fsa-test.fairgate.ch',
+            'org-123',
+            'access-key',
+            null,
+            static fn (string $token): bool => true,
+        );
+
+        self::assertFalse($client->hasContactByEmail('first@example.com'));
+        self::assertFalse($client->hasContactByEmail('second@example.com'));
+        self::assertCount(3, $history);
+    }
 }

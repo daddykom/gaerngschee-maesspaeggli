@@ -46,6 +46,26 @@ final class GroupMiddlewareTest extends TestCase
         );
 
         self::assertSame(404, $response->getStatusCode());
+        self::assertSame(
+            '{"error":{"code":"NOT_FOUND","details":[]}}',
+            (string) $response->getBody(),
+        );
+    }
+
+    public function testDifferentGroupCannotAccessRoute(): void
+    {
+        $user = $this->repository->createUser('user@example.com', 'secret', 'user');
+        $handler = $this->createMock(RequestHandlerInterface::class);
+        $handler->expects(self::never())->method('handle');
+
+        $response = (new GroupMiddleware('admin', $this->repository))->__invoke(
+            (new ServerRequestFactory())
+                ->createServerRequest('GET', '/admin/users')
+                ->withAttribute('user_id', $user['id']),
+            $handler,
+        );
+
+        self::assertSame(404, $response->getStatusCode());
     }
 
     #[DataProvider('userGroups')]

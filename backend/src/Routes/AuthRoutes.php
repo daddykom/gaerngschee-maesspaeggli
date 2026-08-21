@@ -15,10 +15,15 @@ use Throwable;
 
 final class AuthRoutes
 {
-    public static function register(App $app): void
+    public static function register(
+        App $app,
+        ?UserRepository $userRepository = null,
+        ?JwtService $jwtService = null,
+        ?SessionService $sessionService = null,
+    ): void
     {
-        $app->group('/auth', function (RouteCollectorProxy $group): void {
-            $group->post('/register', function (ServerRequestInterface $request, ResponseInterface $response) {
+        $app->group('/auth', function (RouteCollectorProxy $group) use ($userRepository, $jwtService, $sessionService): void {
+            $group->post('/register', function (ServerRequestInterface $request, ResponseInterface $response) use ($userRepository, $jwtService, $sessionService) {
                 $data = self::readJsonBody($request);
                 $email = self::readString($data, 'email');
                 $password = self::readString($data, 'password');
@@ -27,15 +32,15 @@ final class AuthRoutes
                     return self::error($response, 'INVALID_CREDENTIALS', 422);
                 }
 
-                $repository = new UserRepository();
+                $repository = $userRepository ?? new UserRepository();
                 if ($repository->findByEmail($email) !== null) {
                     return self::error($response, 'EMAIL_ALREADY_REGISTERED', 409);
                 }
 
                 try {
                     $user = $repository->createUser($email, $password, 'client');
-                    $token = (new JwtService())->createToken($user['id']);
-                    (new SessionService())->setUserId($user['id']);
+                    $token = ($jwtService ?? new JwtService())->createToken($user['id']);
+                    ($sessionService ?? new SessionService())->setUserId($user['id']);
                 } catch (Throwable) {
                     return self::error($response, 'REGISTRATION_FAILED', 500);
                 }
@@ -43,7 +48,7 @@ final class AuthRoutes
                 return self::json($response, ['user' => $user, 'token' => $token], 201);
             });
 
-            $group->post('/login', function (ServerRequestInterface $request, ResponseInterface $response) {
+            $group->post('/login', function (ServerRequestInterface $request, ResponseInterface $response) use ($userRepository, $jwtService, $sessionService) {
                 $data = self::readJsonBody($request);
                 $email = self::readString($data, 'email');
                 $password = self::readString($data, 'password');
@@ -52,13 +57,13 @@ final class AuthRoutes
                     return self::error($response, 'INVALID_CREDENTIALS', 401);
                 }
 
-                $user = (new UserRepository())->verifyPassword($email, $password);
+                $user = ($userRepository ?? new UserRepository())->verifyPassword($email, $password);
                 if ($user === null || !in_array($user['group'] ?? null, ['admin', 'user'], true)) {
                     return self::error($response, 'INVALID_CREDENTIALS', 401);
                 }
 
-                $token = (new JwtService())->createToken($user['id']);
-                (new SessionService())->setUser($user['id'], $user['group']);
+                $token = ($jwtService ?? new JwtService())->createToken($user['id']);
+                ($sessionService ?? new SessionService())->setUser($user['id'], $user['group']);
 
                 return self::json($response, [
                     'user' => $user,

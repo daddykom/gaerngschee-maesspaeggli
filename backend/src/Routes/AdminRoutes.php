@@ -13,11 +13,11 @@ use Slim\Routing\RouteCollectorProxy;
 
 final class AdminRoutes
 {
-    public static function register(App $app): void
+    public static function register(App $app, ?UserRepository $userRepository = null): void
     {
-        $app->group('/admin', function (RouteCollectorProxy $group): void {
-            $route = $group->get('/users', function ($request, ResponseInterface $response) {
-                $repository = new UserRepository();
+        $app->group('/admin', function (RouteCollectorProxy $group) use ($userRepository): void {
+            $route = $group->get('/users', function ($request, ResponseInterface $response) use ($userRepository) {
+                $repository = $userRepository ?? new UserRepository();
                 $users = $repository->findAll();
                 $body = json_encode($users, JSON_THROW_ON_ERROR);
                 $response->getBody()->write($body);
@@ -25,7 +25,7 @@ final class AdminRoutes
                     ->withHeader('Content-Type', 'application/json');
             });
 
-            $route->add(new GroupMiddleware('admin'));
+            $route->add(new GroupMiddleware('admin', $userRepository));
             $route->add(new AuthMiddleware());
         });
     }

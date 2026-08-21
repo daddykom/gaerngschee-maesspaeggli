@@ -4,12 +4,50 @@ declare(strict_types=1);
 
 namespace Tests\Routes;
 
+use App\Data\UserRepository;
 use App\Application;
+use App\Routes\AuthRoutes;
+use App\Services\JwtService;
+use App\Services\SessionService;
+use PDO;
 use PHPUnit\Framework\TestCase;
 use Slim\Psr7\Factory\ServerRequestFactory;
+use Slim\Psr7\Stream;
+use Slim\Factory\AppFactory;
 
 final class AuthRoutesTest extends TestCase
 {
+    private PDO $pdo;
+    private UserRepository $repository;
+
+    protected function setUp(): void
+    {
+        putenv('JWT_SECRET=01234567890123456789012345678901');
+        putenv('JWT_ALGORITHM=HS256');
+        (new SessionService())->clear();
+
+        $this->pdo = new PDO('sqlite::memory:');
+        $this->pdo->setAttribute(PDO::ATTR_DEFAULT_FETCH_MODE, PDO::FETCH_ASSOC);
+        $this->pdo->exec(
+            'CREATE TABLE users (
+                id TEXT PRIMARY KEY,
+                email TEXT UNIQUE NOT NULL,
+                password TEXT NOT NULL,
+                "group" TEXT NOT NULL,
+                created_at TEXT,
+                updated_at TEXT
+            )',
+        );
+        $this->repository = new UserRepository($this->pdo);
+    }
+
+    protected function tearDown(): void
+    {
+        (new SessionService())->clear();
+        putenv('JWT_SECRET');
+        putenv('JWT_ALGORITHM');
+    }
+
     public function testInvalidLoginReturnsUnauthorized(): void
     {
         $request = (new ServerRequestFactory())
@@ -17,6 +55,58 @@ final class AuthRoutesTest extends TestCase
             ->withBody((new \Slim\Psr7\Stream(fopen('php://temp', 'r+'))));
 
         $response = Application::create()->handle($request);
+
+        self::assertSame(401, $response->getStatusCode());
+        self::assertSame(
+            '{"error":{"code":"INVALID_CREDENTIALS","details":[]}}',
+            (string) $response->getBody(),
+        );
+    }
+
+    public function testAllowedUserCanLoginWithJwtAndSession(): void
+    {
+        $user = $this->repository->createUser('user@example.com', 'secret', 'user');
+        $app = $this->createAuthApp();
+
+        $response = $app->handle($this->request('/auth/login', [
+            'email' => 'user@example.com',
+            'password' => 'secret',
+        ]));
+        $data = json_decode((string) $response->getBody(), true, 512, JSON_THROW_ON_ERROR);
+
+        self::assertSame(200, $response->getStatusCode());
+        self::assertSame($user['id'], $data['user']['id']);
+        self::assertSame('user', $data['group']);
+        self::assertSame($user['id'], (new JwtService())->getUserIdFromToken($data['token']));
+        self::assertSame($user['id'], (new SessionService())->getUserId());
+        self::assertSame('user', (new SessionService())->getGroup());
+    }
+
+    public function testClientCannotLoginEvenWithCorrectPassword(): void
+    {
+        $this->repository->createUser('client@example.com', 'secret', 'client');
+
+        $response = $this->createAuthApp()->handle($this->request('/auth/login', [
+            'email' => 'client@example.com',
+            'password' => 'secret',
+        ]));
+
+        self::assertSame(401, $response->getStatusCode());
+        self::assertSame(
+            '{"error":{"code":"INVALID_CREDENTIALS","details":[]}}',
+            (string) $response->getBody(),
+        );
+        self::assertNull((new SessionService())->getUserId());
+    }
+
+    public function testWrongPasswordCannotLogin(): void
+    {
+        $this->repository->createUser('user@example.com', 'secret', 'user');
+
+        $response = $this->createAuthApp()->handle($this->request('/auth/login', [
+            'email' => 'user@example.com',
+            'password' => 'wrong',
+        ]));
 
         self::assertSame(401, $response->getStatusCode());
         self::assertSame(
@@ -34,5 +124,26 @@ final class AuthRoutesTest extends TestCase
         $response = Application::create()->handle($request);
 
         self::assertSame(422, $response->getStatusCode());
+    }
+
+    private function createAuthApp(): \Slim\App
+    {
+        $app = AppFactory::create();
+        $app->addRoutingMiddleware();
+        AuthRoutes::register($app, $this->repository, new JwtService(), new SessionService());
+
+        return $app;
+    }
+
+    private function request(string $path, array $body): \Psr\Http\Message\ServerRequestInterface
+    {
+        $stream = fopen('php://temp', 'r+');
+        fwrite($stream, json_encode($body, JSON_THROW_ON_ERROR));
+        rewind($stream);
+
+        return (new ServerRequestFactory())
+            ->createServerRequest('POST', $path)
+            ->withHeader('Content-Type', 'application/json')
+            ->withBody(new Stream($stream));
     }
 }

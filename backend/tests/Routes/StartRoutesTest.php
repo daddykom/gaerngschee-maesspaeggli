@@ -26,6 +26,10 @@ final class StartRoutesTest extends TestCase
         $response = $app->handle($this->request('not-an-email'));
 
         self::assertSame(422, $response->getStatusCode());
+        self::assertSame(
+            '{"error":{"code":"INVALID_EMAIL","details":[]}}',
+            (string) $response->getBody(),
+        );
     }
 
     public function testStartRequestReturnsNeutralAcceptedResponse(): void
@@ -43,7 +47,37 @@ final class StartRoutesTest extends TestCase
         );
     }
 
-    private function service(): AnmeldungService
+    public function testStartRequestRejectsUnsupportedLanguage(): void
+    {
+        $app = AppFactory::create();
+        $app->addRoutingMiddleware();
+        StartRoutes::register($app, $this->service());
+
+        $response = $app->handle($this->request('person@example.com', 'fr'));
+
+        self::assertSame(422, $response->getStatusCode());
+        self::assertSame(
+            '{"error":{"code":"UNSUPPORTED_LANGUAGE","details":[]}}',
+            (string) $response->getBody(),
+        );
+    }
+
+    public function testStartRequestReturnsServiceError(): void
+    {
+        $app = AppFactory::create();
+        $app->addRoutingMiddleware();
+        StartRoutes::register($app, $this->service(true));
+
+        $response = $app->handle($this->request('person@example.com'));
+
+        self::assertSame(503, $response->getStatusCode());
+        self::assertSame(
+            '{"error":{"code":"REQUEST_FAILED","details":[]}}',
+            (string) $response->getBody(),
+        );
+    }
+
+    private function service(bool $failToSend = false): AnmeldungService
     {
         $pdo = new PDO('sqlite::memory:');
         $pdo->exec(
@@ -65,7 +99,14 @@ final class StartRoutesTest extends TestCase
                     return false;
                 }
             },
-            new class () implements EmailSenderInterface {
+            $failToSend
+                ? new class () implements EmailSenderInterface {
+                    public function sendAnmeldung(string $recipient, \App\Services\AnmeldungMailVariant $variant, string $locale = 'de'): void
+                    {
+                        throw new \RuntimeException('SMTP failed');
+                    }
+                }
+                : new class () implements EmailSenderInterface {
                 public function sendAnmeldung(string $recipient, \App\Services\AnmeldungMailVariant $variant, string $locale = 'de'): void
                 {
                 }
@@ -73,10 +114,10 @@ final class StartRoutesTest extends TestCase
         );
     }
 
-    private function request(string $email): \Psr\Http\Message\ServerRequestInterface
+    private function request(string $email, string $language = 'de'): \Psr\Http\Message\ServerRequestInterface
     {
         $stream = fopen('php://temp', 'r+');
-        fwrite($stream, json_encode(['email' => $email], JSON_THROW_ON_ERROR));
+        fwrite($stream, json_encode(['email' => $email, 'language' => $language], JSON_THROW_ON_ERROR));
         rewind($stream);
 
         return (new ServerRequestFactory())
