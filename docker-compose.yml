@@ -17,6 +17,7 @@ services:
       - DB_NAME=gaerngschee_maesspaeggli
       - DB_USER=gaerngschee
       - DB_PASS=changeme
+      - JWT_SECRET=${JWT_SECRET:-077d240281f5296af33a65436217ae966bd0a36a8281cd740ef6f7f0f7faca52}
 
   database:
     image: mariadb:10.11
