@@ -13,6 +13,7 @@ import { authEffects } from './store/auth/auth.effects';
 import { authFeature } from './store/auth/auth.feature';
 import { startEffects } from './store/start/start.effects';
 import { startFeature } from './store/start/start.feature';
+import { adminOverviewFeature } from './store/admin-overview/admin-overview.feature';
 
 export const appConfig: ApplicationConfig = {
   providers: [
@@ -22,6 +23,7 @@ export const appConfig: ApplicationConfig = {
     provideStore(),
     provideState(startFeature),
     provideState(authFeature),
+    provideState(adminOverviewFeature),
     provideEffects(startEffects, authEffects),
     provideStoreDevtools(),
     provideAnimations(),
