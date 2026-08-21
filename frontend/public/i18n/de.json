@@ -3,7 +3,7 @@
     "title": "Gärngschee-Mässpäggli",
     "anmeldung": {
       "title": "Mässpäggli bekommen",
-      "lead": "Schreib deine E-Mail-Adresse hier hinein. Wir schicken dir dann die nächsten Schritte per E-Mail.",
+      "lead": "Schreib deine E-Mail-Adresse hier hinein. Wir schicken dir dann einen direkten Link zum Bestellformular.",
       "fairgate": "Hast du ein Konto bei Fairgate? Dann gib hier dieselbe E-Mail-Adresse ein.",
       "emailHeading": "Deine E-Mail-Adresse",
       "emailLabel": "E-Mail-Adresse",
@@ -15,6 +15,13 @@
       "sendError": "Die E-Mail konnte gerade nicht gesendet werden. Bitte versuche es später noch einmal.",
       "privacyTitle": "Deine Daten bleiben privat",
       "privacyText": "Wir prüfen deine Angaben. Auf dieser Seite zeigen wir nicht, ob diese E-Mail-Adresse bei uns oder bei Fairgate gespeichert ist. Die nächsten Schritte schicken wir dir per E-Mail."
+    },
+    "login": {
+      "pageTitle": "Mässpäggli verwalten",
+      "heading": "Anmelden",
+      "emailLabel": "E-Mail-Adresse",
+      "passwordLabel": "Passwort",
+      "submit": "Anmelden"
     }
   }
 }

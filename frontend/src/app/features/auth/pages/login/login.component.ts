@@ -4,10 +4,11 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatCardModule } from '@angular/material/card';
 import { MatInputModule } from '@angular/material/input';
 import { ActivatedRoute } from '@angular/router';
+import { TranslatePipe } from '@ngx-translate/core';
 
 @Component({
   selector: 'app-login',
-  imports: [MatCardModule, MatInputModule, MatButtonModule, ReactiveFormsModule],
+  imports: [MatCardModule, MatInputModule, MatButtonModule, ReactiveFormsModule, TranslatePipe],
   templateUrl: './login.component.html',
   styleUrl: './login.component.scss',
 })

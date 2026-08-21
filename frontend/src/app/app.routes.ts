@@ -3,11 +3,11 @@ import { Routes } from '@angular/router';
 export const appRoutes: Routes = [
   {
     path: '',
-    redirectTo: 'anmeldung',
+    redirectTo: 'start',
     pathMatch: 'full',
   },
   {
-    path: 'anmeldung',
+    path: 'start',
     loadComponent: () =>
       import('./features/auth/pages/start/maesspaeggli-start.component').then(
         (m) => m.MaesspaeggliStartComponent,

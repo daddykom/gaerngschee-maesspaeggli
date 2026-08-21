@@ -1,22 +1,22 @@
 <div class="page-container">
     <div class="page-header">
         <img src="/android-chrome-512x512.png" alt="Logo" class="header-icon" />
-        <h1 class="mat-headline-5">Mässpäggli anfragen</h1>
+        <h1 class="mat-headline-5">{{ 'app.login.pageTitle' | translate }}</h1>
     </div>
 
   <mat-card appearance="outlined" class="standard-card">
-      <h2>Anmelden</h2>
+      <h2>{{ 'app.login.heading' | translate }}</h2>
     <mat-card-content>
       <form [formGroup]="loginForm" class="auth-form" (ngSubmit)="onSubmit()">
         <mat-form-field appearance="outline">
-          <mat-label>Email</mat-label>
+          <mat-label>{{ 'app.login.emailLabel' | translate }}</mat-label>
           <input matInput type="email" formControlName="email" />
         </mat-form-field>
         <mat-form-field appearance="outline">
-          <mat-label>Passwort</mat-label>
+          <mat-label>{{ 'app.login.passwordLabel' | translate }}</mat-label>
           <input matInput type="password" formControlName="password" />
         </mat-form-field>
-        <button mat-flat-button color="primary" type="submit">Anmelden</button>
+        <button mat-flat-button color="primary" type="submit">{{ 'app.login.submit' | translate }}</button>
       </form>
     </mat-card-content>
   </mat-card>
