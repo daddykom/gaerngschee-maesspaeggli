@@ -1,3 +1,7 @@
+.admin-page-content {
+  padding: clamp(40px, 5vw, 72px) clamp(24px, 4vw, 54px);
+}
+
 .overview-list {
   max-width: 900px;
   margin: 0 auto;
