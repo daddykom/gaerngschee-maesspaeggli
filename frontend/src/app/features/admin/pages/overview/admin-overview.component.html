@@ -1,2 +1,19 @@
-<main class="page-container">
+<main class="page">
+  <mat-card class="admin-card" appearance="outlined">
+    <mat-card-content>
+      <dl class="overview-list">
+        <div class="overview-list__row">
+          <dt>Anzahl Bestellungen</dt>
+          <dd>{{ numbOrders() }}</dd>
+        </div>
+
+        @for (kategory of kategories(); track kategory.kategoryId) {
+          <div class="overview-list__row">
+            <dt>Kategorie {{ kategory.kategoryId }}</dt>
+            <dd>{{ kategory.numbPackages }}</dd>
+          </div>
+        }
+      </dl>
+    </mat-card-content>
+  </mat-card>
 </main>

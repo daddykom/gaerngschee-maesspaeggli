@@ -1,0 +1,38 @@
+.page {
+  width: min(1180px, calc(100% - 32px));
+  margin: 16px auto 32px;
+}
+
+.admin-card {
+  border-radius: 24px;
+}
+
+.admin-card mat-card-content {
+  padding: clamp(24px, 4vw, 54px) !important;
+}
+
+.overview-list {
+  max-width: 900px;
+  margin: 0 auto;
+}
+
+.overview-list__row {
+  display: flex;
+  justify-content: space-between;
+  gap: 1rem;
+  padding: 1.25rem 0;
+  border-bottom: 1px solid var(--mat-sys-outline-variant);
+}
+
+.overview-list__row:first-child {
+  border-top: 1px solid var(--mat-sys-outline-variant);
+}
+
+.overview-list dt {
+  font-weight: 500;
+}
+
+.overview-list dd {
+  margin: 0;
+  text-align: right;
+}
