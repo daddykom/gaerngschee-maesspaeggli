@@ -27,24 +27,25 @@
         <h2 id="email-heading">{{ 'app.anmeldung.emailHeading' | translate }}</h2>
 
         <form [formGroup]="form" (ngSubmit)="submit()" class="email-form">
-          <mat-form-field appearance="outline" class="email-field">
-            <mat-label>{{ 'app.anmeldung.emailLabel' | translate }}</mat-label>
-            <mat-icon matPrefix>mail</mat-icon>
+          <div class="email-field-group">
+            <mat-form-field appearance="outline" class="email-field">
+              <mat-label>{{ 'app.anmeldung.emailLabel' | translate }}</mat-label>
+              <mat-icon matPrefix>mail</mat-icon>
 
-            <input
-              matInput
-              type="email"
-              formControlName="email"
-              autocomplete="email"
-              [placeholder]="'app.anmeldung.emailPlaceholder' | translate"
-            >
+              <input
+                matInput
+                type="email"
+                formControlName="email"
+                autocomplete="email"
+                [placeholder]="'app.anmeldung.emailPlaceholder' | translate"
+              >
+            </mat-form-field>
 
-          </mat-form-field>
-
-          <app-control-error
-            [control]="form.controls.email"
-            translationPrefix="app.anmeldung.errors.email"
-          />
+            <app-control-error
+              [control]="form.controls.email"
+              translationPrefix="app.anmeldung.errors.email"
+            />
+          </div>
 
           <button
             mat-flat-button
