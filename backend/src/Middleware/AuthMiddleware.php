@@ -27,16 +27,21 @@ final class AuthMiddleware
         }
 
         if ($userId === null) {
-            return $this->jsonError('Unauthorized.', 401);
+            return $this->jsonError('UNAUTHORIZED', 401);
         }
 
         return $handler->handle($request->withAttribute('user_id', $userId));
     }
 
-    private function jsonError(string $message, int $status): ResponseInterface
+    private function jsonError(string $code, int $status): ResponseInterface
     {
         $response = new Response();
-        $response->getBody()->write(json_encode(['error' => $message], JSON_THROW_ON_ERROR));
+        $response->getBody()->write(json_encode([
+            'error' => [
+                'code' => $code,
+                'details' => [],
+            ],
+        ], JSON_THROW_ON_ERROR));
 
         return $response
             ->withHeader('Content-Type', 'application/json')

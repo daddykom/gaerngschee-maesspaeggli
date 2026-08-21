@@ -29,17 +29,17 @@ final class StartRoutes
                     : 'de';
 
                 if ($email === null || filter_var(trim($email), FILTER_VALIDATE_EMAIL) === false) {
-                    return self::json($response, ['error' => 'Invalid email address.'], 422);
+                    return self::error($response, 'INVALID_EMAIL', 422);
                 }
 
                 if (!in_array($locale, self::SUPPORTED_LOCALES, true)) {
-                    return self::json($response, ['error' => 'Unsupported language.'], 422);
+                    return self::error($response, 'UNSUPPORTED_LANGUAGE', 422);
                 }
 
                 try {
                     ($anmeldungService ?? self::createAnmeldungService())->sendInformationEmail($email, $locale);
                 } catch (Throwable) {
-                    return self::json($response, ['error' => 'The request could not be processed.'], 503);
+                    return self::error($response, 'REQUEST_FAILED', 503);
                 }
 
                 return self::json(
@@ -67,5 +67,10 @@ final class StartRoutes
         return $response
             ->withHeader('Content-Type', 'application/json')
             ->withStatus($status);
+    }
+
+    private static function error(ResponseInterface $response, string $code, int $status): ResponseInterface
+    {
+        return self::json($response, ['error' => ['code' => $code, 'details' => []]], $status);
     }
 }

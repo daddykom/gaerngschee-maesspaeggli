@@ -38,7 +38,12 @@ final class GroupMiddleware
     private function notFound(): ResponseInterface
     {
         $response = new Response();
-        $response->getBody()->write(json_encode(['error' => 'Not found.'], JSON_THROW_ON_ERROR));
+        $response->getBody()->write(json_encode([
+            'error' => [
+                'code' => 'NOT_FOUND',
+                'details' => [],
+            ],
+        ], JSON_THROW_ON_ERROR));
 
         return $response
             ->withHeader('Content-Type', 'application/json')

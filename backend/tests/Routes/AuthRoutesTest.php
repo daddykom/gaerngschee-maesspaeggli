@@ -19,6 +19,10 @@ final class AuthRoutesTest extends TestCase
         $response = Application::create()->handle($request);
 
         self::assertSame(401, $response->getStatusCode());
+        self::assertSame(
+            '{"error":{"code":"INVALID_CREDENTIALS","details":[]}}',
+            (string) $response->getBody(),
+        );
     }
 
     public function testInvalidRegistrationReturnsValidationError(): void

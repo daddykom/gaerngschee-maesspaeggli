@@ -24,12 +24,12 @@ final class AuthRoutes
                 $password = self::readString($data, 'password');
 
                 if (!self::isEmailAndPasswordValid($email, $password)) {
-                    return self::json($response, ['error' => 'Invalid email or password.'], 422);
+                    return self::error($response, 'INVALID_CREDENTIALS', 422);
                 }
 
                 $repository = new UserRepository();
                 if ($repository->findByEmail($email) !== null) {
-                    return self::json($response, ['error' => 'Email is already registered.'], 409);
+                    return self::error($response, 'EMAIL_ALREADY_REGISTERED', 409);
                 }
 
                 try {
@@ -37,7 +37,7 @@ final class AuthRoutes
                     $token = (new JwtService())->createToken($user['id']);
                     (new SessionService())->setUserId($user['id']);
                 } catch (Throwable) {
-                    return self::json($response, ['error' => 'Registration failed.'], 500);
+                    return self::error($response, 'REGISTRATION_FAILED', 500);
                 }
 
                 return self::json($response, ['user' => $user, 'token' => $token], 201);
@@ -49,18 +49,22 @@ final class AuthRoutes
                 $password = self::readString($data, 'password');
 
                 if ($email === null || $password === null) {
-                    return self::json($response, ['error' => 'Invalid credentials.'], 401);
+                    return self::error($response, 'INVALID_CREDENTIALS', 401);
                 }
 
                 $user = (new UserRepository())->verifyPassword($email, $password);
-                if ($user === null) {
-                    return self::json($response, ['error' => 'Invalid credentials.'], 401);
+                if ($user === null || !in_array($user['group'] ?? null, ['admin', 'user'], true)) {
+                    return self::error($response, 'INVALID_CREDENTIALS', 401);
                 }
 
                 $token = (new JwtService())->createToken($user['id']);
-                (new SessionService())->setUserId($user['id']);
+                (new SessionService())->setUser($user['id'], $user['group']);
 
-                return self::json($response, ['user' => $user, 'token' => $token]);
+                return self::json($response, [
+                    'user' => $user,
+                    'token' => $token,
+                    'group' => $user['group'],
+                ]);
             });
 
             $group->post('/logout', function (ServerRequestInterface $request, ResponseInterface $response) {
@@ -79,12 +83,12 @@ final class AuthRoutes
                 }
 
                 if ($userId === null) {
-                    return self::json($response, ['error' => 'Unauthorized.'], 401);
+                    return self::error($response, 'UNAUTHORIZED', 401);
                 }
 
                 $user = (new UserRepository())->findById($userId);
                 if ($user === null) {
-                    return self::json($response, ['error' => 'Unauthorized.'], 401);
+                    return self::error($response, 'UNAUTHORIZED', 401);
                 }
 
                 return self::json($response, ['user' => $user]);
@@ -120,5 +124,10 @@ final class AuthRoutes
         return $response
             ->withHeader('Content-Type', 'application/json')
             ->withStatus($status);
+    }
+
+    private static function error(ResponseInterface $response, string $code, int $status): ResponseInterface
+    {
+        return self::json($response, ['error' => ['code' => $code, 'details' => []]], $status);
     }
 }

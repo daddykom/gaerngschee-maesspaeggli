@@ -35,6 +35,15 @@ final class SessionServiceTest extends TestCase
         self::assertSame('user-123', $service->getUserId());
     }
 
+    public function testUserIdAndGroupCanBeStoredAndRead(): void
+    {
+        $service = new SessionService();
+        $service->setUser('user-123', 'admin');
+
+        self::assertSame('user-123', $service->getUserId());
+        self::assertSame('admin', $service->getGroup());
+    }
+
     public function testClearRemovesUserId(): void
     {
         $service = new SessionService();
@@ -42,5 +51,6 @@ final class SessionServiceTest extends TestCase
         $service->clear();
 
         self::assertNull($service->getUserId());
+        self::assertNull($service->getGroup());
     }
 }
