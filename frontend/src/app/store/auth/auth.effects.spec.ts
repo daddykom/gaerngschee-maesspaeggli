@@ -1,11 +1,13 @@
 import { HttpErrorResponse } from '@angular/common/http';
 import { TestBed } from '@angular/core/testing';
+import { Router } from '@angular/router';
 import { provideMockActions } from '@ngrx/effects/testing';
 import { Action } from '@ngrx/store';
 import { firstValueFrom, of, Subject, throwError } from 'rxjs';
 import { AuthService } from '../../shared/services/auth.service';
 import { AuthActions } from './auth.actions';
 import { loginEffect } from './auth.effects';
+import { navigateOnLoginSuccessEffect } from './auth.effects';
 
 describe('loginEffect', () => {
   let actions$: Subject<Action>;
@@ -53,5 +55,17 @@ describe('loginEffect', () => {
     await expect(result).resolves.toEqual(
       AuthActions.loginFailure({ errorCode: 'INVALID_CREDENTIALS' }),
     );
+  });
+
+  it('navigates to the admin overview after a successful login', () => {
+    const router = { navigateByUrl: jest.fn() };
+    TestBed.overrideProvider(Router, { useValue: router });
+    const effect$ = TestBed.runInInjectionContext(() => navigateOnLoginSuccessEffect());
+    const subscription = effect$.subscribe();
+
+    actions$.next(AuthActions.loginSuccess({ token: 'jwt-token', group: 'admin' }));
+
+    expect(router.navigateByUrl).toHaveBeenCalledWith('/admin/overview');
+    subscription.unsubscribe();
   });
 });

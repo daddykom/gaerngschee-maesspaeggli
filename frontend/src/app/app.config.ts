@@ -9,8 +9,10 @@ import { provideAnimations } from '@angular/platform-browser/animations';
 import { provideTranslateService } from '@ngx-translate/core';
 import { provideTranslateHttpLoader } from '@ngx-translate/http-loader';
 import { appRoutes } from './app.routes';
-import { loginEffect } from './store/auth/auth.effects';
+import { authEffects } from './store/auth/auth.effects';
 import { authFeature } from './store/auth/auth.feature';
+import { startEffects } from './store/start/start.effects';
+import { startFeature } from './store/start/start.feature';
 
 export const appConfig: ApplicationConfig = {
   providers: [
@@ -18,8 +20,9 @@ export const appConfig: ApplicationConfig = {
     provideHttpClient(),
     provideRouter(appRoutes),
     provideStore(),
+    provideState(startFeature),
     provideState(authFeature),
-    provideEffects({ loginEffect }),
+    provideEffects(startEffects, authEffects),
     provideStoreDevtools(),
     provideAnimations(),
     provideTranslateService({

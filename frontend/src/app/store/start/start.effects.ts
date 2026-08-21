@@ -18,4 +18,6 @@ export const submitStartEffect = createEffect(
   { functional: true },
 );
 
-export const startEffects = [submitStartEffect];
+export const startEffects = {
+  submitStartEffect,
+};
