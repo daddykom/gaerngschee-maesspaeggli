@@ -8,8 +8,12 @@
       "emailHeading": "Deine E-Mail-Adresse",
       "emailLabel": "E-Mail-Adresse",
       "emailPlaceholder": "name@example.com",
-      "requiredError": "Bitte gib deine E-Mail-Adresse ein.",
-      "invalidEmailError": "Bitte prüfe deine E-Mail-Adresse.",
+      "errors": {
+        "email": {
+          "required": "Bitte gib deine E-Mail-Adresse ein.",
+          "email": "Bitte prüfe deine E-Mail-Adresse."
+        }
+      },
       "continue": "Weiter",
       "privacyHint": "Wir behandeln deine Daten vertraulich.",
       "sendError": "Die E-Mail konnte gerade nicht gesendet werden. Bitte versuche es später noch einmal.",

@@ -39,12 +39,12 @@
               [placeholder]="'app.anmeldung.emailPlaceholder' | translate"
             >
 
-            @if (form.controls.email.hasError('required')) {
-              <mat-error>{{ 'app.anmeldung.requiredError' | translate }}</mat-error>
-            } @else if (form.controls.email.hasError('email')) {
-              <mat-error>{{ 'app.anmeldung.invalidEmailError' | translate }}</mat-error>
-            }
           </mat-form-field>
+
+          <app-control-error
+            [control]="form.controls.email"
+            translationPrefix="app.anmeldung.errors.email"
+          />
 
           <button
             mat-flat-button

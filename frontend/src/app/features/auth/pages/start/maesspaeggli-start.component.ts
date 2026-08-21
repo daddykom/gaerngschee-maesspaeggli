@@ -11,6 +11,7 @@ import { Store } from '@ngrx/store';
 import { StartActions } from '../../../../store/start/start.actions';
 import { selectStartSendError } from '../../../../store/start/start.feature';
 import { InfoBoxComponent } from '../../../../shared/components/info-box/info-box';
+import { ControlErrorComponent } from '../../../../shared/components/control-error/control-error';
 
 @Component({
   selector: 'app-maesspaeggli-start',
@@ -24,6 +25,7 @@ import { InfoBoxComponent } from '../../../../shared/components/info-box/info-bo
     MatInputModule,
     TranslatePipe,
     InfoBoxComponent,
+    ControlErrorComponent,
   ],
   templateUrl: './maesspaeggli-start.component.html',
   styleUrl: './maesspaeggli-start.component.scss',
