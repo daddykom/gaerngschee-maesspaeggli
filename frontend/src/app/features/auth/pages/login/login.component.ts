@@ -1,7 +1,6 @@
 import { Component, inject, OnInit } from '@angular/core';
 import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
-import { MatCardModule } from '@angular/material/card';
 import { MatInputModule } from '@angular/material/input';
 import { ActivatedRoute } from '@angular/router';
 import { TranslatePipe } from '@ngx-translate/core';
@@ -13,7 +12,6 @@ import { ControlErrorComponent } from '../../../../shared/components/control-err
 @Component({
   selector: 'app-login',
   imports: [
-    MatCardModule,
     MatInputModule,
     MatButtonModule,
     ReactiveFormsModule,

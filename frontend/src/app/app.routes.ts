@@ -21,6 +21,7 @@ export const appRoutes: Routes = [
   },
   {
     path: 'register',
+    data: { pageTitle: 'app.register.pageTitle' },
     loadComponent: () =>
       import('./features/auth/pages/register/register.component').then((m) => m.Register),
   },

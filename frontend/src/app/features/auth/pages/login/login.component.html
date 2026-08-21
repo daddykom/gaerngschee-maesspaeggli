@@ -1,8 +1,7 @@
-<div class="page-container">
-  <mat-card appearance="outlined" class="standard-card">
-      <h2>{{ 'app.login.heading' | translate }}</h2>
-    <mat-card-content>
-      <form [formGroup]="loginForm" class="auth-form" (ngSubmit)="onSubmit()">
+<section class="page-content">
+  <div class="form-content">
+    <h2>{{ 'app.login.heading' | translate }}</h2>
+    <form [formGroup]="loginForm" class="auth-form" (ngSubmit)="onSubmit()">
         <div class="auth-field-group">
           <mat-form-field appearance="outline" subscriptSizing="dynamic">
             <mat-label>{{ 'app.login.emailLabel' | translate }}</mat-label>
@@ -32,7 +31,6 @@
         >
           {{ 'app.login.submit' | translate }}
         </button>
-      </form>
-    </mat-card-content>
-  </mat-card>
-</div>
+    </form>
+  </div>
+</section>

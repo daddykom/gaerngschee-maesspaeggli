@@ -7,7 +7,7 @@
   background: transparent;
 }
 
-.admin-page-shell {
+.page-shell {
   width: min(1180px, calc(100% - 32px));
   margin: 2rem auto;
   border: 1px solid var(--mat-sys-outline-variant);
@@ -26,6 +26,8 @@
   align-items: center;
   gap: 1rem;
   width: 100%;
+  max-width: 900px;
+  margin: 0 auto;
 }
 
 .app-page-header--admin {
@@ -35,7 +37,6 @@
 
 .app-page-header--admin .app-page-header__content {
   width: min(900px, calc(100% - 48px));
-  margin: 0 auto;
 }
 
 .admin-menu-button {
@@ -57,7 +58,10 @@
 }
 
 .app-page-header {
-  padding: 2rem 2rem 0;
+  box-sizing: border-box;
+  width: 100%;
+  max-width: none;
+  padding: 1rem 2rem;
   margin-bottom: 0;
 }
 

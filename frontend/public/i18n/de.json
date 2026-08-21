@@ -36,6 +36,9 @@
         }
       }
     },
+    "register": {
+      "pageTitle": "Registrieren"
+    },
     "auth": {
       "loginErrorTitle": "Anmeldung fehlgeschlagen",
       "errors": {
