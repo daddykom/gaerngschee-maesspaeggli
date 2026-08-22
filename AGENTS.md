@@ -175,7 +175,7 @@ Playwright-E2E-Specs testen jeweils nur eine Route:
 - `start.spec.ts` testet `/start`.
 - Tests für `/` liegen in einer separaten `root.spec.ts`.
 
-Eine Spec DARF keine Tests für mehrere unterschiedliche Routen enthalten.
+Eine Spec DARF grundsätzlich keine Tests für mehrere unterschiedliche Routen enthalten. Authentifizierungs- und Redirect-Lifecycle-Tests dürfen die dafür notwendigen Zielrouten durchlaufen. Der Login-Lifecycle in `login.spec.ts` darf deshalb `/login` und den geschützten Übergang zu `/admin/overview` testen.
 
 ## Entwicklungsphilosophie
 

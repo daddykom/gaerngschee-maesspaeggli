@@ -1,4 +1,5 @@
 import { Routes } from '@angular/router';
+import { groupGuard } from './shared/guards/group.guard';
 
 export const appRoutes: Routes = [
   {
@@ -26,11 +27,17 @@ export const appRoutes: Routes = [
       import('./features/auth/pages/register/register.component').then((m) => m.Register),
   },
   {
-    path: 'admin/overview',
-    data: { pageTitle: 'app.admin.overview.title', pageHeaderLayout: 'wide' },
-    loadComponent: () =>
-      import('./features/admin/pages/overview/admin-overview.component').then(
-        (m) => m.AdminOverviewComponent,
-      ),
+    path: 'admin',
+    canActivate: [groupGuard(['user', 'admin'])],
+    children: [
+      {
+        path: 'overview',
+        data: { pageTitle: 'app.admin.overview.title', pageHeaderLayout: 'wide' },
+        loadComponent: () =>
+          import('./features/admin/pages/overview/admin-overview.component').then(
+            (m) => m.AdminOverviewComponent,
+          ),
+      },
+    ],
   },
 ];

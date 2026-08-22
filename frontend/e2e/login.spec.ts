@@ -13,6 +13,9 @@ test.describe('Login route', () => {
         }),
       });
     });
+    await page.route('http://localhost:8080/auth/logout', async (route) => {
+      await route.fulfill({ status: 204 });
+    });
 
     await page.goto('/login');
     await expect(page.locator('h1')).toHaveText('Mässpäggli verwalten');
@@ -27,6 +30,14 @@ test.describe('Login route', () => {
     await page.getByRole('button', { name: 'Administrationsmenü öffnen' }).click();
     await expect(page.getByRole('menuitem', { name: 'Startseite' })).toBeVisible();
     await expect(page.getByRole('menuitem', { name: 'Admin-Übersicht' })).toBeVisible();
+    await expect(page.getByRole('menuitem', { name: 'Abmelden' })).toBeVisible();
+
+    await page.getByRole('menuitem', { name: 'Abmelden' }).click();
+    await page.waitForURL('**/login');
+
+    await page.goto('/admin/overview');
+    await page.waitForURL('**/login');
+    await expect(page.locator('h1')).toHaveText('Mässpäggli verwalten');
   });
 
   test('shows a translated error for invalid credentials', async ({ page }) => {
