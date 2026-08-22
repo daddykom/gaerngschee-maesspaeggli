@@ -29,6 +29,14 @@ export const appRoutes: Routes = [
       ),
   },
   {
+    path: 'not-found',
+    data: { pageTitle: 'app.notFound.pageTitle' },
+    loadComponent: () =>
+      import('./features/errors/pages/not-found/not-found.component').then(
+        (m) => m.NotFoundComponent,
+      ),
+  },
+  {
     path: 'admin',
     canActivate: [groupGuard(['user', 'admin'])],
     children: [
@@ -41,5 +49,9 @@ export const appRoutes: Routes = [
           ),
       },
     ],
+  },
+  {
+    path: '**',
+    redirectTo: 'not-found',
   },
 ];

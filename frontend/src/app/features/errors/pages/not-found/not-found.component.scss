@@ -1,0 +1,22 @@
+.page-content {
+  padding: clamp(40px, 5vw, 72px) clamp(24px, 4vw, 54px);
+}
+
+.not-found-content {
+  max-width: 600px;
+  margin: 0 auto;
+  text-align: center;
+}
+
+.not-found-links {
+  display: flex;
+  justify-content: center;
+  gap: 1rem;
+  margin-top: 2rem;
+}
+
+@media (max-width: 560px) {
+  .not-found-links {
+    flex-direction: column;
+  }
+}
