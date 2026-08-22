@@ -36,4 +36,11 @@ export class AuthService {
   logout(): Observable<void> {
     return this.http.post<void>('http://localhost:8080/auth/logout', {});
   }
+
+  changePassword(password: string): Observable<{ user: AuthUser }> {
+    return this.http.post<{ user: AuthUser }>(
+      'http://localhost:8080/auth/password-change-authenticated',
+      { password },
+    );
+  }
 }

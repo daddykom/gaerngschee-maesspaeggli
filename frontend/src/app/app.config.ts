@@ -1,5 +1,5 @@
 import { ApplicationConfig, provideBrowserGlobalErrorListeners } from '@angular/core';
-import { provideHttpClient } from '@angular/common/http';
+import { provideHttpClient, withInterceptors } from '@angular/common/http';
 import { provideRouter } from '@angular/router';
 import { provideStore } from '@ngrx/store';
 import { provideEffects } from '@ngrx/effects';
@@ -14,17 +14,21 @@ import { authFeature } from './store/auth/auth.feature';
 import { startEffects } from './store/start/start.effects';
 import { startFeature } from './store/start/start.feature';
 import { adminOverviewFeature } from './store/admin-overview/admin-overview.feature';
+import { adminUsersEffects } from './store/admin-users/admin-users.effects';
+import { adminUsersFeature } from './store/admin-users/admin-users.feature';
+import { authTokenInterceptor } from './shared/interceptors/auth-token.interceptor';
 
 export const appConfig: ApplicationConfig = {
   providers: [
     provideBrowserGlobalErrorListeners(),
-    provideHttpClient(),
+    provideHttpClient(withInterceptors([authTokenInterceptor])),
     provideRouter(appRoutes),
     provideStore(),
     provideState(startFeature),
     provideState(authFeature),
     provideState(adminOverviewFeature),
-    provideEffects(startEffects, authEffects),
+    provideState(adminUsersFeature),
+    provideEffects(startEffects, authEffects, adminUsersEffects),
     provideStoreDevtools(),
     provideAnimations(),
     provideTranslateService({
