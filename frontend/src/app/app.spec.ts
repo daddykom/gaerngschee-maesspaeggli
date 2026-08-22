@@ -3,12 +3,18 @@ import { RouterTestingModule } from '@angular/router/testing';
 import { provideTranslateService } from '@ngx-translate/core';
 import { provideMockStore } from '@ngrx/store/testing';
 import { App } from './app';
+import { initialState as authInitialState } from './store/auth/auth.state';
 
 describe('App', () => {
   beforeEach(async () => {
     await TestBed.configureTestingModule({
       imports: [App, RouterTestingModule],
-      providers: [provideTranslateService(), provideMockStore({ initialState: { notification: { current: null } } })],
+      providers: [provideTranslateService(), provideMockStore({
+        initialState: {
+          auth: authInitialState,
+          notification: { current: null },
+        },
+      })],
     }).compileComponents();
   });
 
@@ -36,6 +42,7 @@ describe('App', () => {
                   preserveOnRoutes: [],
                 },
               },
+              auth: authInitialState,
             },
           }),
         ],

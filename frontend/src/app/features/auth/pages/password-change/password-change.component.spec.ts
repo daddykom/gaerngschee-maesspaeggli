@@ -1,7 +1,7 @@
 import { provideRouter } from '@angular/router';
 import { provideTranslateService } from '@ngx-translate/core';
-import { provideStore } from '@ngrx/store';
-import { AuthService } from '../../../../shared/services/auth.service';
+import { provideMockStore } from '@ngrx/store/testing';
+import { initialState as authInitialState } from '../../../../store/auth/auth.state';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { PasswordChange } from './password-change.component';
 
@@ -15,8 +15,7 @@ describe('PasswordChange', () => {
         providers: [
           provideRouter([]),
           provideTranslateService(),
-          provideStore(),
-          { provide: AuthService, useValue: { changePassword: jest.fn() } },
+          provideMockStore({ initialState: { auth: authInitialState } }),
         ],
     }).compileComponents();
 
