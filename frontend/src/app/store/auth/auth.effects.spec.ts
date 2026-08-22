@@ -1,11 +1,11 @@
 import { HttpErrorResponse } from '@angular/common/http';
 import { TestBed } from '@angular/core/testing';
-import { Router } from '@angular/router';
 import { provideMockActions } from '@ngrx/effects/testing';
 import { Action } from '@ngrx/store';
 import { firstValueFrom, of, Subject, throwError } from 'rxjs';
 import { AuthService } from '../../shared/services/auth.service';
 import { AuthActions } from './auth.actions';
+import { NavigationActions } from '../navigation/navigation.actions';
 import { loginEffect, logoutEffect, navigateOnLoginSuccessEffect } from './auth.effects';
 
 describe('loginEffect', () => {
@@ -62,11 +62,9 @@ describe('loginEffect', () => {
     );
   });
 
-  it('navigates to the admin overview after a successful login', () => {
-    const router = { navigateByUrl: jest.fn() };
-    TestBed.overrideProvider(Router, { useValue: router });
+  it('dispatches navigation to the admin overview after a successful login', async () => {
     const effect$ = TestBed.runInInjectionContext(() => navigateOnLoginSuccessEffect());
-    const subscription = effect$.subscribe();
+    const result = firstValueFrom(effect$);
 
     actions$.next(AuthActions.loginSuccess({
       token: 'jwt-token',
@@ -75,15 +73,12 @@ describe('loginEffect', () => {
       requiredPasswordReset: false,
     }));
 
-    expect(router.navigateByUrl).toHaveBeenCalledWith('/admin/overview');
-    subscription.unsubscribe();
+    await expect(result).resolves.toEqual(NavigationActions.navigate({ target: '/admin/overview' }));
   });
 
-  it('navigates to password change when a reset is required', () => {
-    const router = { navigateByUrl: jest.fn() };
-    TestBed.overrideProvider(Router, { useValue: router });
+  it('dispatches navigation to password change when a reset is required', async () => {
     const effect$ = TestBed.runInInjectionContext(() => navigateOnLoginSuccessEffect());
-    const subscription = effect$.subscribe();
+    const result = firstValueFrom(effect$);
 
     actions$.next(AuthActions.loginSuccess({
       token: 'jwt-token',
@@ -92,39 +87,28 @@ describe('loginEffect', () => {
       requiredPasswordReset: true,
     }));
 
-    expect(router.navigateByUrl).toHaveBeenCalledWith('/password-change');
-    subscription.unsubscribe();
+    await expect(result).resolves.toEqual(NavigationActions.navigate({ target: '/password-change' }));
   });
 
-  it('calls the backend logout and navigates to login after success', () => {
-    const router = { navigateByUrl: jest.fn() };
+  it('calls the backend logout and dispatches navigation to login after success', async () => {
     authService.logout.mockReturnValue(of(undefined));
-    TestBed.overrideProvider(Router, { useValue: router });
     const effect$ = TestBed.runInInjectionContext(() => logoutEffect());
-    const subscription = effect$.subscribe();
+    const result = firstValueFrom(effect$);
 
     actions$.next(AuthActions.logout());
 
     expect(authService.logout).toHaveBeenCalledTimes(1);
-    expect(router.navigateByUrl).toHaveBeenCalledWith('/login');
-    subscription.unsubscribe();
+    await expect(result).resolves.toEqual(NavigationActions.navigate({ target: '/login' }));
   });
 
-  it('navigates to login when the backend logout fails', () => {
-    const router = { navigateByUrl: jest.fn() };
+  it('dispatches navigation to login when the backend logout fails', async () => {
     authService.logout.mockReturnValue(throwError(() => new Error('Logout failed')));
-    TestBed.overrideProvider(Router, { useValue: router });
     const effect$ = TestBed.runInInjectionContext(() => logoutEffect());
-    const subscription = effect$.subscribe({
-      error: (error) => {
-        throw error;
-      },
-    });
+    const result = firstValueFrom(effect$);
 
     actions$.next(AuthActions.logout());
 
     expect(authService.logout).toHaveBeenCalledTimes(1);
-    expect(router.navigateByUrl).toHaveBeenCalledWith('/login');
-    subscription.unsubscribe();
+    await expect(result).resolves.toEqual(NavigationActions.navigate({ target: '/login' }));
   });
 });
