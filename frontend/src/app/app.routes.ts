@@ -21,6 +21,14 @@ export const appRoutes: Routes = [
     loadComponent: () => import('./features/auth/pages/login/login.component').then((m) => m.Login),
   },
   {
+    path: 'password-change',
+    data: { pageTitle: 'app.passwordChange.pageTitle' },
+    loadComponent: () =>
+      import('./features/auth/pages/password-change/password-change.component').then(
+        (m) => m.PasswordChange,
+      ),
+  },
+  {
     path: 'admin',
     canActivate: [groupGuard(['user', 'admin'])],
     children: [

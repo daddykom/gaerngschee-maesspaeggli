@@ -37,6 +37,22 @@
         }
       }
     },
+    "passwordChange": {
+      "pageTitle": "Passwort ändern",
+      "heading": "Passwort ändern",
+      "newPasswordLabel": "Neues Passwort",
+      "confirmationLabel": "Neues Passwort bestätigen",
+      "submit": "Passwort ändern",
+      "errors": {
+        "newPassword": {
+          "required": "Bitte gib ein neues Passwort ein."
+        },
+        "passwordConfirmation": {
+          "required": "Bitte bestätige dein neues Passwort."
+        },
+        "passwordsDoNotMatch": "Die Passwörter stimmen nicht überein."
+      }
+    },
     "auth": {
       "loginErrorTitle": "Anmeldung fehlgeschlagen",
       "errors": {
