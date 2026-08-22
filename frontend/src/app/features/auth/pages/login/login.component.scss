@@ -8,5 +8,19 @@
 }
 
 .forgot-password-link {
-  padding-inline: 0;
+  align-self: flex-start;
+  display: inline-block;
+  appearance: none;
+  border: 0;
+  background: transparent;
+  padding: 0;
+  color: var(--mat-sys-primary);
+  font: inherit;
+  text-decoration: underline;
+  cursor: pointer;
+  box-shadow: none;
+}
+
+.forgot-password-link:hover {
+  text-decoration: underline;
 }

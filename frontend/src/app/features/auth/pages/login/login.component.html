@@ -23,6 +23,13 @@
           />
         </div>
         <button
+          type="button"
+          class="forgot-password-link"
+          (click)="onForgotPassword()"
+        >
+          {{ 'app.login.forgotPassword' | translate }}
+        </button>
+        <button
           mat-flat-button
           color="primary"
           type="submit"
@@ -32,13 +39,5 @@
           {{ 'app.login.submit' | translate }}
         </button>
     </form>
-    <button
-      mat-button
-      type="button"
-      class="forgot-password-link"
-      (click)="onForgotPassword()"
-    >
-      {{ 'app.login.forgotPassword' | translate }}
-    </button>
   </div>
 </section>
