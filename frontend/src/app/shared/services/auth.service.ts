@@ -31,4 +31,8 @@ export class AuthService {
   login(email: string, password: string): Observable<LoginResponse> {
     return this.http.post<LoginResponse>('http://localhost:8080/auth/login', { email, password });
   }
+
+  logout(): Observable<void> {
+    return this.http.post<void>('http://localhost:8080/auth/logout', {});
+  }
 }

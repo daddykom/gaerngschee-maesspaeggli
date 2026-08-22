@@ -40,4 +40,21 @@ describe('AuthService', () => {
 
     expect(actualResponse).toEqual(response);
   });
+
+  it('posts logout to the backend', () => {
+    let completed = false;
+
+    service.logout().subscribe({
+      complete: () => {
+        completed = true;
+      },
+    });
+
+    const request = httpTesting.expectOne('http://localhost:8080/auth/logout');
+    expect(request.request.method).toBe('POST');
+    expect(request.request.body).toEqual({});
+    request.flush(null);
+
+    expect(completed).toBe(true);
+  });
 });
