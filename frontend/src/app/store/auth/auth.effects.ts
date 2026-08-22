@@ -12,7 +12,12 @@ export const loginEffect = createEffect(
       ofType(AuthActions.login),
       exhaustMap(({ email, password }) =>
         authService.login(email, password).pipe(
-          map(({ token, group }) => AuthActions.loginSuccess({ token, group })),
+          map(({ token, user, group, requiredPasswordReset }) => AuthActions.loginSuccess({
+            token,
+            userId: user.id,
+            group,
+            requiredPasswordReset,
+          })),
           catchError((error: HttpErrorResponse) =>
             of(AuthActions.loginFailure({
               errorCode: typeof error.error?.error?.code === 'string'
@@ -30,8 +35,8 @@ export const navigateOnLoginSuccessEffect = createEffect(
   (actions$ = inject(Actions), router = inject(Router)) =>
     actions$.pipe(
       ofType(AuthActions.loginSuccess),
-      tap(() => {
-        void router.navigateByUrl('/admin/overview');
+      tap(({ requiredPasswordReset }) => {
+        void router.navigateByUrl(requiredPasswordReset ? '/password-change' : '/admin/overview');
       }),
     ),
   { functional: true, dispatch: false },

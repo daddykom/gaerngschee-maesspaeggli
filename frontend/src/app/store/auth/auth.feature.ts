@@ -11,17 +11,21 @@ export const authFeature = createFeature({
       loading: true,
       errorCode: null,
     })),
-    on(AuthActions.loginSuccess, (state, { token, group }) => ({
+    on(AuthActions.loginSuccess, (state, { token, userId, group, requiredPasswordReset }) => ({
       ...state,
       token,
+      userId,
       group,
+      requiredPasswordReset,
       loading: false,
       errorCode: null,
     })),
     on(AuthActions.loginFailure, (state, { errorCode }) => ({
       ...state,
       token: null,
+      userId: null,
       group: null,
+      requiredPasswordReset: false,
       loading: false,
       errorCode,
     })),
@@ -34,7 +38,9 @@ export const {
   reducer: authReducer,
   selectAuthState,
   selectToken: selectAuthToken,
+  selectUserId: selectAuthUserId,
   selectGroup: selectAuthGroup,
+  selectRequiredPasswordReset: selectAuthRequiredPasswordReset,
   selectLoading: selectAuthLoading,
   selectErrorCode: selectAuthErrorCode,
 } = authFeature;

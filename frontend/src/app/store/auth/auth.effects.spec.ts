@@ -29,6 +29,7 @@ describe('loginEffect', () => {
       user: { id: 'user-123', email: 'user@example.com', group: 'admin' },
       token: 'jwt-token',
       group: 'admin',
+      requiredPasswordReset: false,
     }));
     const effect$ = TestBed.runInInjectionContext(() => loginEffect());
     const result = firstValueFrom(effect$);
@@ -36,7 +37,12 @@ describe('loginEffect', () => {
     actions$.next(AuthActions.login({ email: 'user@example.com', password: 'secret' }));
 
     await expect(result).resolves.toEqual(
-      AuthActions.loginSuccess({ token: 'jwt-token', group: 'admin' }),
+      AuthActions.loginSuccess({
+        token: 'jwt-token',
+        userId: 'user-123',
+        group: 'admin',
+        requiredPasswordReset: false,
+      }),
     );
     expect(authService.login).toHaveBeenCalledWith('user@example.com', 'secret');
   });
@@ -62,9 +68,31 @@ describe('loginEffect', () => {
     const effect$ = TestBed.runInInjectionContext(() => navigateOnLoginSuccessEffect());
     const subscription = effect$.subscribe();
 
-    actions$.next(AuthActions.loginSuccess({ token: 'jwt-token', group: 'admin' }));
+    actions$.next(AuthActions.loginSuccess({
+      token: 'jwt-token',
+      userId: 'user-123',
+      group: 'admin',
+      requiredPasswordReset: false,
+    }));
 
     expect(router.navigateByUrl).toHaveBeenCalledWith('/admin/overview');
+    subscription.unsubscribe();
+  });
+
+  it('navigates to password change when a reset is required', () => {
+    const router = { navigateByUrl: jest.fn() };
+    TestBed.overrideProvider(Router, { useValue: router });
+    const effect$ = TestBed.runInInjectionContext(() => navigateOnLoginSuccessEffect());
+    const subscription = effect$.subscribe();
+
+    actions$.next(AuthActions.loginSuccess({
+      token: 'jwt-token',
+      userId: 'user-123',
+      group: 'user',
+      requiredPasswordReset: true,
+    }));
+
+    expect(router.navigateByUrl).toHaveBeenCalledWith('/password-change');
     subscription.unsubscribe();
   });
 

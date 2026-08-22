@@ -11,7 +11,9 @@ describe('authReducer', () => {
 
     expect(state).toEqual({
       token: null,
+      userId: null,
       group: null,
+      requiredPasswordReset: false,
       loading: true,
       errorCode: null,
     });
@@ -20,12 +22,19 @@ describe('authReducer', () => {
   it('stores the token and group after a successful login', () => {
     const state = authReducer(
       { ...initialState, loading: true },
-      AuthActions.loginSuccess({ token: 'jwt-token', group: 'admin' }),
+      AuthActions.loginSuccess({
+        token: 'jwt-token',
+        userId: 'user-123',
+        group: 'admin',
+        requiredPasswordReset: false,
+      }),
     );
 
     expect(state).toEqual({
       token: 'jwt-token',
+      userId: 'user-123',
       group: 'admin',
+      requiredPasswordReset: false,
       loading: false,
       errorCode: null,
     });
@@ -39,7 +48,9 @@ describe('authReducer', () => {
 
     expect(state).toEqual({
       token: null,
+      userId: null,
       group: null,
+      requiredPasswordReset: false,
       loading: false,
       errorCode: 'INVALID_CREDENTIALS',
     });
@@ -47,7 +58,14 @@ describe('authReducer', () => {
 
   it('clears authentication data on logout', () => {
     const state = authReducer(
-      { token: 'jwt-token', group: 'admin', loading: false, errorCode: null },
+      {
+        token: 'jwt-token',
+        userId: 'user-123',
+        group: 'admin',
+        requiredPasswordReset: false,
+        loading: false,
+        errorCode: null,
+      },
       AuthActions.logout(),
     );
 

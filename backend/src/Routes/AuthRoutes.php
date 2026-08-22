@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Routes;
 
 use App\Data\UserRepository;
+use App\Middleware\AuthMiddleware;
 use App\Services\AccessKeyService;
 use App\Services\JwtService;
 use App\Services\SessionService;
@@ -40,6 +41,24 @@ final class AuthRoutes
 
                 return self::json($response, ['user' => $user]);
             });
+
+            $authenticatedPasswordChangeRoute = $group->post('/password-change-authenticated', function (
+                ServerRequestInterface $request,
+                ResponseInterface $response,
+            ) use ($userRepository): ResponseInterface {
+                $data = self::readJsonBody($request);
+                $password = self::readString($data, 'password');
+                $userId = $request->getAttribute('user_id');
+
+                if ($password === null || !is_string($userId) || $userId === '') {
+                    return self::error($response, 'INVALID_PASSWORD', 422);
+                }
+
+                $user = ($userRepository ?? new UserRepository())->updatePassword($userId, $password);
+
+                return self::json($response, ['user' => $user]);
+            });
+            $authenticatedPasswordChangeRoute->add(new AuthMiddleware());
 
             $group->post('/client-login', function (ServerRequestInterface $request, ResponseInterface $response) use ($jwtService, $sessionService, $accessKeyService) {
                 $data = self::readJsonBody($request);
@@ -110,6 +129,7 @@ final class AuthRoutes
                     'user' => $user,
                     'token' => $token,
                     'group' => $user['group'],
+                    'requiredPasswordReset' => (bool) ($user['required_password_reset'] ?? false),
                 ]);
             });
 

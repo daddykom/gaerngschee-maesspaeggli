@@ -101,6 +101,22 @@ final class AuthRoutesTest extends TestCase
         self::assertSame($user['id'], (new JwtService())->getUserIdFromToken($data['token']));
         self::assertSame($user['id'], (new SessionService())->getUserId());
         self::assertSame('user', (new SessionService())->getGroup());
+        self::assertFalse($data['requiredPasswordReset']);
+    }
+
+    public function testFlaggedUserCanLoginButMustChangePassword(): void
+    {
+        $user = $this->repository->createUser('user@example.com', 'temporary-secret', 'user', true);
+
+        $response = $this->createAuthApp()->handle($this->request('/auth/login', [
+            'email' => $user['email'],
+            'password' => 'temporary-secret',
+        ]));
+        $data = json_decode((string) $response->getBody(), true, 512, JSON_THROW_ON_ERROR);
+
+        self::assertSame(200, $response->getStatusCode());
+        self::assertTrue($data['requiredPasswordReset']);
+        self::assertSame($user['id'], (new SessionService())->getUserId());
     }
 
     public function testClientCannotLoginEvenWithCorrectPassword(): void
@@ -160,6 +176,30 @@ final class AuthRoutesTest extends TestCase
 
         self::assertSame(200, $response->getStatusCode());
         self::assertNotNull($this->repository->verifyPassword('client@example.com', 'new-secret'));
+        self::assertFalse((bool) $this->repository->findById($user['id'])['required_password_reset']);
+    }
+
+    public function testAuthenticatedPasswordChangeClearsResetRequirement(): void
+    {
+        $user = $this->repository->createUser('user@example.com', 'temporary-secret', 'user', true);
+        (new SessionService())->setUser($user['id'], 'user');
+
+        $response = $this->createAuthApp()->handle($this->request('/auth/password-change-authenticated', [
+            'password' => 'new-secret',
+        ]));
+
+        self::assertSame(200, $response->getStatusCode());
+        self::assertNotNull($this->repository->verifyPassword('user@example.com', 'new-secret'));
+        self::assertFalse((bool) $this->repository->findById($user['id'])['required_password_reset']);
+    }
+
+    public function testAuthenticatedPasswordChangeRequiresAuthentication(): void
+    {
+        $response = $this->createAuthApp()->handle($this->request('/auth/password-change-authenticated', [
+            'password' => 'new-secret',
+        ]));
+
+        self::assertSame(404, $response->getStatusCode());
     }
 
     public function testClientLoginWorksWithoutAnExistingSession(): void

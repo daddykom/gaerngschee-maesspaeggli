@@ -13,6 +13,7 @@ export interface LoginResponse {
   user: AuthUser;
   token: string;
   group: UserGroup;
+  requiredPasswordReset: boolean;
 }
 
 export interface ApiErrorResponse {
