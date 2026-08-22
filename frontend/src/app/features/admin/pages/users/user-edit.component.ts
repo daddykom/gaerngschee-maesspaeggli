@@ -4,9 +4,8 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatCheckboxModule } from '@angular/material/checkbox';
 import { MatInputModule } from '@angular/material/input';
 import { MatSelectModule } from '@angular/material/select';
-import { Location } from '@angular/common';
-import { ActivatedRoute } from '@angular/router';
 import { Store } from '@ngrx/store';
+import { ActivatedRoute } from '@angular/router';
 import { TranslatePipe } from '@ngx-translate/core';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { map, of, switchMap } from 'rxjs';
@@ -15,6 +14,7 @@ import { AdminUsersService } from '../../../../shared/services/admin-users.servi
 import { selectAuthGroup } from '../../../../store/auth/auth.feature';
 import { AdminUsersActions } from '../../../../store/admin-users/admin-users.actions';
 import { selectAdminUsersErrorCode, selectAdminUsersSaving } from '../../../../store/admin-users/admin-users.feature';
+import { NavigationActions } from '../../../../store/navigation/navigation.actions';
 
 @Component({
   selector: 'app-admin-user-edit',
@@ -33,7 +33,6 @@ import { selectAdminUsersErrorCode, selectAdminUsersSaving } from '../../../../s
 })
 export class UserEditComponent {
   private readonly route = inject(ActivatedRoute);
-  private readonly location = inject(Location);
   private readonly store = inject(Store);
   private readonly service = inject(AdminUsersService);
 
@@ -97,6 +96,6 @@ export class UserEditComponent {
   }
 
   cancel(): void {
-    this.location.back();
+    this.store.dispatch(NavigationActions.navigate({ target: 'back' }));
   }
 }

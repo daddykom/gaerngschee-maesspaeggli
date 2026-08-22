@@ -17,6 +17,7 @@ import { adminOverviewFeature } from './store/admin-overview/admin-overview.feat
 import { adminUsersEffects } from './store/admin-users/admin-users.effects';
 import { adminUsersFeature } from './store/admin-users/admin-users.feature';
 import { authTokenInterceptor } from './shared/interceptors/auth-token.interceptor';
+import { navigationEffects } from './store/navigation/navigation.effects';
 
 export const appConfig: ApplicationConfig = {
   providers: [
@@ -28,7 +29,7 @@ export const appConfig: ApplicationConfig = {
     provideState(authFeature),
     provideState(adminOverviewFeature),
     provideState(adminUsersFeature),
-    provideEffects(startEffects, authEffects, adminUsersEffects),
+    provideEffects(startEffects, authEffects, adminUsersEffects, navigationEffects),
     provideStoreDevtools(),
     provideAnimations(),
     provideTranslateService({

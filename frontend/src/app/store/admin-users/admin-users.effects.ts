@@ -1,10 +1,10 @@
 import { HttpErrorResponse } from '@angular/common/http';
-import { Location } from '@angular/common';
 import { inject } from '@angular/core';
 import { Actions, createEffect, ofType } from '@ngrx/effects';
-import { catchError, exhaustMap, map, of, tap } from 'rxjs';
+import { catchError, exhaustMap, map, of } from 'rxjs';
 import { AdminUsersService } from '../../shared/services/admin-users.service';
 import { AdminUsersActions } from './admin-users.actions';
+import { NavigationActions } from '../navigation/navigation.actions';
 
 const errorCode = (error: HttpErrorResponse): string =>
   typeof error.error?.error?.code === 'string' ? error.error.error.code : 'REQUEST_FAILED';
@@ -57,11 +57,11 @@ export const deleteAdminUserEffect = createEffect(
 );
 
 export const navigateBackAfterUserMutationEffect = createEffect(
-  (actions$ = inject(Actions), location = inject(Location)) => actions$.pipe(
+  (actions$ = inject(Actions)) => actions$.pipe(
     ofType(AdminUsersActions.createSuccess, AdminUsersActions.updateSuccess),
-    tap(() => location.back()),
+    map(() => NavigationActions.navigate({ target: 'back' })),
   ),
-  { functional: true, dispatch: false },
+  { functional: true },
 );
 
 export const adminUsersEffects = {

@@ -1,10 +1,10 @@
 import { HttpErrorResponse } from '@angular/common/http';
 import { inject } from '@angular/core';
 import { Actions, createEffect, ofType } from '@ngrx/effects';
-import { Router } from '@angular/router';
-import { EMPTY, catchError, exhaustMap, map, of, tap } from 'rxjs';
+import { catchError, exhaustMap, map, of } from 'rxjs';
 import { AuthService } from '../../shared/services/auth.service';
 import { AuthActions } from './auth.actions';
+import { NavigationActions } from '../navigation/navigation.actions';
 
 export const loginEffect = createEffect(
   (actions$ = inject(Actions), authService = inject(AuthService)) =>
@@ -32,14 +32,14 @@ export const loginEffect = createEffect(
 );
 
 export const navigateOnLoginSuccessEffect = createEffect(
-  (actions$ = inject(Actions), router = inject(Router)) =>
+  (actions$ = inject(Actions)) =>
     actions$.pipe(
       ofType(AuthActions.loginSuccess),
-      tap(({ requiredPasswordReset }) => {
-        void router.navigateByUrl(requiredPasswordReset ? '/password-change' : '/admin/overview');
-      }),
+      map(({ requiredPasswordReset }) => NavigationActions.navigate({
+        target: requiredPasswordReset ? '/password-change' : '/admin/overview',
+      })),
     ),
-  { functional: true, dispatch: false },
+  { functional: true },
 );
 
 export const passwordChangeEffect = createEffect(
@@ -58,32 +58,25 @@ export const passwordChangeEffect = createEffect(
 );
 
 export const navigateOnPasswordChangeSuccessEffect = createEffect(
-  (actions$ = inject(Actions), router = inject(Router)) => actions$.pipe(
+  (actions$ = inject(Actions)) => actions$.pipe(
     ofType(AuthActions.passwordChangeSuccess),
-    tap(() => {
-      void router.navigateByUrl('/admin/overview');
-    }),
+    map(() => NavigationActions.navigate({ target: '/admin/overview' })),
   ),
-  { functional: true, dispatch: false },
+  { functional: true },
 );
 
 export const logoutEffect = createEffect(
-  (actions$ = inject(Actions), authService = inject(AuthService), router = inject(Router)) =>
+  (actions$ = inject(Actions), authService = inject(AuthService)) =>
     actions$.pipe(
       ofType(AuthActions.logout),
       exhaustMap(() =>
         authService.logout().pipe(
-          tap(() => {
-            void router.navigateByUrl('/login');
-          }),
-          catchError(() => {
-            void router.navigateByUrl('/login');
-            return EMPTY;
-          }),
+          map(() => NavigationActions.navigate({ target: '/login' })),
+          catchError(() => of(NavigationActions.navigate({ target: '/login' }))),
         ),
       ),
     ),
-  { functional: true, dispatch: false },
+  { functional: true },
 );
 
 export const authEffects = {
