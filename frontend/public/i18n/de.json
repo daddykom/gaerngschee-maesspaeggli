@@ -53,6 +53,12 @@
         "passwordsDoNotMatch": "Die Passwörter stimmen nicht überein."
       }
     },
+    "notFound": {
+      "pageTitle": "Seite nicht gefunden",
+      "heading": "Diese Seite gibt es nicht",
+      "login": "Anmelden",
+      "start": "Mässpäggli bestellen"
+    },
     "auth": {
       "loginErrorTitle": "Anmeldung fehlgeschlagen",
       "errors": {
