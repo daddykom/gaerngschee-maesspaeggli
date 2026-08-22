@@ -6,16 +6,15 @@ import { Action } from '@ngrx/store';
 import { firstValueFrom, of, Subject, throwError } from 'rxjs';
 import { AuthService } from '../../shared/services/auth.service';
 import { AuthActions } from './auth.actions';
-import { loginEffect } from './auth.effects';
-import { navigateOnLoginSuccessEffect } from './auth.effects';
+import { loginEffect, logoutEffect, navigateOnLoginSuccessEffect } from './auth.effects';
 
 describe('loginEffect', () => {
   let actions$: Subject<Action>;
-  let authService: { login: jest.Mock };
+  let authService: { login: jest.Mock; logout: jest.Mock };
 
   beforeEach(() => {
     actions$ = new Subject<Action>();
-    authService = { login: jest.fn() };
+    authService = { login: jest.fn(), logout: jest.fn() };
 
     TestBed.configureTestingModule({
       providers: [
@@ -66,6 +65,38 @@ describe('loginEffect', () => {
     actions$.next(AuthActions.loginSuccess({ token: 'jwt-token', group: 'admin' }));
 
     expect(router.navigateByUrl).toHaveBeenCalledWith('/admin/overview');
+    subscription.unsubscribe();
+  });
+
+  it('calls the backend logout and navigates to login after success', () => {
+    const router = { navigateByUrl: jest.fn() };
+    authService.logout.mockReturnValue(of(undefined));
+    TestBed.overrideProvider(Router, { useValue: router });
+    const effect$ = TestBed.runInInjectionContext(() => logoutEffect());
+    const subscription = effect$.subscribe();
+
+    actions$.next(AuthActions.logout());
+
+    expect(authService.logout).toHaveBeenCalledTimes(1);
+    expect(router.navigateByUrl).toHaveBeenCalledWith('/login');
+    subscription.unsubscribe();
+  });
+
+  it('navigates to login when the backend logout fails', () => {
+    const router = { navigateByUrl: jest.fn() };
+    authService.logout.mockReturnValue(throwError(() => new Error('Logout failed')));
+    TestBed.overrideProvider(Router, { useValue: router });
+    const effect$ = TestBed.runInInjectionContext(() => logoutEffect());
+    const subscription = effect$.subscribe({
+      error: (error) => {
+        throw error;
+      },
+    });
+
+    actions$.next(AuthActions.logout());
+
+    expect(authService.logout).toHaveBeenCalledTimes(1);
+    expect(router.navigateByUrl).toHaveBeenCalledWith('/login');
     subscription.unsubscribe();
   });
 });
