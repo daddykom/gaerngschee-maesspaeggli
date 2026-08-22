@@ -29,4 +29,10 @@ test.describe('Not-found route', () => {
     await page.waitForURL('**/not-found');
     await expect(page.locator('h1')).toHaveText('Seite nicht gefunden');
   });
+
+  test('shows the not-found page for the unauthenticated user administration route', async ({ page }) => {
+    await page.goto('/admin/users');
+    await page.waitForURL('**/not-found');
+    await expect(page.locator('h1')).toHaveText('Seite nicht gefunden');
+  });
 });

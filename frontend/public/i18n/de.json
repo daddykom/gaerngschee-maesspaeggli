@@ -93,6 +93,7 @@
         "deleteConfirm": "Löschen",
         "successTitle": "Erfolgreich",
         "created": "Der Benutzer wurde erstellt.",
+        "createdWithEmail": "Der Benutzer wurde erstellt. Eine E-Mail wurde an {{ recipient }} versendet.",
         "updated": "Der Benutzer wurde geändert.",
         "updatedWithEmail": "Der Benutzer wurde geändert. Eine E-Mail wurde an {{ recipient }} versendet.",
         "deleted": "Der Benutzer wurde gelöscht.",
@@ -104,8 +105,10 @@
           "client": "Klient"
         },
         "errors": {
-          "required": "Dieses Feld ist erforderlich.",
-          "email": "Bitte prüfe die E-Mail-Adresse.",
+          "email": {
+            "required": "Dieses Feld ist erforderlich.",
+            "email": "Bitte prüfe die E-Mail-Adresse."
+          },
           "EMAIL_ALREADY_REGISTERED": "Diese E-Mail-Adresse ist bereits registriert.",
           "INVALID_USER_DATA": "Bitte prüfe die Eingaben.",
           "NOT_FOUND": "Der Benutzer wurde nicht gefunden.",

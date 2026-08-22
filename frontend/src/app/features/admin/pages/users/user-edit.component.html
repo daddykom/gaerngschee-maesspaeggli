@@ -9,7 +9,7 @@
         <mat-label>{{ 'app.admin.users.emailLabel' | translate }}</mat-label>
         <input matInput type="email" formControlName="email" />
       </mat-form-field>
-      <app-control-error [control]="form.controls.email" translationPrefix="app.admin.users.errors" />
+      <app-control-error [control]="form.controls.email" translationPrefix="app.admin.users.errors.email" />
 
       @if (isAdmin()) {
         <mat-form-field appearance="outline">

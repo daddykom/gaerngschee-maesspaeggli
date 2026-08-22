@@ -10,6 +10,7 @@ test.describe('Admin overview route', () => {
           user: { id: '1', email: 'admin@example.com', group: 'admin' },
           token: 'test-token',
           group: 'admin',
+          requiredPasswordReset: false,
         }),
       });
     });
@@ -22,5 +23,7 @@ test.describe('Admin overview route', () => {
 
     await expect(page.locator('h1')).toHaveText('Admin-Übersicht');
     await expect(page.getByRole('button', { name: 'Administrationsmenü öffnen' })).toBeVisible();
+    await page.getByRole('button', { name: 'Administrationsmenü öffnen' }).click();
+    await expect(page.getByRole('menuitem', { name: 'Benutzerverwaltung' })).toBeVisible();
   });
 });

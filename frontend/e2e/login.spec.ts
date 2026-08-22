@@ -10,6 +10,7 @@ test.describe('Login route', () => {
           user: { id: '1', email: 'admin@example.com', group: 'admin' },
           token: 'test-token',
           group: 'admin',
+          requiredPasswordReset: false,
         }),
       });
     });
@@ -61,5 +62,28 @@ test.describe('Login route', () => {
     await expect(page.locator('.info-box')).toContainText(
       'E-Mail-Adresse oder Passwort ist ungültig.',
     );
+  });
+
+  test('redirects users with a required password reset', async ({ page }) => {
+    await page.route('http://localhost:8080/auth/login', async (route) => {
+      await route.fulfill({
+        status: 200,
+        contentType: 'application/json',
+        body: JSON.stringify({
+          user: { id: '2', email: 'user@example.com', group: 'user' },
+          token: 'test-token',
+          group: 'user',
+          requiredPasswordReset: true,
+        }),
+      });
+    });
+
+    await page.goto('/login');
+    await page.locator('input[type="email"]').fill('user@example.com');
+    await page.locator('input[type="password"]').fill('temporary-secret');
+    await page.getByRole('button', { name: 'Anmelden' }).click();
+
+    await page.waitForURL('**/password-change');
+    await expect(page.locator('h1')).toHaveText('Passwort ändern');
   });
 });

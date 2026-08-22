@@ -80,7 +80,7 @@ export const adminUsersNotificationEffect = createEffect(
         return NotificationActions.show({
           variant: 'success',
           titleKey: 'app.admin.users.successTitle',
-          messageKey: 'app.admin.users.created',
+          messageKey: 'app.admin.users.createdWithEmail',
           params: { recipient: action.emailSentTo },
           preserveOnRoutes: ['/admin/users'],
         });

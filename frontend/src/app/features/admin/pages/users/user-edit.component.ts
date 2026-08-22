@@ -40,7 +40,7 @@ export class UserEditComponent {
   readonly isAdmin = computed(() => this.authGroup() === 'admin');
   readonly saving = this.store.selectSignal(selectAdminUsersSaving);
   readonly userId = this.route.snapshot.paramMap.get('userId');
-  readonly isNew = this.route.snapshot.routeConfig?.path === 'users/new';
+  readonly isNew = this.route.snapshot.routeConfig?.path === 'new';
   readonly loading = toSignal(
     this.isNew || this.userId === null
       ? of(false)

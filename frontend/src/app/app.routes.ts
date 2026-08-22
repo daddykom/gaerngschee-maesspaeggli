@@ -49,25 +49,30 @@ export const appRoutes: Routes = [
           ),
       },
       {
-        path: 'users/new',
-        canActivate: [groupGuard(['admin'])],
-        data: { pageTitle: 'app.admin.users.createTitle', pageHeaderLayout: 'wide' },
-        loadComponent: () =>
-          import('./features/admin/pages/users/user-edit.component').then((m) => m.UserEditComponent),
-      },
-      {
-        path: 'users/:userId',
-        canActivate: [groupGuard(['user', 'admin'])],
-        data: { pageTitle: 'app.admin.users.editTitle', pageHeaderLayout: 'wide' },
-        loadComponent: () =>
-          import('./features/admin/pages/users/user-edit.component').then((m) => m.UserEditComponent),
-      },
-      {
         path: 'users',
-        canActivate: [groupGuard(['admin'])],
-        data: { pageTitle: 'app.admin.users.title', pageHeaderLayout: 'wide' },
-        loadComponent: () =>
-          import('./features/admin/pages/users/users.component').then((m) => m.UsersComponent),
+        children: [
+          {
+            path: 'new',
+            canActivate: [groupGuard(['admin'])],
+            data: { pageTitle: 'app.admin.users.createTitle', pageHeaderLayout: 'wide' },
+            loadComponent: () =>
+              import('./features/admin/pages/users/user-edit.component').then((m) => m.UserEditComponent),
+          },
+          {
+            path: ':userId',
+            canActivate: [groupGuard(['user', 'admin'])],
+            data: { pageTitle: 'app.admin.users.editTitle', pageHeaderLayout: 'wide' },
+            loadComponent: () =>
+              import('./features/admin/pages/users/user-edit.component').then((m) => m.UserEditComponent),
+          },
+          {
+            path: '',
+            canActivate: [groupGuard(['admin'])],
+            data: { pageTitle: 'app.admin.users.title', pageHeaderLayout: 'wide' },
+            loadComponent: () =>
+              import('./features/admin/pages/users/users.component').then((m) => m.UsersComponent),
+          },
+        ],
       },
     ],
   },
