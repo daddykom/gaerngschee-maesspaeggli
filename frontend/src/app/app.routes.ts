@@ -21,12 +21,6 @@ export const appRoutes: Routes = [
     loadComponent: () => import('./features/auth/pages/login/login.component').then((m) => m.Login),
   },
   {
-    path: 'register',
-    data: { pageTitle: 'app.register.pageTitle' },
-    loadComponent: () =>
-      import('./features/auth/pages/register/register.component').then((m) => m.Register),
-  },
-  {
     path: 'admin',
     canActivate: [groupGuard(['user', 'admin'])],
     children: [
