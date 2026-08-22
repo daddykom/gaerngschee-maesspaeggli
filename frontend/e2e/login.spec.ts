@@ -36,8 +36,8 @@ test.describe('Login route', () => {
     await page.waitForURL('**/login');
 
     await page.goto('/admin/overview');
-    await page.waitForURL('**/login');
-    await expect(page.locator('h1')).toHaveText('Mässpäggli verwalten');
+    await page.waitForURL('**/not-found');
+    await expect(page.locator('h1')).toHaveText('Seite nicht gefunden');
   });
 
   test('shows a translated error for invalid credentials', async ({ page }) => {

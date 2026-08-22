@@ -6,7 +6,7 @@ import { groupGuard } from './group.guard';
 
 describe('groupGuard', () => {
   const router = {
-    parseUrl: jest.fn(() => ({ url: '/login' } as unknown as UrlTree)),
+    parseUrl: jest.fn(() => ({ url: '/not-found' } as unknown as UrlTree)),
   };
 
   const createGuardResult = (group: UserGroup | null, allowedGroups: UserGroup[]) => {
@@ -34,12 +34,12 @@ describe('groupGuard', () => {
   });
 
   it('rejects the client group', () => {
-    expect(createGuardResult('client', ['user', 'admin'])).toEqual({ url: '/login' });
-    expect(router.parseUrl).toHaveBeenCalledWith('/login');
+    expect(createGuardResult('client', ['user', 'admin'])).toEqual({ url: '/not-found' });
+    expect(router.parseUrl).toHaveBeenCalledWith('/not-found');
   });
 
   it('rejects an unauthenticated user', () => {
-    expect(createGuardResult(null, ['user', 'admin'])).toEqual({ url: '/login' });
-    expect(router.parseUrl).toHaveBeenCalledWith('/login');
+    expect(createGuardResult(null, ['user', 'admin'])).toEqual({ url: '/not-found' });
+    expect(router.parseUrl).toHaveBeenCalledWith('/not-found');
   });
 });

@@ -11,5 +11,5 @@ export const groupGuard = (allowedGroups: UserGroup[]): CanActivateFn => () => {
 
   return group !== null && allowedGroups.includes(group)
     ? true
-    : router.parseUrl('/login');
+    : router.parseUrl('/not-found');
 };
