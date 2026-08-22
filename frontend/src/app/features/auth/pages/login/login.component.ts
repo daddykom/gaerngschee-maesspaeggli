@@ -52,4 +52,8 @@ export class Login implements OnInit {
 
     this.store.dispatch(AuthActions.login({ email, password }));
   }
+
+  onForgotPassword(): void {
+    this.store.dispatch(AuthActions.forgotPassword());
+  }
 }

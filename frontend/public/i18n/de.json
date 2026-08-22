@@ -26,6 +26,7 @@
       "emailLabel": "E-Mail-Adresse",
       "passwordLabel": "Passwort",
       "submit": "Anmelden",
+      "forgotPassword": "Passwort vergessen?",
       "errors": {
         "email": {
           "required": "Bitte gib deine E-Mail-Adresse ein.",

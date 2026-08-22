@@ -70,4 +70,14 @@ describe('Login', () => {
 
     expect(fixture.nativeElement.querySelector('button[type="submit"]').disabled).toBe(true);
   });
+
+  it('dispatches forgot password when the link is clicked', () => {
+    const forgotPassword = fixture.nativeElement.querySelector('.forgot-password-link');
+
+    forgotPassword.click();
+
+    expect(store.dispatch).toHaveBeenCalledWith({
+      type: '[Auth] Forgot Password',
+    });
+  });
 });
