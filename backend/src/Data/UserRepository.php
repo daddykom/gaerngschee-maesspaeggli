@@ -141,6 +141,14 @@ final class UserRepository
         return $this->findById($id);
     }
 
+    public function deleteUser(string $id): bool
+    {
+        $stmt = $this->pdo->prepare('DELETE FROM users WHERE id = :id');
+        $stmt->execute(['id' => $id]);
+
+        return $stmt->rowCount() > 0;
+    }
+
     private function normalizeEmail(string $email): string
     {
         return strtolower(trim($email));
