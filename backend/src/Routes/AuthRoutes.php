@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Routes;
 
 use App\Data\UserRepository;
+use App\Services\AccessKeyService;
 use App\Services\JwtService;
 use App\Services\SessionService;
 use Psr\Http\Message\ResponseInterface;
@@ -20,9 +21,49 @@ final class AuthRoutes
         ?UserRepository $userRepository = null,
         ?JwtService $jwtService = null,
         ?SessionService $sessionService = null,
-    ): void
-    {
-        $app->group('/auth', function (RouteCollectorProxy $group) use ($userRepository, $jwtService, $sessionService): void {
+        ?AccessKeyService $accessKeyService = null,
+    ): void {
+        $app->group('/auth', function (RouteCollectorProxy $group) use ($userRepository, $jwtService, $sessionService, $accessKeyService): void {
+            $group->post('/password-change', function (ServerRequestInterface $request, ResponseInterface $response) use ($accessKeyService) {
+                $data = self::readJsonBody($request);
+                $accessKey = self::readString($data, 'accessKey');
+                $password = self::readString($data, 'password');
+
+                if ($accessKey === null || $password === null) {
+                    return self::error($response, 'INVALID_PASSWORD', 422);
+                }
+
+                $user = ($accessKeyService ?? new AccessKeyService())->resetPassword($accessKey, $password);
+                if ($user === null) {
+                    return self::error($response, 'INVALID_ACCESS_KEY', 401);
+                }
+
+                return self::json($response, ['user' => $user]);
+            });
+
+            $group->post('/client-login', function (ServerRequestInterface $request, ResponseInterface $response) use ($jwtService, $sessionService, $accessKeyService) {
+                $data = self::readJsonBody($request);
+                $accessKey = self::readString($data, 'accessKey');
+
+                if ($accessKey === null) {
+                    return self::error($response, 'INVALID_ACCESS_KEY', 401);
+                }
+
+                $user = ($accessKeyService ?? new AccessKeyService())->loginClient($accessKey);
+                if ($user === null) {
+                    return self::error($response, 'INVALID_ACCESS_KEY', 401);
+                }
+
+                $token = ($jwtService ?? new JwtService())->createToken($user['id']);
+                ($sessionService ?? new SessionService())->setUser($user['id'], $user['group']);
+
+                return self::json($response, [
+                    'user' => $user,
+                    'token' => $token,
+                    'group' => $user['group'],
+                ]);
+            });
+
             $group->post('/register', function (ServerRequestInterface $request, ResponseInterface $response) use ($userRepository, $jwtService, $sessionService) {
                 $data = self::readJsonBody($request);
                 $email = self::readString($data, 'email');

@@ -86,6 +86,26 @@ final class UserRepository
         return $user;
     }
 
+    public function updatePassword(string $id, string $password): array
+    {
+        $passwordHash = password_hash($password, PASSWORD_DEFAULT);
+        if ($passwordHash === false) {
+            throw new \RuntimeException('Could not hash password.');
+        }
+
+        $stmt = $this->pdo->prepare(
+            'UPDATE users SET password = :password, updated_at = CURRENT_TIMESTAMP WHERE id = :id',
+        );
+        $stmt->execute(['password' => $passwordHash, 'id' => $id]);
+
+        $user = $this->findById($id);
+        if ($user === null) {
+            throw new \RuntimeException('Updated user could not be loaded.');
+        }
+
+        return $user;
+    }
+
     private function createUuid(): string
     {
         $data = random_bytes(16);

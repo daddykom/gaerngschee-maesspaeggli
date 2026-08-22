@@ -4,9 +4,12 @@ declare(strict_types=1);
 
 namespace Tests\Routes;
 
+use App\Data\AccessKeyRepository;
 use App\Data\UserRepository;
 use App\Application;
+use App\Routes\AdminRoutes;
 use App\Routes\AuthRoutes;
+use App\Services\AccessKeyService;
 use App\Services\JwtService;
 use App\Services\SessionService;
 use PDO;
@@ -19,6 +22,7 @@ final class AuthRoutesTest extends TestCase
 {
     private PDO $pdo;
     private UserRepository $repository;
+    private AccessKeyService $accessKeyService;
 
     protected function setUp(): void
     {
@@ -39,6 +43,23 @@ final class AuthRoutesTest extends TestCase
             )',
         );
         $this->repository = new UserRepository($this->pdo);
+        $this->pdo->exec(
+            'CREATE TABLE user_access_keys (
+                id TEXT PRIMARY KEY,
+                user_id TEXT NOT NULL,
+                purpose TEXT NOT NULL,
+                key_hash TEXT NOT NULL UNIQUE,
+                expires_at TEXT NOT NULL,
+                used_at TEXT NULL,
+                created_at TEXT,
+                updated_at TEXT
+            )',
+        );
+        $this->accessKeyService = new AccessKeyService(
+            $this->pdo,
+            $this->repository,
+            new AccessKeyRepository($this->pdo),
+        );
     }
 
     protected function tearDown(): void
@@ -126,11 +147,89 @@ final class AuthRoutesTest extends TestCase
         self::assertSame(422, $response->getStatusCode());
     }
 
+    public function testPasswordChangeWorksWithValidPublicAccessKey(): void
+    {
+        $user = $this->repository->createUser('client@example.com', 'old-secret', 'client');
+        $generated = $this->accessKeyService->generateForUser($user['id'], AccessKeyService::PASSWORD_RESET);
+        self::assertNotNull($generated);
+
+        $response = $this->createAuthApp()->handle($this->request('/auth/password-change', [
+            'accessKey' => $generated['accessKey'],
+            'password' => 'new-secret',
+        ]));
+
+        self::assertSame(200, $response->getStatusCode());
+        self::assertNotNull($this->repository->verifyPassword('client@example.com', 'new-secret'));
+    }
+
+    public function testClientLoginWorksWithoutAnExistingSession(): void
+    {
+        $user = $this->repository->createUser('client@example.com', 'secret', 'client');
+        $generated = $this->accessKeyService->generateForUser($user['id'], AccessKeyService::CLIENT_LOGIN);
+        self::assertNotNull($generated);
+
+        $response = $this->createAuthApp()->handle($this->request('/auth/client-login', [
+            'accessKey' => $generated['accessKey'],
+        ]));
+        $data = json_decode((string) $response->getBody(), true, 512, JSON_THROW_ON_ERROR);
+
+        self::assertSame(200, $response->getStatusCode());
+        self::assertSame('client', $data['group']);
+        self::assertSame($user['id'], (new SessionService())->getUserId());
+        self::assertSame('client', (new SessionService())->getGroup());
+    }
+
+    public function testInvalidAccessKeyIsRejected(): void
+    {
+        $response = $this->createAuthApp()->handle($this->request('/auth/client-login', [
+            'accessKey' => 'invalid-key',
+        ]));
+
+        self::assertSame(401, $response->getStatusCode());
+        self::assertSame(
+            '{"error":{"code":"INVALID_ACCESS_KEY","details":[]}}',
+            (string) $response->getBody(),
+        );
+    }
+
+    public function testAdminCanGenerateAnAccessKeyForAUser(): void
+    {
+        $admin = $this->repository->createUser('admin@example.com', 'secret', 'admin');
+        $client = $this->repository->createUser('client@example.com', 'secret', 'client');
+        (new SessionService())->setUser($admin['id'], 'admin');
+
+        $response = $this->createAdminApp()->handle($this->request(
+            '/admin/users/' . $client['id'] . '/access-key',
+            ['purpose' => AccessKeyService::CLIENT_LOGIN],
+        ));
+        $data = json_decode((string) $response->getBody(), true, 512, JSON_THROW_ON_ERROR);
+
+        self::assertSame(201, $response->getStatusCode());
+        self::assertSame(AccessKeyService::CLIENT_LOGIN, $data['purpose']);
+        self::assertSame('client', $data['group']);
+        self::assertIsString($data['accessKey']);
+    }
+
     private function createAuthApp(): \Slim\App
     {
         $app = AppFactory::create();
         $app->addRoutingMiddleware();
-        AuthRoutes::register($app, $this->repository, new JwtService(), new SessionService());
+        AuthRoutes::register(
+            $app,
+            $this->repository,
+            new JwtService(),
+            new SessionService(),
+            $this->accessKeyService,
+        );
+
+        return $app;
+    }
+
+    private function createAdminApp(): \Slim\App
+    {
+        $app = AppFactory::create();
+        $app->addRoutingMiddleware();
+        AdminRoutes::register($app, $this->repository, $this->accessKeyService);
 
         return $app;
     }
