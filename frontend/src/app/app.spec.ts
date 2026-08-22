@@ -8,7 +8,7 @@ describe('App', () => {
   beforeEach(async () => {
     await TestBed.configureTestingModule({
       imports: [App, RouterTestingModule],
-      providers: [provideTranslateService(), provideMockStore({ initialState: { auth: { errorCode: null } } })],
+      providers: [provideTranslateService(), provideMockStore({ initialState: { notification: { current: null } } })],
     }).compileComponents();
   });
 
@@ -19,13 +19,25 @@ describe('App', () => {
     expect(compiled.querySelector('router-outlet')).toBeTruthy();
   });
 
-  it('shows the authentication error code in the info box', async () => {
+  it('shows the global notification in the info box', async () => {
     await TestBed.resetTestingModule()
       .configureTestingModule({
         imports: [App, RouterTestingModule],
         providers: [
           provideTranslateService(),
-          provideMockStore({ initialState: { auth: { errorCode: 'INVALID_CREDENTIALS' } } }),
+          provideMockStore({
+            initialState: {
+              notification: {
+                current: {
+                  variant: 'error',
+                  titleKey: 'app.auth.loginErrorTitle',
+                  messageKey: 'INVALID_CREDENTIALS',
+                  params: {},
+                  preserveOnRoutes: [],
+                },
+              },
+            },
+          }),
         ],
       })
       .compileComponents();

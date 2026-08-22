@@ -4,10 +4,6 @@
       {{ (isNew ? 'app.admin.users.createHeading' : 'app.admin.users.editHeading') | translate }}
     </h2>
 
-    @if (errorCode(); as error) {
-      <p class="form-error" role="alert">{{ ('app.admin.users.errors.' + error) | translate }}</p>
-    }
-
     <form [formGroup]="form" class="user-form" (ngSubmit)="onSubmit()">
       <mat-form-field appearance="outline">
         <mat-label>{{ 'app.admin.users.emailLabel' | translate }}</mat-label>

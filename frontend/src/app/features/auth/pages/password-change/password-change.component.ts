@@ -13,10 +13,7 @@ import { MatInputModule } from '@angular/material/input';
 import { TranslatePipe } from '@ngx-translate/core';
 import { AuthActions } from '../../../../store/auth/auth.actions';
 import { Store } from '@ngrx/store';
-import {
-  selectAuthPasswordChangeErrorCode,
-  selectAuthPasswordChangeLoading,
-} from '../../../../store/auth/auth.feature';
+import { selectAuthPasswordChangeLoading } from '../../../../store/auth/auth.feature';
 import { ControlErrorComponent } from '../../../../shared/components/control-error/control-error';
 
 const matchingPasswordsValidator: ValidatorFn = (
@@ -43,7 +40,6 @@ const matchingPasswordsValidator: ValidatorFn = (
 export class PasswordChange {
   private readonly store = inject(Store);
   readonly submitting = this.store.selectSignal(selectAuthPasswordChangeLoading);
-  readonly errorCode = this.store.selectSignal(selectAuthPasswordChangeErrorCode);
 
   readonly passwordChangeForm = new FormGroup(
     {

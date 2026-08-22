@@ -11,7 +11,8 @@ import { toSignal } from '@angular/core/rxjs-interop';
 import { filter, startWith } from 'rxjs';
 import { InfoBoxComponent } from './shared/components/info-box/info-box';
 import { AuthActions } from './store/auth/auth.actions';
-import { selectAuthErrorCode, selectAuthGroup, selectAuthUserId } from './store/auth/auth.feature';
+import { selectAuthGroup, selectAuthUserId } from './store/auth/auth.feature';
+import { selectNotification } from './store/notification/notification.feature';
 
 @Component({
   imports: [
@@ -44,7 +45,7 @@ export class App {
     { initialValue: null },
   );
 
-  readonly authErrorCode = this.store.selectSignal(selectAuthErrorCode);
+  readonly notification = this.store.selectSignal(selectNotification);
   readonly authGroup = this.store.selectSignal(selectAuthGroup);
   readonly authUserId = this.store.selectSignal(selectAuthUserId);
   readonly isAdmin = computed(() => this.authGroup() === 'admin');

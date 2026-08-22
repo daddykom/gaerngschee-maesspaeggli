@@ -26,10 +26,10 @@
     </mat-menu>
 
     <main [class.page-shell]="pageTitleKey()" [class.admin-page-shell]="isAdminRoute()">
-      @if (authErrorCode(); as errorCode) {
+      @if (notification(); as currentNotification) {
         <div role="alert" aria-live="assertive">
-          <app-info-box variant="error" [title]="'app.auth.loginErrorTitle' | translate">
-            <span>{{ errorCode }}: {{ ('app.auth.errors.' + errorCode) | translate }}</span>
+          <app-info-box [variant]="currentNotification.variant" [title]="currentNotification.titleKey | translate">
+            <span>{{ currentNotification.messageKey | translate: currentNotification.params }}</span>
           </app-info-box>
         </div>
       }

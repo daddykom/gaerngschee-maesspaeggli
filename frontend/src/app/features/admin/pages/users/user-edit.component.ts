@@ -13,7 +13,7 @@ import { ControlErrorComponent } from '../../../../shared/components/control-err
 import { AdminUsersService } from '../../../../shared/services/admin-users.service';
 import { selectAuthGroup } from '../../../../store/auth/auth.feature';
 import { AdminUsersActions } from '../../../../store/admin-users/admin-users.actions';
-import { selectAdminUsersErrorCode, selectAdminUsersSaving } from '../../../../store/admin-users/admin-users.feature';
+import { selectAdminUsersSaving } from '../../../../store/admin-users/admin-users.feature';
 import { NavigationActions } from '../../../../store/navigation/navigation.actions';
 
 @Component({
@@ -39,7 +39,6 @@ export class UserEditComponent {
   private readonly authGroup = this.store.selectSignal(selectAuthGroup);
   readonly isAdmin = computed(() => this.authGroup() === 'admin');
   readonly saving = this.store.selectSignal(selectAdminUsersSaving);
-  readonly errorCode = this.store.selectSignal(selectAdminUsersErrorCode);
   readonly userId = this.route.snapshot.paramMap.get('userId');
   readonly isNew = this.route.snapshot.routeConfig?.path === 'users/new';
   readonly loading = toSignal(

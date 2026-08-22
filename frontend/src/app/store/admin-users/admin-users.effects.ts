@@ -5,6 +5,7 @@ import { catchError, exhaustMap, map, of } from 'rxjs';
 import { AdminUsersService } from '../../shared/services/admin-users.service';
 import { AdminUsersActions } from './admin-users.actions';
 import { NavigationActions } from '../navigation/navigation.actions';
+import { NotificationActions } from '../notification/notification.actions';
 
 const errorCode = (error: HttpErrorResponse): string =>
   typeof error.error?.error?.code === 'string' ? error.error.error.code : 'REQUEST_FAILED';
@@ -64,10 +65,64 @@ export const navigateBackAfterUserMutationEffect = createEffect(
   { functional: true },
 );
 
+export const adminUsersNotificationEffect = createEffect(
+  (actions$ = inject(Actions)) => actions$.pipe(
+    ofType(
+      AdminUsersActions.createSuccess,
+      AdminUsersActions.updateSuccess,
+      AdminUsersActions.deleteSuccess,
+      AdminUsersActions.createFailure,
+      AdminUsersActions.updateFailure,
+      AdminUsersActions.deleteFailure,
+    ),
+    map((action) => {
+      if (action.type === AdminUsersActions.createSuccess.type) {
+        return NotificationActions.show({
+          variant: 'success',
+          titleKey: 'app.admin.users.successTitle',
+          messageKey: 'app.admin.users.created',
+          params: { recipient: action.emailSentTo },
+          preserveOnRoutes: ['/admin/users'],
+        });
+      }
+
+      if (action.type === AdminUsersActions.updateSuccess.type) {
+        return NotificationActions.show({
+          variant: 'success',
+          titleKey: 'app.admin.users.successTitle',
+          messageKey: action.emailSentTo
+            ? 'app.admin.users.updatedWithEmail'
+            : 'app.admin.users.updated',
+          params: action.emailSentTo ? { recipient: action.emailSentTo } : {},
+          preserveOnRoutes: ['/admin/users'],
+        });
+      }
+
+      if (action.type === AdminUsersActions.deleteSuccess.type) {
+        return NotificationActions.show({
+          variant: 'success',
+          titleKey: 'app.admin.users.successTitle',
+          messageKey: 'app.admin.users.deleted',
+          preserveOnRoutes: ['/admin/users'],
+        });
+      }
+
+      return NotificationActions.show({
+        variant: 'error',
+        titleKey: 'app.admin.users.errorTitle',
+        messageKey: `app.admin.users.errors.${action.errorCode}`,
+        preserveOnRoutes: ['/admin/users'],
+      });
+    }),
+  ),
+  { functional: true },
+);
+
 export const adminUsersEffects = {
   loadAdminUsersEffect,
   createAdminUserEffect,
   updateAdminUserEffect,
   deleteAdminUserEffect,
   navigateBackAfterUserMutationEffect,
+  adminUsersNotificationEffect,
 };

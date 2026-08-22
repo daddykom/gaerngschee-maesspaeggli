@@ -5,6 +5,7 @@ import { catchError, exhaustMap, map, of } from 'rxjs';
 import { AuthService } from '../../shared/services/auth.service';
 import { AuthActions } from './auth.actions';
 import { NavigationActions } from '../navigation/navigation.actions';
+import { NotificationActions } from '../notification/notification.actions';
 
 export const loginEffect = createEffect(
   (actions$ = inject(Actions), authService = inject(AuthService)) =>
@@ -79,10 +80,27 @@ export const logoutEffect = createEffect(
   { functional: true },
 );
 
+export const authNotificationEffect = createEffect(
+  (actions$ = inject(Actions)) => actions$.pipe(
+    ofType(AuthActions.loginFailure, AuthActions.passwordChangeFailure),
+    map((action) => NotificationActions.show({
+      variant: 'error',
+      titleKey: action.type === AuthActions.passwordChangeFailure.type
+        ? 'app.passwordChange.heading'
+        : 'app.auth.loginErrorTitle',
+      messageKey: action.type === AuthActions.passwordChangeFailure.type
+        ? `app.passwordChange.errors.${action.errorCode}`
+        : `app.auth.errors.${action.errorCode}`,
+    })),
+  ),
+  { functional: true },
+);
+
 export const authEffects = {
   loginEffect,
   navigateOnLoginSuccessEffect,
   passwordChangeEffect,
   navigateOnPasswordChangeSuccessEffect,
   logoutEffect,
+  authNotificationEffect,
 };

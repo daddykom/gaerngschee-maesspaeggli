@@ -20,6 +20,5 @@ export const AdminUsersActions = createActionGroup({
     Delete: props<{ userId: string }>(),
     'Delete Success': props<{ userId: string }>(),
     'Delete Failure': props<{ errorCode: string }>(),
-    ClearFeedback: emptyProps(),
   },
 });

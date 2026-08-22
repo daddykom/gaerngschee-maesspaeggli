@@ -1,31 +1,4 @@
 <section class="admin-page-content">
-  @if (success() === 'created') {
-    <app-info-box variant="success" [title]="'app.admin.users.successTitle' | translate">
-      {{ 'app.admin.users.created' | translate }}
-      @if (emailSentTo(); as recipient) {
-        {{ 'app.admin.users.emailSentTo' | translate: { recipient } }}
-      }
-    </app-info-box>
-  }
-  @if (success() === 'updated') {
-    <app-info-box variant="success" [title]="'app.admin.users.successTitle' | translate">
-      {{ 'app.admin.users.updated' | translate }}
-      @if (emailSentTo(); as recipient) {
-        {{ 'app.admin.users.emailSentTo' | translate: { recipient } }}
-      }
-    </app-info-box>
-  }
-  @if (success() === 'deleted') {
-    <app-info-box variant="success" [title]="'app.admin.users.successTitle' | translate">
-      {{ 'app.admin.users.deleted' | translate }}
-    </app-info-box>
-  }
-  @if (errorCode(); as error) {
-    <app-info-box variant="error" [title]="'app.admin.users.errorTitle' | translate">
-      {{ ('app.admin.users.errors.' + error) | translate }}
-    </app-info-box>
-  }
-
   <div class="users-toolbar">
     <h2>{{ 'app.admin.users.heading' | translate }}</h2>
     <a mat-flat-button color="primary" routerLink="new">

@@ -94,6 +94,7 @@
         "successTitle": "Erfolgreich",
         "created": "Der Benutzer wurde erstellt.",
         "updated": "Der Benutzer wurde geändert.",
+        "updatedWithEmail": "Der Benutzer wurde geändert. Eine E-Mail wurde an {{ recipient }} versendet.",
         "deleted": "Der Benutzer wurde gelöscht.",
         "emailSentTo": "Eine E-Mail wurde an {{ recipient }} versendet.",
         "errorTitle": "Fehler",
@@ -109,6 +110,8 @@
           "INVALID_USER_DATA": "Bitte prüfe die Eingaben.",
           "NOT_FOUND": "Der Benutzer wurde nicht gefunden.",
           "EMAIL_DELIVERY_FAILED": "Die E-Mail konnte nicht versendet werden.",
+          "USER_CREATION_FAILED": "Der Benutzer konnte nicht erstellt werden.",
+          "USER_UPDATE_FAILED": "Der Benutzer konnte nicht geändert werden.",
           "REQUEST_FAILED": "Die Anfrage konnte nicht durchgeführt werden."
         }
       }
