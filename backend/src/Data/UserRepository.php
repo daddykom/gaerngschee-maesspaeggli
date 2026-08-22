@@ -19,16 +19,18 @@ final class UserRepository
 
     public function findAll(): array
     {
-        $stmt = $this->pdo->query('SELECT id, email, `group`, created_at, updated_at FROM users ORDER BY created_at DESC');
+        $stmt = $this->pdo->query(
+            'SELECT id, email, `group`, required_password_reset, created_at, updated_at FROM users ORDER BY created_at DESC',
+        );
         return $stmt->fetchAll();
     }
 
     public function findByEmail(string $email): ?array
     {
         $stmt = $this->pdo->prepare(
-            'SELECT id, email, `group`, created_at, updated_at FROM users WHERE email = :email',
+            'SELECT id, email, `group`, required_password_reset, created_at, updated_at FROM users WHERE email = :email',
         );
-        $stmt->execute(['email' => $email]);
+        $stmt->execute(['email' => $this->normalizeEmail($email)]);
         $row = $stmt->fetch();
         return $row ?: null;
     }
@@ -36,7 +38,7 @@ final class UserRepository
     public function findById(string $id): ?array
     {
         $stmt = $this->pdo->prepare(
-            'SELECT id, email, `group`, created_at, updated_at FROM users WHERE id = :id',
+            'SELECT id, email, `group`, required_password_reset, created_at, updated_at FROM users WHERE id = :id',
         );
         $stmt->execute(['id' => $id]);
         $row = $stmt->fetch();
@@ -46,7 +48,7 @@ final class UserRepository
     public function verifyPassword(string $email, string $password): ?array
     {
         $stmt = $this->pdo->prepare('SELECT * FROM users WHERE email = :email');
-        $stmt->execute(['email' => $email]);
+        $stmt->execute(['email' => $this->normalizeEmail($email)]);
         $user = $stmt->fetch();
 
         if ($user === false || !password_verify($password, $user['password'])) {
@@ -56,7 +58,12 @@ final class UserRepository
         return $this->findById($user['id']);
     }
 
-    public function createUser(string $email, string $password, string $group = 'user'): array
+    public function createUser(
+        string $email,
+        string $password,
+        string $group = 'user',
+        bool $requiredPasswordReset = false,
+    ): array
     {
         if (!in_array($group, self::USER_GROUPS, true)) {
             throw new \InvalidArgumentException('Invalid user group.');
@@ -69,13 +76,15 @@ final class UserRepository
 
         $id = $this->createUuid();
         $stmt = $this->pdo->prepare(
-            'INSERT INTO users (id, email, password, `group`) VALUES (:id, :email, :password, :group)',
+            'INSERT INTO users (id, email, password, `group`, required_password_reset) '
+            . 'VALUES (:id, :email, :password, :group, :required_password_reset)',
         );
         $stmt->execute([
             'id' => $id,
-            'email' => $email,
+            'email' => $this->normalizeEmail($email),
             'password' => $passwordHash,
             'group' => $group,
+            'required_password_reset' => $requiredPasswordReset ? 1 : 0,
         ]);
 
         $user = $this->findById($id);
@@ -94,7 +103,8 @@ final class UserRepository
         }
 
         $stmt = $this->pdo->prepare(
-            'UPDATE users SET password = :password, updated_at = CURRENT_TIMESTAMP WHERE id = :id',
+            'UPDATE users SET password = :password, required_password_reset = 0, '
+            . 'updated_at = CURRENT_TIMESTAMP WHERE id = :id',
         );
         $stmt->execute(['password' => $passwordHash, 'id' => $id]);
 
@@ -104,6 +114,36 @@ final class UserRepository
         }
 
         return $user;
+    }
+
+    public function updateUser(
+        string $id,
+        string $email,
+        string $group,
+        bool $requiredPasswordReset,
+    ): ?array {
+        if (!in_array($group, self::USER_GROUPS, true)) {
+            throw new \InvalidArgumentException('Invalid user group.');
+        }
+
+        $stmt = $this->pdo->prepare(
+            'UPDATE users SET email = :email, `group` = :group, '
+            . 'required_password_reset = :required_password_reset, '
+            . 'updated_at = CURRENT_TIMESTAMP WHERE id = :id',
+        );
+        $stmt->execute([
+            'id' => $id,
+            'email' => $this->normalizeEmail($email),
+            'group' => $group,
+            'required_password_reset' => $requiredPasswordReset ? 1 : 0,
+        ]);
+
+        return $this->findById($id);
+    }
+
+    private function normalizeEmail(string $email): string
+    {
+        return strtolower(trim($email));
     }
 
     private function createUuid(): string

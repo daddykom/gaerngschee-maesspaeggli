@@ -28,6 +28,7 @@ final class AccessKeyServiceTest extends TestCase
                 email TEXT UNIQUE NOT NULL,
                 password TEXT NOT NULL,
                 "group" TEXT NOT NULL,
+                required_password_reset INTEGER NOT NULL DEFAULT 0,
                 created_at TEXT,
                 updated_at TEXT
             )',

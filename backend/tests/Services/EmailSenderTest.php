@@ -37,6 +37,43 @@ final class EmailSenderTest extends TestCase
         $sender->sendAnmeldung('person@example.com', $variant);
     }
 
+    public function testSendUserCreatedSendsTemporaryPasswordToNewUser(): void
+    {
+        $mailer = $this->createMock(MailerInterface::class);
+        $mailer->expects(self::once())
+            ->method('send')
+            ->with(self::callback(static function (Email $email): bool {
+                self::assertSame('new@example.com', $email->getTo()[0]->getAddress());
+                self::assertSame('Dein Benutzerkonto wurde erstellt', $email->getSubject());
+                self::assertStringContainsString('temporary-secret', $email->getHtmlBody());
+                self::assertStringContainsString('/login', $email->getHtmlBody());
+
+                return true;
+            }));
+
+        $sender = new EmailSender($mailer, 'noreply@example.com', 'Gärngschee-Mässpäggli');
+
+        $sender->sendUserCreated('new@example.com', 'temporary-secret');
+    }
+
+    public function testSendUserEmailChangedNotifiesNewAddress(): void
+    {
+        $mailer = $this->createMock(MailerInterface::class);
+        $mailer->expects(self::once())
+            ->method('send')
+            ->with(self::callback(static function (Email $email): bool {
+                self::assertSame('new@example.com', $email->getTo()[0]->getAddress());
+                self::assertSame('Deine E-Mail-Adresse wurde geändert', $email->getSubject());
+                self::assertStringContainsString('neue Adresse', $email->getHtmlBody());
+
+                return true;
+            }));
+
+        $sender = new EmailSender($mailer, 'noreply@example.com', 'Gärngschee-Mässpäggli');
+
+        $sender->sendUserEmailChanged('new@example.com');
+    }
+
     public static function mailVariants(): array
     {
         return [

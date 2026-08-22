@@ -86,6 +86,7 @@ final class StartRoutesTest extends TestCase
                 email TEXT UNIQUE NOT NULL,
                 password TEXT NOT NULL,
                 "group" TEXT NOT NULL,
+                required_password_reset INTEGER NOT NULL DEFAULT 0,
                 created_at TEXT,
                 updated_at TEXT
             )',
@@ -105,9 +106,25 @@ final class StartRoutesTest extends TestCase
                     {
                         throw new \RuntimeException('SMTP failed');
                     }
+
+                    public function sendUserCreated(string $recipient, string $temporaryPassword): void
+                    {
+                    }
+
+                    public function sendUserEmailChanged(string $recipient): void
+                    {
+                    }
                 }
                 : new class () implements EmailSenderInterface {
                 public function sendAnmeldung(string $recipient, \App\Services\AnmeldungMailVariant $variant, string $locale = 'de'): void
+                {
+                }
+
+                public function sendUserCreated(string $recipient, string $temporaryPassword): void
+                {
+                }
+
+                public function sendUserEmailChanged(string $recipient): void
                 {
                 }
             },

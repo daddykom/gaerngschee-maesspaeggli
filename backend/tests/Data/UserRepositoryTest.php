@@ -23,6 +23,7 @@ final class UserRepositoryTest extends TestCase
                 email TEXT UNIQUE NOT NULL,
                 password TEXT NOT NULL,
                 "group" TEXT NOT NULL,
+                required_password_reset INTEGER NOT NULL DEFAULT 0,
                 created_at TEXT,
                 updated_at TEXT
             )',
@@ -36,6 +37,7 @@ final class UserRepositoryTest extends TestCase
 
         self::assertSame('client@example.com', $user['email']);
         self::assertSame('client', $user['group']);
+        self::assertFalse((bool) $user['required_password_reset']);
         self::assertArrayNotHasKey('password', $user);
 
         $stored = $this->pdo->query('SELECT password FROM users')->fetchColumn();
@@ -72,5 +74,13 @@ final class UserRepositoryTest extends TestCase
 
         $this->expectException(\PDOException::class);
         $this->repository->createUser('person@example.com', 'another-secret');
+    }
+
+    public function testNewUserCanRequirePasswordResetAndEmailsAreNormalized(): void
+    {
+        $user = $this->repository->createUser(' Person@Example.com ', 'secret', 'user', true);
+
+        self::assertSame('person@example.com', $user['email']);
+        self::assertTrue((bool) $user['required_password_reset']);
     }
 }

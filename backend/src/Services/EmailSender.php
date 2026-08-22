@@ -41,7 +41,10 @@ final class EmailSender implements EmailSenderInterface
         $this->fromAddress = $fromAddress ?? $this->requiredEnvironment('MAIL_FROM_ADDRESS');
         $this->fromName = $fromName ?? getenv('MAIL_FROM_NAME') ?: 'Gärngschee-Mässpäggli';
         $this->twig = $twig ?? new Environment(
-            new FilesystemLoader(dirname(__DIR__, 2) . '/resources/emails/anmeldung'),
+            new FilesystemLoader([
+                dirname(__DIR__, 2) . '/resources/emails/anmeldung',
+                dirname(__DIR__, 2) . '/resources/emails',
+            ]),
         );
         $this->translator = $translator ?? $this->createTranslator();
         $this->twig->addExtension(new TranslationExtension($this->translator));
@@ -63,6 +66,43 @@ final class EmailSender implements EmailSenderInterface
             ->from(new Address($this->fromAddress, $this->fromName))
             ->to($recipient)
             ->subject($this->translator->trans('anmeldung.' . $variant->value . '.subject', [], null, $locale))
+            ->text($this->plainText($html))
+            ->html($html);
+
+        try {
+            $this->mailer->send($message);
+        } catch (TransportExceptionInterface $exception) {
+            throw new EmailDeliveryException('The email could not be sent.', 0, $exception);
+        }
+    }
+
+    public function sendUserCreated(string $recipient, string $temporaryPassword): void
+    {
+        $frontendBaseUrl = rtrim(getenv('FRONTEND_BASE_URL') ?: 'http://localhost:4200', '/');
+        $html = $this->twig->render('user-created.html.twig', [
+            'LOGIN_URL' => $frontendBaseUrl . '/login',
+            'TEMPORARY_PASSWORD' => $temporaryPassword,
+        ]);
+
+        $this->sendUserEmail($recipient, 'Dein Benutzerkonto wurde erstellt', $html);
+    }
+
+    public function sendUserEmailChanged(string $recipient): void
+    {
+        $frontendBaseUrl = rtrim(getenv('FRONTEND_BASE_URL') ?: 'http://localhost:4200', '/');
+        $html = $this->twig->render('user-email-changed.html.twig', [
+            'LOGIN_URL' => $frontendBaseUrl . '/login',
+        ]);
+
+        $this->sendUserEmail($recipient, 'Deine E-Mail-Adresse wurde geändert', $html);
+    }
+
+    private function sendUserEmail(string $recipient, string $subject, string $html): void
+    {
+        $message = (new Email())
+            ->from(new Address($this->fromAddress, $this->fromName))
+            ->to($recipient)
+            ->subject($subject)
             ->text($this->plainText($html))
             ->html($html);
 
