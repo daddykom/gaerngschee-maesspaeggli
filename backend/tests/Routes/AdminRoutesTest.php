@@ -10,6 +10,7 @@ use App\Routes\AdminRoutes;
 use App\Services\SessionService;
 use PDO;
 use PHPUnit\Framework\TestCase;
+use Slim\Exception\HttpNotFoundException;
 use Slim\Factory\AppFactory;
 use Slim\Psr7\Factory\ServerRequestFactory;
 
@@ -89,5 +90,20 @@ final class AdminRoutesTest extends TestCase
         $response = $app->handle((new ServerRequestFactory())->createServerRequest('GET', '/admin/users'));
 
         self::assertSame(404, $response->getStatusCode());
+    }
+
+    public function testAccessKeyRouteIsNotAvailable(): void
+    {
+        $admin = $this->repository->createUser('admin@example.com', 'secret', 'admin');
+        (new SessionService())->setUser($admin['id'], 'admin');
+        $app = AppFactory::create();
+        $app->addRoutingMiddleware();
+        AdminRoutes::register($app, $this->repository);
+
+        self::expectException(HttpNotFoundException::class);
+
+        $app->handle(
+            (new ServerRequestFactory())->createServerRequest('POST', '/admin/users/user-id/access-key'),
+        );
     }
 }

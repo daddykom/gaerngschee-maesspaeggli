@@ -7,7 +7,6 @@ namespace Tests\Routes;
 use App\Data\AccessKeyRepository;
 use App\Data\UserRepository;
 use App\Application;
-use App\Routes\AdminRoutes;
 use App\Routes\AuthRoutes;
 use App\Services\AccessKeyService;
 use App\Services\JwtService;
@@ -192,24 +191,6 @@ final class AuthRoutesTest extends TestCase
         );
     }
 
-    public function testAdminCanGenerateAnAccessKeyForAUser(): void
-    {
-        $admin = $this->repository->createUser('admin@example.com', 'secret', 'admin');
-        $client = $this->repository->createUser('client@example.com', 'secret', 'client');
-        (new SessionService())->setUser($admin['id'], 'admin');
-
-        $response = $this->createAdminApp()->handle($this->request(
-            '/admin/users/' . $client['id'] . '/access-key',
-            ['purpose' => AccessKeyService::CLIENT_LOGIN],
-        ));
-        $data = json_decode((string) $response->getBody(), true, 512, JSON_THROW_ON_ERROR);
-
-        self::assertSame(201, $response->getStatusCode());
-        self::assertSame(AccessKeyService::CLIENT_LOGIN, $data['purpose']);
-        self::assertSame('client', $data['group']);
-        self::assertIsString($data['accessKey']);
-    }
-
     private function createAuthApp(): \Slim\App
     {
         $app = AppFactory::create();
@@ -221,15 +202,6 @@ final class AuthRoutesTest extends TestCase
             new SessionService(),
             $this->accessKeyService,
         );
-
-        return $app;
-    }
-
-    private function createAdminApp(): \Slim\App
-    {
-        $app = AppFactory::create();
-        $app->addRoutingMiddleware();
-        AdminRoutes::register($app, $this->repository, $this->accessKeyService);
 
         return $app;
     }
