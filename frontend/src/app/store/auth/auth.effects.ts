@@ -2,7 +2,7 @@ import { HttpErrorResponse } from '@angular/common/http';
 import { inject } from '@angular/core';
 import { Actions, createEffect, ofType } from '@ngrx/effects';
 import { Router } from '@angular/router';
-import { catchError, exhaustMap, map, of, tap } from 'rxjs';
+import { EMPTY, catchError, exhaustMap, map, of, tap } from 'rxjs';
 import { AuthService } from '../../shared/services/auth.service';
 import { AuthActions } from './auth.actions';
 
@@ -37,7 +37,27 @@ export const navigateOnLoginSuccessEffect = createEffect(
   { functional: true, dispatch: false },
 );
 
+export const logoutEffect = createEffect(
+  (actions$ = inject(Actions), authService = inject(AuthService), router = inject(Router)) =>
+    actions$.pipe(
+      ofType(AuthActions.logout),
+      exhaustMap(() =>
+        authService.logout().pipe(
+          tap(() => {
+            void router.navigateByUrl('/login');
+          }),
+          catchError(() => {
+            void router.navigateByUrl('/login');
+            return EMPTY;
+          }),
+        ),
+      ),
+    ),
+  { functional: true, dispatch: false },
+);
+
 export const authEffects = {
   loginEffect,
   navigateOnLoginSuccessEffect,
+  logoutEffect,
 };
