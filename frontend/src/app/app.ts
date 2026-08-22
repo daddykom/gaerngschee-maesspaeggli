@@ -10,6 +10,7 @@ import { TranslatePipe } from '@ngx-translate/core';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { filter, startWith } from 'rxjs';
 import { InfoBoxComponent } from './shared/components/info-box/info-box';
+import { AuthActions } from './store/auth/auth.actions';
 import { selectAuthErrorCode } from './store/auth/auth.feature';
 
 @Component({
@@ -44,6 +45,11 @@ export class App {
   );
 
   readonly authErrorCode = this.store.selectSignal(selectAuthErrorCode);
+
+  logout(): void {
+    this.store.dispatch(AuthActions.logout());
+  }
+
   readonly isAdminRoute = computed(() => {
     this.navigation();
     return this.router.url.startsWith('/admin');

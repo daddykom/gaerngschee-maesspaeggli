@@ -9,6 +9,9 @@
           <a mat-menu-item routerLink="/admin/overview" routerLinkActive="active">
             {{ 'app.navigation.adminOverview' | translate }}
           </a>
+          <button mat-menu-item type="button" (click)="logout()">
+            {{ 'app.navigation.logout' | translate }}
+          </button>
         </nav>
       }
     </mat-menu>

@@ -55,7 +55,8 @@
       "menuLabel": "Administrationsmenü",
       "openMenu": "Administrationsmenü öffnen",
       "start": "Startseite",
-      "adminOverview": "Admin-Übersicht"
+      "adminOverview": "Admin-Übersicht",
+      "logout": "Abmelden"
     }
   }
 }
