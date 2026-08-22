@@ -1,0 +1,61 @@
+<section class="admin-page-content">
+  @if (success() === 'created') {
+    <app-info-box variant="success" [title]="'app.admin.users.successTitle' | translate">
+      {{ 'app.admin.users.created' | translate }}
+      @if (emailSentTo(); as recipient) {
+        {{ 'app.admin.users.emailSentTo' | translate: { recipient } }}
+      }
+    </app-info-box>
+  }
+  @if (success() === 'updated') {
+    <app-info-box variant="success" [title]="'app.admin.users.successTitle' | translate">
+      {{ 'app.admin.users.updated' | translate }}
+      @if (emailSentTo(); as recipient) {
+        {{ 'app.admin.users.emailSentTo' | translate: { recipient } }}
+      }
+    </app-info-box>
+  }
+  @if (success() === 'deleted') {
+    <app-info-box variant="success" [title]="'app.admin.users.successTitle' | translate">
+      {{ 'app.admin.users.deleted' | translate }}
+    </app-info-box>
+  }
+  @if (errorCode(); as error) {
+    <app-info-box variant="error" [title]="'app.admin.users.errorTitle' | translate">
+      {{ ('app.admin.users.errors.' + error) | translate }}
+    </app-info-box>
+  }
+
+  <div class="users-toolbar">
+    <h2>{{ 'app.admin.users.heading' | translate }}</h2>
+    <a mat-flat-button color="primary" routerLink="new">
+      {{ 'app.admin.users.create' | translate }}
+    </a>
+  </div>
+
+  @if (loading()) {
+    <p>{{ 'app.admin.users.loading' | translate }}</p>
+  } @else {
+    <div class="user-list" role="list">
+      @for (user of users(); track user.id) {
+        <article class="user-row" role="listitem">
+          <div>
+            <strong>{{ user.email }}</strong>
+            <span>{{ ('app.admin.users.groups.' + user.group) | translate }}</span>
+            @if (user.required_password_reset) {
+              <span>{{ 'app.admin.users.passwordResetRequired' | translate }}</span>
+            }
+          </div>
+          <div class="user-actions">
+            <a mat-button [routerLink]="[user.id]">{{ 'app.admin.users.edit' | translate }}</a>
+            <button mat-button color="warn" type="button" (click)="deleteUser(user.id)">
+              {{ 'app.admin.users.delete' | translate }}
+            </button>
+          </div>
+        </article>
+      } @empty {
+        <p>{{ 'app.admin.users.empty' | translate }}</p>
+      }
+    </div>
+  }
+</section>

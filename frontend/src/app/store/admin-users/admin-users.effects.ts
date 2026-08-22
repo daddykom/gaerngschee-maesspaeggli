@@ -1,7 +1,8 @@
 import { HttpErrorResponse } from '@angular/common/http';
+import { Location } from '@angular/common';
 import { inject } from '@angular/core';
 import { Actions, createEffect, ofType } from '@ngrx/effects';
-import { catchError, exhaustMap, map, of } from 'rxjs';
+import { catchError, exhaustMap, map, of, tap } from 'rxjs';
 import { AdminUsersService } from '../../shared/services/admin-users.service';
 import { AdminUsersActions } from './admin-users.actions';
 
@@ -55,9 +56,18 @@ export const deleteAdminUserEffect = createEffect(
   { functional: true },
 );
 
+export const navigateBackAfterUserMutationEffect = createEffect(
+  (actions$ = inject(Actions), location = inject(Location)) => actions$.pipe(
+    ofType(AdminUsersActions.createSuccess, AdminUsersActions.updateSuccess),
+    tap(() => location.back()),
+  ),
+  { functional: true, dispatch: false },
+);
+
 export const adminUsersEffects = {
   loadAdminUsersEffect,
   createAdminUserEffect,
   updateAdminUserEffect,
   deleteAdminUserEffect,
+  navigateBackAfterUserMutationEffect,
 };

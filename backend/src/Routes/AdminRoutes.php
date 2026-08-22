@@ -115,6 +115,10 @@ final class AdminRoutes
                 }
 
                 $data = self::readJsonBody($request);
+                if (!self::isAdmin($request) && (array_key_exists('group', $data) || array_key_exists('requiredPasswordReset', $data))) {
+                    return self::error($response, 'INVALID_USER_DATA', 422);
+                }
+
                 $email = array_key_exists('email', $data) ? self::readEmail($data) : $currentUser['email'];
                 $group = array_key_exists('group', $data) ? self::readGroup($data) : $currentUser['group'];
                 $requiredPasswordReset = array_key_exists('requiredPasswordReset', $data)

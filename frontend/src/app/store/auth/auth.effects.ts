@@ -42,6 +42,31 @@ export const navigateOnLoginSuccessEffect = createEffect(
   { functional: true, dispatch: false },
 );
 
+export const passwordChangeEffect = createEffect(
+  (actions$ = inject(Actions), authService = inject(AuthService)) => actions$.pipe(
+    ofType(AuthActions.passwordChange),
+    exhaustMap(({ password }) => authService.changePassword(password).pipe(
+      map(() => AuthActions.passwordChangeSuccess()),
+      catchError((error: HttpErrorResponse) => of(AuthActions.passwordChangeFailure({
+        errorCode: typeof error.error?.error?.code === 'string'
+          ? error.error.error.code
+          : 'PASSWORD_CHANGE_FAILED',
+      }))),
+    )),
+  ),
+  { functional: true },
+);
+
+export const navigateOnPasswordChangeSuccessEffect = createEffect(
+  (actions$ = inject(Actions), router = inject(Router)) => actions$.pipe(
+    ofType(AuthActions.passwordChangeSuccess),
+    tap(() => {
+      void router.navigateByUrl('/admin/overview');
+    }),
+  ),
+  { functional: true, dispatch: false },
+);
+
 export const logoutEffect = createEffect(
   (actions$ = inject(Actions), authService = inject(AuthService), router = inject(Router)) =>
     actions$.pipe(
@@ -64,5 +89,7 @@ export const logoutEffect = createEffect(
 export const authEffects = {
   loginEffect,
   navigateOnLoginSuccessEffect,
+  passwordChangeEffect,
+  navigateOnPasswordChangeSuccessEffect,
   logoutEffect,
 };

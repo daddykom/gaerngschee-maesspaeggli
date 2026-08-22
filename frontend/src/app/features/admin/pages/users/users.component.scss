@@ -1,0 +1,52 @@
+.admin-page-content {
+  padding: clamp(32px, 5vw, 72px) clamp(24px, 4vw, 54px);
+}
+
+.users-toolbar,
+.user-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+}
+
+.users-toolbar {
+  max-width: 1000px;
+  margin: 0 auto 2rem;
+}
+
+.users-toolbar h2 {
+  margin: 0;
+}
+
+.user-list {
+  max-width: 1000px;
+  margin: 0 auto;
+}
+
+.user-row {
+  align-items: flex-start;
+  padding: 1rem 0;
+  border-bottom: 1px solid var(--mat-sys-outline-variant);
+}
+
+.user-row > div:first-child {
+  display: grid;
+  gap: 0.25rem;
+}
+
+.user-actions {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+}
+
+@media (max-width: 600px) {
+  .user-row {
+    flex-direction: column;
+  }
+
+  .user-actions {
+    justify-content: flex-start;
+  }
+}

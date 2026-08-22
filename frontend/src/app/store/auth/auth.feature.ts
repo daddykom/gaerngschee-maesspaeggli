@@ -29,6 +29,22 @@ export const authFeature = createFeature({
       loading: false,
       errorCode,
     })),
+    on(AuthActions.passwordChangeSuccess, (state) => ({
+      ...state,
+      requiredPasswordReset: false,
+      passwordChangeLoading: false,
+      passwordChangeErrorCode: null,
+    })),
+    on(AuthActions.passwordChange, (state) => ({
+      ...state,
+      passwordChangeLoading: true,
+      passwordChangeErrorCode: null,
+    })),
+    on(AuthActions.passwordChangeFailure, (state, { errorCode }) => ({
+      ...state,
+      passwordChangeLoading: false,
+      passwordChangeErrorCode: errorCode,
+    })),
     on(AuthActions.logout, () => initialState),
   ),
 });
@@ -41,6 +57,8 @@ export const {
   selectUserId: selectAuthUserId,
   selectGroup: selectAuthGroup,
   selectRequiredPasswordReset: selectAuthRequiredPasswordReset,
+  selectPasswordChangeLoading: selectAuthPasswordChangeLoading,
+  selectPasswordChangeErrorCode: selectAuthPasswordChangeErrorCode,
   selectLoading: selectAuthLoading,
   selectErrorCode: selectAuthErrorCode,
 } = authFeature;

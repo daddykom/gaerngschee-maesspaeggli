@@ -14,6 +14,8 @@ describe('authReducer', () => {
       userId: null,
       group: null,
       requiredPasswordReset: false,
+      passwordChangeLoading: false,
+      passwordChangeErrorCode: null,
       loading: true,
       errorCode: null,
     });
@@ -35,6 +37,8 @@ describe('authReducer', () => {
       userId: 'user-123',
       group: 'admin',
       requiredPasswordReset: false,
+      passwordChangeLoading: false,
+      passwordChangeErrorCode: null,
       loading: false,
       errorCode: null,
     });
@@ -51,6 +55,8 @@ describe('authReducer', () => {
       userId: null,
       group: null,
       requiredPasswordReset: false,
+      passwordChangeLoading: false,
+      passwordChangeErrorCode: null,
       loading: false,
       errorCode: 'INVALID_CREDENTIALS',
     });
@@ -63,6 +69,8 @@ describe('authReducer', () => {
         userId: 'user-123',
         group: 'admin',
         requiredPasswordReset: false,
+        passwordChangeLoading: false,
+        passwordChangeErrorCode: null,
         loading: false,
         errorCode: null,
       },

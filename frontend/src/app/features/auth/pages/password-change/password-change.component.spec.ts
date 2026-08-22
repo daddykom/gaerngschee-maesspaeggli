@@ -1,5 +1,7 @@
 import { provideRouter } from '@angular/router';
 import { provideTranslateService } from '@ngx-translate/core';
+import { provideStore } from '@ngrx/store';
+import { AuthService } from '../../../../shared/services/auth.service';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { PasswordChange } from './password-change.component';
 
@@ -10,7 +12,12 @@ describe('PasswordChange', () => {
   beforeEach(async () => {
     await TestBed.configureTestingModule({
       imports: [PasswordChange],
-      providers: [provideRouter([]), provideTranslateService()],
+        providers: [
+          provideRouter([]),
+          provideTranslateService(),
+          provideStore(),
+          { provide: AuthService, useValue: { changePassword: jest.fn() } },
+        ],
     }).compileComponents();
 
     fixture = TestBed.createComponent(PasswordChange);
