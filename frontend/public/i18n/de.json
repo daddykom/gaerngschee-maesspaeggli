@@ -71,6 +71,23 @@
       "overview": {
         "title": "Admin-Übersicht"
       },
+      "configuration": {
+        "title": "Konfiguration",
+        "loading": "Konfiguration wird geladen ...",
+        "empty": "Es sind keine Konfigurationsvariablen vorhanden.",
+        "save": "Konfiguration speichern",
+        "addValue": "Wert hinzufügen",
+        "removeValue": "Wert entfernen",
+        "successTitle": "Erfolgreich",
+        "saved": "Die Konfiguration wurde gespeichert.",
+        "errorTitle": "Fehler",
+        "errors": {
+          "FORBIDDEN": "Du darfst mindestens eine Konfiguration nicht verändern.",
+          "INVALID_CONFIGURATION_DATA": "Bitte prüfe die Konfigurationswerte.",
+          "CONFIGURATION_UPDATE_FAILED": "Die Konfiguration konnte nicht gespeichert werden.",
+          "REQUEST_FAILED": "Die Anfrage konnte nicht durchgeführt werden."
+        }
+      },
       "users": {
         "title": "Benutzerverwaltung",
         "createTitle": "Benutzer erstellen",
@@ -124,6 +141,7 @@
       "openMenu": "Administrationsmenü öffnen",
       "start": "Startseite",
       "adminOverview": "Admin-Übersicht",
+      "configuration": "Konfiguration",
       "userManagement": "Benutzerverwaltung",
       "myUser": "Meine Daten",
       "logout": "Abmelden"

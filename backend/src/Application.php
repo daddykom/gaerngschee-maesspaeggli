@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App;
 
 use App\Routes\AdminRoutes;
+use App\Routes\ConfigurationRoutes;
 use App\Routes\StartRoutes;
 use App\Routes\AuthRoutes;
 use App\Routes\PublicRoutes;
@@ -31,7 +32,7 @@ final class Application
                 $response = new Response();
                 return $response
                     ->withHeader('Access-Control-Allow-Origin', '*')
-                    ->withHeader('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS')
+                    ->withHeader('Access-Control-Allow-Methods', 'GET, POST, PATCH, PUT, DELETE, OPTIONS')
                     ->withHeader('Access-Control-Allow-Headers', 'Content-Type, Authorization')
                     ->withStatus(204);
             }
@@ -46,6 +47,7 @@ final class Application
         StartRoutes::register($app);
         AuthRoutes::register($app);
         AdminRoutes::register($app);
+        ConfigurationRoutes::register($app);
 
         return $app;
     }

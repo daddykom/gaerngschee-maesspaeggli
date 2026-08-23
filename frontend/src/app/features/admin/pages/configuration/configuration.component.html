@@ -1,0 +1,48 @@
+<section class="admin-page-content">
+  <form [formGroup]="form" class="configuration-form" (ngSubmit)="onSubmit()">
+    @if (loading()) {
+      <p>{{ 'app.admin.configuration.loading' | translate }}</p>
+    } @else {
+      @for (config of configs(); track config.id) {
+        <fieldset class="configuration-field" [class.configuration-field--readonly]="!config.canUpdate">
+          <legend>{{ config.label || config.variableName }}</legend>
+          @if (config.description) {
+            <p class="configuration-description">{{ config.description }}</p>
+          }
+
+          @if (isArray(config)) {
+            <div class="configuration-values">
+              @for (value of arrayControl(config).controls; track $index) {
+                <mat-form-field appearance="outline">
+                  <mat-label>{{ config.variableName }} {{ $index + 1 }}</mat-label>
+                  <input matInput type="text" [formControl]="value" />
+                </mat-form-field>
+                @if (config.canUpdate) {
+                  <button mat-button type="button" (click)="removeValue(config, $index)">
+                    {{ 'app.admin.configuration.removeValue' | translate }}
+                  </button>
+                }
+              }
+            </div>
+            @if (config.canUpdate) {
+              <button mat-button type="button" (click)="addValue(config)">
+                {{ 'app.admin.configuration.addValue' | translate }}
+              </button>
+            }
+          } @else {
+            <mat-form-field appearance="outline">
+              <mat-label>{{ config.variableName }}</mat-label>
+              <input matInput type="text" [formControl]="control(config)" />
+            </mat-form-field>
+          }
+        </fieldset>
+      } @empty {
+        <p>{{ 'app.admin.configuration.empty' | translate }}</p>
+      }
+
+      <button mat-flat-button color="primary" type="submit" [disabled]="saving() || loading()">
+        {{ 'app.admin.configuration.save' | translate }}
+      </button>
+    }
+  </form>
+</section>

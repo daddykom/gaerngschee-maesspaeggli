@@ -6,9 +6,12 @@
           <a mat-menu-item routerLink="/start" routerLinkActive="active">
             {{ 'app.navigation.start' | translate }}
           </a>
-          <a mat-menu-item routerLink="/admin/overview" routerLinkActive="active">
-            {{ 'app.navigation.adminOverview' | translate }}
-          </a>
+           <a mat-menu-item routerLink="/admin/overview" routerLinkActive="active">
+             {{ 'app.navigation.adminOverview' | translate }}
+           </a>
+           <a mat-menu-item routerLink="/admin/configuration" routerLinkActive="active">
+             {{ 'app.navigation.configuration' | translate }}
+           </a>
           @if (isAdmin()) {
             <a mat-menu-item routerLink="/admin/users" routerLinkActive="active">
               {{ 'app.navigation.userManagement' | translate }}

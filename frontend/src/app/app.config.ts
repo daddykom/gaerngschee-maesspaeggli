@@ -20,6 +20,8 @@ import { authTokenInterceptor } from './shared/interceptors/auth-token.intercept
 import { navigationEffects } from './store/navigation/navigation.effects';
 import { notificationEffects } from './store/notification/notification.effects';
 import { notificationFeature } from './store/notification/notification.feature';
+import { frontendConfigEffects } from './store/frontend-config/frontend-config.effects';
+import { frontendConfigFeature } from './store/frontend-config/frontend-config.feature';
 
 export const appConfig: ApplicationConfig = {
   providers: [
@@ -32,7 +34,8 @@ export const appConfig: ApplicationConfig = {
     provideState(adminOverviewFeature),
     provideState(adminUsersFeature),
     provideState(notificationFeature),
-    provideEffects(startEffects, authEffects, adminUsersEffects, navigationEffects, notificationEffects),
+    provideState(frontendConfigFeature),
+    provideEffects(startEffects, authEffects, adminUsersEffects, frontendConfigEffects, navigationEffects, notificationEffects),
     provideStoreDevtools(),
     provideAnimations(),
     provideTranslateService({

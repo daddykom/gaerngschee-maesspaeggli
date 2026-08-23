@@ -49,6 +49,14 @@ export const appRoutes: Routes = [
           ),
       },
       {
+        path: 'configuration',
+        data: { pageTitle: 'app.admin.configuration.title', pageHeaderLayout: 'wide' },
+        loadComponent: () =>
+          import('./features/admin/pages/configuration/configuration.component').then(
+            (m) => m.ConfigurationComponent,
+          ),
+      },
+      {
         path: 'users',
         children: [
           {
