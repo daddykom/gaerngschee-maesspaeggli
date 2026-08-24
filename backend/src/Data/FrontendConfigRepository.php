@@ -28,8 +28,7 @@ final class FrontendConfigRepository
             }
 
             $updateGroups = $this->decodeGroups($row['update_group']);
-            $values = $this->findValues($row['id']);
-            $configs[] = $this->mapConfig($row, $values, in_array($group, $updateGroups, true));
+            $configs[] = $this->mapConfig($row, in_array($group, $updateGroups, true));
         }
 
         return $configs;
@@ -54,41 +53,15 @@ final class FrontendConfigRepository
             return false;
         }
 
-        $this->pdo->beginTransaction();
-        try {
-            if (is_array($value)) {
-                $this->pdo->prepare(
-                    'UPDATE frontend_config SET value = NULL, updated_at = CURRENT_TIMESTAMP WHERE id = :id',
-                )->execute(['id' => $id]);
-
-                $this->pdo->prepare('DELETE FROM frontend_config_values WHERE frontend_config_id = :id')
-                    ->execute(['id' => $id]);
-
-                $insert = $this->pdo->prepare(
-                    'INSERT INTO frontend_config_values (id, frontend_config_id, value, position)
-                     VALUES (:id, :frontend_config_id, :value, :position)',
-                );
-                foreach (array_values($value) as $position => $item) {
-                    $insert->execute([
-                        'id' => $this->createUuid(),
-                        'frontend_config_id' => $id,
-                        'value' => $item,
-                        'position' => $position,
-                    ]);
-                }
-            } else {
-                $this->pdo->prepare(
-                    'UPDATE frontend_config SET value = :value, updated_at = CURRENT_TIMESTAMP WHERE id = :id',
-                )->execute(['id' => $id, 'value' => $value]);
-                $this->pdo->prepare('DELETE FROM frontend_config_values WHERE frontend_config_id = :id')
-                    ->execute(['id' => $id]);
-            }
-
-            $this->pdo->commit();
-        } catch (\Throwable $exception) {
-            $this->pdo->rollBack();
-            throw $exception;
-        }
+        $stmt = $this->pdo->prepare(
+            'UPDATE frontend_config
+             SET value = :value, updated_at = CURRENT_TIMESTAMP
+             WHERE id = :id',
+        );
+        $stmt->execute([
+            'id' => $id,
+            'value' => json_encode($value, JSON_THROW_ON_ERROR),
+        ]);
 
         return $this->findById($id, $group);
     }
@@ -104,30 +77,32 @@ final class FrontendConfigRepository
         return null;
     }
 
-    private function findValues(string $configId): array
-    {
-        $stmt = $this->pdo->prepare(
-            'SELECT value FROM frontend_config_values
-             WHERE frontend_config_id = :frontend_config_id
-             ORDER BY position ASC',
-        );
-        $stmt->execute(['frontend_config_id' => $configId]);
-
-        return array_column($stmt->fetchAll(), 'value');
-    }
-
-    private function mapConfig(array $row, array $values, bool $canUpdate): array
+    private function mapConfig(array $row, bool $canUpdate): array
     {
         return [
             'id' => $row['id'],
             'variableName' => $row['variable_name'],
-            'value' => $values === [] ? $row['value'] : $values,
+            'value' => $this->decodeValue($row['value']),
             'description' => $row['description'],
             'label' => $row['label'],
             'canUpdate' => $canUpdate,
             'createdAt' => $row['created_at'],
             'updatedAt' => $row['updated_at'],
         ];
+    }
+
+    private function decodeValue(mixed $value): string|array|null
+    {
+        if ($value === null) {
+            return null;
+        }
+
+        $decoded = json_decode((string) $value, true);
+        if (is_string($decoded) || $this->isStringArray($decoded)) {
+            return $decoded;
+        }
+
+        return (string) $value;
     }
 
     private function decodeGroups(mixed $groups): array
@@ -137,12 +112,10 @@ final class FrontendConfigRepository
         return is_array($decoded) ? array_values(array_filter($decoded, 'is_string')) : [];
     }
 
-    private function createUuid(): string
+    private function isStringArray(mixed $value): bool
     {
-        $data = random_bytes(16);
-        $data[6] = chr((ord($data[6]) & 0x0f) | 0x40);
-        $data[8] = chr((ord($data[8]) & 0x3f) | 0x80);
-
-        return vsprintf('%s%s-%s-%s-%s-%s%s%s', str_split(bin2hex($data), 4));
+        return is_array($value)
+            && array_is_list($value)
+            && count(array_filter($value, 'is_string')) === count($value);
     }
 }
