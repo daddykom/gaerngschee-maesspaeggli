@@ -16,6 +16,7 @@ use PHPUnit\Framework\TestCase;
 use Slim\Psr7\Factory\ServerRequestFactory;
 use Slim\Psr7\Stream;
 use Slim\Factory\AppFactory;
+use Tests\Support\TestDatabase;
 
 final class AuthRoutesTest extends TestCase
 {
@@ -29,32 +30,8 @@ final class AuthRoutesTest extends TestCase
         putenv('JWT_ALGORITHM=HS256');
         (new SessionService())->clear();
 
-        $this->pdo = new PDO('sqlite::memory:');
-        $this->pdo->setAttribute(PDO::ATTR_DEFAULT_FETCH_MODE, PDO::FETCH_ASSOC);
-        $this->pdo->exec(
-            'CREATE TABLE users (
-                id TEXT PRIMARY KEY,
-                email TEXT UNIQUE NOT NULL,
-                password TEXT NOT NULL,
-                "group" TEXT NOT NULL,
-                required_password_reset INTEGER NOT NULL DEFAULT 0,
-                created_at TEXT,
-                updated_at TEXT
-            )',
-        );
+        $this->pdo = TestDatabase::create(withAccessKeys: true);
         $this->repository = new UserRepository($this->pdo);
-        $this->pdo->exec(
-            'CREATE TABLE user_access_keys (
-                id TEXT PRIMARY KEY,
-                user_id TEXT NOT NULL,
-                purpose TEXT NOT NULL,
-                key_hash TEXT NOT NULL UNIQUE,
-                expires_at TEXT NOT NULL,
-                used_at TEXT NULL,
-                created_at TEXT,
-                updated_at TEXT
-            )',
-        );
         $this->accessKeyService = new AccessKeyService(
             $this->pdo,
             $this->repository,

@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Tests\Users;
 
 use App\Users\Data\UserRepository;
+use Tests\Support\TestDatabase;
 use PDO;
 use PHPUnit\Framework\TestCase;
 
@@ -15,19 +16,7 @@ final class UserRepositoryTest extends TestCase
 
     protected function setUp(): void
     {
-        $this->pdo = new PDO('sqlite::memory:');
-        $this->pdo->setAttribute(PDO::ATTR_DEFAULT_FETCH_MODE, PDO::FETCH_ASSOC);
-        $this->pdo->exec(
-            'CREATE TABLE users (
-                id TEXT PRIMARY KEY,
-                email TEXT UNIQUE NOT NULL,
-                password TEXT NOT NULL,
-                "group" TEXT NOT NULL,
-                required_password_reset INTEGER NOT NULL DEFAULT 0,
-                created_at TEXT,
-                updated_at TEXT
-            )',
-        );
+        $this->pdo = TestDatabase::create();
         $this->repository = new UserRepository($this->pdo);
     }
 

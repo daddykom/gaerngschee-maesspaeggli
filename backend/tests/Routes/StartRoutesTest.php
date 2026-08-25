@@ -9,6 +9,7 @@ use App\Routes\StartRoutes;
 use App\Registration\Services\AnmeldungService;
 use App\Shared\Mail\EmailSenderInterface;
 use App\Fairgate\Services\FairgateContactProvider;
+use Tests\Support\TestDatabase;
 use PDO;
 use PHPUnit\Framework\TestCase;
 use Slim\Factory\AppFactory;
@@ -79,18 +80,7 @@ final class StartRoutesTest extends TestCase
 
     private function service(bool $failToSend = false): AnmeldungService
     {
-        $pdo = new PDO('sqlite::memory:');
-        $pdo->exec(
-            'CREATE TABLE users (
-                id TEXT PRIMARY KEY,
-                email TEXT UNIQUE NOT NULL,
-                password TEXT NOT NULL,
-                "group" TEXT NOT NULL,
-                required_password_reset INTEGER NOT NULL DEFAULT 0,
-                created_at TEXT,
-                updated_at TEXT
-            )',
-        );
+        $pdo = TestDatabase::create();
 
         return new AnmeldungService(
             new UserRepository($pdo),

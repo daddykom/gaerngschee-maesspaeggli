@@ -8,9 +8,10 @@ use App\Users\Data\UserRepository;
 use App\Application;
 use App\Fairgate\Actions\FairgateTestAction;
 use App\Routes\AdminRoutes;
-use App\Registration\Services\AnmeldungMailVariant;
 use App\Shared\Mail\EmailSenderInterface;
+use Tests\Support\TestDatabase;
 use App\Auth\Services\SessionService;
+use Tests\Support\RecordingEmailSender;
 use PDO;
 use PHPUnit\Framework\TestCase;
 use Slim\Factory\AppFactory;
@@ -25,19 +26,7 @@ final class AdminRoutesTest extends TestCase
     protected function setUp(): void
     {
         (new SessionService())->clear();
-        $this->pdo = new PDO('sqlite::memory:');
-        $this->pdo->setAttribute(PDO::ATTR_DEFAULT_FETCH_MODE, PDO::FETCH_ASSOC);
-        $this->pdo->exec(
-            'CREATE TABLE users (
-                id TEXT PRIMARY KEY,
-                email TEXT UNIQUE NOT NULL,
-                password TEXT NOT NULL,
-                "group" TEXT NOT NULL,
-                required_password_reset INTEGER NOT NULL DEFAULT 0,
-                created_at TEXT,
-                updated_at TEXT
-            )',
-        );
+        $this->pdo = TestDatabase::create();
         $this->repository = new UserRepository($this->pdo);
     }
 
@@ -202,25 +191,5 @@ final class AdminRoutesTest extends TestCase
             ->createServerRequest($method, $path)
             ->withHeader('Content-Type', 'application/json')
             ->withBody(new Stream($stream));
-    }
-}
-
-final class RecordingEmailSender implements EmailSenderInterface
-{
-    public ?string $createdRecipient = null;
-    public ?string $changedRecipient = null;
-
-    public function sendAnmeldung(string $recipient, AnmeldungMailVariant $variant, string $locale = 'de'): void
-    {
-    }
-
-    public function sendUserCreated(string $recipient, string $temporaryPassword): void
-    {
-        $this->createdRecipient = $recipient;
-    }
-
-    public function sendUserEmailChanged(string $recipient): void
-    {
-        $this->changedRecipient = $recipient;
     }
 }

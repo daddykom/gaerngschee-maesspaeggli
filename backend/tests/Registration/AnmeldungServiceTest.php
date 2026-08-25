@@ -6,9 +6,10 @@ namespace Tests\Registration;
 
 use App\Users\Data\UserRepository;
 use App\Registration\Services\AnmeldungService;
-use App\Shared\Mail\EmailSenderInterface;
 use App\Registration\Services\AnmeldungMailVariant;
 use App\Fairgate\Services\FairgateContactProvider;
+use Tests\Support\RecordingEmailSender;
+use Tests\Support\TestDatabase;
 use PDO;
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\TestCase;
@@ -20,19 +21,7 @@ final class AnmeldungServiceTest extends TestCase
 
     protected function setUp(): void
     {
-        $this->pdo = new PDO('sqlite::memory:');
-        $this->pdo->setAttribute(PDO::ATTR_DEFAULT_FETCH_MODE, PDO::FETCH_ASSOC);
-        $this->pdo->exec(
-            'CREATE TABLE users (
-                id TEXT PRIMARY KEY,
-                email TEXT UNIQUE NOT NULL,
-                password TEXT NOT NULL,
-                "group" TEXT NOT NULL,
-                required_password_reset INTEGER NOT NULL DEFAULT 0,
-                created_at TEXT,
-                updated_at TEXT
-            )',
-        );
+        $this->pdo = TestDatabase::create();
         $this->users = new UserRepository($this->pdo);
     }
 
@@ -70,28 +59,6 @@ final class AnmeldungServiceTest extends TestCase
         $this->expectException(\InvalidArgumentException::class);
         $service->sendInformationEmail('invalid');
         self::assertSame([], $sender->recipients);
-    }
-}
-
-final class RecordingEmailSender implements EmailSenderInterface
-{
-    /** @var list<string> */
-    public array $recipients = [];
-    /** @var list<AnmeldungMailVariant> */
-    public array $variants = [];
-
-    public function sendAnmeldung(string $recipient, AnmeldungMailVariant $variant, string $locale = 'de'): void
-    {
-        $this->recipients[] = $recipient;
-        $this->variants[] = $variant;
-    }
-
-    public function sendUserCreated(string $recipient, string $temporaryPassword): void
-    {
-    }
-
-    public function sendUserEmailChanged(string $recipient): void
-    {
     }
 }
 

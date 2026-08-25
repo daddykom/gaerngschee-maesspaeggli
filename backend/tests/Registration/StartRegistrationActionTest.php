@@ -9,6 +9,7 @@ use App\Registration\Services\AnmeldungService;
 use App\Fairgate\Services\FairgateContactProvider;
 use App\Shared\Mail\EmailSenderInterface;
 use App\Users\Data\UserRepository;
+use Tests\Support\TestDatabase;
 use PHPUnit\Framework\TestCase;
 use Slim\Psr7\Response;
 use Slim\Psr7\Stream;
@@ -37,8 +38,7 @@ final class StartRegistrationActionTest extends TestCase
 
     private function service(): AnmeldungService
     {
-        $pdo = new \PDO('sqlite::memory:');
-        $pdo->exec('CREATE TABLE users (id TEXT PRIMARY KEY, email TEXT UNIQUE NOT NULL, password TEXT NOT NULL, "group" TEXT NOT NULL, required_password_reset INTEGER NOT NULL DEFAULT 0, created_at TEXT, updated_at TEXT)');
+        $pdo = TestDatabase::create();
 
         return new AnmeldungService(
             new UserRepository($pdo),
