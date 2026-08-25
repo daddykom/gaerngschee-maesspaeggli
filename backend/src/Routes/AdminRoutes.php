@@ -23,6 +23,7 @@ final class AdminRoutes
         App $app,
         ?UserRepository $userRepository = null,
         ?EmailSenderInterface $emailSender = null,
+        ?FairgateTestAction $fairgateTestAction = null,
     ): void {
         $app->group('/admin', function (RouteCollectorProxy $group) use ($userRepository, $emailSender): void {
             $list = $group->get('/users', new ListUsersAction($userRepository));
@@ -40,7 +41,7 @@ final class AdminRoutes
             $delete = $group->delete('/users/{userId}', new DeleteUserAction($userRepository));
             $delete->add(new GroupMiddleware(['admin'], $userRepository))->add(new AuthMiddleware());
 
-            $fairgateTest = $group->get('/fairgate/test', new FairgateTestAction());
+            $fairgateTest = $group->get('/fairgate/test', $fairgateTestAction ?? new FairgateTestAction());
             $fairgateTest->add(new GroupMiddleware(['admin'], $userRepository))->add(new AuthMiddleware());
         });
     }

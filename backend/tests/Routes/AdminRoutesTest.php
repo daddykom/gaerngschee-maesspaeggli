@@ -6,13 +6,13 @@ namespace Tests\Routes;
 
 use App\Users\Data\UserRepository;
 use App\Application;
+use App\Fairgate\Actions\FairgateTestAction;
 use App\Routes\AdminRoutes;
 use App\Registration\Services\AnmeldungMailVariant;
 use App\Shared\Mail\EmailSenderInterface;
 use App\Auth\Services\SessionService;
 use PDO;
 use PHPUnit\Framework\TestCase;
-use Slim\Exception\HttpNotFoundException;
 use Slim\Factory\AppFactory;
 use Slim\Psr7\Factory\ServerRequestFactory;
 use Slim\Psr7\Stream;
@@ -96,19 +96,21 @@ final class AdminRoutesTest extends TestCase
         self::assertSame(404, $response->getStatusCode());
     }
 
-    public function testAccessKeyRouteIsNotAvailable(): void
+    public function testAdminCanRunFairgateTest(): void
     {
         $admin = $this->repository->createUser('admin@example.com', 'secret', 'admin');
         (new SessionService())->setUser($admin['id'], 'admin');
-        $app = AppFactory::create();
-        $app->addRoutingMiddleware();
-        AdminRoutes::register($app, $this->repository);
+        $app = $this->createApp(null, new FairgateTestAction(static fn (string $email): array => [
+            'success' => true,
+            'data' => ['email' => $email],
+        ]));
 
-        self::expectException(HttpNotFoundException::class);
-
-        $app->handle(
-            (new ServerRequestFactory())->createServerRequest('POST', '/admin/users/user-id/access-key'),
+        $response = $app->handle(
+            (new ServerRequestFactory())->createServerRequest('GET', '/admin/fairgate/test'),
         );
+
+        self::assertSame(200, $response->getStatusCode());
+        self::assertSame('isabelle.joss@gaerngschee.ch', json_decode((string) $response->getBody(), true)['email']);
     }
 
     public function testAdminCanCreateUserAndEmailIsSentToNewAddress(): void
@@ -151,6 +153,20 @@ final class AdminRoutesTest extends TestCase
         self::assertSame(404, $otherResponse->getStatusCode());
     }
 
+    public function testAdminCanReadUserDetails(): void
+    {
+        $admin = $this->repository->createUser('admin@example.com', 'secret', 'admin');
+        $user = $this->repository->createUser('user@example.com', 'secret', 'user');
+        (new SessionService())->setUser($admin['id'], 'admin');
+        $response = $this->createApp()->handle(
+            (new ServerRequestFactory())->createServerRequest('GET', '/admin/users/' . $user['id']),
+        );
+        $data = json_decode((string) $response->getBody(), true, 512, JSON_THROW_ON_ERROR);
+
+        self::assertSame(200, $response->getStatusCode());
+        self::assertSame($user['id'], $data['user']['id']);
+    }
+
     public function testAdminCanDeleteUser(): void
     {
         $admin = $this->repository->createUser('admin@example.com', 'secret', 'admin');
@@ -164,11 +180,14 @@ final class AdminRoutesTest extends TestCase
         self::assertNull($this->repository->findById($user['id']));
     }
 
-    private function createApp(?EmailSenderInterface $emailSender = null): \Slim\App
+    private function createApp(
+        ?EmailSenderInterface $emailSender = null,
+        ?FairgateTestAction $fairgateTestAction = null,
+    ): \Slim\App
     {
         $app = AppFactory::create();
         $app->addRoutingMiddleware();
-        AdminRoutes::register($app, $this->repository, $emailSender);
+        AdminRoutes::register($app, $this->repository, $emailSender, $fairgateTestAction);
 
         return $app;
     }

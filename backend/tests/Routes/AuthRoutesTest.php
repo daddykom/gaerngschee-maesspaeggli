@@ -163,6 +163,33 @@ final class AuthRoutesTest extends TestCase
         self::assertSame(422, $response->getStatusCode());
     }
 
+    public function testRegistrationCreatesClientAndSession(): void
+    {
+        $response = $this->createAuthApp()->handle($this->request('/auth/register', [
+            'email' => 'new-client@example.com',
+            'password' => 'secret',
+        ]));
+        $data = json_decode((string) $response->getBody(), true, 512, JSON_THROW_ON_ERROR);
+
+        self::assertSame(201, $response->getStatusCode());
+        self::assertSame('client', $data['user']['group']);
+        self::assertSame($data['user']['id'], (new SessionService())->getUserId());
+        self::assertNotNull($this->repository->findByEmail('new-client@example.com'));
+    }
+
+    public function testLogoutClearsSession(): void
+    {
+        $user = $this->repository->createUser('user@example.com', 'secret', 'user');
+        (new SessionService())->setUser($user['id'], 'user');
+
+        $response = $this->createAuthApp()->handle(
+            (new ServerRequestFactory())->createServerRequest('POST', '/auth/logout'),
+        );
+
+        self::assertSame(204, $response->getStatusCode());
+        self::assertNull((new SessionService())->getUserId());
+    }
+
     public function testPasswordChangeWorksWithValidPublicAccessKey(): void
     {
         $user = $this->repository->createUser('client@example.com', 'old-secret', 'client');
