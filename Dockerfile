@@ -7,11 +7,13 @@ RUN apk add --no-cache \
     mariadb-client \
     libzip-dev \
     oniguruma-dev \
+      libpng-dev \
     && docker-php-ext-install \
     pdo \
     pdo_mysql \
     zip \
     mbstring \
+    gd \
     opcache
 
 RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer

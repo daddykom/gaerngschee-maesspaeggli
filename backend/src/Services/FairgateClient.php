@@ -41,9 +41,25 @@ final class FairgateClient implements FairgateContactProvider
 
     public function hasContactByEmail(string $email): bool
     {
+        $data = $this->findContactsByEmail($email);
+        $contacts = $data['data']['contacts'] ?? [];
+
+        foreach ($contacts as $contact) {
+            $contactEmail = strtolower(trim((string) ($contact['communication']['primary_email'] ?? '')));
+            if ($contactEmail === strtolower(trim($email))) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    /** @return array<string, mixed> */
+    public function findContactsByEmail(string $email): array
+    {
         $email = strtolower(trim($email));
         if ($email === '') {
-            return false;
+            return ['success' => true, 'data' => ['contacts' => []]];
         }
 
         try {
@@ -60,18 +76,8 @@ final class FairgateClient implements FairgateContactProvider
         }
 
         $data = $this->decodeResponse($response->getStatusCode(), (string) $response->getBody());
-        $contacts = $data['data']['contacts'] ?? [];
 
-        foreach ($contacts as $contact) {
-            $contactEmail = strtolower(trim((string) ($contact['communication']['primary_email'] ?? '')));
-            if ($contactEmail !== $email) {
-                continue;
-            }
-
-            return true;
-        }
-
-        return false;
+        return $data;
     }
 
     private function client(): ClientInterface

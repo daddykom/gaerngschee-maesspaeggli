@@ -7,3 +7,4 @@
 /backend/supervisord.pid
 /backend/supervisord.log
 /backend/.phpunit.cache/
+/backend/config/fairgate.local.php
