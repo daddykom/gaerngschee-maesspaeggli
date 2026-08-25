@@ -6,7 +6,6 @@ namespace App;
 
 use App\Routes\AdminRoutes;
 use App\Routes\ConfigurationRoutes;
-use App\Routes\FairgateTestRoutes;
 use App\Routes\StartRoutes;
 use App\Routes\AuthRoutes;
 use App\Routes\PublicRoutes;
@@ -49,7 +48,6 @@ final class Application
         AuthRoutes::register($app);
         AdminRoutes::register($app);
         ConfigurationRoutes::register($app);
-        FairgateTestRoutes::register($app);
 
         return $app;
     }

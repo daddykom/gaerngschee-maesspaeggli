@@ -1,0 +1,50 @@
+<?php
+
+declare(strict_types=1);
+
+namespace App\Registration\Actions;
+
+use App\Users\Data\UserRepository;
+use App\Registration\Services\AnmeldungService;
+use App\Shared\Mail\EmailSender;
+use App\Fairgate\Services\FairgateContactProviderFactory;
+use App\Shared\Http\JsonRequest;
+use App\Shared\Http\JsonResponse;
+use Psr\Http\Message\ResponseInterface;
+use Psr\Http\Message\ServerRequestInterface;
+use Throwable;
+
+final class StartRegistrationAction
+{
+    private const SUPPORTED_LOCALES = ['de'];
+
+    public function __construct(private readonly ?AnmeldungService $anmeldung = null)
+    {
+    }
+
+    public function __invoke(ServerRequestInterface $request, ResponseInterface $response): ResponseInterface
+    {
+        $data = JsonRequest::body($request);
+        $email = JsonRequest::string($data, 'email');
+        $locale = strtolower(JsonRequest::string($data, 'language') ?? 'de');
+        if ($email === null || filter_var(trim($email), FILTER_VALIDATE_EMAIL) === false) {
+            return JsonResponse::error($response, 'INVALID_EMAIL', 422);
+        }
+        if (!in_array($locale, self::SUPPORTED_LOCALES, true)) {
+            return JsonResponse::error($response, 'UNSUPPORTED_LANGUAGE', 422);
+        }
+
+        try {
+            ($this->anmeldung ?? self::createService())->sendInformationEmail($email, $locale);
+        } catch (Throwable) {
+            return JsonResponse::error($response, 'REQUEST_FAILED', 503);
+        }
+
+        return JsonResponse::success($response, ['sent' => true], 202);
+    }
+
+    private static function createService(): AnmeldungService
+    {
+        return new AnmeldungService(new UserRepository(), FairgateContactProviderFactory::create(), new EmailSender());
+    }
+}

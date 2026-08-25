@@ -1,11 +1,2 @@
 <?php
-
-declare(strict_types=1);
-
-namespace App\Services;
-
-use RuntimeException;
-
-final class EmailDeliveryException extends RuntimeException
-{
-}
+class_alias(\App\Shared\Mail\EmailDeliveryException::class, 'App\\Services\\EmailDeliveryException');

@@ -1,11 +1,2 @@
 <?php
-
-declare(strict_types=1);
-
-namespace App\Services;
-
-use RuntimeException;
-
-final class FairgateException extends RuntimeException
-{
-}
+class_alias(\App\Fairgate\Services\FairgateException::class, 'App\\Services\\FairgateException');
