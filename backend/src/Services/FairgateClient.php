@@ -10,7 +10,7 @@ use Lcobucci\JWT\Encoding\JoseEncoder;
 use Lcobucci\JWT\Signer\Ecdsa\Sha512;
 use Lcobucci\JWT\Signer\Key\InMemory;
 use Lcobucci\JWT\Token\Parser;
-use Lcobucci\JWT\Token\UnencryptedToken;
+use Lcobucci\JWT\UnencryptedToken;
 use Lcobucci\JWT\Validation\Constraint\SignedWith;
 use Lcobucci\JWT\Validation\Validator;
 use Psr\Http\Client\ClientInterface;
@@ -18,6 +18,7 @@ use Psr\Http\Client\ClientInterface;
 final class FairgateClient implements FairgateContactProvider
 {
     private const CONTACTS_PATH = '/fsa/v1.1/contact/%s/contacts/list';
+    private const CONTACT_DATA_PATH = '/fsa/v2.0/contact/%s/data/%s';
     private const TOKEN_PATH = '/fsa/v1.1/auth/create/%s/token';
 
     private ?string $bearerToken = null;
@@ -78,6 +79,41 @@ final class FairgateClient implements FairgateContactProvider
         $data = $this->decodeResponse($response->getStatusCode(), (string) $response->getBody());
 
         return $data;
+    }
+
+    /** @return array<string, mixed> */
+    public function findContactDataByEmail(string $email): array
+    {
+        $email = strtolower(trim($email));
+        $contactsResponse = $this->findContactsByEmail($email);
+        $contacts = $contactsResponse['data']['contacts'] ?? [];
+
+        foreach ($contacts as $contact) {
+            $contactEmail = strtolower(trim((string) ($contact['primary_email'] ?? '')));
+            if ($contactEmail !== $email || !isset($contact['contact_id'])) {
+                continue;
+            }
+
+            try {
+                $response = $this->client()->request('GET', sprintf(
+                    self::CONTACT_DATA_PATH,
+                    $this->organizationId(),
+                    (string) $contact['contact_id'],
+                ), [
+                    'headers' => $this->headers(),
+                ]);
+            } catch (GuzzleException $exception) {
+                throw new FairgateException('FSA contact data request failed.', 0, $exception);
+            }
+
+            return $this->decodeResponse($response->getStatusCode(), (string) $response->getBody());
+        }
+
+        return [
+            'success' => true,
+            'code' => 200,
+            'data' => null,
+        ];
     }
 
     private function client(): ClientInterface

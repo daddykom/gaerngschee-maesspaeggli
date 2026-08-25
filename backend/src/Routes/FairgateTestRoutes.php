@@ -35,7 +35,7 @@ final class FairgateTestRoutes
 
                 return self::json($response, [
                     'email' => self::TEST_EMAIL,
-                    'fairgate' => $client->findContactsByEmail(self::TEST_EMAIL),
+                    'fairgate' => $client->findContactDataByEmail(self::TEST_EMAIL),
                 ]);
             } catch (FairgateException) {
                 return self::error($response, 'FAIRGATE_TEST_FAILED', 502);
