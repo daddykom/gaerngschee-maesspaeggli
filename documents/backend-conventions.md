@@ -84,7 +84,6 @@ use App\Routes\AdminRoutes;
 use App\Routes\AuthRoutes;
 use App\Routes\ConfigurationRoutes;
 use App\Routes\PublicRoutes;
-use App\Routes\StartRoutes;
 use Psr\Http\Message\ResponseInterface;
 use Slim\App;
 use Slim\Factory\AppFactory;
@@ -104,7 +103,6 @@ final class Application
         });
 
         PublicRoutes::register($app);
-        StartRoutes::register($app);
         AuthRoutes::register($app);
         AdminRoutes::register($app);
         ConfigurationRoutes::register($app);

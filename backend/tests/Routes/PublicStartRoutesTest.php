@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace Tests\Routes;
 
 use App\Users\Data\UserRepository;
-use App\Routes\StartRoutes;
+use App\Routes\PublicRoutes;
 use App\Registration\Services\AnmeldungService;
 use App\Shared\Mail\EmailSenderInterface;
 use App\Fairgate\Services\FairgateContactProvider;
@@ -16,13 +16,13 @@ use Slim\Factory\AppFactory;
 use Slim\Psr7\Factory\ServerRequestFactory;
 use Slim\Psr7\Stream;
 
-final class StartRoutesTest extends TestCase
+final class PublicStartRoutesTest extends TestCase
 {
     public function testStartRequestReturnsValidationErrorForInvalidEmail(): void
     {
         $app = AppFactory::create();
         $app->addRoutingMiddleware();
-        StartRoutes::register($app, $this->service());
+        PublicRoutes::register($app, $this->service());
 
         $response = $app->handle($this->request('not-an-email'));
 
@@ -37,7 +37,7 @@ final class StartRoutesTest extends TestCase
     {
         $app = AppFactory::create();
         $app->addRoutingMiddleware();
-        StartRoutes::register($app, $this->service());
+        PublicRoutes::register($app, $this->service());
 
         $response = $app->handle($this->request('person@example.com'));
 
@@ -52,7 +52,7 @@ final class StartRoutesTest extends TestCase
     {
         $app = AppFactory::create();
         $app->addRoutingMiddleware();
-        StartRoutes::register($app, $this->service());
+        PublicRoutes::register($app, $this->service());
 
         $response = $app->handle($this->request('person@example.com', 'fr'));
 
@@ -67,7 +67,7 @@ final class StartRoutesTest extends TestCase
     {
         $app = AppFactory::create();
         $app->addRoutingMiddleware();
-        StartRoutes::register($app, $this->service(true));
+        PublicRoutes::register($app, $this->service(true));
 
         $response = $app->handle($this->request('person@example.com'));
 
