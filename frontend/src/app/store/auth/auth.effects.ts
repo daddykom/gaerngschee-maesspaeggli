@@ -1,11 +1,12 @@
 import { HttpErrorResponse } from '@angular/common/http';
 import { inject } from '@angular/core';
 import { Actions, createEffect, ofType } from '@ngrx/effects';
-import { catchError, exhaustMap, map, of } from 'rxjs';
+import { catchError, exhaustMap, map, of, tap } from 'rxjs';
 import { AuthService } from '../../shared/services/auth.service';
 import { AuthActions } from './auth.actions';
 import { NavigationActions } from '../navigation/navigation.actions';
 import { NotificationActions } from '../notification/notification.actions';
+import { clearPersistedAuthState, persistAuthState } from '../../shared/services/auth-storage';
 
 export const loginEffect = createEffect(
   (actions$ = inject(Actions), authService = inject(AuthService)) =>
@@ -54,6 +55,52 @@ export const registrationLoginEffect = createEffect(
       )),
     ),
   { functional: true },
+);
+
+export const persistLoginEffect = createEffect(
+  (actions$ = inject(Actions)) => actions$.pipe(
+    ofType(AuthActions.loginSuccess),
+    tap(({ token, userId, group }) => {
+      persistAuthState({
+        token,
+        userId,
+        group,
+        fairgateUserExists: null,
+        childrenCount: null,
+        adultsCount: null,
+        salutation: null,
+      });
+    }),
+  ),
+  { functional: true, dispatch: false },
+);
+
+export const persistRegistrationLoginEffect = createEffect(
+  (actions$ = inject(Actions)) => actions$.pipe(
+    ofType(AuthActions.registrationLoginSuccess),
+    tap(({ token, userId, group, fairgateUserExists, childrenCount, adultsCount, salutation }) => {
+      persistAuthState({
+        token,
+        userId,
+        group,
+        fairgateUserExists,
+        childrenCount,
+        adultsCount,
+        salutation,
+      });
+    }),
+  ),
+  { functional: true, dispatch: false },
+);
+
+export const clearPersistedAuthEffect = createEffect(
+  (actions$ = inject(Actions)) => actions$.pipe(
+    ofType(AuthActions.logout),
+    tap(() => {
+      clearPersistedAuthState();
+    }),
+  ),
+  { functional: true, dispatch: false },
 );
 
 export const navigateOnRegistrationLoginSuccessEffect = createEffect(
@@ -131,6 +178,9 @@ export const authNotificationEffect = createEffect(
 export const authEffects = {
   loginEffect,
   registrationLoginEffect,
+  persistLoginEffect,
+  persistRegistrationLoginEffect,
+  clearPersistedAuthEffect,
   navigateOnRegistrationLoginSuccessEffect,
   navigateOnLoginSuccessEffect,
   passwordChangeEffect,

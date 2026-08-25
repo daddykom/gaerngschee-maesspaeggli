@@ -1,4 +1,7 @@
 import { UserGroup } from '../../shared/models/frontend-config.model';
+import { loadPersistedAuthState } from '../../shared/services/auth-storage';
+
+const persistedAuth = loadPersistedAuthState();
 
 export interface AuthState {
   token: string | null;
@@ -18,9 +21,9 @@ export interface AuthState {
 }
 
 export const initialState: AuthState = {
-  token: null,
-  userId: null,
-  group: null,
+  token: persistedAuth.token ?? null,
+  userId: persistedAuth.userId ?? null,
+  group: persistedAuth.group ?? null,
   requiredPasswordReset: false,
   loading: false,
   passwordChangeLoading: false,
@@ -28,8 +31,8 @@ export const initialState: AuthState = {
   errorCode: null,
   registrationLoginLoading: false,
   registrationLoginErrorCode: null,
-  fairgateUserExists: null,
-  childrenCount: null,
-  adultsCount: null,
-  salutation: null,
+  fairgateUserExists: persistedAuth.fairgateUserExists ?? null,
+  childrenCount: persistedAuth.childrenCount ?? null,
+  adultsCount: persistedAuth.adultsCount ?? null,
+  salutation: persistedAuth.salutation ?? null,
 };
