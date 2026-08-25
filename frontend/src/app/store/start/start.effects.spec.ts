@@ -4,7 +4,7 @@ import { Action } from '@ngrx/store';
 import { firstValueFrom, of, Subject, throwError } from 'rxjs';
 import { AnmeldungService } from '../../shared/services/anmeldung.service';
 import { StartActions } from './start.actions';
-import { submitStartEffect } from './start.effects';
+import { showStartSuccessNotificationEffect, submitStartEffect } from './start.effects';
 
 describe('submitStartEffect', () => {
   let actions$: Subject<Action>;
@@ -41,5 +41,20 @@ describe('submitStartEffect', () => {
     actions$.next(StartActions.submit({ email: 'person@example.com', language: 'de' }));
 
     await expect(result).resolves.toEqual(StartActions.submitFailure());
+  });
+
+  it('shows a success notification after the email was sent', async () => {
+    const effect$ = TestBed.runInInjectionContext(() => showStartSuccessNotificationEffect());
+    const result = firstValueFrom(effect$);
+
+    actions$.next(StartActions.submitSuccess({ sent: true }));
+
+    await expect(result).resolves.toEqual({
+      type: '[Notification] Show',
+      variant: 'success',
+      titleKey: 'app.anmeldung.emailSentTitle',
+      messageKey: 'app.anmeldung.emailSentMessage',
+      preserveOnRoutes: ['/start'],
+    });
   });
 });

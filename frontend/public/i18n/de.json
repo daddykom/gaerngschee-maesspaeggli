@@ -17,6 +17,8 @@
       "continue": "Weiter",
       "privacyHint": "Wir behandeln deine Daten vertraulich.",
       "sendError": "Die E-Mail konnte gerade nicht gesendet werden. Bitte versuche es später noch einmal.",
+      "emailSentTitle": "E-Mail versandt",
+      "emailSentMessage": "Wir haben dir eine E-Mail mit deinem persönlichen Bestelllink geschickt. Der Link ist 10 Minuten gültig.",
       "privacyTitle": "Deine Daten bleiben privat",
       "privacyText": "Wir prüfen deine Angaben. Auf dieser Seite zeigen wir nicht, ob diese E-Mail-Adresse bei uns oder bei Fairgate gespeichert ist. Die nächsten Schritte schicken wir dir per E-Mail."
     },
