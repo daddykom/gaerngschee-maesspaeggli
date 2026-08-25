@@ -29,6 +29,7 @@ gaerngschee/
 - [openspec/specs/maesspaeggli.md](./openspec/specs/maesspaeggli.md) - Fachkonzept
 - [documents/project.md](./documents/project.md) - Project overview
 - [documents/architecture.md](./documents/architecture.md) - System architecture
+- [documents/directory-structure.md](./documents/directory-structure.md) - Aktuelle Verzeichnisstruktur
 
 ### For AI Assistants
 - [openspec/specs/authentication/spec.md](./openspec/specs/authentication/spec.md) - User authentication & roles
@@ -46,6 +47,65 @@ Angular components follow the View/Container pattern:
 | **ContainerComponent** | Manages state, injects Store/services, dispatches actions |
 
 See: [documents/frontend-conventions.md](./documents/frontend-conventions.md#viewcontainer-pattern)
+
+## Backend-Struktur
+
+Das Backend verwendet eine fachlich organisierte Struktur unter `backend/src/`:
+
+```
+src/
+├── Auth/
+│   ├── Actions/
+│   ├── Data/
+│   └── Services/
+├── Configuration/
+│   ├── Actions/
+│   └── Data/
+├── Fairgate/
+│   ├── Actions/
+│   └── Services/
+├── Registration/
+│   ├── Actions/
+│   └── Services/
+├── Users/
+│   ├── Actions/
+│   └── Data/
+├── Shared/
+│   ├── Database/
+│   ├── Http/
+│   └── Mail/
+├── Middleware/
+├── PublicApi/
+├── Routes/
+└── Application.php
+```
+
+- Routes registrieren HTTP-Methode, Pfad, Action und Middleware. Sie enthalten keine Fachlogik.
+- Actions verarbeiten einzelne Anwendungsfälle und geben PSR-7-Responses zurück.
+- Services enthalten fachliche oder externe Integrationen und liegen im zuständigen Modul.
+- Datenbankzugriff liegt im zuständigen `Data/`-Verzeichnis; gemeinsame Datenbank-Infrastruktur liegt unter `Shared/Database/`.
+- Wiederverwendbare HTTP- und Mail-Helfer liegen unter `Shared/`.
+- Namespace und Verzeichnis müssen der PSR-4-Struktur entsprechen.
+- Die Admin-Fairgate-Testroute `/admin/fairgate/test` wird in `Routes/AdminRoutes.php` registriert und verwendet `Fairgate/Actions/FairgateTestAction`.
+- Die früheren Sammelpfade `App\Services` und `App\Data` werden nicht mehr verwendet.
+
+## Backend-Tests
+
+Backend-Tests folgen ebenfalls der fachlichen Struktur:
+
+```
+tests/
+├── Auth/
+├── Fairgate/
+├── Registration/
+├── Shared/
+├── Users/
+├── Middleware/
+├── Routes/
+└── Support/
+```
+
+Gemeinsames SQLite-Testsetup und Test-Doubles liegen unter `tests/Support/` und werden über `tests/bootstrap.php` geladen. Fachlogik soll direkt auf Action- oder Service-Ebene getestet werden; Route-Tests prüfen primär Registrierung und Middleware-Verhalten.
 
 ## Arbeitsweise & Verhaltensregeln
 

@@ -97,12 +97,23 @@ backend/
 │   └── index.php          # Entry point
 ├── src/
 │   ├── Application.php    # App configuration
-│   └── Routes/           # API route definitions
-│       ├── RegistrationRoutes.php
-│       ├── DonationRoutes.php
-│       └── ...
+│   ├── Auth/              # Authentication actions, services and data
+│   ├── Configuration/     # Configuration actions and data
+│   ├── Fairgate/          # Fairgate actions and services
+│   ├── Registration/      # Registration actions and services
+│   ├── Users/             # User actions and data
+│   ├── Shared/            # Shared infrastructure
+│   ├── Middleware/        # PSR-15 middleware
+│   ├── PublicApi/         # Public API actions
+│   └── Routes/            # Thin route registration
 └── vendor/                # Dependencies
 ```
+
+Routes enthalten keine Fachlogik. Sie verbinden Pfade und Middleware mit
+Actions. Fachliche Services und Datenzugriff liegen im jeweiligen Modul; nur
+gemeinsam genutzte Infrastruktur liegt unter `Shared/`. Die Route
+`GET /admin/fairgate/test` wird zusammen mit den übrigen Admin-Routen in
+`Routes/AdminRoutes.php` registriert.
 
 ### External Integrations
 
