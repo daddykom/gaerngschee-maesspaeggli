@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace Tests\Services;
+namespace Tests\Auth;
 
-use App\Services\SessionService;
+use App\Auth\Services\SessionService;
 use PHPUnit\Framework\TestCase;
 
 final class SessionServiceTest extends TestCase

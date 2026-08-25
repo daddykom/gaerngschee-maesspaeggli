@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace Tests\Services;
+namespace Tests\Auth;
 
-use App\Services\JwtService;
+use App\Auth\Services\JwtService;
 use PHPUnit\Framework\TestCase;
 
 final class JwtServiceTest extends TestCase

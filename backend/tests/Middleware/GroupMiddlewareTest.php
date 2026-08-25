@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Tests\Middleware;
 
-use App\Data\UserRepository;
+use App\Users\Data\UserRepository;
 use App\Middleware\GroupMiddleware;
 use PDO;
 use PHPUnit\Framework\Attributes\DataProvider;

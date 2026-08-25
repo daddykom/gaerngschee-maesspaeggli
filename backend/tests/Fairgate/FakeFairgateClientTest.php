@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace Tests\Services;
+namespace Tests\Fairgate;
 
-use App\Services\FakeFairgateClient;
+use App\Fairgate\Services\FakeFairgateClient;
 use PHPUnit\Framework\TestCase;
 
 final class FakeFairgateClientTest extends TestCase

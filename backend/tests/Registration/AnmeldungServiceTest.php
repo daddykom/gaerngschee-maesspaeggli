@@ -2,13 +2,13 @@
 
 declare(strict_types=1);
 
-namespace Tests\Services;
+namespace Tests\Registration;
 
-use App\Data\UserRepository;
-use App\Services\AnmeldungService;
-use App\Services\EmailSenderInterface;
-use App\Services\AnmeldungMailVariant;
-use App\Services\FairgateContactProvider;
+use App\Users\Data\UserRepository;
+use App\Registration\Services\AnmeldungService;
+use App\Shared\Mail\EmailSenderInterface;
+use App\Registration\Services\AnmeldungMailVariant;
+use App\Fairgate\Services\FairgateContactProvider;
 use PDO;
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\TestCase;

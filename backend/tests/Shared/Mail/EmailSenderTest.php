@@ -2,10 +2,10 @@
 
 declare(strict_types=1);
 
-namespace Tests\Services;
+namespace Tests\Shared\Mail;
 
-use App\Services\AnmeldungMailVariant;
-use App\Services\EmailSender;
+use App\Registration\Services\AnmeldungMailVariant;
+use App\Shared\Mail\EmailSender;
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\TestCase;
 use Symfony\Component\Mailer\MailerInterface;

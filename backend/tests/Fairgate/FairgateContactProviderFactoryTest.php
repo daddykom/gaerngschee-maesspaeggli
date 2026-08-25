@@ -2,11 +2,11 @@
 
 declare(strict_types=1);
 
-namespace Tests\Services;
+namespace Tests\Fairgate;
 
-use App\Services\FakeFairgateClient;
-use App\Services\FairgateClient;
-use App\Services\FairgateContactProviderFactory;
+use App\Fairgate\Services\FakeFairgateClient;
+use App\Fairgate\Services\FairgateClient;
+use App\Fairgate\Services\FairgateContactProviderFactory;
 use LogicException;
 use PHPUnit\Framework\TestCase;
 

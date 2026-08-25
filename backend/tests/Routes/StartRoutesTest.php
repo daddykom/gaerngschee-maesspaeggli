@@ -4,11 +4,11 @@ declare(strict_types=1);
 
 namespace Tests\Routes;
 
-use App\Data\UserRepository;
+use App\Users\Data\UserRepository;
 use App\Routes\StartRoutes;
-use App\Services\AnmeldungService;
-use App\Services\EmailSenderInterface;
-use App\Services\FairgateContactProvider;
+use App\Registration\Services\AnmeldungService;
+use App\Shared\Mail\EmailSenderInterface;
+use App\Fairgate\Services\FairgateContactProvider;
 use PDO;
 use PHPUnit\Framework\TestCase;
 use Slim\Factory\AppFactory;
@@ -102,7 +102,7 @@ final class StartRoutesTest extends TestCase
             },
             $failToSend
                 ? new class () implements EmailSenderInterface {
-                    public function sendAnmeldung(string $recipient, \App\Services\AnmeldungMailVariant $variant, string $locale = 'de'): void
+                    public function sendAnmeldung(string $recipient, \App\Registration\Services\AnmeldungMailVariant $variant, string $locale = 'de'): void
                     {
                         throw new \RuntimeException('SMTP failed');
                     }
@@ -116,7 +116,7 @@ final class StartRoutesTest extends TestCase
                     }
                 }
                 : new class () implements EmailSenderInterface {
-                public function sendAnmeldung(string $recipient, \App\Services\AnmeldungMailVariant $variant, string $locale = 'de'): void
+                public function sendAnmeldung(string $recipient, \App\Registration\Services\AnmeldungMailVariant $variant, string $locale = 'de'): void
                 {
                 }
 

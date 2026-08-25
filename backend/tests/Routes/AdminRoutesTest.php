@@ -4,12 +4,12 @@ declare(strict_types=1);
 
 namespace Tests\Routes;
 
-use App\Data\UserRepository;
+use App\Users\Data\UserRepository;
 use App\Application;
 use App\Routes\AdminRoutes;
-use App\Services\AnmeldungMailVariant;
-use App\Services\EmailSenderInterface;
-use App\Services\SessionService;
+use App\Registration\Services\AnmeldungMailVariant;
+use App\Shared\Mail\EmailSenderInterface;
+use App\Auth\Services\SessionService;
 use PDO;
 use PHPUnit\Framework\TestCase;
 use Slim\Exception\HttpNotFoundException;

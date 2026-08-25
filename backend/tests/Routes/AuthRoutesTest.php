@@ -4,13 +4,13 @@ declare(strict_types=1);
 
 namespace Tests\Routes;
 
-use App\Data\AccessKeyRepository;
-use App\Data\UserRepository;
+use App\Auth\Data\AccessKeyRepository;
+use App\Users\Data\UserRepository;
 use App\Application;
 use App\Routes\AuthRoutes;
-use App\Services\AccessKeyService;
-use App\Services\JwtService;
-use App\Services\SessionService;
+use App\Auth\Services\AccessKeyService;
+use App\Auth\Services\JwtService;
+use App\Auth\Services\SessionService;
 use PDO;
 use PHPUnit\Framework\TestCase;
 use Slim\Psr7\Factory\ServerRequestFactory;

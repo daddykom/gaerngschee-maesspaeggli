@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace Tests\Data;
+namespace Tests\Users;
 
-use App\Data\UserRepository;
+use App\Users\Data\UserRepository;
 use PDO;
 use PHPUnit\Framework\TestCase;
 

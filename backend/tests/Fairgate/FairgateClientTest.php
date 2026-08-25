@@ -2,10 +2,10 @@
 
 declare(strict_types=1);
 
-namespace Tests\Services;
+namespace Tests\Fairgate;
 
-use App\Services\FairgateClient;
-use App\Services\FairgateException;
+use App\Fairgate\Services\FairgateClient;
+use App\Fairgate\Services\FairgateException;
 use GuzzleHttp\Client;
 use GuzzleHttp\Handler\MockHandler;
 use GuzzleHttp\HandlerStack;

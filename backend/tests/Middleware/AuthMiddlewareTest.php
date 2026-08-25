@@ -5,8 +5,8 @@ declare(strict_types=1);
 namespace Tests\Middleware;
 
 use App\Middleware\AuthMiddleware;
-use App\Services\JwtService;
-use App\Services\SessionService;
+use App\Auth\Services\JwtService;
+use App\Auth\Services\SessionService;
 use PHPUnit\Framework\TestCase;
 use Psr\Http\Server\RequestHandlerInterface;
 use Slim\Psr7\Factory\ServerRequestFactory;

@@ -2,11 +2,11 @@
 
 declare(strict_types=1);
 
-namespace Tests\Services;
+namespace Tests\Auth;
 
-use App\Data\AccessKeyRepository;
-use App\Data\UserRepository;
-use App\Services\AccessKeyService;
+use App\Auth\Data\AccessKeyRepository;
+use App\Users\Data\UserRepository;
+use App\Auth\Services\AccessKeyService;
 use DateTimeImmutable;
 use DateTimeZone;
 use PDO;
