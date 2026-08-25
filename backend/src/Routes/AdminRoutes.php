@@ -25,7 +25,7 @@ final class AdminRoutes
         ?EmailSenderInterface $emailSender = null,
         ?FairgateTestAction $fairgateTestAction = null,
     ): void {
-        $app->group('/admin', function (RouteCollectorProxy $group) use ($userRepository, $emailSender): void {
+        $app->group('/admin', function (RouteCollectorProxy $group) use ($userRepository, $emailSender, $fairgateTestAction): void {
             $list = $group->get('/users', new ListUsersAction($userRepository));
             $list->add(new GroupMiddleware(['admin'], $userRepository))->add(new AuthMiddleware());
 

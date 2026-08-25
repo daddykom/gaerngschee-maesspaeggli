@@ -1,6 +1,7 @@
 <?php
 
 return [
+    'mode' => 'real',
     'base_url' => 'https://fsa-test.fairgate.ch',
     'organization_id' => '',
     'access_key' => '',

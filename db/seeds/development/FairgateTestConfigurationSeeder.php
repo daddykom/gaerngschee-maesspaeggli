@@ -1,0 +1,34 @@
+<?php
+
+declare(strict_types=1);
+
+use Phinx\Seed\AbstractSeed;
+
+final class FairgateTestConfigurationSeeder extends AbstractSeed
+{
+    public function run(): void
+    {
+        $variableName = 'fairgate_test_email';
+        if ($this->query(
+            'SELECT id FROM frontend_config WHERE variable_name = :variable_name',
+            ['variable_name' => $variableName],
+        )->fetch() !== false) {
+            return;
+        }
+
+        $this->query(
+            'INSERT INTO frontend_config
+                (id, variable_name, value, description, access_group, update_group, label)
+             VALUES (:id, :variable_name, :value, :description, :access_group, :update_group, :label)',
+            [
+                'id' => '00000000-0000-4000-8000-000000000010',
+                'variable_name' => $variableName,
+                'value' => json_encode('isabelle.joss@gaerngschee.ch', JSON_THROW_ON_ERROR),
+                'description' => 'E-Mail-Adresse für den Fairgate-Verbindungstest.',
+                'access_group' => json_encode(['admin'], JSON_THROW_ON_ERROR),
+                'update_group' => json_encode(['admin'], JSON_THROW_ON_ERROR),
+                'label' => 'Fairgate Test-E-Mail-Adresse',
+            ],
+        );
+    }
+}

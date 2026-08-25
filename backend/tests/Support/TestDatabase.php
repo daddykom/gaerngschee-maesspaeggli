@@ -50,6 +50,19 @@ final class TestDatabase
                 updated_at TEXT
             )',
         );
+        $pdo->exec(
+            'CREATE TABLE frontend_config (
+                id TEXT PRIMARY KEY,
+                variable_name TEXT UNIQUE NOT NULL,
+                value TEXT,
+                description TEXT,
+                access_group TEXT NOT NULL,
+                update_group TEXT NOT NULL,
+                label TEXT NOT NULL,
+                created_at TEXT,
+                updated_at TEXT
+            )',
+        );
 
         return $pdo;
     }

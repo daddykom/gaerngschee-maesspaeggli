@@ -89,6 +89,8 @@ src/
 - Die Admin-Fairgate-Testroute `/admin/fairgate/test` wird in `Routes/AdminRoutes.php` registriert und verwendet `Fairgate/Actions/FairgateTestAction`.
 - Die früheren Sammelpfade `App\Services` und `App\Data` werden nicht mehr verwendet.
 - Lokale Fairgate- und Mail-Zugangsdaten werden über Dateien unter `backend/config/` geladen. Versionierte `.dist`-Vorlagen enthalten keine echten Zugangsdaten; lokale Dateien wie `fairgate.local.php` und `mail.local.php` bleiben ignoriert.
+- `backend/config/fairgate.local.php` enthält zusätzlich `mode` mit den Werten `fake` oder `real`. Die `FairgateContactProviderFactory` verwendet diesen Modus für alle Fairgate-Zugriffe, einschliesslich `GET /admin/fairgate/test`.
+- Die E-Mail-Adresse der Admin-Fairgate-Testroute wird aus dem Konfigurationsschlüssel `fairgate_test_email` der Tabelle `frontend_config` gelesen. Seeds für Development, Test und Production legen `isabelle.joss@gaerngschee.ch` an.
 
 ## Backend-Tests
 

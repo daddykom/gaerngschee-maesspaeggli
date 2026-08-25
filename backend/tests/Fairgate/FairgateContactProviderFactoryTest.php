@@ -19,23 +19,23 @@ final class FairgateContactProviderFactoryTest extends TestCase
 
     public function testTestEnvironmentUsesFakeClient(): void
     {
-        putenv('APP_ENV=test');
-
-        self::assertInstanceOf(FakeFairgateClient::class, FairgateContactProviderFactory::create());
+        self::assertInstanceOf(FakeFairgateClient::class, FairgateContactProviderFactory::create(['mode' => 'fake']));
     }
 
     public function testProductionEnvironmentUsesRealClient(): void
     {
-        putenv('APP_ENV=prod');
-
-        self::assertInstanceOf(FairgateClient::class, FairgateContactProviderFactory::create());
+        self::assertInstanceOf(FairgateClient::class, FairgateContactProviderFactory::create([
+            'mode' => 'real',
+            'base_url' => 'https://example.test',
+            'organization_id' => 'org',
+            'access_key' => 'access',
+            'public_key' => 'public',
+        ]));
     }
 
     public function testUnknownEnvironmentIsRejected(): void
     {
-        putenv('APP_ENV=unknown');
-
         $this->expectException(LogicException::class);
-        FairgateContactProviderFactory::create();
+        FairgateContactProviderFactory::create(['mode' => 'unknown']);
     }
 }

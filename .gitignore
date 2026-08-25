@@ -9,3 +9,4 @@
 /backend/.phpunit.cache/
 /backend/config/fairgate.local.php
 /backend/config/mail.local.php
+/backend/config/fairgate.local.php.prod.dist

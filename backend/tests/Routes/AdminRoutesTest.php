@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Tests\Routes;
 
 use App\Users\Data\UserRepository;
+use App\Configuration\Data\FrontendConfigRepository;
 use App\Application;
 use App\Fairgate\Actions\FairgateTestAction;
 use App\Routes\AdminRoutes;
@@ -89,10 +90,19 @@ final class AdminRoutesTest extends TestCase
     {
         $admin = $this->repository->createUser('admin@example.com', 'secret', 'admin');
         (new SessionService())->setUser($admin['id'], 'admin');
+        $statement = $this->pdo->prepare(
+            'INSERT INTO frontend_config
+                (id, variable_name, value, description, access_group, update_group, label)
+             VALUES (?, ?, ?, ?, ?, ?, ?)',
+        );
+        $statement->execute([
+            'config-1', 'fairgate_test_email', '"isabelle.joss@gaerngschee.ch"',
+            'Test', '["admin"]', '["admin"]', 'Fairgate Test E-Mail',
+        ]);
         $app = $this->createApp(null, new FairgateTestAction(static fn (string $email): array => [
             'success' => true,
             'data' => ['email' => $email],
-        ]));
+        ], new FrontendConfigRepository($this->pdo)));
 
         $response = $app->handle(
             (new ServerRequestFactory())->createServerRequest('GET', '/admin/fairgate/test'),

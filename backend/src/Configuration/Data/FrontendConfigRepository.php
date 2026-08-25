@@ -66,6 +66,17 @@ final class FrontendConfigRepository
         return $this->findById($id, $group);
     }
 
+    public function findValueByVariableName(string $variableName): string|array|null
+    {
+        $stmt = $this->pdo->prepare(
+            'SELECT value FROM frontend_config WHERE variable_name = :variable_name',
+        );
+        $stmt->execute(['variable_name' => $variableName]);
+        $value = $stmt->fetchColumn();
+
+        return $value === false ? null : $this->decodeValue($value);
+    }
+
     private function findById(string $id, string $group): ?array
     {
         foreach ($this->findVisibleForGroup($group) as $config) {

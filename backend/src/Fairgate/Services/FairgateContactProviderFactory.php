@@ -4,16 +4,24 @@ declare(strict_types=1);
 
 namespace App\Fairgate\Services;
 
-use LogicException;
-
 final class FairgateContactProviderFactory
 {
-    public static function create(): FairgateContactProvider
+    /** @param array{mode: string, base_url?: string, organization_id?: string, access_key?: string, public_key?: string}|null $configuration */
+    public static function create(?array $configuration = null): FairgateContactProvider
     {
-        return match (getenv('APP_ENV')) {
-            'test' => new FakeFairgateClient(),
-            'prod' => new FairgateClient(),
-            default => throw new LogicException('APP_ENV must be set to either test or prod.'),
-        };
+        $configuration ??= FairgateConfiguration::load();
+
+        if (!in_array($configuration['mode'] ?? null, ['fake', 'real'], true)) {
+            throw new \LogicException('Unknown Fairgate mode.');
+        }
+
+        return $configuration['mode'] === 'fake'
+            ? new FakeFairgateClient()
+            : new FairgateClient(
+                baseUrl: $configuration['base_url'],
+                organizationId: $configuration['organization_id'],
+                accessKey: $configuration['access_key'],
+                publicKey: $configuration['public_key'],
+            );
     }
 }
