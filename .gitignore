@@ -8,3 +8,4 @@
 /backend/supervisord.log
 /backend/.phpunit.cache/
 /backend/config/fairgate.local.php
+/backend/config/mail.local.php

@@ -88,6 +88,7 @@ src/
 - Namespace und Verzeichnis müssen der PSR-4-Struktur entsprechen.
 - Die Admin-Fairgate-Testroute `/admin/fairgate/test` wird in `Routes/AdminRoutes.php` registriert und verwendet `Fairgate/Actions/FairgateTestAction`.
 - Die früheren Sammelpfade `App\Services` und `App\Data` werden nicht mehr verwendet.
+- Lokale Fairgate- und Mail-Zugangsdaten werden über Dateien unter `backend/config/` geladen. Versionierte `.dist`-Vorlagen enthalten keine echten Zugangsdaten; lokale Dateien wie `fairgate.local.php` und `mail.local.php` bleiben ignoriert.
 
 ## Backend-Tests
 

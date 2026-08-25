@@ -36,11 +36,14 @@ final class EmailSender implements EmailSenderInterface
         ?Environment $twig = null,
         ?TranslatorInterface $translator = null,
     ) {
+        $configuration = $mailer === null || $fromAddress === null || $fromName === null
+            ? MailConfiguration::load()
+            : null;
         $this->mailer = $mailer ?? new Mailer(Transport::fromDsn(
-            $mailerDsn ?? $this->requiredEnvironment('MAILER_DSN'),
+            $mailerDsn ?? $configuration['mailer_dsn'],
         ));
-        $this->fromAddress = $fromAddress ?? $this->requiredEnvironment('MAIL_FROM_ADDRESS');
-        $this->fromName = $fromName ?? getenv('MAIL_FROM_NAME') ?: 'Gärngschee-Mässpäggli';
+        $this->fromAddress = $fromAddress ?? $configuration['from_address'];
+        $this->fromName = $fromName ?? $configuration['from_name'];
         $this->twig = $twig ?? new Environment(
             new FilesystemLoader([
                 dirname(__DIR__, 3) . '/resources/emails/anmeldung',
@@ -142,13 +145,4 @@ final class EmailSender implements EmailSenderInterface
         ));
     }
 
-    private function requiredEnvironment(string $name): string
-    {
-        $value = getenv($name);
-        if ($value === false || trim($value) === '') {
-            throw new EmailDeliveryException(sprintf('Missing required mail configuration: %s.', $name));
-        }
-
-        return $value;
-    }
 }
