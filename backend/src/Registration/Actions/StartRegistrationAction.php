@@ -6,6 +6,7 @@ namespace App\Registration\Actions;
 
 use App\Users\Data\UserRepository;
 use App\Registration\Services\AnmeldungService;
+use App\Registration\Services\RegistrationTokenService;
 use App\Shared\Mail\EmailSender;
 use App\Fairgate\Services\FairgateContactProviderFactory;
 use App\Shared\Http\JsonRequest;
@@ -18,7 +19,10 @@ final class StartRegistrationAction
 {
     private const SUPPORTED_LOCALES = ['de'];
 
-    public function __construct(private readonly ?AnmeldungService $anmeldung = null)
+    public function __construct(
+        private readonly ?AnmeldungService $anmeldung = null,
+        private readonly ?RegistrationTokenService $tokens = null,
+    )
     {
     }
 
@@ -35,7 +39,10 @@ final class StartRegistrationAction
         }
 
         try {
-            ($this->anmeldung ?? self::createService())->sendInformationEmail($email, $locale);
+            $token = ($this->tokens ?? new RegistrationTokenService())->issue(strtolower(trim($email)))['token'];
+            $frontendBaseUrl = rtrim(getenv('FRONTEND_BASE_URL') ?: 'http://localhost:4200', '/');
+            $loginUrl = $frontendBaseUrl . '/client-login?token=' . rawurlencode($token);
+            ($this->anmeldung ?? self::createService())->sendInformationEmail($email, $locale, $loginUrl);
         } catch (Throwable) {
             return JsonResponse::error($response, 'REQUEST_FAILED', 503);
         }

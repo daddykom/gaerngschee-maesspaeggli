@@ -57,4 +57,29 @@ describe('AuthService', () => {
 
     expect(completed).toBe(true);
   });
+
+  it('exchanges a registration token for a client session', () => {
+    const response = {
+      user: { id: 'client-123', email: 'person@example.com', group: 'client' as const },
+      token: 'jwt-token',
+      group: 'client' as const,
+      requiredPasswordReset: false,
+      fairgateUserExists: true,
+      childrenCount: 2,
+      adultsCount: 2,
+      salutation: 'Hallo',
+    };
+    let actualResponse = null;
+
+    service.registrationLogin('registration-token').subscribe((value) => {
+      actualResponse = value;
+    });
+
+    const request = httpTesting.expectOne('http://localhost:8080/auth/registration-login');
+    expect(request.request.method).toBe('POST');
+    expect(request.request.body).toEqual({ token: 'registration-token' });
+    request.flush(response);
+
+    expect(actualResponse).toEqual(response);
+  });
 });

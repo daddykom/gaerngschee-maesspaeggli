@@ -7,6 +7,7 @@ namespace Tests\Routes;
 use App\Users\Data\UserRepository;
 use App\Routes\PublicRoutes;
 use App\Registration\Services\AnmeldungService;
+use App\Registration\Services\RegistrationTokenService;
 use App\Shared\Mail\EmailSenderInterface;
 use App\Fairgate\Services\FairgateContactProvider;
 use Tests\Support\TestDatabase;
@@ -22,7 +23,7 @@ final class PublicStartRoutesTest extends TestCase
     {
         $app = AppFactory::create();
         $app->addRoutingMiddleware();
-        PublicRoutes::register($app, $this->service());
+        PublicRoutes::register($app, $this->service(), new RegistrationTokenService(TestDatabase::create()));
 
         $response = $app->handle($this->request('not-an-email'));
 
@@ -37,7 +38,7 @@ final class PublicStartRoutesTest extends TestCase
     {
         $app = AppFactory::create();
         $app->addRoutingMiddleware();
-        PublicRoutes::register($app, $this->service());
+        PublicRoutes::register($app, $this->service(), new RegistrationTokenService(TestDatabase::create()));
 
         $response = $app->handle($this->request('person@example.com'));
 
@@ -52,7 +53,7 @@ final class PublicStartRoutesTest extends TestCase
     {
         $app = AppFactory::create();
         $app->addRoutingMiddleware();
-        PublicRoutes::register($app, $this->service());
+        PublicRoutes::register($app, $this->service(), new RegistrationTokenService(TestDatabase::create()));
 
         $response = $app->handle($this->request('person@example.com', 'fr'));
 
@@ -67,7 +68,7 @@ final class PublicStartRoutesTest extends TestCase
     {
         $app = AppFactory::create();
         $app->addRoutingMiddleware();
-        PublicRoutes::register($app, $this->service(true));
+        PublicRoutes::register($app, $this->service(true), new RegistrationTokenService(TestDatabase::create()));
 
         $response = $app->handle($this->request('person@example.com'));
 
@@ -89,10 +90,15 @@ final class PublicStartRoutesTest extends TestCase
                 {
                     return false;
                 }
+
+                public function findContactDataByEmail(string $email): array
+                {
+                    return ['success' => true, 'data' => null];
+                }
             },
             $failToSend
                 ? new class () implements EmailSenderInterface {
-                    public function sendAnmeldung(string $recipient, \App\Registration\Services\AnmeldungMailVariant $variant, string $locale = 'de'): void
+                    public function sendAnmeldung(string $recipient, \App\Registration\Services\AnmeldungMailVariant $variant, string $locale = 'de', ?string $loginUrl = null): void
                     {
                         throw new \RuntimeException('SMTP failed');
                     }
@@ -106,7 +112,7 @@ final class PublicStartRoutesTest extends TestCase
                     }
                 }
                 : new class () implements EmailSenderInterface {
-                public function sendAnmeldung(string $recipient, \App\Registration\Services\AnmeldungMailVariant $variant, string $locale = 'de'): void
+                public function sendAnmeldung(string $recipient, \App\Registration\Services\AnmeldungMailVariant $variant, string $locale = 'de', ?string $loginUrl = null): void
                 {
                 }
 

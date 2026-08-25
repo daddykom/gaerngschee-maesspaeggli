@@ -89,8 +89,9 @@ final class FairgateClient implements FairgateContactProvider
         $contacts = $contactsResponse['data']['contacts'] ?? [];
 
         foreach ($contacts as $contact) {
-            $contactEmail = strtolower(trim((string) ($contact['primary_email'] ?? '')));
-            if ($contactEmail !== $email || !isset($contact['contact_id'])) {
+            $contactEmail = strtolower(trim((string) ($contact['primary_email'] ?? $contact['communication']['primary_email'] ?? '')));
+            $contactId = $contact['contact_id'] ?? $contact['basefields']['contact_id'] ?? null;
+            if ($contactEmail !== $email || $contactId === null) {
                 continue;
             }
 
@@ -98,7 +99,7 @@ final class FairgateClient implements FairgateContactProvider
                 $response = $this->client()->request('GET', sprintf(
                     self::CONTACT_DATA_PATH,
                     $this->organizationId(),
-                    (string) $contact['contact_id'],
+                    (string) $contactId,
                 ), [
                     'headers' => $this->headers(),
                 ]);

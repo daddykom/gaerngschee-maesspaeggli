@@ -18,6 +18,12 @@ describe('authReducer', () => {
       passwordChangeErrorCode: null,
       loading: true,
       errorCode: null,
+      registrationLoginLoading: false,
+      registrationLoginErrorCode: null,
+      fairgateUserExists: null,
+      childrenCount: null,
+      adultsCount: null,
+      salutation: null,
     });
   });
 
@@ -41,6 +47,12 @@ describe('authReducer', () => {
       passwordChangeErrorCode: null,
       loading: false,
       errorCode: null,
+      registrationLoginLoading: false,
+      registrationLoginErrorCode: null,
+      fairgateUserExists: null,
+      childrenCount: null,
+      adultsCount: null,
+      salutation: null,
     });
   });
 
@@ -59,6 +71,12 @@ describe('authReducer', () => {
       passwordChangeErrorCode: null,
       loading: false,
       errorCode: 'INVALID_CREDENTIALS',
+      registrationLoginLoading: false,
+      registrationLoginErrorCode: null,
+      fairgateUserExists: null,
+      childrenCount: null,
+      adultsCount: null,
+      salutation: null,
     });
   });
 
@@ -73,6 +91,12 @@ describe('authReducer', () => {
         passwordChangeErrorCode: null,
         loading: false,
         errorCode: null,
+        registrationLoginLoading: false,
+        registrationLoginErrorCode: null,
+        fairgateUserExists: null,
+        childrenCount: null,
+        adultsCount: null,
+        salutation: null,
       },
       AuthActions.logout(),
     );

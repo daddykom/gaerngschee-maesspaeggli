@@ -37,6 +37,25 @@
         }
       }
     },
+    "clientLogin": {
+      "pageTitle": "Direkte Anmeldung",
+      "loading": "Du wirst direkt angemeldet ...",
+      "errorTitle": "Der Anmeldelink ist ungültig",
+      "errors": {
+        "INVALID_REGISTRATION_TOKEN": "Der Link ist ungültig oder bereits abgelaufen.",
+        "REGISTRATION_LOGIN_FAILED": "Die Anmeldung konnte nicht durchgeführt werden. Bitte versuche es später erneut."
+      }
+    },
+    "order": {
+      "pageTitle": "Mässpäggli bestellen",
+      "heading": "Mässpäggli bestellen",
+      "description": "Dies ist die vorbereitete Bestellseite.",
+      "adults": "Erwachsene",
+      "children": "Kinder",
+      "fairgate": "Fairgate-Konto vorhanden",
+      "yes": "Ja",
+      "no": "Nein"
+    },
     "passwordChange": {
       "pageTitle": "Passwort ändern",
       "heading": "Passwort ändern",

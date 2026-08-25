@@ -51,14 +51,19 @@ final class EmailSender implements EmailSenderInterface
         $this->twig->addExtension(new TranslationExtension($this->translator));
     }
 
-    public function sendAnmeldung(string $recipient, AnmeldungMailVariant $variant, string $locale = 'de'): void
+    public function sendAnmeldung(
+        string $recipient,
+        AnmeldungMailVariant $variant,
+        string $locale = 'de',
+        ?string $loginUrl = null,
+    ): void
     {
         if ($this->translator instanceof LocaleAwareInterface) {
             $this->translator->setLocale($locale);
         }
         $frontendBaseUrl = rtrim(getenv('FRONTEND_BASE_URL') ?: 'http://localhost:4200', '/');
         $html = $this->twig->render($variant->value . '.html.twig', [
-            'LOGIN_URL' => $frontendBaseUrl . '/login',
+            'LOGIN_URL' => $loginUrl ?? $frontendBaseUrl . '/login',
             'REGISTRATION_URL' => $frontendBaseUrl . '/register',
             'FAIRGATE_URL' => getenv('FAIRGATE_URL') ?: 'https://www.fairgate.ch',
         ]);

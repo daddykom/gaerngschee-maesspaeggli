@@ -16,6 +16,13 @@ export interface LoginResponse {
   requiredPasswordReset: boolean;
 }
 
+export interface RegistrationLoginResponse extends LoginResponse {
+  fairgateUserExists: boolean;
+  childrenCount: number;
+  adultsCount: number;
+  salutation: string;
+}
+
 export interface ApiErrorResponse {
   error: {
     code: string;
@@ -31,6 +38,10 @@ export class AuthService {
 
   login(email: string, password: string): Observable<LoginResponse> {
     return this.http.post<LoginResponse>('http://localhost:8080/auth/login', { email, password });
+  }
+
+  registrationLogin(token: string): Observable<RegistrationLoginResponse> {
+    return this.http.post<RegistrationLoginResponse>('http://localhost:8080/auth/registration-login', { token });
   }
 
   logout(): Observable<void> {

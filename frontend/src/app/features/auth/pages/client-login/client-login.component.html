@@ -1,0 +1,8 @@
+<section class="page-content">
+  @if (loading()) {
+    <p>{{ 'app.clientLogin.loading' | translate }}</p>
+  } @else if (errorCode()) {
+    <h2>{{ 'app.clientLogin.errorTitle' | translate }}</h2>
+    <p>{{ 'app.clientLogin.errors.' + errorCode() | translate }}</p>
+  }
+</section>

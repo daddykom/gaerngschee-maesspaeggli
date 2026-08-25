@@ -21,6 +21,18 @@ export const appRoutes: Routes = [
     loadComponent: () => import('./features/auth/pages/login/login.component').then((m) => m.Login),
   },
   {
+    path: 'client-login',
+    data: { pageTitle: 'app.clientLogin.pageTitle' },
+    loadComponent: () =>
+      import('./features/auth/pages/client-login/client-login.component').then((m) => m.ClientLoginComponent),
+  },
+  {
+    path: 'order',
+    canActivate: [groupGuard(['client'])],
+    data: { pageTitle: 'app.order.pageTitle' },
+    loadComponent: () => import('./features/order/pages/order/order.component').then((m) => m.OrderComponent),
+  },
+  {
     path: 'password-change',
     data: { pageTitle: 'app.passwordChange.pageTitle' },
     loadComponent: () =>

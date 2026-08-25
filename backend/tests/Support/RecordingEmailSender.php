@@ -16,7 +16,7 @@ final class RecordingEmailSender implements EmailSenderInterface
     public ?string $createdRecipient = null;
     public ?string $changedRecipient = null;
 
-    public function sendAnmeldung(string $recipient, AnmeldungMailVariant $variant, string $locale = 'de'): void
+    public function sendAnmeldung(string $recipient, AnmeldungMailVariant $variant, string $locale = 'de', ?string $loginUrl = null): void
     {
         $this->recipients[] = $recipient;
         $this->variants[] = $variant;

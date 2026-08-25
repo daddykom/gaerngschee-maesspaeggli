@@ -21,4 +21,23 @@ final class FakeFairgateClient implements FairgateContactProvider
 
         return str_contains(substr($localPart, $plusPosition + 1), 'fair');
     }
+
+    public function findContactDataByEmail(string $email): array
+    {
+        if (!$this->hasContactByEmail($email)) {
+            return ['success' => true, 'data' => null];
+        }
+
+        return [
+            'success' => true,
+            'data' => [
+                'contactId' => 1,
+                'salutation' => 'Informal',
+                'gender' => 'Female',
+                'correspondence_lang' => 'de',
+                'wohnt_im_gleichen_haushalt' => 'Nein',
+                'name_und_vorname_kind1' => '',
+            ],
+        ];
+    }
 }

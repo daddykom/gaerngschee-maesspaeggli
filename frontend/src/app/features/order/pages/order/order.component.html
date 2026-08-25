@@ -1,0 +1,13 @@
+<section class="page-content">
+  <h2>{{ 'app.order.heading' | translate }}</h2>
+  <p>{{ 'app.order.description' | translate }}</p>
+  <p>{{ salutation() }}</p>
+  <dl>
+    <dt>{{ 'app.order.adults' | translate }}</dt>
+    <dd>{{ adultsCount() }}</dd>
+    <dt>{{ 'app.order.children' | translate }}</dt>
+    <dd>{{ childrenCount() }}</dd>
+    <dt>{{ 'app.order.fairgate' | translate }}</dt>
+    <dd>{{ fairgateUserExists() ? ('app.order.yes' | translate) : ('app.order.no' | translate) }}</dd>
+  </dl>
+</section>

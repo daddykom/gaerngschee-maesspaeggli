@@ -11,6 +11,9 @@ use App\Routes\AuthRoutes;
 use App\Auth\Services\AccessKeyService;
 use App\Auth\Services\JwtService;
 use App\Auth\Services\SessionService;
+use App\Registration\Services\ClientRegistrationLoginService;
+use App\Registration\Services\RegistrationTokenService;
+use App\Fairgate\Services\FairgateContactProvider;
 use PDO;
 use PHPUnit\Framework\TestCase;
 use Slim\Psr7\Factory\ServerRequestFactory;
@@ -236,7 +239,46 @@ final class AuthRoutesTest extends TestCase
         );
     }
 
-    private function createAuthApp(): \Slim\App
+    public function testRegistrationTokenCreatesClientAndReturnsFairgateSummary(): void
+    {
+        $email = 'person@example.com';
+        $registrationTokens = new RegistrationTokenService($this->pdo);
+        $issued = $registrationTokens->issue($email);
+        $loginService = new ClientRegistrationLoginService(
+            $registrationTokens,
+            $this->repository,
+            new class () implements FairgateContactProvider {
+                public function hasContactByEmail(string $email): bool { return true; }
+                public function findContactDataByEmail(string $email): array
+                {
+                    return [
+                        'success' => true,
+                        'data' => [
+                            'gender' => 'Female',
+                            'salutation' => 'Informal',
+                            'correspondence_lang' => 'de',
+                            'wohnt_im_gleichen_haushalt' => 'Ja',
+                            'name_und_vorname_kind1' => 'Child',
+                        ],
+                    ];
+                }
+            },
+        );
+
+        $response = $this->createAuthApp($loginService)->handle($this->request('/auth/registration-login', [
+            'token' => $issued['token'],
+        ]));
+        $data = json_decode((string) $response->getBody(), true, 512, JSON_THROW_ON_ERROR);
+
+        self::assertSame(200, $response->getStatusCode());
+        self::assertSame('client', $data['group']);
+        self::assertTrue($data['fairgateUserExists']);
+        self::assertSame(1, $data['childrenCount']);
+        self::assertSame(2, $data['adultsCount']);
+        self::assertSame('Hallo', $data['salutation']);
+    }
+
+    private function createAuthApp(?ClientRegistrationLoginService $registrationLoginService = null): \Slim\App
     {
         $app = AppFactory::create();
         $app->addRoutingMiddleware();
@@ -246,6 +288,7 @@ final class AuthRoutesTest extends TestCase
             new JwtService(),
             new SessionService(),
             $this->accessKeyService,
+            $registrationLoginService,
         );
 
         return $app;

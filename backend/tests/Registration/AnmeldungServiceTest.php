@@ -72,4 +72,9 @@ final class StubFairgateContactProvider implements FairgateContactProvider
     {
         return $this->exists;
     }
+
+    public function findContactDataByEmail(string $email): array
+    {
+        return $this->exists ? ['success' => true, 'data' => []] : ['success' => true, 'data' => null];
+    }
 }

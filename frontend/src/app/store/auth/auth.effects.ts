@@ -32,6 +32,38 @@ export const loginEffect = createEffect(
   { functional: true },
 );
 
+export const registrationLoginEffect = createEffect(
+  (actions$ = inject(Actions), authService = inject(AuthService)) =>
+    actions$.pipe(
+      ofType(AuthActions.registrationLogin),
+      exhaustMap(({ token }) => authService.registrationLogin(token).pipe(
+        map((response) => AuthActions.registrationLoginSuccess({
+          token: response.token,
+          userId: response.user.id,
+          group: response.group,
+          fairgateUserExists: response.fairgateUserExists,
+          childrenCount: response.childrenCount,
+          adultsCount: response.adultsCount,
+          salutation: response.salutation,
+        })),
+        catchError((error: HttpErrorResponse) => of(AuthActions.registrationLoginFailure({
+          errorCode: typeof error.error?.error?.code === 'string'
+            ? error.error.error.code
+            : 'REGISTRATION_LOGIN_FAILED',
+        }))),
+      )),
+    ),
+  { functional: true },
+);
+
+export const navigateOnRegistrationLoginSuccessEffect = createEffect(
+  (actions$ = inject(Actions)) => actions$.pipe(
+    ofType(AuthActions.registrationLoginSuccess),
+    map(() => NavigationActions.navigate({ target: '/order' })),
+  ),
+  { functional: true },
+);
+
 export const navigateOnLoginSuccessEffect = createEffect(
   (actions$ = inject(Actions)) =>
     actions$.pipe(
@@ -98,6 +130,8 @@ export const authNotificationEffect = createEffect(
 
 export const authEffects = {
   loginEffect,
+  registrationLoginEffect,
+  navigateOnRegistrationLoginSuccessEffect,
   navigateOnLoginSuccessEffect,
   passwordChangeEffect,
   navigateOnPasswordChangeSuccessEffect,

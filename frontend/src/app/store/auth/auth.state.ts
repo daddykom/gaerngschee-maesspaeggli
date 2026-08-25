@@ -9,6 +9,12 @@ export interface AuthState {
   passwordChangeLoading: boolean;
   passwordChangeErrorCode: string | null;
   errorCode: string | null;
+  registrationLoginLoading: boolean;
+  registrationLoginErrorCode: string | null;
+  fairgateUserExists: boolean | null;
+  childrenCount: number | null;
+  adultsCount: number | null;
+  salutation: string | null;
 }
 
 export const initialState: AuthState = {
@@ -20,4 +26,10 @@ export const initialState: AuthState = {
   passwordChangeLoading: false,
   passwordChangeErrorCode: null,
   errorCode: null,
+  registrationLoginLoading: false,
+  registrationLoginErrorCode: null,
+  fairgateUserExists: null,
+  childrenCount: null,
+  adultsCount: null,
+  salutation: null,
 };

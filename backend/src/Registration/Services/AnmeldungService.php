@@ -18,7 +18,7 @@ final class AnmeldungService
     ) {
     }
 
-    public function sendInformationEmail(string $email, string $locale = 'de'): void
+    public function sendInformationEmail(string $email, string $locale = 'de', ?string $loginUrl = null): void
     {
         $email = strtolower(trim($email));
         if (filter_var($email, FILTER_VALIDATE_EMAIL) === false) {
@@ -29,6 +29,6 @@ final class AnmeldungService
         $fairgateExists = $this->fairgate->hasContactByEmail($email);
         $variant = AnmeldungMailVariant::fromChecks($userExists, $fairgateExists);
 
-        $this->emailSender->sendAnmeldung($email, $variant, $locale);
+        $this->emailSender->sendAnmeldung($email, $variant, $locale, $loginUrl);
     }
 }

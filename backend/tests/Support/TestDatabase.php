@@ -39,6 +39,18 @@ final class TestDatabase
             );
         }
 
+        $pdo->exec(
+            'CREATE TABLE registration_tokens (
+                id TEXT PRIMARY KEY,
+                email TEXT NOT NULL,
+                token_hash TEXT NOT NULL UNIQUE,
+                expires_at TEXT NOT NULL,
+                used_at TEXT NULL,
+                created_at TEXT,
+                updated_at TEXT
+            )',
+        );
+
         return $pdo;
     }
 }
