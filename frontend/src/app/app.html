@@ -9,6 +9,11 @@
            <a mat-menu-item routerLink="/admin/overview" routerLinkActive="active">
              {{ 'app.navigation.adminOverview' | translate }}
            </a>
+           @if (isAdmin()) {
+             <a mat-menu-item routerLink="/admin/fairgate-test" routerLinkActive="active">
+               {{ 'app.navigation.fairgateTest' | translate }}
+             </a>
+           }
            <a mat-menu-item routerLink="/admin/configuration" routerLinkActive="active">
              {{ 'app.navigation.configuration' | translate }}
            </a>

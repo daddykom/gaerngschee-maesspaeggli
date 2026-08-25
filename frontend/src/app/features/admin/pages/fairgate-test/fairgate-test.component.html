@@ -1,0 +1,23 @@
+<section class="admin-page-content">
+  <div class="fairgate-test-content">
+    <p>{{ 'app.admin.fairgateTest.description' | translate }}</p>
+
+    <button mat-flat-button color="primary" type="button" (click)="runTest()" [disabled]="loading()">
+      {{ 'app.admin.fairgateTest.run' | translate }}
+    </button>
+
+    @if (loading()) {
+      <p>{{ 'app.admin.fairgateTest.loading' | translate }}</p>
+    }
+
+    @if (errorCode(); as code) {
+      <p class="fairgate-test-error" role="alert">
+        {{ 'app.admin.fairgateTest.errors.' + code | translate }}
+      </p>
+    }
+
+    @if (result(); as response) {
+      <pre class="fairgate-test-result">{{ response | json }}</pre>
+    }
+  </div>
+</section>

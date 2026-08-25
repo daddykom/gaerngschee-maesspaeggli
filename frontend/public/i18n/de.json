@@ -71,6 +71,16 @@
       "overview": {
         "title": "Admin-Übersicht"
       },
+      "fairgateTest": {
+        "title": "Fairgate-Test",
+        "description": "Testet die Verbindung zu Fairgate mit dem hinterlegten Testkontakt.",
+        "run": "Fairgate-Abfrage starten",
+        "loading": "Fairgate-Abfrage läuft ...",
+        "errors": {
+          "FAIRGATE_TEST_FAILED": "Die Fairgate-Abfrage ist fehlgeschlagen.",
+          "REQUEST_FAILED": "Die Anfrage konnte nicht durchgeführt werden."
+        }
+      },
       "configuration": {
         "title": "Konfiguration",
         "loading": "Konfiguration wird geladen ...",
@@ -142,6 +152,7 @@
       "start": "Startseite",
       "adminOverview": "Admin-Übersicht",
       "configuration": "Konfiguration",
+      "fairgateTest": "Fairgate-Test",
       "userManagement": "Benutzerverwaltung",
       "myUser": "Meine Daten",
       "logout": "Abmelden"

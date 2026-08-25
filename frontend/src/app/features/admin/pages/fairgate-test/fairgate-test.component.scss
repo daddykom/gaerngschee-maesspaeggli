@@ -1,0 +1,25 @@
+.admin-page-content {
+  padding: clamp(32px, 5vw, 72px) clamp(24px, 4vw, 54px);
+}
+
+.fairgate-test-content {
+  display: grid;
+  gap: 1rem;
+  max-width: 1000px;
+  margin: 0 auto;
+}
+
+.fairgate-test-error {
+  color: var(--mat-sys-error);
+}
+
+.fairgate-test-result {
+  max-width: 100%;
+  overflow: auto;
+  padding: 1rem;
+  border: 1px solid var(--mat-sys-outline-variant);
+  border-radius: 0.5rem;
+  background: var(--mat-sys-surface-container-low);
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+}

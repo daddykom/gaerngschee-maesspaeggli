@@ -49,6 +49,15 @@ export const appRoutes: Routes = [
           ),
       },
       {
+        path: 'fairgate-test',
+        canActivate: [groupGuard(['admin'])],
+        data: { pageTitle: 'app.admin.fairgateTest.title', pageHeaderLayout: 'wide' },
+        loadComponent: () =>
+          import('./features/admin/pages/fairgate-test/fairgate-test.component').then(
+            (m) => m.FairgateTestComponent,
+          ),
+      },
+      {
         path: 'configuration',
         data: { pageTitle: 'app.admin.configuration.title', pageHeaderLayout: 'wide' },
         loadComponent: () =>

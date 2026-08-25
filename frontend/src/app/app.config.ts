@@ -22,6 +22,8 @@ import { notificationEffects } from './store/notification/notification.effects';
 import { notificationFeature } from './store/notification/notification.feature';
 import { frontendConfigEffects } from './store/frontend-config/frontend-config.effects';
 import { frontendConfigFeature } from './store/frontend-config/frontend-config.feature';
+import { fairgateTestEffects } from './store/fairgate-test/fairgate-test.effects';
+import { fairgateTestFeature } from './store/fairgate-test/fairgate-test.feature';
 
 export const appConfig: ApplicationConfig = {
   providers: [
@@ -35,7 +37,8 @@ export const appConfig: ApplicationConfig = {
     provideState(adminUsersFeature),
     provideState(notificationFeature),
     provideState(frontendConfigFeature),
-    provideEffects(startEffects, authEffects, adminUsersEffects, frontendConfigEffects, navigationEffects, notificationEffects),
+    provideState(fairgateTestFeature),
+    provideEffects(startEffects, authEffects, adminUsersEffects, frontendConfigEffects, fairgateTestEffects, navigationEffects, notificationEffects),
     provideStoreDevtools(),
     provideAnimations(),
     provideTranslateService({
