@@ -107,6 +107,56 @@ tests/
 
 Gemeinsames SQLite-Testsetup und Test-Doubles liegen unter `tests/Support/` und werden über `tests/bootstrap.php` geladen. Fachlogik soll direkt auf Action- oder Service-Ebene getestet werden; Route-Tests prüfen primär Registrierung und Middleware-Verhalten.
 
+## Fairgate-Datenstruktur
+
+Die Fairgate-Abfrage liefert die erweiterten Kontaktdaten in folgender Struktur:
+
+```json
+{
+  "email": "jane@doe.ch",
+  "fairgate": {
+    "success": true,
+    "message": "Data retrieved successfully",
+    "data": {
+      "contactType": "single_person",
+      "contactId": 1,
+      "salutation": "Informal",
+      "first_name": "Jane",
+      "last_name": "Doe",
+      "gender": "Female",
+      "correspondence_lang": "de",
+      "wohnt_im_gleichen_haushalt": "Ja",
+      "name_und_vorname_kind1": "Baby Doe",
+      "name_und_vorname_kind2": "Jonny Doe",
+      "name_und_vorname_kind3": "",
+      "geburtsdatum_kind1": "2019-03-28T00:00:00Z",
+      "geburtsdatum_kind2": null
+    }
+  }
+}
+```
+
+Die Kinderfelder reichen von `name_und_vorname_kind1` bis `name_und_vorname_kind10` und von `geburtsdatum_kind1` bis `geburtsdatum_kind10`. Nicht vorhandene Kinder können als leerer String oder `null` geliefert werden.
+
+Für die Weiterverarbeitung gelten folgende Regeln:
+
+- Die Kinderanzahl entspricht der Anzahl nicht leerer `name_und_vorname_kindN`-Felder.
+- `wohnt_im_gleichen_haushalt = "Ja"` ergibt zwei Erwachsene.
+- Jeder andere Wert ergibt einen Erwachsenen.
+- Die Anrede wird aus `correspondence_lang`, `gender` und `salutation` abgeleitet.
+- Das Frontend erhält mindestens `fairgateUserExists`, `childrenCount`, `adultsCount` und `salutation`.
+
+## Registrierungslink und Client-Login
+
+- `POST /public/start` legt noch keinen Benutzer an.
+- Die Route erstellt einen einmaligen Registrierungstoken und versendet einen Link an die angegebene E-Mail-Adresse.
+- Registrierungstoken werden in der separaten Tabelle `registration_tokens` gespeichert, nur gehasht abgelegt und sind zehn Minuten gültig.
+- `POST /auth/registration-login` konsumiert den Token.
+- Erst beim erfolgreichen Token-Login wird ein neuer Benutzer mit der Gruppe `client` angelegt, falls noch keiner existiert.
+- Bestehende `admin`- und `user`-Konten werden nicht in Client-Konten umgewandelt; die Antwort bleibt aus Sicherheitsgründen neutral.
+- Nach dem Token-Login werden JWT, Client-Gruppe und die berechneten Fairgate-Werte an das Frontend geliefert.
+- Das Frontend verarbeitet den Link unter `/client-login` und navigiert nach erfolgreichem Login zu `/order`.
+
 ## Arbeitsweise & Verhaltensregeln
 
 ### 1. Eigenständige Änderungen vermeiden
