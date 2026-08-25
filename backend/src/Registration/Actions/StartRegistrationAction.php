@@ -42,7 +42,7 @@ final class StartRegistrationAction
             $token = ($this->tokens ?? new RegistrationTokenService())->issue(strtolower(trim($email)))['token'];
             $frontendBaseUrl = rtrim(getenv('FRONTEND_BASE_URL') ?: 'http://localhost:4200', '/');
             $loginUrl = $frontendBaseUrl . '/client-login?token=' . rawurlencode($token);
-            ($this->anmeldung ?? self::createService())->sendInformationEmail($email, $locale, $loginUrl);
+            ($this->anmeldung ?? self::createService())->sendRegistrationLink($email, $loginUrl, $locale);
         } catch (Throwable) {
             return JsonResponse::error($response, 'REQUEST_FAILED', 503);
         }

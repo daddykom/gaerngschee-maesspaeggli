@@ -56,6 +56,32 @@ final class EmailSenderTest extends TestCase
         $sender->sendUserCreated('new@example.com', 'temporary-secret');
     }
 
+    public function testSendRegistrationLinkUsesTheSingleUseOrderUrl(): void
+    {
+        $mailer = $this->createMock(MailerInterface::class);
+        $mailer->expects(self::once())
+            ->method('send')
+            ->with(self::callback(static function (Email $email): bool {
+                self::assertSame('Dein Link zur Mässpäggli-Bestellung', $email->getSubject());
+                self::assertStringContainsString('Jetzt bestellen', $email->getHtmlBody());
+                self::assertStringContainsString('http://localhost:4200/client-login?token=test-token', $email->getHtmlBody());
+                self::assertStringContainsString('10 Minuten gültig', $email->getHtmlBody());
+                self::assertStringContainsString('http://localhost:4200/client-login?token=test-token', $email->getTextBody());
+                self::assertStringNotContainsString('fairgate.ch', $email->getHtmlBody());
+
+                return true;
+            }));
+
+        $sender = new EmailSender($mailer, 'noreply@example.com', 'Gärngschee-Mässpäggli');
+
+        $sender->sendAnmeldung(
+            'person@example.com',
+            AnmeldungMailVariant::ClientOrder,
+            'de',
+            'http://localhost:4200/client-login?token=test-token',
+        );
+    }
+
     public function testSendUserEmailChangedNotifiesNewAddress(): void
     {
         $mailer = $this->createMock(MailerInterface::class);

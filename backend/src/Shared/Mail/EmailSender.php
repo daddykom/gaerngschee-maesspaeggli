@@ -138,6 +138,12 @@ final class EmailSender implements EmailSenderInterface
 
     private function plainText(string $html): string
     {
+        $html = (string) preg_replace_callback(
+            '/<a\b[^>]*href=["\']([^"\']+)["\'][^>]*>(.*?)<\/a>/is',
+            static fn (array $match): string => $match[2] . ' (' . $match[1] . ')',
+            $html,
+        );
+
         return trim((string) preg_replace(
             '/\s+/',
             ' ',

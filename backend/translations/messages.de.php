@@ -1,6 +1,13 @@
 <?php
 
 return [
+    'anmeldung.client-order.title' => 'Jetzt Mässpäggli bestellen',
+    'anmeldung.client-order.highlight' => 'Dein direkter Bestelllink ist bereit.',
+    'anmeldung.client-order.body' => 'Klicke auf den folgenden Link, um dich direkt anzumelden und deine Bestellung zu starten.',
+    'anmeldung.client-order.next_title' => 'Wichtig',
+    'anmeldung.client-order.next_text' => 'Der Link ist 10 Minuten gültig und kann nur einmal verwendet werden.',
+    'anmeldung.client-order.button' => 'Jetzt bestellen',
+    'anmeldung.client-order.subject' => 'Dein Link zur Mässpäggli-Bestellung',
     'anmeldung.user-and-fairgate.title' => 'Du hast bereits ein Konto',
     'anmeldung.user-and-fairgate.highlight' => 'Alles ist bereits eingerichtet.',
     'anmeldung.user-and-fairgate.body' => 'Deine E-Mail-Adresse ist bei Fairgate registriert und für unsere Mässpäggli-Plattform besteht bereits ein Konto.',

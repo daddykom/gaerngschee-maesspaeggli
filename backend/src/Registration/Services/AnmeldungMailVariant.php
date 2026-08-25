@@ -6,6 +6,7 @@ namespace App\Registration\Services;
 
 enum AnmeldungMailVariant: string
 {
+    case ClientOrder = 'client-order';
     case UserAndFairgate = 'user-and-fairgate';
     case UserMissingFairgate = 'user-missing-fairgate';
     case UserMissingFairgateMissing = 'user-missing-fairgate-missing';
