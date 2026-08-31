@@ -1,39 +1,16 @@
-import { Component, inject } from '@angular/core';
-import {
-  AbstractControl,
-  FormControl,
-  FormGroup,
-  ReactiveFormsModule,
-  ValidationErrors,
-  ValidatorFn,
-  Validators,
-} from '@angular/forms';
+import { Component, computed, inject, signal } from '@angular/core';
+import { form, FormField, required, validate } from '@angular/forms/signals';
 import { MatButtonModule } from '@angular/material/button';
 import { MatInputModule } from '@angular/material/input';
-import { TranslatePipe } from '@ngx-translate/core';
-import { AuthActions } from '../../../../store/auth/auth.actions';
 import { Store } from '@ngrx/store';
-import { selectAuthPasswordChangeLoading } from '../../../../store/auth/auth.feature';
+import { TranslatePipe } from '@ngx-translate/core';
 import { ControlErrorComponent } from '../../../../shared/components/control-error/control-error';
-
-const matchingPasswordsValidator: ValidatorFn = (
-  control: AbstractControl,
-): ValidationErrors | null => {
-  const newPassword = control.get('newPassword')?.value;
-  const passwordConfirmation = control.get('passwordConfirmation')?.value;
-
-  return newPassword === passwordConfirmation ? null : { passwordsDoNotMatch: true };
-};
+import { AuthActions } from '../../../../store/auth/auth.actions';
+import { selectAuthPasswordChangeLoading } from '../../../../store/auth/auth.feature';
 
 @Component({
   selector: 'app-password-change',
-  imports: [
-    MatInputModule,
-    MatButtonModule,
-    ReactiveFormsModule,
-    TranslatePipe,
-    ControlErrorComponent,
-  ],
+  imports: [MatInputModule, MatButtonModule, FormField, TranslatePipe, ControlErrorComponent],
   templateUrl: './password-change.component.html',
   styleUrl: './password-change.component.scss',
 })
@@ -41,23 +18,31 @@ export class PasswordChange {
   private readonly store = inject(Store);
   readonly submitting = this.store.selectSignal(selectAuthPasswordChangeLoading);
 
-  readonly passwordChangeForm = new FormGroup(
-    {
-      newPassword: new FormControl('', [Validators.required]),
-      passwordConfirmation: new FormControl('', [Validators.required]),
-    },
-    { validators: matchingPasswordsValidator },
+  readonly passwordChangeModel = signal({ newPassword: '', passwordConfirmation: '' });
+  readonly passwordChangeForm = form(this.passwordChangeModel, (schema) => {
+    required(schema.newPassword);
+    required(schema.passwordConfirmation);
+    validate(schema, ({ valueOf }) =>
+      valueOf(schema.newPassword) === valueOf(schema.passwordConfirmation)
+        ? undefined
+        : { kind: 'passwordsDoNotMatch' },
+    );
+  });
+  readonly passwordsDoNotMatch = computed(() =>
+    this.passwordChangeForm()
+      .errors()
+      .some((error) => error.kind === 'passwordsDoNotMatch'),
   );
 
   onSubmit(): void {
-    if (this.passwordChangeForm.invalid) {
-      this.passwordChangeForm.markAllAsTouched();
+    if (!this.passwordChangeForm().valid()) {
+      this.passwordChangeForm.newPassword().markAsTouched();
+      this.passwordChangeForm.passwordConfirmation().markAsTouched();
       return;
     }
 
-    const password = this.passwordChangeForm.controls.newPassword.value;
-    if (password !== null) {
-      this.store.dispatch(AuthActions.passwordChange({ password }));
-    }
+    this.store.dispatch(
+      AuthActions.passwordChange({ password: this.passwordChangeModel().newPassword }),
+    );
   }
 }
