@@ -35,4 +35,26 @@ test.describe('Not-found route', () => {
     await page.waitForURL('**/not-found');
     await expect(page.locator('h1')).toHaveText('Seite nicht gefunden');
   });
+
+  test('shows the not-found page when a client opens an admin route', async ({ page }) => {
+    await page.route('http://localhost:8080/auth/login', async (route) => {
+      await route.fulfill({
+        status: 200,
+        contentType: 'application/json',
+        body: JSON.stringify({
+          user: { id: 'client-1', email: 'client@example.com', group: 'client' },
+          token: 'client-token',
+          group: 'client',
+          requiredPasswordReset: false,
+        }),
+      });
+    });
+
+    await page.goto('/login');
+    await page.locator('input[type="email"]').fill('client@example.com');
+    await page.locator('input[type="password"]').fill('secret');
+    await page.locator('button[type="submit"]').click();
+    await page.waitForURL('**/not-found');
+    await expect(page.locator('h1')).toHaveText('Seite nicht gefunden');
+  });
 });

@@ -61,4 +61,35 @@ describe('FairgateTestComponent', () => {
     expect(fixture.nativeElement.querySelector('.fairgate-test-result').textContent).toContain('success');
     expect(fixture.nativeElement.querySelector('.fairgate-test-result').textContent).toContain('contacts');
   });
+
+  it('renders the loading state and disables the test button', () => {
+    store.setState({ fairgateTest: { result: null, loading: true, errorCode: null } });
+    fixture.detectChanges();
+
+    expect(fixture.nativeElement.querySelector('button').disabled).toBe(true);
+    expect(fixture.nativeElement.textContent).toContain('app.admin.fairgateTest.loading');
+  });
+
+  it('renders a translated error code without a result', () => {
+    store.setState({ fairgateTest: { result: null, loading: false, errorCode: 'FAIRGATE_UNAVAILABLE' } });
+    fixture.detectChanges();
+
+    const error = fixture.nativeElement.querySelector('.fairgate-test-error');
+    expect(error.getAttribute('role')).toBe('alert');
+    expect(error.textContent).toContain('app.admin.fairgateTest.errors.FAIRGATE_UNAVAILABLE');
+    expect(fixture.nativeElement.querySelector('.fairgate-test-result')).toBeNull();
+  });
+
+  it('can render an empty and false result payload', () => {
+    store.setState({
+      fairgateTest: {
+        result: { email: '', fairgate: { success: false, data: null } },
+        loading: false,
+        errorCode: null,
+      },
+    });
+    fixture.detectChanges();
+
+    expect(fixture.nativeElement.querySelector('.fairgate-test-result').textContent).toContain('false');
+  });
 });

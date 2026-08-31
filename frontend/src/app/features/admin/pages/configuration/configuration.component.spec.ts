@@ -67,6 +67,7 @@ describe('ConfigurationComponent', () => {
     }).compileComponents();
 
     store = TestBed.inject(MockStore);
+    jest.spyOn(store, 'dispatch');
     fixture = TestBed.createComponent(ConfigurationComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
@@ -78,6 +79,10 @@ describe('ConfigurationComponent', () => {
     expect(fixture.nativeElement.textContent).toContain('ARRAY_CONFIG');
     expect(component.control(configs[0]).value).toBe('120');
     expect(component.arrayControl(configs[1]).getRawValue()).toEqual(['A', 'B']);
+  });
+
+  it('dispatches load on creation', () => {
+    expect(store.dispatch).toHaveBeenCalledWith(FrontendConfigActions.load());
   });
 
   it('disables fields without update permission', () => {
@@ -106,5 +111,51 @@ describe('ConfigurationComponent', () => {
         { id: 'array-config', value: ['C', 'B'] },
       ],
     }));
+  });
+
+  it('does not save while a save is already in progress', () => {
+    store.setState({ frontendConfig: { configs, loading: false, saving: true } });
+    const dispatch = jest.spyOn(store, 'dispatch');
+
+    component.onSubmit();
+
+    expect(dispatch).not.toHaveBeenCalledWith(expect.objectContaining({ type: FrontendConfigActions.save.type }));
+  });
+
+  it('shows the loading state and does not render the form fields', () => {
+    store.setState({ frontendConfig: { configs: [], loading: true, saving: false } });
+    fixture.detectChanges();
+
+    expect(fixture.nativeElement.textContent).toContain('app.admin.configuration.loading');
+    expect(fixture.nativeElement.querySelectorAll('fieldset')).toHaveLength(0);
+    expect(fixture.nativeElement.querySelector('button[type="submit"]')).toBeNull();
+  });
+
+  it('renders the empty state and supports null scalar values', async () => {
+    component.form.removeControl('scalar-config');
+    store.setState({
+      frontendConfig: {
+        configs: [{ ...configs[0], value: null }],
+        loading: false,
+        saving: false,
+      },
+    });
+    fixture.detectChanges();
+    await fixture.whenStable();
+
+    expect(component.control({ ...configs[0], value: null }).value).toBe('');
+
+    store.setState({ frontendConfig: { configs: [], loading: false, saving: false } });
+    fixture.detectChanges();
+    expect(fixture.nativeElement.textContent).toContain('app.admin.configuration.empty');
+  });
+
+  it('removes controls for configurations no longer in the store', async () => {
+    store.setState({ frontendConfig: { configs: [configs[0]], loading: false, saving: false } });
+    fixture.detectChanges();
+    await fixture.whenStable();
+
+    expect(component.form.contains('array-config')).toBe(false);
+    expect(component.form.contains('scalar-config')).toBe(true);
   });
 });

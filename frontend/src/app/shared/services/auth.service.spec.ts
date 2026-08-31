@@ -82,4 +82,22 @@ describe('AuthService', () => {
 
     expect(actualResponse).toEqual(response);
   });
+
+  it('posts the new password to the authenticated password-change endpoint', () => {
+    const response = {
+      user: { id: 'user-123', email: 'user@example.com', group: 'admin' as const },
+    };
+    let actualResponse = null;
+
+    service.changePassword('new-secret').subscribe((value) => {
+      actualResponse = value;
+    });
+
+    const request = httpTesting.expectOne('http://localhost:8080/auth/password-change-authenticated');
+    expect(request.request.method).toBe('POST');
+    expect(request.request.body).toEqual({ password: 'new-secret' });
+    request.flush(response);
+
+    expect(actualResponse).toEqual(response);
+  });
 });
