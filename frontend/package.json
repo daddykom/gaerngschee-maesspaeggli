@@ -18,6 +18,10 @@
     "db:seed": "cd .. && docker compose exec -T backend vendor/bin/phinx seed:run -e development -c /var/www/db/phinx.php",
     "db:setup": "npm run db:start && sleep 5 && npm run db:migrate && npm run db:seed",
     "db:reset": "npm run db:stop && npm run db:start && sleep 5 && npm run db:migrate && npm run db:seed",
+    "integration:start": "cd .. && docker compose -f docker-compose.integration.yml up -d --build --wait integration-database integration-backend",
+    "integration:stop": "cd .. && docker compose -f docker-compose.integration.yml down -v",
+    "integration:migrate": "cd .. && docker compose -f docker-compose.integration.yml exec -T integration-backend vendor/bin/phinx migrate -e test -c /var/www/db/phinx.php",
+    "integration:setup": "npm run integration:start && npm run integration:migrate",
     "composer": "cd .. && docker compose exec -T backend composer install --no-interaction",
     "composer:update": "cd .. && docker compose exec -T backend composer update --no-interaction"
   },
