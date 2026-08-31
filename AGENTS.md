@@ -346,11 +346,11 @@ Als Leitlinie gilt:
 > **Design for change, but do not implement the future in advance.**
 ## Coding Rules
 
-### 5. Immer Reactive Forms verwenden
+### 5. Immer Signal Forms verwenden
 
-Alle Formulare in Angular SOLLEN mit Reactive Forms (`FormGroup`, `FormControl`) erstellt werden, nicht mit Template-driven Forms.
+Alle Formulare in Angular MÜSSEN mit Angular Signal Forms (`form`, `FieldTree`, `FormField`) erstellt werden. Reactive Forms (`FormGroup`, `FormControl`, `FormArray`, `FormBuilder`) sind nicht erlaubt. Template-driven Forms sowie `ngModel` sind ebenfalls nicht erlaubt.
 
-Siehe: [Angular Reactive Forms](https://angular.io/guide/reactive-forms)
+Für neue Formulare und Änderungen an bestehenden Formularen ist die offizielle Angular-Signal-Forms-API zu verwenden. Bestehende Reactive-Forms-Strukturen müssen bei fachlichen Änderungen in Signal Forms überführt werden.
 
 ### 6. Immer globale Funktionen/Styles verwenden
 
