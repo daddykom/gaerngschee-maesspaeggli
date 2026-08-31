@@ -36,7 +36,7 @@ describe('Login', () => {
   });
 
   it('dispatches login credentials for a valid form', () => {
-    component.loginForm.setValue({ email: 'user@example.com', password: 'secret' });
+    component.loginModel.set({ email: 'user@example.com', password: 'secret' });
 
     component.onSubmit();
 
@@ -48,13 +48,13 @@ describe('Login', () => {
   });
 
   it('does not dispatch for an invalid form', () => {
-    component.loginForm.setValue({ email: 'invalid-email', password: '' });
+    component.loginModel.set({ email: 'invalid-email', password: '' });
 
     component.onSubmit();
 
     expect(store.dispatch).not.toHaveBeenCalled();
-    expect(component.loginForm.controls.email.touched).toBe(true);
-    expect(component.loginForm.controls.password.touched).toBe(true);
+    expect(component.loginForm.email().touched()).toBe(true);
+    expect(component.loginForm.password().touched()).toBe(true);
   });
 
   it('shows validation errors after submitting an invalid form', () => {

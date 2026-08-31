@@ -1,24 +1,24 @@
 <section class="page-content">
   <div class="form-content">
     <h2>{{ 'app.login.heading' | translate }}</h2>
-    <form [formGroup]="loginForm" class="auth-form" (ngSubmit)="onSubmit()">
+    <form class="auth-form" (submit)="$event.preventDefault(); onSubmit()">
         <div class="auth-field-group">
           <mat-form-field appearance="outline" subscriptSizing="dynamic">
             <mat-label>{{ 'app.login.emailLabel' | translate }}</mat-label>
-            <input matInput type="email" formControlName="email" />
+           <input matInput type="email" [formField]="loginForm.email" />
           </mat-form-field>
           <app-control-error
-            [control]="loginForm.controls.email"
+             [control]="loginForm.email()"
             translationPrefix="app.login.errors.email"
           />
         </div>
         <div class="auth-field-group">
           <mat-form-field appearance="outline" subscriptSizing="dynamic">
             <mat-label>{{ 'app.login.passwordLabel' | translate }}</mat-label>
-            <input matInput type="password" formControlName="password" />
+           <input matInput type="password" [formField]="loginForm.password" />
           </mat-form-field>
           <app-control-error
-            [control]="loginForm.controls.password"
+             [control]="loginForm.password()"
             translationPrefix="app.login.errors.password"
           />
         </div>

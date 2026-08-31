@@ -1,4 +1,5 @@
 import { AbstractControl } from '@angular/forms';
+import { FieldState } from '@angular/forms/signals';
 import { Component, computed, effect, input, signal } from '@angular/core';
 import { TranslatePipe } from '@ngx-translate/core';
 
@@ -9,7 +10,7 @@ import { TranslatePipe } from '@ngx-translate/core';
   styleUrl: './control-error.scss',
 })
 export class ControlErrorComponent {
-  control = input.required<AbstractControl>();
+  control = input.required<AbstractControl | FieldState<unknown>>();
   translationPrefix = input.required<string>();
 
   private readonly statusVersion = signal(0);
@@ -17,6 +18,11 @@ export class ControlErrorComponent {
   readonly firstErrorKey = computed(() => {
     this.statusVersion();
     const control = this.control();
+
+    if (this.isSignalField(control)) {
+      const errors = control.errors();
+      return control.touched() && errors.length > 0 ? errors[0]?.kind ?? null : null;
+    }
 
     if (!control.touched || !control.errors) {
       return null;
@@ -33,11 +39,19 @@ export class ControlErrorComponent {
   constructor() {
     effect((onCleanup) => {
       const control = this.control();
+      if (this.isSignalField(control)) {
+        return;
+      }
+
       const subscription = control.events.subscribe(() => {
         this.statusVersion.update((version) => version + 1);
       });
 
       onCleanup(() => subscription.unsubscribe());
     });
+  }
+
+  private isSignalField(control: AbstractControl | FieldState<unknown>): control is FieldState<unknown> {
+    return typeof control.touched === 'function';
   }
 }

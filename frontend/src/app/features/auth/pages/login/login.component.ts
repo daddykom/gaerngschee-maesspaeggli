@@ -1,5 +1,5 @@
-import { Component, inject, OnInit } from '@angular/core';
-import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
+import { Component, inject, OnInit, signal } from '@angular/core';
+import { email, form, FormField, required } from '@angular/forms/signals';
 import { MatButtonModule } from '@angular/material/button';
 import { MatInputModule } from '@angular/material/input';
 import { ActivatedRoute } from '@angular/router';
@@ -14,7 +14,7 @@ import { ControlErrorComponent } from '../../../../shared/components/control-err
   imports: [
     MatInputModule,
     MatButtonModule,
-    ReactiveFormsModule,
+    FormField,
     TranslatePipe,
     ControlErrorComponent,
   ],
@@ -27,28 +27,28 @@ export class Login implements OnInit {
 
   readonly loading = this.store.selectSignal(selectAuthLoading);
 
-  loginForm = new FormGroup({
-    email: new FormControl('', [Validators.required, Validators.email]),
-    password: new FormControl('', [Validators.required]),
+  readonly loginModel = signal({ email: '', password: '' });
+  readonly loginForm = form(this.loginModel, (schema) => {
+    required(schema.email);
+    email(schema.email);
+    required(schema.password);
   });
 
   ngOnInit(): void {
     const email = this.route.snapshot.queryParamMap.get('email');
     if (email) {
-      this.loginForm.patchValue({ email });
+      this.loginModel.update((model) => ({ ...model, email }));
     }
   }
 
   onSubmit(): void {
-    if (!this.loginForm.valid) {
-      this.loginForm.markAllAsTouched();
+    if (!this.loginForm().valid()) {
+      this.loginForm.email().markAsTouched();
+      this.loginForm.password().markAsTouched();
       return;
     }
 
-    const { email, password } = this.loginForm.getRawValue();
-    if (email === null || password === null) {
-      return;
-    }
+    const { email, password } = this.loginModel();
 
     this.store.dispatch(AuthActions.login({ email, password }));
   }

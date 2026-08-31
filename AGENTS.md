@@ -110,6 +110,16 @@ tests/
 
 Gemeinsames SQLite-Testsetup und Test-Doubles liegen unter `tests/Support/` und werden über `tests/bootstrap.php` geladen. Fachlogik soll direkt auf Action- oder Service-Ebene getestet werden; Route-Tests prüfen primär Registrierung und Middleware-Verhalten.
 
+### Frontend- und Backend-Änderungen
+
+Nach Änderungen unter `frontend/` oder `backend/` müssen die Playwright-E2E-Tests ausgeführt werden:
+
+```bash
+cd frontend && npm run test:e2e:cli
+```
+
+Zusätzlich sollen die für den geänderten Bereich relevanten Unit- bzw. Integrationstests ausgeführt werden. Die E2E-Tests benötigen den Frontend- und Backend-Entwicklungsserver sowie die erforderlichen Testdaten.
+
 ## Fairgate-Datenstruktur
 
 Die Fairgate-Abfrage liefert die erweiterten Kontaktdaten in folgender Struktur:
