@@ -120,6 +120,27 @@ cd frontend && npm run test:e2e:cli
 
 Zusätzlich sollen die für den geänderten Bereich relevanten Unit- bzw. Integrationstests ausgeführt werden. Die E2E-Tests benötigen den Frontend- und Backend-Entwicklungsserver sowie die erforderlichen Testdaten.
 
+### Testauswahl nach jeder Änderung
+
+Nach jeder Code- oder Konfigurationsänderung muss vor der Verifikation bewusst geprüft werden, welche Testebenen vom geänderten Verhalten betroffen sind. Die Prüfung und die daraus abgeleiteten Massnahmen müssen in der Arbeitszusammenfassung genannt werden.
+
+Die Testebenen werden nach diesen Kriterien ausgewählt:
+
+- **Jest** für isolierte Frontend-Logik, Reducer, Effects, Services und Komponentenverhalten ohne echtes Backend.
+- **Playwright-E2E** für einen einzelnen Frontend-Routenfluss, Navigation, sichtbares UI-Verhalten und browserbezogene Akzeptanzkriterien mit Mock-API.
+- **PHPUnit** für Backend-Actions, Services, Repositories, Middleware und fachliche Regeln in isolierter Testumgebung.
+- **Integrationstests** für Datenflüsse über mehrere Schichten, echte HTTP-Kommunikation zwischen Frontend und Backend, MariaDB, Migrationen, Seeds oder Test-Ersatzdienste wie Fake-Fairgate und Mailpit.
+
+Für jede Änderung sind diese Schritte einzuhalten:
+
+1. Den betroffenen Produktionsfluss und die passende(n) Testebene(n) identifizieren.
+2. Prüfen, ob ein bestehender Test angepasst werden muss oder ein neuer Test fehlt.
+3. Vor der Umsetzung oder spätestens vor Abschluss konkrete Testmassnahmen vorschlagen.
+4. Die relevanten Tests ausführen und Ergebnisse sowie nicht ausgeführte Tests mit Begründung dokumentieren.
+5. Bei Änderungen an `frontend/` oder `backend/` zusätzlich `cd frontend && npm run test:e2e:cli` ausführen, sofern die erforderlichen Entwicklungsserver und Testdaten verfügbar sind.
+
+Eine Testart darf nicht allein deshalb ausgelassen werden, weil eine andere Testart grün ist. Wenn eine Testebene nicht relevant ist, muss dies kurz begründet werden. Wenn ein Test einen bestehenden Fehler aufdeckt, darf der Produktionscode nicht ungefragt geändert werden; der Fehler ist zu melden und eine Korrektur muss abgestimmt werden.
+
 ## Fairgate-Datenstruktur
 
 Die Fairgate-Abfrage liefert die erweiterten Kontaktdaten in folgender Struktur:
