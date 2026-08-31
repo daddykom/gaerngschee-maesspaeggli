@@ -65,11 +65,8 @@ Implemented routes:
 
 | Method | URL | Purpose |
 |--------|-----|---------|
-| `GET` | `/public` | Public API endpoint |
-| `POST` | `/auth/register` | Register a new `client` user |
 | `POST` | `/auth/login` | Authenticate a user and issue a JWT |
 | `POST` | `/auth/logout` | Destroy the current session |
-| `GET` | `/auth/me` | Return the authenticated user |
 | `GET` | `/admin/users` | List users for administrators |
 
 ### Middleware

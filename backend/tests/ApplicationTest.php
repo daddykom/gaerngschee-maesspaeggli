@@ -15,15 +15,6 @@ final class ApplicationTest extends TestCase
         self::assertNotNull(Application::create());
     }
 
-    public function testPublicRouteIsAvailable(): void
-    {
-        $response = Application::create()->handle(
-            (new ServerRequestFactory())->createServerRequest('GET', '/public'),
-        );
-
-        self::assertSame(200, $response->getStatusCode());
-    }
-
     public function testCorsPreflightAllowsAuthorizationHeader(): void
     {
         $response = Application::create()->handle(

@@ -8,7 +8,7 @@ use PDO;
 
 final class TestDatabase
 {
-    public static function create(bool $withAccessKeys = false): PDO
+    public static function create(): PDO
     {
         $pdo = new PDO('sqlite::memory:');
         $pdo->setAttribute(PDO::ATTR_DEFAULT_FETCH_MODE, PDO::FETCH_ASSOC);
@@ -23,21 +23,6 @@ final class TestDatabase
                 updated_at TEXT
             )',
         );
-
-        if ($withAccessKeys) {
-            $pdo->exec(
-                'CREATE TABLE user_access_keys (
-                    id TEXT PRIMARY KEY,
-                    user_id TEXT NOT NULL,
-                    purpose TEXT NOT NULL,
-                    key_hash TEXT NOT NULL UNIQUE,
-                    expires_at TEXT NOT NULL,
-                    used_at TEXT NULL,
-                    created_at TEXT,
-                    updated_at TEXT
-                )',
-            );
-        }
 
         $pdo->exec(
             'CREATE TABLE registration_tokens (

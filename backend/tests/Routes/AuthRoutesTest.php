@@ -4,11 +4,9 @@ declare(strict_types=1);
 
 namespace Tests\Routes;
 
-use App\Auth\Data\AccessKeyRepository;
 use App\Users\Data\UserRepository;
 use App\Application;
 use App\Routes\AuthRoutes;
-use App\Auth\Services\AccessKeyService;
 use App\Auth\Services\JwtService;
 use App\Auth\Services\SessionService;
 use App\Registration\Services\ClientRegistrationLoginService;
@@ -25,7 +23,6 @@ final class AuthRoutesTest extends TestCase
 {
     private PDO $pdo;
     private UserRepository $repository;
-    private AccessKeyService $accessKeyService;
 
     protected function setUp(): void
     {
@@ -33,13 +30,8 @@ final class AuthRoutesTest extends TestCase
         putenv('JWT_ALGORITHM=HS256');
         (new SessionService())->clear();
 
-        $this->pdo = TestDatabase::create(withAccessKeys: true);
+        $this->pdo = TestDatabase::create();
         $this->repository = new UserRepository($this->pdo);
-        $this->accessKeyService = new AccessKeyService(
-            $this->pdo,
-            $this->repository,
-            new AccessKeyRepository($this->pdo),
-        );
     }
 
     protected function tearDown(): void
@@ -132,31 +124,6 @@ final class AuthRoutesTest extends TestCase
         );
     }
 
-    public function testInvalidRegistrationReturnsValidationError(): void
-    {
-        $request = (new ServerRequestFactory())
-            ->createServerRequest('POST', '/auth/register')
-            ->withBody((new \Slim\Psr7\Stream(fopen('php://temp', 'r+'))));
-
-        $response = Application::create()->handle($request);
-
-        self::assertSame(422, $response->getStatusCode());
-    }
-
-    public function testRegistrationCreatesClientAndSession(): void
-    {
-        $response = $this->createAuthApp()->handle($this->request('/auth/register', [
-            'email' => 'new-client@example.com',
-            'password' => 'secret',
-        ]));
-        $data = json_decode((string) $response->getBody(), true, 512, JSON_THROW_ON_ERROR);
-
-        self::assertSame(201, $response->getStatusCode());
-        self::assertSame('client', $data['user']['group']);
-        self::assertSame($data['user']['id'], (new SessionService())->getUserId());
-        self::assertNotNull($this->repository->findByEmail('new-client@example.com'));
-    }
-
     public function testLogoutClearsSession(): void
     {
         $user = $this->repository->createUser('user@example.com', 'secret', 'user');
@@ -168,22 +135,6 @@ final class AuthRoutesTest extends TestCase
 
         self::assertSame(204, $response->getStatusCode());
         self::assertNull((new SessionService())->getUserId());
-    }
-
-    public function testPasswordChangeWorksWithValidPublicAccessKey(): void
-    {
-        $user = $this->repository->createUser('client@example.com', 'old-secret', 'client');
-        $generated = $this->accessKeyService->generateForUser($user['id'], AccessKeyService::PASSWORD_RESET);
-        self::assertNotNull($generated);
-
-        $response = $this->createAuthApp()->handle($this->request('/auth/password-change', [
-            'accessKey' => $generated['accessKey'],
-            'password' => 'new-secret',
-        ]));
-
-        self::assertSame(200, $response->getStatusCode());
-        self::assertNotNull($this->repository->verifyPassword('client@example.com', 'new-secret'));
-        self::assertFalse((bool) $this->repository->findById($user['id'])['required_password_reset']);
     }
 
     public function testAuthenticatedPasswordChangeClearsResetRequirement(): void
@@ -207,36 +158,6 @@ final class AuthRoutesTest extends TestCase
         ]));
 
         self::assertSame(404, $response->getStatusCode());
-    }
-
-    public function testClientLoginWorksWithoutAnExistingSession(): void
-    {
-        $user = $this->repository->createUser('client@example.com', 'secret', 'client');
-        $generated = $this->accessKeyService->generateForUser($user['id'], AccessKeyService::CLIENT_LOGIN);
-        self::assertNotNull($generated);
-
-        $response = $this->createAuthApp()->handle($this->request('/auth/client-login', [
-            'accessKey' => $generated['accessKey'],
-        ]));
-        $data = json_decode((string) $response->getBody(), true, 512, JSON_THROW_ON_ERROR);
-
-        self::assertSame(200, $response->getStatusCode());
-        self::assertSame('client', $data['group']);
-        self::assertSame($user['id'], (new SessionService())->getUserId());
-        self::assertSame('client', (new SessionService())->getGroup());
-    }
-
-    public function testInvalidAccessKeyIsRejected(): void
-    {
-        $response = $this->createAuthApp()->handle($this->request('/auth/client-login', [
-            'accessKey' => 'invalid-key',
-        ]));
-
-        self::assertSame(401, $response->getStatusCode());
-        self::assertSame(
-            '{"error":{"code":"INVALID_ACCESS_KEY","details":[]}}',
-            (string) $response->getBody(),
-        );
     }
 
     public function testRegistrationTokenCreatesClientAndReturnsFairgateSummary(): void
@@ -287,7 +208,6 @@ final class AuthRoutesTest extends TestCase
             $this->repository,
             new JwtService(),
             new SessionService(),
-            $this->accessKeyService,
             $registrationLoginService,
         );
 

@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace App\Routes;
 
-use App\PublicApi\Actions\ApiInfoAction;
 use App\Registration\Actions\StartRegistrationAction;
 use App\Registration\Services\AnmeldungService;
 use App\Registration\Services\RegistrationTokenService;
@@ -19,8 +18,6 @@ final class PublicRoutes
         ?RegistrationTokenService $registrationTokens = null,
     ): void
     {
-        $app->get('/public', new ApiInfoAction());
-
         $app->group('/public', function (RouteCollectorProxy $group) use ($anmeldungService, $registrationTokens): void {
             $group->post('/start', new StartRegistrationAction($anmeldungService, $registrationTokens));
         });
