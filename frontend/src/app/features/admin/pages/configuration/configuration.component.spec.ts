@@ -1,6 +1,6 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
-import { provideTranslateService } from '@ngx-translate/core';
 import { MockStore, provideMockStore } from '@ngrx/store/testing';
+import { provideTranslateService } from '@ngx-translate/core';
 import { FrontendConfig } from '../../../../shared/models/frontend-config.model';
 import { FrontendConfigActions } from '../../../../store/frontend-config/frontend-config.actions';
 import { ConfigurationComponent } from './configuration.component';
@@ -77,8 +77,8 @@ describe('ConfigurationComponent', () => {
   it('loads and displays scalar and array configuration values', () => {
     expect(fixture.nativeElement.textContent).toContain('SCALAR_CONFIG');
     expect(fixture.nativeElement.textContent).toContain('ARRAY_CONFIG');
-    expect(component.control(configs[0]).value).toBe('120');
-    expect(component.arrayControl(configs[1]).getRawValue()).toEqual(['A', 'B']);
+    expect(component.model()[configs[0].id]).toBe('120');
+    expect(component.model()[configs[1].id]).toEqual(['A', 'B']);
   });
 
   it('dispatches load on creation', () => {
@@ -86,31 +86,36 @@ describe('ConfigurationComponent', () => {
   });
 
   it('disables fields without update permission', () => {
-    expect(component.control(configs[2]).disabled).toBe(true);
+    expect(fixture.nativeElement.querySelector('input[disabled]')).toBeTruthy();
     expect(fixture.nativeElement.querySelector('.configuration-field--readonly')).toBeTruthy();
   });
 
   it('adds and removes array values', () => {
     component.addValue(configs[1]);
-    expect(component.arrayControl(configs[1]).length).toBe(3);
+    expect(component.values(configs[1])).toHaveLength(3);
 
     component.removeValue(configs[1], 1);
-    expect(component.arrayControl(configs[1]).getRawValue()).toEqual(['A', '']);
+    expect(component.model()[configs[1].id]).toEqual(['A', '']);
   });
 
   it('dispatches editable scalar and array values when saving', () => {
     const dispatch = jest.spyOn(store, 'dispatch');
-    component.control(configs[0]).setValue('240');
-    component.arrayControl(configs[1]).at(0).setValue('C');
+    component.model.update((model) => ({
+      ...model,
+      [configs[0].id]: '240',
+      [configs[1].id]: ['C', 'B'],
+    }));
 
     component.onSubmit();
 
-    expect(dispatch).toHaveBeenCalledWith(FrontendConfigActions.save({
-      configs: [
-        { id: 'scalar-config', value: '240' },
-        { id: 'array-config', value: ['C', 'B'] },
-      ],
-    }));
+    expect(dispatch).toHaveBeenCalledWith(
+      FrontendConfigActions.save({
+        configs: [
+          { id: 'scalar-config', value: '240' },
+          { id: 'array-config', value: ['C', 'B'] },
+        ],
+      }),
+    );
   });
 
   it('does not save while a save is already in progress', () => {
@@ -119,7 +124,9 @@ describe('ConfigurationComponent', () => {
 
     component.onSubmit();
 
-    expect(dispatch).not.toHaveBeenCalledWith(expect.objectContaining({ type: FrontendConfigActions.save.type }));
+    expect(dispatch).not.toHaveBeenCalledWith(
+      expect.objectContaining({ type: FrontendConfigActions.save.type }),
+    );
   });
 
   it('shows the loading state and does not render the form fields', () => {
@@ -132,7 +139,7 @@ describe('ConfigurationComponent', () => {
   });
 
   it('renders the empty state and supports null scalar values', async () => {
-    component.form.removeControl('scalar-config');
+    component.model.set({});
     store.setState({
       frontendConfig: {
         configs: [{ ...configs[0], value: null }],
@@ -143,7 +150,7 @@ describe('ConfigurationComponent', () => {
     fixture.detectChanges();
     await fixture.whenStable();
 
-    expect(component.control({ ...configs[0], value: null }).value).toBe('');
+    expect(component.model()[configs[0].id]).toBe('');
 
     store.setState({ frontendConfig: { configs: [], loading: false, saving: false } });
     fixture.detectChanges();
@@ -155,7 +162,7 @@ describe('ConfigurationComponent', () => {
     fixture.detectChanges();
     await fixture.whenStable();
 
-    expect(component.form.contains('array-config')).toBe(false);
-    expect(component.form.contains('scalar-config')).toBe(true);
+    expect(component.model()[configs[1].id]).toBeUndefined();
+    expect(component.model()[configs[0].id]).toBe('120');
   });
 });
