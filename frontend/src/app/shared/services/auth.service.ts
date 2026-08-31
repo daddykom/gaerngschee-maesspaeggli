@@ -1,6 +1,7 @@
 import { HttpClient } from '@angular/common/http';
 import { inject, Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
+import { environment } from '../../../environments/environment';
 import { UserGroup } from '../models/frontend-config.model';
 
 export interface AuthUser {
@@ -37,20 +38,23 @@ export class AuthService {
   private readonly http = inject(HttpClient);
 
   login(email: string, password: string): Observable<LoginResponse> {
-    return this.http.post<LoginResponse>('http://localhost:8080/auth/login', { email, password });
+    return this.http.post<LoginResponse>(`${environment.apiUrl}/auth/login`, { email, password });
   }
 
   registrationLogin(token: string): Observable<RegistrationLoginResponse> {
-    return this.http.post<RegistrationLoginResponse>('http://localhost:8080/auth/registration-login', { token });
+    return this.http.post<RegistrationLoginResponse>(
+      `${environment.apiUrl}/auth/registration-login`,
+      { token },
+    );
   }
 
   logout(): Observable<void> {
-    return this.http.post<void>('http://localhost:8080/auth/logout', {});
+    return this.http.post<void>(`${environment.apiUrl}/auth/logout`, {});
   }
 
   changePassword(password: string): Observable<{ user: AuthUser }> {
     return this.http.post<{ user: AuthUser }>(
-      'http://localhost:8080/auth/password-change-authenticated',
+      `${environment.apiUrl}/auth/password-change-authenticated`,
       { password },
     );
   }

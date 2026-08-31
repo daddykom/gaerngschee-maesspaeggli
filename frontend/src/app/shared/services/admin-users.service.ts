@@ -1,6 +1,7 @@
 import { HttpClient } from '@angular/common/http';
 import { inject, Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
+import { environment } from '../../../environments/environment';
 import { UserGroup } from '../models/frontend-config.model';
 
 export interface AdminUser {
@@ -20,7 +21,7 @@ export interface UserMutationResponse {
 @Injectable({ providedIn: 'root' })
 export class AdminUsersService {
   private readonly http = inject(HttpClient);
-  private readonly baseUrl = 'http://localhost:8080/admin/users';
+  private readonly baseUrl = `${environment.apiUrl}/admin/users`;
 
   list(): Observable<AdminUser[]> {
     return this.http.get<AdminUser[]>(this.baseUrl);

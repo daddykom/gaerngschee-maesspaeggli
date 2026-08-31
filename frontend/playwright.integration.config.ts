@@ -12,7 +12,7 @@ export default defineConfig({
     trace: 'on-first-retry',
   },
   webServer: {
-    command: 'npx nx serve frontend',
+    command: 'npx nx serve frontend --configuration=integration',
     url: baseURL,
     reuseExistingServer: true,
     cwd: workspaceRoot,
