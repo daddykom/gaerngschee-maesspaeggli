@@ -36,11 +36,19 @@ services:
       DB_USER: gaerngschee_integration
       DB_PASS: integration-password
       JWT_SECRET: integration-only-jwt-secret-change-me
-      FRONTEND_BASE_URL: http://localhost:4200
+      FRONTEND_BASE_URL: http://localhost:4300
       PHINX_SEED_PATH: /var/www/db/seeds/test
     depends_on:
       integration-database:
         condition: service_healthy
+      integration-mail:
+        condition: service_started
+
+  integration-mail:
+    image: axllent/mailpit:v1.21
+    ports:
+      - "8025:8025"
+      - "1025:1025"
 
 volumes:
   integration_db_data:

@@ -12,5 +12,8 @@ if ($email === null || filter_var($email, FILTER_VALIDATE_EMAIL) === false) {
     exit(1);
 }
 
-$result = (new RegistrationTokenService())->issue($email);
+$now = ($argv[2] ?? '') === 'expired'
+    ? new \DateTimeImmutable('-11 minutes', new \DateTimeZone('UTC'))
+    : null;
+$result = (new RegistrationTokenService())->issue($email, $now);
 fwrite(STDOUT, $result['token']);
