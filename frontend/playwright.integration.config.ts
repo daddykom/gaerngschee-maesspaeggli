@@ -2,7 +2,7 @@ import { workspaceRoot } from '@nx/devkit';
 import { nxE2EPreset } from '@nx/playwright/preset';
 import { defineConfig, devices } from '@playwright/test';
 
-const baseURL = process.env['INTEGRATION_BASE_URL'] || 'http://localhost:4200';
+const baseURL = process.env['INTEGRATION_BASE_URL'] || 'http://localhost:4300';
 
 export default defineConfig({
   ...nxE2EPreset(__filename, { testDir: './integration' }),
@@ -12,7 +12,7 @@ export default defineConfig({
     trace: 'on-first-retry',
   },
   webServer: {
-    command: 'npx nx serve frontend --configuration=integration',
+    command: 'npx nx serve frontend --configuration=integration --port=4300',
     url: baseURL,
     reuseExistingServer: true,
     cwd: workspaceRoot,

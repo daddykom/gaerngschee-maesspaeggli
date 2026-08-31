@@ -4,7 +4,7 @@ declare(strict_types=1);
 return [
     'paths' => [
         'migrations' => __DIR__ . '/migrations',
-        'seeds' => __DIR__ . '/seeds/development',
+        'seeds' => getenv('PHINX_SEED_PATH') ?: __DIR__ . '/seeds/development',
     ],
     'environments' => [
         'default_migration_table' => 'phinxlog',

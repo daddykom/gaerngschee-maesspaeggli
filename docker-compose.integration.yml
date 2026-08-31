@@ -37,6 +37,7 @@ services:
       DB_PASS: integration-password
       JWT_SECRET: integration-only-jwt-secret-change-me
       FRONTEND_BASE_URL: http://localhost:4200
+      PHINX_SEED_PATH: /var/www/db/seeds/test
     depends_on:
       integration-database:
         condition: service_healthy
