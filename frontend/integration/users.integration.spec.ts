@@ -24,13 +24,13 @@ test.describe('Integration user administration', () => {
     await page.waitForURL('**/admin/users/*');
     await page.getByRole('combobox').click();
     await page.getByRole('option', { name: 'Administrator' }).click();
-    await page.getByRole('checkbox').check();
+    await page.getByRole('checkbox').uncheck();
     await page.getByRole('button', { name: 'Speichern' }).click();
 
     await page.waitForURL('**/admin/users');
     const updatedUser = page.getByRole('listitem').filter({ hasText: email });
     await expect(updatedUser).toContainText('Administrator');
-    await expect(updatedUser).toContainText('Passwort muss neu gesetzt werden');
+    await expect(updatedUser).not.toContainText('Passwort muss neu gesetzt werden');
 
     await updatedUser.getByRole('button', { name: 'Löschen' }).click();
     await page.getByRole('dialog').getByRole('button', { name: 'Löschen' }).click();

@@ -152,6 +152,25 @@ final class AdminRoutesTest extends TestCase
         self::assertSame(404, $otherResponse->getStatusCode());
     }
 
+    public function testAdminCanUpdateUserGroupAndPasswordResetFlag(): void
+    {
+        $admin = $this->repository->createUser('admin@example.com', 'secret', 'admin');
+        $user = $this->repository->createUser('user@example.com', 'secret', 'user', true);
+        (new SessionService())->setUser($admin['id'], 'admin');
+        $app = $this->createApp();
+
+        $response = $app->handle($this->request('PATCH', '/admin/users/' . $user['id'], [
+            'email' => $user['email'],
+            'group' => 'admin',
+            'required_password_reset' => false,
+        ]));
+        $data = json_decode((string) $response->getBody(), true, 512, JSON_THROW_ON_ERROR);
+
+        self::assertSame(200, $response->getStatusCode());
+        self::assertSame('admin', $data['user']['group']);
+        self::assertFalse((bool) $data['user']['required_password_reset']);
+    }
+
     public function testAdminCanReadUserDetails(): void
     {
         $admin = $this->repository->createUser('admin@example.com', 'secret', 'admin');

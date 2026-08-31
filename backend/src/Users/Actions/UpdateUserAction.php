@@ -36,16 +36,16 @@ final class UpdateUserAction
         }
 
         $data = JsonRequest::body($request);
-        if (!$this->isAdmin($actor) && (array_key_exists('group', $data) || array_key_exists('requiredPasswordReset', $data))) {
+        if (!$this->isAdmin($actor) && (array_key_exists('group', $data) || array_key_exists('required_password_reset', $data))) {
             return JsonResponse::error($response, 'INVALID_USER_DATA', 422);
         }
 
         $email = array_key_exists('email', $data) ? JsonRequest::string($data, 'email') : $current['email'];
         $email = $email === null ? null : trim($email);
         $group = array_key_exists('group', $data) ? JsonRequest::string($data, 'group') : $current['group'];
-        $reset = array_key_exists('requiredPasswordReset', $data) && is_bool($data['requiredPasswordReset'])
-            ? $data['requiredPasswordReset']
-            : (array_key_exists('requiredPasswordReset', $data) ? null : (bool) $current['required_password_reset']);
+        $reset = array_key_exists('required_password_reset', $data) && is_bool($data['required_password_reset'])
+            ? $data['required_password_reset']
+            : (array_key_exists('required_password_reset', $data) ? null : (bool) $current['required_password_reset']);
         if ($email === null || filter_var($email, FILTER_VALIDATE_EMAIL) === false || !is_string($group) || !in_array($group, ['admin', 'user', 'client'], true) || $reset === null) {
             return JsonResponse::error($response, 'INVALID_USER_DATA', 422);
         }
