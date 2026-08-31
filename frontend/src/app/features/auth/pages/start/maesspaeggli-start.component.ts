@@ -1,22 +1,21 @@
-import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
-import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
+import { ChangeDetectionStrategy, Component, inject, signal } from '@angular/core';
+import { email, form, FormField, required } from '@angular/forms/signals';
 import { MatButtonModule } from '@angular/material/button';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatIconModule } from '@angular/material/icon';
 import { MatInputModule } from '@angular/material/input';
-import { TranslatePipe } from '@ngx-translate/core';
-import { TranslateService } from '@ngx-translate/core';
 import { Store } from '@ngrx/store';
+import { TranslatePipe, TranslateService } from '@ngx-translate/core';
+import { ControlErrorComponent } from '../../../../shared/components/control-error/control-error';
+import { InfoBoxComponent } from '../../../../shared/components/info-box/info-box';
 import { StartActions } from '../../../../store/start/start.actions';
 import { selectStartSendError } from '../../../../store/start/start.feature';
-import { InfoBoxComponent } from '../../../../shared/components/info-box/info-box';
-import { ControlErrorComponent } from '../../../../shared/components/control-error/control-error';
 
 @Component({
   selector: 'app-maesspaeggli-start',
   standalone: true,
   imports: [
-    ReactiveFormsModule,
+    FormField,
     MatButtonModule,
     MatFormFieldModule,
     MatIconModule,
@@ -30,25 +29,28 @@ import { ControlErrorComponent } from '../../../../shared/components/control-err
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class MaesspaeggliStartComponent {
-  private readonly fb = inject(FormBuilder);
   private readonly store = inject(Store);
   private readonly translate = inject(TranslateService);
 
   readonly sendError = this.store.selectSignal(selectStartSendError);
 
-  readonly form = this.fb.nonNullable.group({
-    email: ['', [Validators.required, Validators.email]],
+  readonly model = signal({
+    email: '',
+  });
+  readonly form = form(this.model, (schema) => {
+    required(schema.email);
+    email(schema.email);
   });
 
   submit(): void {
-    if (this.form.invalid) {
-      this.form.markAllAsTouched();
+    if (!this.form().valid()) {
+      this.form.email().markAsTouched();
       return;
     }
 
     this.store.dispatch(
       StartActions.submit({
-        email: this.form.getRawValue().email,
+        email: this.model().email,
         language: this.translate.getCurrentLang() ?? 'de',
       }),
     );

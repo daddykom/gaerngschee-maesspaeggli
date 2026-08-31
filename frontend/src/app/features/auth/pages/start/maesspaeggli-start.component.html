@@ -1,79 +1,74 @@
 <section class="start-page-content">
-      <section class="intro">
-        <div class="intro__content">
-          <p class="lead">
-            {{ 'app.anmeldung.lead' | translate }}
-          </p>
+  <section class="intro">
+    <div class="intro__content">
+      <p class="lead">
+        {{ 'app.anmeldung.lead' | translate }}
+      </p>
 
-          <div class="info-box">
-            <mat-icon aria-hidden="true">info</mat-icon>
-            <p>
-              {{ 'app.anmeldung.fairgate' | translate }}
-            </p>
-          </div>
-        </div>
-
-        <div class="intro__visual" aria-hidden="true">
-          <mat-icon>mail</mat-icon>
-          <mat-icon>laptop</mat-icon>
-        </div>
-      </section>
-
-      <section class="email-section" aria-labelledby="email-heading">
-        <h2 id="email-heading">{{ 'app.anmeldung.emailHeading' | translate }}</h2>
-
-        <form [formGroup]="form" (ngSubmit)="submit()" class="email-form">
-          <div class="email-field-group">
-            <mat-form-field appearance="outline" subscriptSizing="dynamic" class="email-field">
-              <mat-label>{{ 'app.anmeldung.emailLabel' | translate }}</mat-label>
-              <mat-icon matPrefix>mail</mat-icon>
-
-              <input
-                matInput
-                type="email"
-                formControlName="email"
-                autocomplete="email"
-                [placeholder]="'app.anmeldung.emailPlaceholder' | translate"
-              >
-            </mat-form-field>
-
-            <app-control-error
-              [control]="form.controls.email"
-              translationPrefix="app.anmeldung.errors.email"
-            />
-          </div>
-
-          <button
-            mat-flat-button
-            type="submit"
-            class="continue-button"
-          >
-            {{ 'app.anmeldung.continue' | translate }}
-          </button>
-        </form>
-
-        @if (sendError()) {
-          <div role="alert" aria-live="assertive">
-            <app-info-box variant="error">
-              {{ 'app.anmeldung.sendError' | translate }}
-            </app-info-box>
-          </div>
-        }
-
-        <p class="privacy-hint">
-          <mat-icon aria-hidden="true">lock</mat-icon>
-          {{ 'app.anmeldung.privacyHint' | translate }}
+      <div class="info-box">
+        <mat-icon aria-hidden="true">info</mat-icon>
+        <p>
+          {{ 'app.anmeldung.fairgate' | translate }}
         </p>
-      </section>
+      </div>
+    </div>
 
+    <div class="intro__visual" aria-hidden="true">
+      <mat-icon>mail</mat-icon>
+      <mat-icon>laptop</mat-icon>
+    </div>
+  </section>
 
-      <section class="privacy-box">
-        <mat-icon aria-hidden="true">shield</mat-icon>
-        <div>
-          <h2>{{ 'app.anmeldung.privacyTitle' | translate }}</h2>
-          <p>
-            {{ 'app.anmeldung.privacyText' | translate }}
-          </p>
-        </div>
-      </section>
+  <section class="email-section" aria-labelledby="email-heading">
+    <h2 id="email-heading">{{ 'app.anmeldung.emailHeading' | translate }}</h2>
+
+    <form (submit)="$event.preventDefault(); submit()" class="email-form">
+      <div class="email-field-group">
+        <mat-form-field appearance="outline" subscriptSizing="dynamic" class="email-field">
+          <mat-label>{{ 'app.anmeldung.emailLabel' | translate }}</mat-label>
+          <mat-icon matPrefix>mail</mat-icon>
+
+          <input
+            matInput
+            type="email"
+            [formField]="form.email"
+            autocomplete="email"
+            [placeholder]="'app.anmeldung.emailPlaceholder' | translate"
+          />
+        </mat-form-field>
+
+        <app-control-error
+          [control]="form.email()"
+          translationPrefix="app.anmeldung.errors.email"
+        />
+      </div>
+
+      <button mat-flat-button type="submit" class="continue-button">
+        {{ 'app.anmeldung.continue' | translate }}
+      </button>
+    </form>
+
+    @if (sendError()) {
+      <div role="alert" aria-live="assertive">
+        <app-info-box variant="error">
+          {{ 'app.anmeldung.sendError' | translate }}
+        </app-info-box>
+      </div>
+    }
+
+    <p class="privacy-hint">
+      <mat-icon aria-hidden="true">lock</mat-icon>
+      {{ 'app.anmeldung.privacyHint' | translate }}
+    </p>
+  </section>
+
+  <section class="privacy-box">
+    <mat-icon aria-hidden="true">shield</mat-icon>
+    <div>
+      <h2>{{ 'app.anmeldung.privacyTitle' | translate }}</h2>
+      <p>
+        {{ 'app.anmeldung.privacyText' | translate }}
+      </p>
+    </div>
+  </section>
 </section>
