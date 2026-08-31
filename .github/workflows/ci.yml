@@ -81,7 +81,7 @@ jobs:
       - name: Setup PHP
         uses: shivammathur/setup-php@v2
         with:
-          php-version: '8.4'
+          php-version: "8.4"
           extensions: mbstring, pdo, pdo_sqlite, pdo_mysql, zip
           tools: composer
           coverage: none
@@ -113,3 +113,47 @@ jobs:
         run: npx playwright install --with-deps chromium
       - name: Run Playwright tests
         run: npm run test:e2e:cli
+
+  frontend-integration-tests:
+    name: frontend-integration-tests
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: frontend
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: frontend/package-lock.json
+      - name: Setup PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: "8.4"
+          extensions: mbstring, pdo, pdo_mysql, zip
+          tools: composer
+          coverage: none
+      - name: Install frontend dependencies
+        run: npm ci
+      - name: Install backend dependencies
+        working-directory: backend
+        run: composer install --no-interaction --prefer-dist
+      - name: Install Playwright browser
+        run: npx playwright install --with-deps chromium
+      - name: Start and migrate integration environment
+        run: npm run integration:setup
+      - name: Run integration tests
+        run: npm run test:integration
+      - name: Upload Playwright integration artifacts
+        if: ${{ !success() }}
+        uses: actions/upload-artifact@v4
+        with:
+          name: playwright-integration-artifacts
+          path: frontend/dist/.playwright/
+          if-no-files-found: ignore
+      - name: Stop integration environment
+        if: ${{ always() }}
+        run: npm run integration:stop
