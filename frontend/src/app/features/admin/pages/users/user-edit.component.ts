@@ -1,19 +1,19 @@
-import { ChangeDetectionStrategy, Component, computed, inject } from '@angular/core';
-import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
+import { ChangeDetectionStrategy, Component, computed, inject, signal } from '@angular/core';
+import { toSignal } from '@angular/core/rxjs-interop';
+import { email, form, FormField, required } from '@angular/forms/signals';
 import { MatButtonModule } from '@angular/material/button';
 import { MatCheckboxModule } from '@angular/material/checkbox';
 import { MatInputModule } from '@angular/material/input';
 import { MatSelectModule } from '@angular/material/select';
-import { Store } from '@ngrx/store';
 import { ActivatedRoute } from '@angular/router';
+import { Store } from '@ngrx/store';
 import { TranslatePipe } from '@ngx-translate/core';
-import { toSignal } from '@angular/core/rxjs-interop';
-import { map, of, switchMap } from 'rxjs';
+import { map, of } from 'rxjs';
 import { ControlErrorComponent } from '../../../../shared/components/control-error/control-error';
 import { AdminUsersService } from '../../../../shared/services/admin-users.service';
-import { selectAuthGroup } from '../../../../store/auth/auth.feature';
 import { AdminUsersActions } from '../../../../store/admin-users/admin-users.actions';
 import { selectAdminUsersSaving } from '../../../../store/admin-users/admin-users.feature';
+import { selectAuthGroup } from '../../../../store/auth/auth.feature';
 import { NavigationActions } from '../../../../store/navigation/navigation.actions';
 
 @Component({
@@ -23,7 +23,7 @@ import { NavigationActions } from '../../../../store/navigation/navigation.actio
     MatCheckboxModule,
     MatInputModule,
     MatSelectModule,
-    ReactiveFormsModule,
+    FormField,
     TranslatePipe,
     ControlErrorComponent,
   ],
@@ -41,36 +41,45 @@ export class UserEditComponent {
   readonly saving = this.store.selectSignal(selectAdminUsersSaving);
   readonly userId = this.route.snapshot.paramMap.get('userId');
   readonly isNew = this.route.snapshot.routeConfig?.path === 'new';
+  readonly model = signal<{
+    email: string;
+    group: 'admin' | 'user' | 'client';
+    requiredPasswordReset: boolean;
+  }>({
+    email: '',
+    group: 'user',
+    requiredPasswordReset: false,
+  });
+  readonly form = form(this.model, (schema) => {
+    required(schema.email);
+    email(schema.email);
+    required(schema.group);
+  });
   readonly loading = toSignal(
     this.isNew || this.userId === null
       ? of(false)
       : this.service.get(this.userId).pipe(
           map(({ user }) => {
-            this.form.patchValue({
+            this.model.update((model) => ({
+              ...model,
               email: user.email,
               group: user.group,
               requiredPasswordReset: user.required_password_reset,
-            });
+            }));
             return false;
           }),
-          switchMap(() => of(false)),
         ),
     { initialValue: !this.isNew },
   );
 
-  readonly form = new FormGroup({
-    email: new FormControl('', { nonNullable: true, validators: [Validators.required, Validators.email] }),
-    group: new FormControl<'admin' | 'user' | 'client'>('user', { nonNullable: true, validators: [Validators.required] }),
-    requiredPasswordReset: new FormControl(false, { nonNullable: true }),
-  });
-
   onSubmit(): void {
-    if (this.form.invalid) {
-      this.form.markAllAsTouched();
+    if (!this.form().valid()) {
+      this.form.email().markAsTouched();
+      this.form.group().markAsTouched();
       return;
     }
 
-    const value = this.form.getRawValue();
+    const value = this.model();
     if (this.isNew) {
       this.store.dispatch(AdminUsersActions.create({ email: value.email, group: value.group }));
       return;
@@ -88,10 +97,12 @@ export class UserEditComponent {
         }
       : { email: value.email };
 
-    this.store.dispatch(AdminUsersActions.update({
-      userId: this.userId,
-      changes,
-    }));
+    this.store.dispatch(
+      AdminUsersActions.update({
+        userId: this.userId,
+        changes,
+      }),
+    );
   }
 
   cancel(): void {

@@ -4,26 +4,31 @@
       {{ (isNew ? 'app.admin.users.createHeading' : 'app.admin.users.editHeading') | translate }}
     </h2>
 
-    <form [formGroup]="form" class="user-form" (ngSubmit)="onSubmit()">
+    <form class="user-form" (submit)="$event.preventDefault(); onSubmit()">
       <mat-form-field appearance="outline">
         <mat-label>{{ 'app.admin.users.emailLabel' | translate }}</mat-label>
-        <input matInput type="email" formControlName="email" />
+        <input matInput type="email" [formField]="form.email" />
       </mat-form-field>
-      <app-control-error [control]="form.controls.email" translationPrefix="app.admin.users.errors.email" />
+      <app-control-error
+        [control]="form.email()"
+        translationPrefix="app.admin.users.errors.email"
+      />
 
       @if (isAdmin()) {
         <mat-form-field appearance="outline">
           <mat-label>{{ 'app.admin.users.groupLabel' | translate }}</mat-label>
-          <mat-select formControlName="group">
+          <mat-select [formField]="form.group">
             <mat-option value="admin">{{ 'app.admin.users.groups.admin' | translate }}</mat-option>
             <mat-option value="user">{{ 'app.admin.users.groups.user' | translate }}</mat-option>
-            <mat-option value="client">{{ 'app.admin.users.groups.client' | translate }}</mat-option>
+            <mat-option value="client">{{
+              'app.admin.users.groups.client' | translate
+            }}</mat-option>
           </mat-select>
         </mat-form-field>
       }
 
       @if (isAdmin()) {
-        <mat-checkbox formControlName="requiredPasswordReset">
+        <mat-checkbox [formField]="form.requiredPasswordReset">
           {{ 'app.admin.users.passwordResetRequired' | translate }}
         </mat-checkbox>
       }
