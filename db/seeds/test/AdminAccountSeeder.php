@@ -15,6 +15,7 @@ final class AdminAccountSeeder extends AbstractSeed
         )->fetch();
 
         if ($existingUser !== false) {
+            $this->createRegularUser();
             return;
         }
 
@@ -25,6 +26,29 @@ final class AdminAccountSeeder extends AbstractSeed
                 'email' => $email,
                 'password' => password_hash('secret', PASSWORD_DEFAULT),
                 'group' => 'admin',
+            ],
+        );
+
+        $this->createRegularUser();
+    }
+
+    private function createRegularUser(): void
+    {
+        $email = 'user@gaerngschee.ch';
+        if ($this->query(
+            'SELECT id FROM users WHERE email = :email',
+            ['email' => $email],
+        )->fetch() !== false) {
+            return;
+        }
+
+        $this->query(
+            'INSERT INTO users (id, email, password, `group`) VALUES (:id, :email, :password, :group)',
+            [
+                'id' => '00000000-0000-4000-8000-000000000002',
+                'email' => $email,
+                'password' => password_hash('secret', PASSWORD_DEFAULT),
+                'group' => 'user',
             ],
         );
     }
