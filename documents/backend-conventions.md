@@ -125,13 +125,17 @@ entscheidet `FakeFairgateClient` anhand der E-Mail-Adresse:
 
 | E-Mail-Adresse | Fairgate-Ergebnis |
 |---|---|
-| `person+fair@example.com` | `true` |
-| `person+FAIR-test@example.com` | `true` |
+| `person+fair1@example.com` | Kontakt gefunden, 2 Erwachsene, 3 Kinder |
+| `person+test-fair2@example.com` | Kontakt gefunden, 1 Erwachsener, 2 Kinder |
+| `person+FAIR3-test@example.com` | Kontakt gefunden, 2 Erwachsene, 0 Kinder |
+| `person+fair4-extra@example.com` | Kontakt gefunden, 2 Erwachsene, 7 Kinder |
 | `person+test@example.com` | `false` |
 | `person@example.com` | `false` |
 
-Die Buchstabenfolge `fair` muss im lokalen Teil der E-Mail-Adresse nach dem
-`+` vorkommen. Die Prüfung ist unabhängig von Gross-/Kleinschreibung.
+Eine der Zeichenfolgen `fair1`, `fair2`, `fair3` oder `fair4` muss im lokalen
+Teil der E-Mail-Adresse nach dem `+` vorkommen. Die Prüfung ist unabhängig von
+Gross-/Kleinschreibung. Ohne eine dieser Zeichenfolgen wird kein Kontakt
+gefunden.
 
 Für die Produktionsumgebung muss gesetzt werden:
 
