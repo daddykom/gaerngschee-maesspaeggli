@@ -1,4 +1,4 @@
-import { Component, computed, inject, signal } from '@angular/core';
+import { Component, inject, signal } from '@angular/core';
 import { form, FormField, required, validate } from '@angular/forms/signals';
 import { MatButtonModule } from '@angular/material/button';
 import { MatInputModule } from '@angular/material/input';
@@ -28,14 +28,9 @@ export class PasswordChange {
         : { kind: 'passwordsDoNotMatch' },
     );
   });
-  readonly passwordsDoNotMatch = computed(() =>
-    this.passwordChangeForm()
-      .errors()
-      .some((error) => error.kind === 'passwordsDoNotMatch'),
-  );
-
   onSubmit(): void {
     if (!this.passwordChangeForm().valid()) {
+      this.passwordChangeForm().markAsTouched();
       this.passwordChangeForm.newPassword().markAsTouched();
       this.passwordChangeForm.passwordConfirmation().markAsTouched();
       return;

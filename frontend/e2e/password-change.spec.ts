@@ -8,8 +8,8 @@ test.describe('Password change route', () => {
     await expect(page.getByText('Bitte gib ein neues Passwort ein.')).toBeVisible();
     await expect(page.getByText('Bitte bestätige dein neues Passwort.')).toBeVisible();
 
-    await page.locator('input[formControlName="newPassword"]').fill('new-secret');
-    await page.locator('input[formControlName="passwordConfirmation"]').fill('different-secret');
+    await page.locator('input[type="password"]').nth(0).fill('new-secret');
+    await page.locator('input[type="password"]').nth(1).fill('different-secret');
     await page.getByRole('button', { name: 'Passwort ändern' }).click();
 
     await expect(page.getByText('Die Passwörter stimmen nicht überein.')).toBeVisible();
@@ -28,8 +28,8 @@ test.describe('Password change route', () => {
       });
     });
 
-    await page.locator('input[formControlName="newPassword"]').fill('new-secret');
-    await page.locator('input[formControlName="passwordConfirmation"]').fill('new-secret');
+    await page.locator('input[type="password"]').nth(0).fill('new-secret');
+    await page.locator('input[type="password"]').nth(1).fill('new-secret');
     await page.getByRole('button', { name: 'Passwort ändern' }).click();
 
     await page.waitForURL('**/admin/overview');
@@ -46,20 +46,28 @@ test.describe('Password change route', () => {
       });
     });
 
-    await page.locator('input[formControlName="newPassword"]').fill('new-secret');
-    await page.locator('input[formControlName="passwordConfirmation"]').fill('new-secret');
+    await page.locator('input[type="password"]').nth(0).fill('new-secret');
+    await page.locator('input[type="password"]').nth(1).fill('new-secret');
     await page.getByRole('button', { name: 'Passwort ändern' }).click();
 
-    await expect(page.locator('.info-box')).toContainText('Das Passwort konnte nicht geändert werden.');
+    await expect(page.locator('.info-box')).toContainText(
+      'Das Passwort konnte nicht geändert werden.',
+    );
   });
 });
 
 async function loginAsUser(page: import('@playwright/test').Page): Promise<void> {
   await page.route('http://localhost:8080/auth/login', async (route) => {
-    await route.fulfill({ status: 200, contentType: 'application/json', body: JSON.stringify({
-      user: { id: '2', email: 'user@example.com', group: 'user' },
-      token: 'test-token', group: 'user', requiredPasswordReset: true,
-    }) });
+    await route.fulfill({
+      status: 200,
+      contentType: 'application/json',
+      body: JSON.stringify({
+        user: { id: '2', email: 'user@example.com', group: 'user' },
+        token: 'test-token',
+        group: 'user',
+        requiredPasswordReset: true,
+      }),
+    });
   });
   await page.goto('/login');
   await page.locator('input[type="email"]').fill('user@example.com');

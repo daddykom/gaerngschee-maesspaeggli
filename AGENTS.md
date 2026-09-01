@@ -405,6 +405,8 @@ Beispiele:
 - Empty-State
 - Page-Header
 
+Fehlermeldungen von Formularfeldern MÜSSEN immer über `frontend/src/app/shared/components/control-error/control-error.ts` beziehungsweise `ControlErrorComponent` dargestellt werden. Bei Signal Forms ist der jeweilige `FieldState` über `[control]` zu übergeben und der passende Übersetzungspfad über `translationPrefix` zu setzen. Inline-Fehlermeldungen für Formularfelder in Page-Templates sind nicht erlaubt.
+
 ### 11. Signals für reaktive Daten verwenden
 
 Inputs SOLLEN als `input()` Signal definiert werden.

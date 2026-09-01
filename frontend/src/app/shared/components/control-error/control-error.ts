@@ -1,6 +1,6 @@
+import { Component, computed, effect, input, signal } from '@angular/core';
 import { AbstractControl } from '@angular/forms';
 import { FieldState } from '@angular/forms/signals';
-import { Component, computed, effect, input, signal } from '@angular/core';
 import { TranslatePipe } from '@ngx-translate/core';
 
 @Component({
@@ -21,7 +21,10 @@ export class ControlErrorComponent {
 
     if (this.isSignalField(control)) {
       const errors = control.errors();
-      return control.touched() && errors.length > 0 ? errors[0]?.kind ?? null : null;
+      if (errors.length > 0 && (control.touched() || (control.required() && !control.value()))) {
+        return errors[0]?.kind ?? null;
+      }
+      return control.required() && !control.value() ? 'required' : null;
     }
 
     if (!control.touched || !control.errors) {
@@ -51,7 +54,9 @@ export class ControlErrorComponent {
     });
   }
 
-  private isSignalField(control: AbstractControl | FieldState<unknown>): control is FieldState<unknown> {
+  private isSignalField(
+    control: AbstractControl | FieldState<unknown>,
+  ): control is FieldState<unknown> {
     return typeof control.touched === 'function';
   }
 }
