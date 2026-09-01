@@ -8,6 +8,77 @@
     <dt>{{ 'app.order.children' | translate }}</dt>
     <dd>{{ childrenCount() }}</dd>
     <dt>{{ 'app.order.fairgate' | translate }}</dt>
-    <dd>{{ fairgateUserExists() ? ('app.order.yes' | translate) : ('app.order.no' | translate) }}</dd>
+    <dd>
+      {{ fairgateUserExists() ? ('app.order.yes' | translate) : ('app.order.no' | translate) }}
+    </dd>
   </dl>
+
+  <form class="order-form" (submit)="$event.preventDefault(); onSubmit()">
+    @if (!fairgateUserExists()) {
+      <mat-card appearance="outlined" class="order-panel">
+        <mat-card-header>
+          <mat-card-title>{{ 'app.order.manualCounts.title' | translate }}</mat-card-title>
+        </mat-card-header>
+        <mat-card-content>
+          <mat-form-field appearance="outline">
+            <mat-label>{{ 'app.order.manualCounts.adults' | translate }}</mat-label>
+            <input matInput type="number" [formField]="form.manualAdultsCount" />
+          </mat-form-field>
+          <mat-form-field appearance="outline">
+            <mat-label>{{ 'app.order.manualCounts.children' | translate }}</mat-label>
+            <input matInput type="number" [formField]="form.manualChildrenCount" />
+          </mat-form-field>
+        </mat-card-content>
+      </mat-card>
+    }
+
+    <mat-card appearance="outlined" class="order-panel">
+      <mat-card-header>
+        <mat-card-title>{{ 'app.order.categories.title' | translate }}</mat-card-title>
+      </mat-card-header>
+      <mat-card-content>
+        <section class="order-panel__section" aria-labelledby="adults-heading">
+          <h3 id="adults-heading">{{ 'app.order.categories.adults' | translate }}</h3>
+          @for (category of model().adults; track $index) {
+            <mat-form-field appearance="outline">
+              <mat-label
+                >{{ 'app.order.categories.person' | translate }} {{ $index + 1 }}</mat-label
+              >
+              <mat-select [formField]="adultField($index)">
+                @for (option of categories; track option) {
+                  <mat-option [value]="option">
+                    {{ 'app.order.categories.options.' + option | translate }}
+                  </mat-option>
+                }
+              </mat-select>
+            </mat-form-field>
+          }
+        </section>
+
+        <mat-divider></mat-divider>
+
+        <section class="order-panel__section" aria-labelledby="children-heading">
+          <h3 id="children-heading">{{ 'app.order.categories.children' | translate }}</h3>
+          @for (category of model().children; track $index) {
+            <mat-form-field appearance="outline">
+              <mat-label
+                >{{ 'app.order.categories.person' | translate }} {{ $index + 1 }}</mat-label
+              >
+              <mat-select [formField]="childField($index)">
+                @for (option of categories; track option) {
+                  <mat-option [value]="option">
+                    {{ 'app.order.categories.options.' + option | translate }}
+                  </mat-option>
+                }
+              </mat-select>
+            </mat-form-field>
+          }
+        </section>
+      </mat-card-content>
+    </mat-card>
+
+    <button mat-flat-button color="primary" type="submit">
+      {{ 'app.order.submit' | translate }}
+    </button>
+  </form>
 </section>

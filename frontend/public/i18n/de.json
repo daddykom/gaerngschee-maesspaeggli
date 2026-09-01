@@ -56,7 +56,28 @@
       "children": "Kinder",
       "fairgate": "Fairgate-Konto vorhanden",
       "yes": "Ja",
-      "no": "Nein"
+      "no": "Nein",
+      "manualCounts": {
+        "title": "Anzahl Personen erfassen",
+        "adults": "Anzahl Erwachsene",
+        "children": "Anzahl Kinder"
+      },
+      "categories": {
+        "title": "Personen kategorisieren",
+        "adults": "Erwachsene",
+        "children": "Kinder",
+        "person": "Person",
+        "options": {
+          "catA": "Erwachsene ruhig",
+          "catB": "Erwachsene Action",
+          "catC": "Kinder 1-3 Jahre",
+          "catD": "Kinder 4-6 Jahre",
+          "catE": "Kinder 7-9 Jahre",
+          "catF": "Kinder 10-12 Jahre",
+          "catG": "Jugendliche 13-17 Jahre"
+        }
+      },
+      "submit": "Weiter"
     },
     "passwordChange": {
       "pageTitle": "Passwort ändern",
