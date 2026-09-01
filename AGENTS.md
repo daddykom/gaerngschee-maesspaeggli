@@ -139,6 +139,14 @@ Für jede Änderung sind diese Schritte einzuhalten:
 4. Die relevanten Tests ausführen und Ergebnisse sowie nicht ausgeführte Tests mit Begründung dokumentieren.
 5. Bei Änderungen an `frontend/` oder `backend/` zusätzlich `cd frontend && npm run test:e2e:cli` ausführen, sofern die erforderlichen Entwicklungsserver und Testdaten verfügbar sind.
 
+### Abhängige Tests bei gemeinsamen Änderungen
+
+Bei Änderungen an gemeinsam verwendeten Services, Fakes, Test-Doubles, Fixtures, Seeds, Konfigurationen oder API-Verträgen MUSS zuerst im gesamten Repository nach allen Verwendungen und abhängigen Testdaten gesucht werden. Es reicht nicht, nur den direkt zugehörigen Test auszuführen.
+
+Alle durch die Änderung betroffenen Tests müssen aktualisiert und ausgeführt werden. Dazu gehören insbesondere Unit-, Integrations- und E2E-Tests, die den geänderten Datenvertrag oder das geänderte Verhalten indirekt verwenden. Bei Änderungen an einem Fake müssen sowohl die direkten Fake-Tests als auch alle Tests mit seinen simulierten Antworten geprüft werden.
+
+Veraltete Erwartungen, Marker, E-Mail-Adressen oder Seed-Daten dürfen nicht bestehen bleiben. Die Arbeitszusammenfassung muss die geprüften Abhängigkeiten, die ausgeführten Testebenen und nicht verfügbare Testläufe dokumentieren.
+
 Eine Testart darf nicht allein deshalb ausgelassen werden, weil eine andere Testart grün ist. Wenn eine Testebene nicht relevant ist, muss dies kurz begründet werden. Wenn ein Test einen bestehenden Fehler aufdeckt, darf der Produktionscode nicht ungefragt geändert werden; der Fehler ist zu melden und eine Korrektur muss abgestimmt werden.
 
 ## Fairgate-Datenstruktur

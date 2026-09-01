@@ -3,19 +3,19 @@ import { issueRegistrationToken } from './support/registration-token';
 
 test.describe('Integration client login', () => {
   test('consumes a registration token and opens the order page', async ({ page }) => {
-    const email = `client+fair-${Date.now()}@example.com`;
+    const email = `client+fair1-${Date.now()}@example.com`;
     const token = issueRegistrationToken(email);
 
     await page.goto(`/client-login?token=${encodeURIComponent(token)}`);
     await page.waitForURL('**/order');
     await expect(page.locator('h2')).toHaveText('Mässpäggli bestellen');
-    await expect(page.locator('dd').nth(0)).toHaveText('1');
-    await expect(page.locator('dd').nth(1)).toHaveText('0');
+    await expect(page.locator('dd').nth(0)).toHaveText('2');
+    await expect(page.locator('dd').nth(1)).toHaveText('3');
     await expect(page.locator('dd').nth(2)).toHaveText('Ja');
   });
 
   test('rejects an already consumed registration token', async ({ page }) => {
-    const email = `consumed+fair-${Date.now()}@example.com`;
+    const email = `consumed+fair1-${Date.now()}@example.com`;
     const token = issueRegistrationToken(email);
 
     const response = await page.request.post('http://localhost:8082/auth/registration-login', {
