@@ -1,11 +1,11 @@
-<section class="admin-page-content">
-  <form class="configuration-form" (submit)="$event.preventDefault(); onSubmit()">
+<section class="gl-stack gl-stack--section">
+  <form class="configuration-form gl-stack gl-stack--section" (submit)="$event.preventDefault(); onSubmit()">
     @if (loading()) {
       <p>{{ 'app.admin.configuration.loading' | translate }}</p>
     } @else {
       @for (config of configs(); track config.id) {
         <fieldset
-          class="configuration-field"
+          class="configuration-field gl-stack gl-stack--group"
           [class.configuration-field--readonly]="!config.canUpdate"
         >
           <legend>{{ config.label || config.variableName }}</legend>
@@ -14,7 +14,7 @@
           }
 
           @if (isArray(config)) {
-            <div class="configuration-values">
+            <div class="configuration-values gl-stack">
               @for (value of values(config); track $index) {
                 <mat-form-field appearance="outline">
                   <mat-label>{{ config.variableName }} {{ $index + 1 }}</mat-label>
@@ -51,9 +51,11 @@
         <p>{{ 'app.admin.configuration.empty' | translate }}</p>
       }
 
-      <button mat-flat-button color="primary" type="submit" [disabled]="saving() || loading()">
-        {{ 'app.admin.configuration.save' | translate }}
-      </button>
+      <div class="gl-cluster">
+        <button mat-flat-button color="primary" type="submit" [disabled]="saving() || loading()">
+          {{ 'app.admin.configuration.save' | translate }}
+        </button>
+      </div>
     }
   </form>
 </section>

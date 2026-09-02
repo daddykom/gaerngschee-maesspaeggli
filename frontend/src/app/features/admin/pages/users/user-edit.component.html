@@ -1,10 +1,9 @@
-<section class="admin-page-content">
-  <div class="edit-content">
+<section class="gl-stack gl-stack--group">
     <h2>
       {{ (isNew ? 'app.admin.users.createHeading' : 'app.admin.users.editHeading') | translate }}
     </h2>
 
-    <form class="user-form" (submit)="$event.preventDefault(); onSubmit()">
+    <form class="user-form gl-stack gl-stack--group" (submit)="$event.preventDefault(); onSubmit()">
       <mat-form-field appearance="outline">
         <mat-label>{{ 'app.admin.users.emailLabel' | translate }}</mat-label>
         <input matInput type="email" [formField]="form.email" />
@@ -33,7 +32,7 @@
         </mat-checkbox>
       }
 
-      <div class="form-actions">
+      <div class="form-actions gl-cluster">
         <button mat-button type="button" (click)="cancel()">
           {{ 'app.admin.users.cancel' | translate }}
         </button>
@@ -42,5 +41,4 @@
         </button>
       </div>
     </form>
-  </div>
 </section>

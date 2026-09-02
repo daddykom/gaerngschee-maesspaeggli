@@ -1,17 +1,8 @@
-.admin-page-content {
-  padding: clamp(40px, 5vw, 72px) clamp(24px, 4vw, 54px);
-}
-
-.overview-list {
-  max-width: 900px;
-  margin: 0 auto;
-}
-
 .overview-list__row {
   display: flex;
   justify-content: space-between;
-  gap: 1rem;
-  padding: 1.25rem 0;
+  gap: var(--gl-space-md);
+  padding: var(--gl-space-md) 0;
   border-bottom: 1px solid var(--mat-sys-outline-variant);
 }
 

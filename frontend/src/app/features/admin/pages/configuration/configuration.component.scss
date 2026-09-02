@@ -1,19 +1,10 @@
-.admin-page-content {
-  padding: clamp(32px, 5vw, 72px) clamp(24px, 4vw, 54px);
-}
-
 .configuration-form {
-  display: grid;
-  gap: 1.5rem;
-  max-width: 1000px;
-  margin: 0 auto;
+  width: 100%;
 }
 
 .configuration-field {
-  display: grid;
-  gap: 0.75rem;
   min-width: 0;
-  padding: 1rem;
+  padding: var(--gl-space-md);
   border: 1px solid var(--mat-sys-outline-variant);
   border-radius: 0.5rem;
 }
@@ -23,7 +14,7 @@
 }
 
 .configuration-field legend {
-  padding: 0 0.25rem;
+  padding: 0 var(--gl-space-sm);
   font-weight: 600;
 }
 
@@ -32,10 +23,5 @@
 }
 
 .configuration-values {
-  display: grid;
-  gap: 0.5rem;
-}
-
-mat-form-field {
   width: 100%;
 }

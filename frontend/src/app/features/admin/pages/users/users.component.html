@@ -1,5 +1,5 @@
-<section class="admin-page-content">
-  <div class="users-toolbar">
+<section class="gl-stack gl-stack--section">
+  <div class="users-toolbar gl-cluster">
     <h2>{{ 'app.admin.users.heading' | translate }}</h2>
     <a mat-flat-button color="primary" routerLink="new">
       {{ 'app.admin.users.create' | translate }}
@@ -9,17 +9,17 @@
   @if (loading()) {
     <p>{{ 'app.admin.users.loading' | translate }}</p>
   } @else {
-    <div class="user-list" role="list">
+    <div class="user-list gl-stack" role="list">
       @for (user of users(); track user.id) {
-        <article class="user-row" role="listitem">
-          <div>
+        <article class="user-row gl-cluster" role="listitem">
+          <div class="user-row__details gl-stack">
             <strong>{{ user.email }}</strong>
             <span>{{ ('app.admin.users.groups.' + user.group) | translate }}</span>
             @if (user.required_password_reset) {
               <span>{{ 'app.admin.users.passwordResetRequired' | translate }}</span>
             }
           </div>
-          <div class="user-actions">
+          <div class="user-actions gl-cluster">
             <a mat-button [routerLink]="[user.id]">{{ 'app.admin.users.edit' | translate }}</a>
             <button mat-button color="warn" type="button" (click)="deleteUser(user.id)">
               {{ 'app.admin.users.delete' | translate }}
