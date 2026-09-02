@@ -66,6 +66,10 @@ body {
   }
 }
 
+.gl-stack mat-form-field {
+  width: 100%;
+}
+
 .gl-cluster {
   display: flex;
   flex-wrap: wrap;

@@ -91,9 +91,12 @@
 }
 
 @media (min-width: layout.$gl-section-breakpoint) {
-  .count-fields,
-  .person-list__item {
+  .count-fields {
     grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .person-list__item {
+    grid-template-columns: max-content minmax(0, 1fr);
   }
 
   .person-list__item {
