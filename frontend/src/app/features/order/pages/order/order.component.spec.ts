@@ -35,6 +35,7 @@ describe('OrderComponent', () => {
 
     expect(text).toContain('Hallo');
     expect(text).toContain('2');
-    expect(text).toContain('app.order.yes');
+    expect(text).toContain('app.order.intro');
+    expect(text).toContain('app.order.categories.title');
   });
 });

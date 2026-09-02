@@ -7,12 +7,14 @@
 
 @include mat.core();
 
-$gaerngschee-theme: mat.define-theme((
-  color: (
-    theme-type: light,
-    primary: mat.$azure-palette,
-  ),
-));
+$gaerngschee-theme: mat.define-theme(
+  (
+    color: (
+      theme-type: light,
+      primary: mat.$azure-palette,
+    ),
+  )
+);
 
 html {
   @include mat.all-component-themes($gaerngschee-theme);
@@ -25,7 +27,8 @@ html {
   }
 }
 
-html, body {
+html,
+body {
   margin: 0;
   padding: 0;
   min-height: 100%;
@@ -102,4 +105,20 @@ mat-icon {
     align-self: flex-end;
     min-width: 120px;
   }
+}
+
+.category-select-panel .mat-mdc-option {
+  min-height: 48px;
+  height: auto;
+  padding-top: 8px;
+  padding-bottom: 8px;
+}
+
+.category-select-panel {
+  max-width: min(90vw, 520px) !important;
+}
+
+.category-select-panel .mdc-list-item__primary-text {
+  white-space: normal;
+  line-height: 1.35;
 }

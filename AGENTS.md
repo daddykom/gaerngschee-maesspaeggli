@@ -10,13 +10,14 @@ Project information for AI assistants. This file is an **index** - see linked do
 
 ## Documentation Structure
 
-```
+```text
 gaerngschee/
 ├── AGENTS.md                    # This file (index)
 ├── documents/                   # Human-readable documentation
 │   ├── project.md              # Project overview
 │   ├── architecture.md         # System architecture
 │   ├── frontend-conventions.md # Angular patterns (View/Container)
+│   ├── ui-design.md            # UI- und Layout-System
 │   ├── backend-conventions.md  # PHP patterns
 │   └── database-conventions.md # Database migrations
 └── openspec/
@@ -26,16 +27,21 @@ gaerngschee/
 ## Quick Links
 
 ### For Humans
+
 - [openspec/specs/maesspaeggli.md](./openspec/specs/maesspaeggli.md) - Fachkonzept
 - [documents/project.md](./documents/project.md) - Project overview
 - [documents/architecture.md](./documents/architecture.md) - System architecture
 - [documents/directory-structure.md](./documents/directory-structure.md) - Aktuelle Verzeichnisstruktur
+- [documents/ui-design.md](./documents/ui-design.md) - Verbindliches UI- und Layout-System
 
 ### For AI Assistants
+
 - [openspec/specs/authentication/spec.md](./openspec/specs/authentication/spec.md) - User authentication & roles
 - [openspec/specs/registrations/spec.md](./openspec/specs/registrations/spec.md) - Anmeldungen
 - [openspec/specs/donations/spec.md](./openspec/specs/donations/spec.md) - Spenden
 - [openspec/specs/platform/spec.md](./openspec/specs/platform/spec.md) - PWA, i18n, a11y
+- [documents/frontend-conventions.md](./documents/frontend-conventions.md) - Angular-Konventionen
+- [documents/ui-design.md](./documents/ui-design.md) - UI- und Layout-Regeln
 
 ## View/Container Pattern
 
@@ -48,11 +54,34 @@ Angular components follow the View/Container pattern:
 
 See: [documents/frontend-conventions.md](./documents/frontend-conventions.md#viewcontainer-pattern)
 
+## UI Design
+
+Das Frontend verwendet ein verbindliches, Mobile-First UI- und Layout-System.
+
+Vor Änderungen an Page-Templates, Formularen oder Layout-Styles MUSS [documents/ui-design.md](./documents/ui-design.md) gelesen und befolgt werden.
+
+Grundprinzipien:
+
+- Angular Material stellt die UI-Controls bereit.
+- Das Gärngschee-Layout-System bestimmt Anordnung, Breite und Abstände.
+- Der Parent bestimmt den verfügbaren Raum und die Anordnung seiner Children.
+- Components beanspruchen grundsätzlich die gesamte vom Parent bereitgestellte Breite.
+- Components bestimmen ihr internes, aber nicht ihr externes Layout.
+- Mobile ist das Standardlayout; breitere Layouts sind progressive Erweiterungen.
+- Reines Layout wird grundsätzlich über die vorhandenen globalen `gl-*` Layout-Primitives umgesetzt, nicht über Angular Components.
+- Vor neuem komponentenspezifischem Layout-CSS müssen die bestehenden Layout-Primitives geprüft und verwendet werden.
+- Seitenweite Informationen, Warnungen, Erfolgs- und Fehlermeldungen werden über den globalen Store gespeist und in der zentralen Informationszone dargestellt.
+- Feldbezogene Validierungsfehler werden ausschliesslich über die bestehende `ControlErrorComponent` dargestellt.
+
+Als Leitlinie gilt:
+
+> **Das Child kennt seinen Inhalt. Der Parent kennt den Raum.**
+
 ## Backend-Struktur
 
 Das Backend verwendet eine fachlich organisierte Struktur unter `backend/src/`:
 
-```
+```text
 src/
 ├── Auth/
 │   ├── Actions/
@@ -96,7 +125,7 @@ src/
 
 Backend-Tests folgen ebenfalls der fachlichen Struktur:
 
-```
+```text
 tests/
 ├── Auth/
 ├── Fairgate/
@@ -206,13 +235,16 @@ Für die Weiterverarbeitung gelten folgende Regeln:
 Du darfst Fehler oder Probleme im Code melden, aber DU SOLLST SIE NICHT EIGENMÄCHTIG KORRIGIEREN.
 
 Immer erst fragen, bevor du:
+
 - Tippfehler oder Syntaxfehler behebst
 - Code umstellst oder restrukturierst
 - Variablen oder Funktionen umbenennst
 - Imports oder Dependencies änderst
 
 **Beispiel:**
+
 Du siehst einen Tippfehler in einer Variable. Frage nicht einfach "Fixed the typo", sondern:
+
 > "Ich sehe einen Tippfehler in `userNme` → sollte das `userName` sein? Soll ich das korrigieren?"
 
 ---
@@ -222,6 +254,7 @@ Du siehst einen Tippfehler in einer Variable. Frage nicht einfach "Fixed the typ
 Für Konfiguration und Code-Generierung SOLLST DU IMMER die offiziellen Tools nutzen.
 
 Konkrete Regeln:
+
 - Nx: `nx generate`, `nx migrate`, `nx add` verwenden
 - Angular: `ng generate`, `ng add`, `ng update` verwenden
 - Niemals manuell Dateien ändern, wenn ein CLI-Tool existiert
@@ -249,11 +282,14 @@ Siehe: [database-conventions.md](./documents/database-conventions.md)
 Wenn der User Code ändert, den du geschrieben hast, SOLLST DU DIESEN CODE NIE automatisch zurücksetzen oder überschreiben.
 
 Bei Konflikten:
+
 - NIEMALS automatisch "zurücksetzen" oder "wiederherstellen"
 - IMMER erst nachfragen
 
 **Beispiel:**
+
 Du bemerkst, dass dein generierter Code geändert wurde. Frage:
+
 > "Ich sehe, dass mein Code geändert wurde. Möchtest du, dass ich meine ursprüngliche Version wiederherstelle, oder soll ich mit deiner Version weiterarbeiten?"
 
 ---
@@ -261,6 +297,7 @@ Du bemerkst, dass dein generierter Code geändert wurde. Frage:
 ### 4. Bei Unsicherheit fragen
 
 Wenn du dir nicht sicher bist, was der User will:
+
 - FRAGE. Stelle Clarifying Questions.
 - Nummeriere mehrere Rückfragen eindeutig, damit der User jede Frage separat beantworten kann.
 - NICHT: Annahmen treffen und handeln
@@ -306,21 +343,7 @@ Der Login verwendet `POST /auth/login` mit `email` und `password`.
 - Reactive Frontend - NgRx with RxJS for async operations
 - Functional Style - map/reduce/filter for data transformations
 
-## Page Layout and E2E Conventions
-
-### Page Layout
-
-Alle Seiten SOLLEN dieselbe grundlegende Card-Struktur verwenden:
-
-- Seitenüberschrift, Logo und Seiteninhalt liegen innerhalb derselben Card.
-- Zwischen Header und Seiteninhalt steht ein `mat-divider`.
-- Die horizontale Ausrichtung des Headers entspricht der Ausrichtung des Card-Inhalts.
-- Die vertikalen Innenabstände von Header und Seiteninhalt sind ausgewogen und konsistent.
-- Admin-Seiten unter `/admin` zeigen zusätzlich das Administrationsmenü im Header.
-- Seiten ausserhalb von `/admin` zeigen keinen Menübutton.
-- Die Desktop-Basisschrift beträgt `1.4em`; die mobile Darstellung bleibt davon unberührt.
-
-### E2E-Teststruktur
+## E2E-Teststruktur
 
 Playwright-E2E-Specs testen jeweils nur eine Route:
 
@@ -352,6 +375,7 @@ Bei Architektur- und Implementierungsentscheidungen gelten folgende Grundsätze:
 Als Leitlinie gilt:
 
 > **Design for change, but do not implement the future in advance.**
+
 ## Coding Rules
 
 ### 5. Immer Signal Forms verwenden
@@ -360,16 +384,21 @@ Alle Formulare in Angular MÜSSEN mit Angular Signal Forms (`form`, `FieldTree`,
 
 Für neue Formulare und Änderungen an bestehenden Formularen ist die offizielle Angular-Signal-Forms-API zu verwenden. Bestehende Reactive-Forms-Strukturen müssen bei fachlichen Änderungen in Signal Forms überführt werden.
 
-### 6. Immer globale Funktionen/Styles verwenden
+### 6. Globale Funktionen und Styles verwenden
 
-Wiederverwendbare Funktionen, Services und Styles SOLLEN in globale Dateien ausgelagert werden (z.B. `styles.scss`, shared services), nicht in Komponenten dupliziert werden.
+Wiederverwendbare Funktionen, Services und Styles SOLLEN in globale beziehungsweise gemeinsame Dateien ausgelagert werden, nicht in Komponenten dupliziert werden.
+
+Für Layout und UI gelten zusätzlich die verbindlichen Regeln aus [documents/ui-design.md](./documents/ui-design.md).
+
+Reine Layout-Regeln werden über die globalen `gl-*` Layout-Primitives umgesetzt. Komponentenspezifisches SCSS ist auf internes Layout und spezifische Darstellung der jeweiligen Komponente zu beschränken.
 
 ### 7. Immer Material-Template-Vorlagen prüfen
 
 Bevor eigene Styles geschrieben werden, SOLL geprüft werden, ob Material-Components bereits Default-Styles mitbringen. Eigenes CSS ist nur zu schreiben, wenn Material keinen Default bietet.
 
 Beispiele:
-- ✅ `mat-form-field` hat keinen 100%-Width-Default → `width: 100%` ist nötig
+
+- ✅ `mat-form-field` hat keinen 100%-Width-Default → die vom UI-System vorgesehene volle Parent-Breite ist sicherzustellen
 - ❌ `mat-form-field appearance="outline"` bringt fertige Border-Styles mit → kein eigenes Border-CSS nötig
 - ❌ Focus/Error-States von Material → keine eigenen Colors nötig
 
@@ -377,7 +406,7 @@ Beispiele:
 
 Jede Component SOLL in ein eigenes Verzeichnis mit gleichnamigen Files:
 
-```
+```text
 components/
 ├── component-name/
 │   ├── component-name.ts
@@ -389,13 +418,15 @@ components/
 
 Alle Component-Styles SOLLEN als SCSS (`.scss`) statt CSS (`.css`) geschrieben werden.
 
-### 10. Wiederverwendbare Componenten für gemeinsame UI-Patterns
+### 10. Wiederverwendbare UI-Components
 
-Gemeinsame UI-Patterns SOLLEN als wiederverwendbare Componenten erstellt werden.
+Wiederverwendbare UI-Patterns mit eigenständiger Bedeutung, Verhalten oder stabiler wiederverwendbarer HTML-Struktur SOLLEN als gemeinsame Components umgesetzt werden.
 
-Diese Componenten SOLLEN im Verzeichnis `shared/components/` erstellt werden:
+Reines Layout wird nicht als Angular Component umgesetzt. Dafür sind die globalen `gl-*` Layout-Primitives gemäss [documents/ui-design.md](./documents/ui-design.md) zu verwenden.
 
-```
+Gemeinsame UI-Components SOLLEN im Verzeichnis `shared/components/` erstellt werden:
+
+```text
 shared/components/
 ├── info-box/
 │   ├── info-box.ts
@@ -407,11 +438,12 @@ shared/components/
     └── ...
 ```
 
-Beispiele:
-- **InfoBoxComponent** mit Varianten: `info`, `warning`, `error`, `success`
-- Loading-Spinner
-- Empty-State
-- Page-Header
+Beispiele für wiederverwendbare UI-Components:
+
+- `InfoBoxComponent` mit Varianten: `info`, `warning`, `error`, `success`
+- `ControlErrorComponent`
+- Loading Spinner
+- Empty State
 
 Fehlermeldungen von Formularfeldern MÜSSEN immer über `frontend/src/app/shared/components/control-error/control-error.ts` beziehungsweise `ControlErrorComponent` dargestellt werden. Bei Signal Forms ist der jeweilige `FieldState` über `[control]` zu übergeben und der passende Übersetzungspfad über `translationPrefix` zu setzen. Inline-Fehlermeldungen für Formularfelder in Page-Templates sind nicht erlaubt.
 
@@ -433,36 +465,10 @@ private router = inject(Router);
 defaultIcon = computed(() => { ... });
 ```
 
-### 12. Standard HTML/CSS-Struktur
+### 12. UI-Struktur
 
-Für alle Pages mit Formularen:
+Für Page-Struktur, responsive Layouts, Formulare, Abstände, Sections, Cards, Actions und die Verwendung gemeinsamer UI-Komponenten gilt ausschliesslich [documents/ui-design.md](./documents/ui-design.md).
 
-```html
-<div class="page-container">
-  <div class="page-header">
-    <img src="/android-chrome-512x512.png" alt="Logo" class="header-icon" />
-    <h1 class="mat-headline-5">Titel</h1>
-  </div>
+Keine Page-spezifische Standardstruktur wie `.page-container`, `.page-header`, `.standard-card` oder `.auth-form` wird vorgegeben.
 
-  <mat-card appearance="outlined" class="standard-card">
-    <h2>Section Title</h2>
-    <mat-card-content>
-      <form class="auth-form">
-        <mat-form-field appearance="outline">
-          <mat-label>Label</mat-label>
-          <input matInput />
-        </mat-form-field>
-        <button mat-flat-button color="primary">Submit</button>
-      </form>
-    </mat-card-content>
-  </mat-card>
-</div>
-```
-
-**Regeln:**
-- Globale CSS-Klassen verwenden: `.page-container`, `.page-header`, `.header-icon`, `.standard-card`, `.auth-form`
-- Material Typography: `mat-headline-5`, `mat-body-1`, etc.
-- `mat-card appearance="outlined"` mit Klasse `standard-card`
-- `mat-form-field appearance="outline"`
-- `mat-flat-button color="primary"`
-- SCSS bleibt leer wenn keine komponentenspezifischen Styles nötig
+Neue Page-Templates SOLLEN aus semantischem HTML, Angular Material, vorhandenen gemeinsamen UI-Components und den globalen `gl-*` Layout-Primitives zusammengesetzt werden.

@@ -9,7 +9,6 @@ import {
 } from '@angular/core';
 import { FieldTree, form, FormField } from '@angular/forms/signals';
 import { MatButtonModule } from '@angular/material/button';
-import { MatCardModule } from '@angular/material/card';
 import { MatDividerModule } from '@angular/material/divider';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
@@ -40,7 +39,6 @@ export const categories: Categorie[] = ['catA', 'catB', 'catC', 'catD', 'catE', 
   imports: [
     FormField,
     MatButtonModule,
-    MatCardModule,
     MatDividerModule,
     MatFormFieldModule,
     MatInputModule,
@@ -82,6 +80,14 @@ export class OrderComponent {
 
   childField(index: number): FieldTree<Categorie> {
     return (this.form.children as unknown as FieldTree<Categorie[]>)[index] as FieldTree<Categorie>;
+  }
+
+  personId(group: 'adult' | 'child', index: number): string {
+    return `${group}-${index + 1}`;
+  }
+
+  personLabelId(group: 'adult' | 'child', index: number): string {
+    return `${this.personId(group, index)}-label`;
   }
 
   onSubmit(): void {

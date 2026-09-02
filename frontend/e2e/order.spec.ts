@@ -1,7 +1,7 @@
 import { expect, test } from '@playwright/test';
 
 test.describe('Order route', () => {
-  test('shows the Fairgate summary for a client', async ({ page }) => {
+  test('shows the order introduction for a client', async ({ page }) => {
     await page.route('http://localhost:8080/auth/registration-login', async (route) => {
       await route.fulfill({
         status: 200,
@@ -23,10 +23,12 @@ test.describe('Order route', () => {
     await page.waitForURL('**/order');
 
     await expect(page.locator('h1')).toHaveText('Mässpäggli bestellen');
-    await expect(page.locator('dl')).toContainText('2');
-    await expect(page.locator('dl')).toContainText('1');
-    await expect(page.locator('dl')).toContainText('Ja');
+    await expect(
+      page.getByText('Für deine Bestellung sind 2 Erwachsene und 1 Kinder erfasst.'),
+    ).toBeVisible();
     await expect(page.getByText('Hallo')).toBeVisible();
+    await expect(page.locator('.order-summary')).toHaveCount(0);
+    await expect(page.getByRole('combobox')).toHaveCount(3);
   });
 
   test('allows manual person counts when Fairgate data is unavailable', async ({ page }) => {
