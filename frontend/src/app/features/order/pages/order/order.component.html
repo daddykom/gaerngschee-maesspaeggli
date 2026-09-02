@@ -45,7 +45,6 @@
                 <mat-select
                   [id]="personId('adult', $index)"
                   [attr.aria-labelledby]="personLabelId('adult', $index)"
-                  panelClass="category-select-panel"
                   [formField]="adultField($index)"
                 >
                   <mat-select-trigger>
@@ -81,8 +80,7 @@
                 <mat-select
                   [id]="personId('child', $index)"
                   [attr.aria-labelledby]="personLabelId('child', $index)"
-                  panelClass="category-select-panel"
-                  [formField]="childField($index)"
+                   [formField]="childField($index)"
                 >
                   <mat-select-trigger>
                     {{ 'app.order.categories.options.' + category | translate }}

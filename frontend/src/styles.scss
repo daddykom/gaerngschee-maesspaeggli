@@ -100,19 +100,3 @@ app-root {
 mat-icon {
   font-family: 'Material Icons', sans-serif;
 }
-
-.category-select-panel .mat-mdc-option {
-  min-height: 48px;
-  height: auto;
-  padding-top: 8px;
-  padding-bottom: 8px;
-}
-
-.category-select-panel {
-  max-width: min(90vw, 520px) !important;
-}
-
-.category-select-panel .mdc-list-item__primary-text {
-  white-space: normal;
-  line-height: 1.35;
-}
