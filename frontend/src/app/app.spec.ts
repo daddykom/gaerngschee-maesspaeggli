@@ -82,7 +82,7 @@ describe('App', () => {
             {
               path: 'admin/overview',
               component: TestPage,
-              data: { pageTitle: 'app.admin.overview.title', pageHeaderLayout: 'wide' },
+               data: { pageTitle: 'app.admin.overview.title' },
             },
           ]),
         ],
@@ -100,8 +100,8 @@ describe('App', () => {
 
     expect(fixture.componentInstance.isAdminRoute()).toBe(true);
     expect(fixture.componentInstance.pageTitleKey()).toBe('app.admin.overview.title');
-    expect(fixture.componentInstance.pageHeaderLayout()).toBe('wide');
     expect(fixture.nativeElement.querySelector('.admin-menu-button')).toBeTruthy();
-    expect(fixture.nativeElement.querySelector('mat-divider')).toBeTruthy();
+    expect(fixture.nativeElement.querySelector('main h1')).toBeTruthy();
+    expect(fixture.nativeElement.querySelector('main router-outlet')).toBeTruthy();
   });
 });

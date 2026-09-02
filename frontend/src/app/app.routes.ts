@@ -9,7 +9,7 @@ export const appRoutes: Routes = [
   },
   {
     path: 'start',
-    data: { pageTitle: 'app.anmeldung.title', pageHeaderLayout: 'wide' },
+    data: { pageTitle: 'app.anmeldung.title' },
     loadComponent: () =>
       import('./features/auth/pages/start/maesspaeggli-start.component').then(
         (m) => m.MaesspaeggliStartComponent,
@@ -54,7 +54,7 @@ export const appRoutes: Routes = [
     children: [
       {
         path: 'overview',
-        data: { pageTitle: 'app.admin.overview.title', pageHeaderLayout: 'wide' },
+        data: { pageTitle: 'app.admin.overview.title' },
         loadComponent: () =>
           import('./features/admin/pages/overview/admin-overview.component').then(
             (m) => m.AdminOverviewComponent,
@@ -63,7 +63,7 @@ export const appRoutes: Routes = [
       {
         path: 'fairgate-test',
         canActivate: [groupGuard(['admin'])],
-        data: { pageTitle: 'app.admin.fairgateTest.title', pageHeaderLayout: 'wide' },
+        data: { pageTitle: 'app.admin.fairgateTest.title' },
         loadComponent: () =>
           import('./features/admin/pages/fairgate-test/fairgate-test.component').then(
             (m) => m.FairgateTestComponent,
@@ -71,7 +71,7 @@ export const appRoutes: Routes = [
       },
       {
         path: 'configuration',
-        data: { pageTitle: 'app.admin.configuration.title', pageHeaderLayout: 'wide' },
+        data: { pageTitle: 'app.admin.configuration.title' },
         loadComponent: () =>
           import('./features/admin/pages/configuration/configuration.component').then(
             (m) => m.ConfigurationComponent,
@@ -83,21 +83,21 @@ export const appRoutes: Routes = [
           {
             path: 'new',
             canActivate: [groupGuard(['admin'])],
-            data: { pageTitle: 'app.admin.users.createTitle', pageHeaderLayout: 'wide' },
+            data: { pageTitle: 'app.admin.users.createTitle' },
             loadComponent: () =>
               import('./features/admin/pages/users/user-edit.component').then((m) => m.UserEditComponent),
           },
           {
             path: ':userId',
             canActivate: [groupGuard(['user', 'admin'])],
-            data: { pageTitle: 'app.admin.users.editTitle', pageHeaderLayout: 'wide' },
+            data: { pageTitle: 'app.admin.users.editTitle' },
             loadComponent: () =>
               import('./features/admin/pages/users/user-edit.component').then((m) => m.UserEditComponent),
           },
           {
             path: '',
             canActivate: [groupGuard(['admin'])],
-            data: { pageTitle: 'app.admin.users.title', pageHeaderLayout: 'wide' },
+            data: { pageTitle: 'app.admin.users.title' },
             loadComponent: () =>
               import('./features/admin/pages/users/users.component').then((m) => m.UsersComponent),
           },

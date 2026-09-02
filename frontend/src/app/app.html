@@ -1,39 +1,97 @@
-<div class="app-container">
-  <div class="app-shell">
-    <mat-menu #adminMenu="matMenu" class="admin-menu" xPosition="before">
-      @if (isAdminRoute()) {
-        <nav aria-label="{{ 'app.navigation.menuLabel' | translate }}">
-          <a mat-menu-item routerLink="/start" routerLinkActive="active">
-            {{ 'app.navigation.start' | translate }}
-          </a>
-           <a mat-menu-item routerLink="/admin/overview" routerLinkActive="active">
-             {{ 'app.navigation.adminOverview' | translate }}
-           </a>
-           @if (isAdmin()) {
-             <a mat-menu-item routerLink="/admin/fairgate-test" routerLinkActive="active">
-               {{ 'app.navigation.fairgateTest' | translate }}
-             </a>
-           }
-           <a mat-menu-item routerLink="/admin/configuration" routerLinkActive="active">
-             {{ 'app.navigation.configuration' | translate }}
-           </a>
-          @if (isAdmin()) {
-            <a mat-menu-item routerLink="/admin/users" routerLinkActive="active">
-              {{ 'app.navigation.userManagement' | translate }}
-            </a>
-          } @else if (authUserId(); as userId) {
-            <a mat-menu-item [routerLink]="['/admin/users', userId]" routerLinkActive="active">
-              {{ 'app.navigation.myUser' | translate }}
-            </a>
-          }
-          <button mat-menu-item type="button" (click)="logout()">
-            {{ 'app.navigation.logout' | translate }}
-          </button>
-        </nav>
-      }
-    </mat-menu>
+<header class="app-header">
+  <div class="gl-container">
+    <div class="app-header__content gl-cluster">
+      <img src="/android-chrome-512x512.png" [alt]="'app.title' | translate" class="header-logo" />
+      <span class="app-header__title">{{ 'app.title' | translate }}</span>
 
-    <main [class.page-shell]="pageTitleKey()" [class.admin-page-shell]="isAdminRoute()">
+      @if (isAdminRoute()) {
+        <button
+          mat-icon-button
+          type="button"
+          class="admin-menu-button"
+          [attr.aria-label]="'app.navigation.openMenu' | translate"
+          [matMenuTriggerFor]="adminMenu"
+        >
+          <mat-icon>menu</mat-icon>
+        </button>
+      }
+    </div>
+  </div>
+</header>
+
+<nav class="app-navigation" aria-label="{{ 'app.navigation.menuLabel' | translate }}">
+  @if (isAdminRoute()) {
+    <div class="gl-container">
+      <div class="app-navigation__links gl-cluster">
+        <a mat-button routerLink="/start" routerLinkActive="active">
+          {{ 'app.navigation.start' | translate }}
+        </a>
+        <a mat-button routerLink="/admin/overview" routerLinkActive="active">
+          {{ 'app.navigation.adminOverview' | translate }}
+        </a>
+        @if (isAdmin()) {
+          <a mat-button routerLink="/admin/fairgate-test" routerLinkActive="active">
+            {{ 'app.navigation.fairgateTest' | translate }}
+          </a>
+        }
+        <a mat-button routerLink="/admin/configuration" routerLinkActive="active">
+          {{ 'app.navigation.configuration' | translate }}
+        </a>
+        @if (isAdmin()) {
+          <a mat-button routerLink="/admin/users" routerLinkActive="active">
+            {{ 'app.navigation.userManagement' | translate }}
+          </a>
+        } @else if (authUserId(); as userId) {
+          <a mat-button [routerLink]="['/admin/users', userId]" routerLinkActive="active">
+            {{ 'app.navigation.myUser' | translate }}
+          </a>
+        }
+        <button mat-button type="button" (click)="logout()">
+          {{ 'app.navigation.logout' | translate }}
+        </button>
+      </div>
+    </div>
+  }
+</nav>
+
+<mat-menu #adminMenu="matMenu" xPosition="before">
+  @if (isAdminRoute()) {
+    <a mat-menu-item routerLink="/start" routerLinkActive="active">
+      {{ 'app.navigation.start' | translate }}
+    </a>
+    <a mat-menu-item routerLink="/admin/overview" routerLinkActive="active">
+      {{ 'app.navigation.adminOverview' | translate }}
+    </a>
+    @if (isAdmin()) {
+      <a mat-menu-item routerLink="/admin/fairgate-test" routerLinkActive="active">
+        {{ 'app.navigation.fairgateTest' | translate }}
+      </a>
+    }
+    <a mat-menu-item routerLink="/admin/configuration" routerLinkActive="active">
+      {{ 'app.navigation.configuration' | translate }}
+    </a>
+    @if (isAdmin()) {
+      <a mat-menu-item routerLink="/admin/users" routerLinkActive="active">
+        {{ 'app.navigation.userManagement' | translate }}
+      </a>
+    } @else if (authUserId(); as userId) {
+      <a mat-menu-item [routerLink]="['/admin/users', userId]" routerLinkActive="active">
+        {{ 'app.navigation.myUser' | translate }}
+      </a>
+    }
+    <button mat-menu-item type="button" (click)="logout()">
+      {{ 'app.navigation.logout' | translate }}
+    </button>
+  }
+</mat-menu>
+
+<main>
+  <div class="gl-container">
+    <div class="gl-stack gl-stack--section">
+      @if (pageTitleKey(); as titleKey) {
+        <h1 class="mat-headline-5">{{ titleKey | translate }}</h1>
+      }
+
       @if (notification(); as currentNotification) {
         <div role="alert" aria-live="assertive">
           <app-info-box [variant]="currentNotification.variant" [title]="currentNotification.titleKey | translate">
@@ -42,35 +100,7 @@
         </div>
       }
 
-      @if (pageTitleKey(); as titleKey) {
-        <header
-          class="page-header app-page-header"
-          [class.app-page-header--wide]="pageHeaderLayout() === 'wide'"
-          [class.app-page-header--admin]="isAdminRoute()"
-        >
-          <div class="app-page-header__content">
-            <img src="/android-chrome-512x512.png" alt="Logo" class="header-icon" />
-            <h1 class="mat-headline-5">{{ titleKey | translate }}</h1>
-            @if (isAdminRoute()) {
-              <button
-                mat-icon-button
-                type="button"
-                class="admin-menu-button"
-                [attr.aria-label]="'app.navigation.openMenu' | translate"
-                [matMenuTriggerFor]="adminMenu"
-              >
-                <mat-icon>menu</mat-icon>
-              </button>
-            }
-          </div>
-        </header>
-      }
-
-      @if (pageTitleKey()) {
-        <mat-divider></mat-divider>
-      }
-
       <router-outlet></router-outlet>
-    </main>
+    </div>
   </div>
-</div>
+</main>

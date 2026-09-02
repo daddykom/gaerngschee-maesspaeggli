@@ -1,126 +1,44 @@
-.app-container {
-  min-height: 100vh;
+.app-header {
+  border-bottom: 1px solid var(--mat-sys-outline-variant);
+  background: var(--mat-sys-surface);
 }
 
-.app-shell {
-  min-height: 100vh;
-  background: transparent;
+.app-header__content {
+  min-height: 4rem;
 }
 
-.page-shell {
-  width: min(1180px, calc(100% - 32px));
-  margin: 2rem auto;
-  border: 1px solid var(--mat-sys-outline-variant);
-  border-radius: 24px;
-  background: rgba(255, 255, 255, 0.95);
-  box-shadow: 0 4px 18px rgba(0, 0, 0, 0.08);
-  overflow: hidden;
-}
-
-.app-page-header h1 {
-  margin: 0;
-}
-
-.app-page-header__content {
-  display: flex;
-  align-items: center;
-  gap: 1rem;
-  width: 100%;
-  max-width: 900px;
-  margin: 0 auto;
-}
-
-.app-page-header--admin {
-  padding: 1rem 0;
-  margin-bottom: 0;
-}
-
-.app-page-header--admin .app-page-header__content {
-  width: min(900px, calc(100% - 48px));
+.app-header__title {
+  font-weight: 500;
 }
 
 .admin-menu-button {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  width: 48px;
-  height: 48px;
-  padding: 0;
   margin-left: auto;
 }
 
-.admin-menu-button mat-icon {
-  display: block;
-  width: 48px;
-  height: 48px;
-  font-size: 48px;
-  line-height: 48px;
+.app-navigation {
+  border-bottom: 1px solid var(--mat-sys-outline-variant);
+  background: var(--mat-sys-surface-container-low);
 }
 
-.app-page-header {
-  box-sizing: border-box;
-  width: 100%;
-  max-width: none;
-  padding: 1rem 2rem;
-  margin-bottom: 0;
+.app-navigation__links {
+  display: none;
 }
 
-.app-page-header--wide {
-  width: min(1180px, calc(100% - 32px));
-  max-width: none;
-  padding-right: 0;
-  padding-left: 0;
+.app-navigation a.active {
+  font-weight: 700;
 }
 
-.app-page-header--admin {
-  padding-block: 1rem;
+main {
+  min-height: calc(100vh - 4rem);
 }
 
-mat-toolbar {
-  position: sticky;
-  top: 0;
-  z-index: 1000;
-}
-
-.spacer {
-  flex: 1 1 auto;
+@media (min-width: 48rem) {
+  .app-navigation__links {
+    display: flex;
+  }
 }
 
 .header-logo {
+  width: 40px;
   height: 40px;
-  width: auto;
-  margin-right: 0.5rem;
-}
-
-.header-title {
-  font-size: 1.2rem;
-
-  @media (max-width: 480px) {
-    display: none;
-  }
-}
-
-.desktop-nav {
-  display: flex;
-  gap: 0.5rem;
-
-  @media (max-width: 768px) {
-    display: none;
-  }
-}
-
-.mobile-menu-button {
-  display: none;
-
-  @media (max-width: 768px) {
-    display: inline-flex;
-  }
-}
-
-.admin-menu {
-  min-width: 260px;
-}
-
-.main-container {
-  min-height: calc(100vh - 64px);
 }
