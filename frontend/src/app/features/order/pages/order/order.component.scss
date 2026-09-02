@@ -31,6 +31,33 @@
   line-height: 1.5;
 }
 
+.order-summary {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: var(--gl-space-md);
+  margin: 0;
+}
+
+.order-summary > div {
+  display: flex;
+  justify-content: space-between;
+  gap: var(--gl-space-md);
+  padding: var(--gl-space-md) 0;
+  border-top: 1px solid var(--mat-sys-outline-variant);
+}
+
+.order-summary > div:last-child {
+  border-bottom: 1px solid var(--mat-sys-outline-variant);
+}
+
+.order-summary dt {
+  font-weight: 600;
+}
+
+.order-summary dd {
+  margin: 0;
+}
+
 .order-form {
   width: 100%;
 }

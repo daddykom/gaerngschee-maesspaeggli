@@ -10,6 +10,23 @@
     <p class="order-intro__instruction">{{ 'app.order.introInstruction' | translate }}</p>
   </div>
 
+  <dl class="order-summary" aria-label="{{ 'app.order.summary' | translate }}">
+    <div>
+      <dt>{{ 'app.order.adults' | translate }}</dt>
+      <dd>{{ displayAdultsCount() }}</dd>
+    </div>
+    <div>
+      <dt>{{ 'app.order.children' | translate }}</dt>
+      <dd>{{ displayChildrenCount() }}</dd>
+    </div>
+    <div>
+      <dt>{{ 'app.order.fairgate' | translate }}</dt>
+      <dd>
+        {{ (fairgateUserExists() ? 'app.order.yes' : 'app.order.no') | translate }}
+      </dd>
+    </div>
+  </dl>
+
   <form class="order-form gl-stack gl-stack--section" (submit)="$event.preventDefault(); onSubmit()">
     @if (!fairgateUserExists()) {
       <section class="order-section gl-stack gl-stack--group" aria-labelledby="manual-counts-heading">

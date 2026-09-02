@@ -294,6 +294,12 @@ Du bemerkst, dass dein generierter Code geändert wurde. Frage:
 
 ---
 
+### 3a. Keine Commits durch Agenten
+
+Agenten dürfen niemals selbstständig Git-Commits erstellen oder bestehende Commits ändern. Dazu gehören insbesondere `git commit`, `git commit --amend`, Rebases, Merges und Pushes. Änderungen bleiben im Arbeitsverzeichnis; das Committen übernimmt ausschliesslich der Benutzer.
+
+---
+
 ### 4. Bei Unsicherheit fragen
 
 Wenn du dir nicht sicher bist, was der User will:
