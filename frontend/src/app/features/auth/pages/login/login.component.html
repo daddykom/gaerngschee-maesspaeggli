@@ -1,7 +1,6 @@
-<section class="page-content">
-  <div class="form-content">
+<section class="gl-stack gl-stack--group">
     <h2>{{ 'app.login.heading' | translate }}</h2>
-    <form class="auth-form" (submit)="$event.preventDefault(); onSubmit()">
+    <form class="gl-stack gl-stack--group" (submit)="$event.preventDefault(); onSubmit()">
         <div class="auth-field-group">
           <mat-form-field appearance="outline" subscriptSizing="dynamic">
             <mat-label>{{ 'app.login.emailLabel' | translate }}</mat-label>
@@ -22,22 +21,23 @@
             translationPrefix="app.login.errors.password"
           />
         </div>
-        <button
-          type="button"
+        <button mat-button
           class="forgot-password-link"
+          type="button"
           (click)="onForgotPassword()"
         >
           {{ 'app.login.forgotPassword' | translate }}
         </button>
-        <button
-          mat-flat-button
-          color="primary"
-          type="submit"
-          [disabled]="loading()"
-          [attr.aria-busy]="loading()"
-        >
-          {{ 'app.login.submit' | translate }}
-        </button>
+        <div class="gl-cluster">
+          <button
+            mat-flat-button
+            color="primary"
+            type="submit"
+            [disabled]="loading()"
+            [attr.aria-busy]="loading()"
+          >
+            {{ 'app.login.submit' | translate }}
+          </button>
+        </div>
     </form>
-  </div>
 </section>

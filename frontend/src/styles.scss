@@ -101,22 +101,6 @@ mat-icon {
   font-family: 'Material Icons', sans-serif;
 }
 
-.auth-form {
-  display: flex;
-  flex-direction: column;
-  gap: 1rem;
-  padding: 1.5rem 0;
-
-  mat-form-field {
-    width: 100%;
-  }
-
-  button {
-    align-self: flex-end;
-    min-width: 120px;
-  }
-}
-
 .category-select-panel .mat-mdc-option {
   min-height: 48px;
   height: auto;

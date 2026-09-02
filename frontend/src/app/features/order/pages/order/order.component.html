@@ -1,4 +1,4 @@
-<section class="order-page-content">
+<section class="gl-stack gl-stack--section">
   <div class="order-intro">
     <p class="order-intro__salutation">{{ salutation() }}</p>
     <p class="order-intro__description">
@@ -10,9 +10,9 @@
     <p class="order-intro__instruction">{{ 'app.order.introInstruction' | translate }}</p>
   </div>
 
-  <form class="order-form" (submit)="$event.preventDefault(); onSubmit()">
+  <form class="order-form gl-stack gl-stack--section" (submit)="$event.preventDefault(); onSubmit()">
     @if (!fairgateUserExists()) {
-      <section class="order-section order-section--counts" aria-labelledby="manual-counts-heading">
+      <section class="order-section gl-stack gl-stack--group" aria-labelledby="manual-counts-heading">
         <h2 id="manual-counts-heading">{{ 'app.order.manualCounts.title' | translate }}</h2>
         <p>{{ 'app.order.manualCounts.description' | translate }}</p>
         <div class="count-fields">
@@ -28,7 +28,7 @@
       </section>
     }
 
-    <section class="order-section" aria-labelledby="categories-heading">
+    <section class="order-section gl-stack gl-stack--group" aria-labelledby="categories-heading">
       <h2 id="categories-heading">{{ 'app.order.categories.title' | translate }}</h2>
       <p>{{ 'app.order.categories.description' | translate }}</p>
 
@@ -103,8 +103,10 @@
         }
     </section>
 
-    <button mat-flat-button color="primary" type="submit">
-      {{ 'app.order.submit' | translate }}
-    </button>
+    <div class="gl-cluster">
+      <button mat-flat-button color="primary" type="submit">
+        {{ 'app.order.submit' | translate }}
+      </button>
+    </div>
   </form>
 </section>

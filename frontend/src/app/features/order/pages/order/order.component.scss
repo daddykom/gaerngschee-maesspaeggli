@@ -2,15 +2,10 @@
   display: block;
 }
 
-.order-page-content {
-  box-sizing: border-box;
-  max-width: 980px;
-  margin: 0 auto;
-  padding: clamp(32px, 5vw, 64px) clamp(20px, 4vw, 54px);
-}
-
 .order-intro {
-  margin-bottom: 30px;
+  display: flex;
+  flex-direction: column;
+  gap: var(--gl-space-md);
 }
 
 .order-intro p,
@@ -19,13 +14,11 @@
 }
 
 .order-intro__salutation {
-  margin-bottom: 10px;
   font-size: 1.35rem;
   font-weight: 700;
 }
 
 .order-intro__description {
-  margin-bottom: 8px;
   font-size: clamp(1.15rem, 2vw, 1.45rem);
   line-height: 1.45;
 }
@@ -37,31 +30,22 @@
 }
 
 .order-form {
-  display: flex;
-  flex-direction: column;
-  gap: 1rem;
-}
-
-.order-section {
-  padding: 26px;
-  border: 1px solid var(--mat-sys-outline-variant);
-  border-radius: 18px;
-  background: color-mix(in srgb, var(--mat-sys-surface) 94%, transparent);
+  width: 100%;
 }
 
 .order-section h2 {
-  margin: 0 0 8px;
+  margin: 0;
   font-size: 1.45rem;
 }
 
 .order-section > p {
-  margin-bottom: 22px;
+  margin: 0;
 }
 
 .count-fields {
   display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: 14px;
+  grid-template-columns: 1fr;
+  gap: var(--gl-space-md);
 }
 
 .count-fields mat-form-field,
@@ -83,10 +67,10 @@
 
 .person-list__item {
   display: grid;
-  grid-template-columns: minmax(180px, 0.75fr) minmax(280px, 1fr);
-  gap: 20px;
+  grid-template-columns: 1fr;
+  gap: var(--gl-space-sm);
   align-items: center;
-  padding: 14px 0;
+  padding: var(--gl-space-md) 0;
   border-top: 1px solid var(--mat-sys-outline-variant);
 }
 
@@ -99,38 +83,18 @@
 }
 
 .person-list__empty {
-  padding: 14px 0;
+  padding: var(--gl-space-md) 0;
   color: var(--mat-sys-on-surface-variant);
   border-top: 1px solid var(--mat-sys-outline-variant);
 }
 
-.order-section > mat-divider {
-  margin: 26px 0;
-}
-
-.order-form > button {
-  align-self: flex-start;
-  min-height: 52px;
-  padding-inline: 28px;
-}
-
-@media (max-width: 680px) {
+@media (min-width: 48rem) {
   .count-fields,
   .person-list__item {
-    grid-template-columns: 1fr;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
   }
 
   .person-list__item {
-    gap: 8px;
-  }
-}
-
-@media (max-width: 560px) {
-  .order-page-content {
-    padding: 20px;
-  }
-
-  .order-section {
-    padding: 20px;
+    gap: var(--gl-space-md);
   }
 }
