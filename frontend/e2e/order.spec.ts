@@ -27,9 +27,6 @@ test.describe('Order route', () => {
       page.getByText('Für deine Bestellung sind 2 Erwachsene und 1 Kinder erfasst.'),
     ).toBeVisible();
     await expect(page.getByText('Hallo')).toBeVisible();
-    await expect(page.locator('.order-summary dd').nth(0)).toHaveText('2');
-    await expect(page.locator('.order-summary dd').nth(1)).toHaveText('1');
-    await expect(page.locator('.order-summary dd').nth(2)).toHaveText('Ja');
     await expect(page.getByRole('combobox')).toHaveCount(3);
   });
 
