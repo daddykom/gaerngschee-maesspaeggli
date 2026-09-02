@@ -39,6 +39,18 @@ main {
   background-color: #fff;
 }
 
+.app-main-content > .gl-stack {
+  gap: var(--gl-space-lg);
+}
+
+.app-main-content h1 {
+  margin: 0;
+}
+
+.app-main-content > .gl-stack > router-outlet {
+  display: contents;
+}
+
 @media (min-width: layout.$gl-section-breakpoint) {
   .app-navigation__links {
     display: flex;
