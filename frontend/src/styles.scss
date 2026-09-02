@@ -35,6 +35,55 @@ body {
   font-family: 'Inter', sans-serif;
 }
 
+:root {
+  --gl-space-sm: 0.5rem;
+  --gl-space-md: 1rem;
+  --gl-space-lg: 1.5rem;
+  --gl-space-xl: 2rem;
+  --gl-content-max-width: 1180px;
+}
+
+$gl-section-breakpoint: 48rem;
+
+.gl-container {
+  box-sizing: border-box;
+  width: 100%;
+  max-width: var(--gl-content-max-width);
+  margin-inline: auto;
+  padding-inline: var(--gl-space-md);
+}
+
+.gl-stack {
+  display: flex;
+  flex-direction: column;
+  gap: var(--gl-space-md);
+
+  &--group {
+    gap: var(--gl-space-lg);
+  }
+
+  &--section {
+    gap: var(--gl-space-xl);
+  }
+}
+
+.gl-cluster {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--gl-space-md);
+}
+
+.gl-section-layout {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: var(--gl-space-xl);
+
+  @media (min-width: $gl-section-breakpoint) {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
 body {
   background-image: url('/herbstmesse.png');
   background-size: cover;
