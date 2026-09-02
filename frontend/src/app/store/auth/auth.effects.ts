@@ -161,15 +161,26 @@ export const logoutEffect = createEffect(
 
 export const authNotificationEffect = createEffect(
   (actions$ = inject(Actions)) => actions$.pipe(
-    ofType(AuthActions.loginFailure, AuthActions.passwordChangeFailure),
+    ofType(
+      AuthActions.loginFailure,
+      AuthActions.passwordChangeFailure,
+      AuthActions.registrationLoginFailure,
+    ),
     map((action) => NotificationActions.show({
       variant: 'error',
       titleKey: action.type === AuthActions.passwordChangeFailure.type
         ? 'app.passwordChange.heading'
-        : 'app.auth.loginErrorTitle',
+        : action.type === AuthActions.registrationLoginFailure.type
+          ? 'app.clientLogin.errorTitle'
+          : 'app.auth.loginErrorTitle',
       messageKey: action.type === AuthActions.passwordChangeFailure.type
         ? `app.passwordChange.errors.${action.errorCode}`
-        : `app.auth.errors.${action.errorCode}`,
+        : action.type === AuthActions.registrationLoginFailure.type
+          ? `app.clientLogin.errors.${action.errorCode}`
+          : `app.auth.errors.${action.errorCode}`,
+      ...(action.type === AuthActions.registrationLoginFailure.type
+        ? { preserveOnRoutes: ['/client-login'] }
+        : {}),
     })),
   ),
   { functional: true },

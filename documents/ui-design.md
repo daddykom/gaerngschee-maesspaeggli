@@ -294,6 +294,36 @@ Es ist verantwortlich für:
 Untergeordnete Komponenten erzeugen keinen eigenen Abstand zum
 Bildschirmrand.
 
+### Kontrast bei dekorativen Hintergrundbildern
+
+Ein dekoratives Hintergrundbild darf niemals dafür verantwortlich sein,
+dass Text und Bedienelemente ausreichend lesbar sind.
+
+Wenn eine Page ein Bild als Hintergrund verwendet, muss der globale
+Content-Bereich selbst einen ausreichenden, vom jeweiligen Bildausschnitt
+unabhängigen Kontrast gewährleisten. Dies gilt für alle Bildschirmgrössen
+und responsiven Bildausschnitte.
+
+Die kontrastsichernde Fläche gehört zum globalen Layout und nicht zu den
+einzelnen fachlichen Komponenten. Sie umfasst den zusammengehörigen
+Seiteninhalt innerhalb des Seitenrahmens, insbesondere:
+
+-   Seitenüberschrift
+-   Informationszone
+-   gerouteten Seiteninhalt
+
+Die Fläche darf beispielsweise einen hellen oder leicht transparenten
+Hintergrund besitzen. Sie ist jedoch keine `mat-card` und soll nicht wie
+eine fachliche Card behandelt werden.
+
+Rundungen, Schatten oder andere dekorative Card-Effekte sind für diese
+Fläche nicht erforderlich. Ihr Zweck ist die zuverlässige Lesbarkeit des
+Inhalts unabhängig vom Hintergrundbild.
+
+Der notwendige Textkontrast muss durch die Content-Fläche selbst
+sichergestellt sein und darf nicht davon abhängen, welcher Teil des
+Hintergrundbildes sich gerade hinter einem Element befindet.
+
 ## `gl-stack`
 
 `gl-stack` ordnet seine direkten Children vertikal an.

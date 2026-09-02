@@ -70,16 +70,6 @@ describe('FairgateTestComponent', () => {
     expect(fixture.nativeElement.textContent).toContain('app.admin.fairgateTest.loading');
   });
 
-  it('renders a translated error code without a result', () => {
-    store.setState({ fairgateTest: { result: null, loading: false, errorCode: 'FAIRGATE_UNAVAILABLE' } });
-    fixture.detectChanges();
-
-    const error = fixture.nativeElement.querySelector('.fairgate-test-error');
-    expect(error.getAttribute('role')).toBe('alert');
-    expect(error.textContent).toContain('app.admin.fairgateTest.errors.FAIRGATE_UNAVAILABLE');
-    expect(fixture.nativeElement.querySelector('.fairgate-test-result')).toBeNull();
-  });
-
   it('can render an empty and false result payload', () => {
     store.setState({
       fairgateTest: {

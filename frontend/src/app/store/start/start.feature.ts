@@ -10,19 +10,16 @@ export const startFeature = createFeature({
       ...state,
       loading: true,
       sent: null,
-      sendError: false,
     })),
     on(StartActions.submitSuccess, (state, { sent }) => ({
       ...state,
       loading: false,
       sent,
-      sendError: false,
     })),
     on(StartActions.submitFailure, (state) => ({
       ...state,
       loading: false,
       sent: false,
-      sendError: true,
     })),
   ),
 });
@@ -33,5 +30,4 @@ export const {
   selectStartState,
   selectLoading: selectStartLoading,
   selectSent: selectStartSent,
-  selectSendError: selectStartSendError,
 } = startFeature;

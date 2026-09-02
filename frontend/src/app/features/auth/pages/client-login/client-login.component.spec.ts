@@ -41,7 +41,7 @@ describe('ClientLoginComponent', () => {
     );
   });
 
-  it('renders loading and error states', () => {
+  it('renders the loading state without local error content', () => {
     create(null);
     store.setState({ auth: { ...initialState, registrationLoginLoading: true } });
     fixture.detectChanges();
@@ -49,6 +49,6 @@ describe('ClientLoginComponent', () => {
 
     store.setState({ auth: { ...initialState, registrationLoginErrorCode: 'INVALID_REGISTRATION_TOKEN' } });
     fixture.detectChanges();
-    expect(fixture.nativeElement.textContent).toContain('app.clientLogin.errorTitle');
+    expect(fixture.nativeElement.textContent).not.toContain('app.clientLogin.errorTitle');
   });
 });

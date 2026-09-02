@@ -32,7 +32,21 @@ export const showStartSuccessNotificationEffect = createEffect(
   { functional: true },
 );
 
+export const showStartFailureNotificationEffect = createEffect(
+  (actions$ = inject(Actions)) => actions$.pipe(
+    ofType(StartActions.submitFailure),
+    map(() => NotificationActions.show({
+      variant: 'error',
+      titleKey: 'app.anmeldung.errorTitle',
+      messageKey: 'app.anmeldung.sendError',
+      preserveOnRoutes: ['/start'],
+    })),
+  ),
+  { functional: true },
+);
+
 export const startEffects = {
   submitStartEffect,
   showStartSuccessNotificationEffect,
+  showStartFailureNotificationEffect,
 };

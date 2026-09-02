@@ -4,7 +4,11 @@ import { Action } from '@ngrx/store';
 import { firstValueFrom, of, Subject, throwError } from 'rxjs';
 import { AnmeldungService } from '../../shared/services/anmeldung.service';
 import { StartActions } from './start.actions';
-import { showStartSuccessNotificationEffect, submitStartEffect } from './start.effects';
+import {
+  showStartFailureNotificationEffect,
+  showStartSuccessNotificationEffect,
+  submitStartEffect,
+} from './start.effects';
 
 describe('submitStartEffect', () => {
   let actions$: Subject<Action>;
@@ -54,6 +58,21 @@ describe('submitStartEffect', () => {
       variant: 'success',
       titleKey: 'app.anmeldung.emailSentTitle',
       messageKey: 'app.anmeldung.emailSentMessage',
+      preserveOnRoutes: ['/start'],
+    });
+  });
+
+  it('shows an error notification when sending fails', async () => {
+    const effect$ = TestBed.runInInjectionContext(() => showStartFailureNotificationEffect());
+    const result = firstValueFrom(effect$);
+
+    actions$.next(StartActions.submitFailure());
+
+    await expect(result).resolves.toEqual({
+      type: '[Notification] Show',
+      variant: 'error',
+      titleKey: 'app.anmeldung.errorTitle',
+      messageKey: 'app.anmeldung.sendError',
       preserveOnRoutes: ['/start'],
     });
   });

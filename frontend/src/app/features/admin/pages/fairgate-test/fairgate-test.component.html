@@ -9,12 +9,6 @@
       <p>{{ 'app.admin.fairgateTest.loading' | translate }}</p>
     }
 
-    @if (errorCode(); as code) {
-      <p class="fairgate-test-error" role="alert">
-        {{ 'app.admin.fairgateTest.errors.' + code | translate }}
-      </p>
-    }
-
     @if (result(); as response) {
       <pre class="fairgate-test-result">{{ response | json }}</pre>
     }

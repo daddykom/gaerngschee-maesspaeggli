@@ -4,7 +4,6 @@ import { JsonPipe } from '@angular/common';
 import { Store } from '@ngrx/store';
 import { TranslatePipe } from '@ngx-translate/core';
 import {
-  selectFairgateTestErrorCode,
   selectFairgateTestLoading,
   selectFairgateTestResult,
 } from '../../../../store/fairgate-test/fairgate-test.feature';
@@ -22,8 +21,6 @@ export class FairgateTestComponent {
 
   readonly result = this.store.selectSignal(selectFairgateTestResult);
   readonly loading = this.store.selectSignal(selectFairgateTestLoading);
-  readonly errorCode = this.store.selectSignal(selectFairgateTestErrorCode);
-
   runTest(): void {
     this.store.dispatch(FairgateTestActions.test());
   }

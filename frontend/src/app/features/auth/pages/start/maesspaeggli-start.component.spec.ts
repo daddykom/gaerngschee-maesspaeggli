@@ -44,12 +44,4 @@ describe('MaesspaeggliStartComponent', () => {
     );
   });
 
-  it('shows the error info when sending fails', () => {
-    store.selectSignal.mockReturnValue(signal(true));
-    const fixture = TestBed.createComponent(MaesspaeggliStartComponent);
-
-    fixture.detectChanges();
-
-    expect(fixture.nativeElement.querySelector('[role="alert"]')).toBeTruthy();
-  });
 });

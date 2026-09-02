@@ -6,24 +6,24 @@ describe('startReducer', () => {
   it('sets loading when an email is submitted', () => {
     const state = startReducer(initialState, StartActions.submit({ email: 'person@example.com' }));
 
-    expect(state).toEqual({ loading: true, sent: null, sendError: false });
+    expect(state).toEqual({ loading: true, sent: null });
   });
 
   it('stores a successful response', () => {
     const state = startReducer(
-      { loading: true, sent: null, sendError: false },
+      { loading: true, sent: null },
       StartActions.submitSuccess({ sent: true }),
     );
 
-    expect(state).toEqual({ loading: false, sent: true, sendError: false });
+    expect(state).toEqual({ loading: false, sent: true });
   });
 
   it('stores a failed response', () => {
     const state = startReducer(
-      { loading: true, sent: null, sendError: false },
+      { loading: true, sent: null },
       StartActions.submitFailure(),
     );
 
-    expect(state).toEqual({ loading: false, sent: false, sendError: true });
+    expect(state).toEqual({ loading: false, sent: false });
   });
 });

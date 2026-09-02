@@ -3,7 +3,6 @@ import { ActivatedRoute } from '@angular/router';
 import { TranslatePipe } from '@ngx-translate/core';
 import { Store } from '@ngrx/store';
 import {
-  selectAuthRegistrationLoginErrorCode,
   selectAuthRegistrationLoginLoading,
 } from '../../../../store/auth/auth.feature';
 import { AuthActions } from '../../../../store/auth/auth.actions';
@@ -20,8 +19,6 @@ export class ClientLoginComponent implements OnInit {
   private readonly store = inject(Store);
 
   readonly loading = this.store.selectSignal(selectAuthRegistrationLoginLoading);
-  readonly errorCode = this.store.selectSignal(selectAuthRegistrationLoginErrorCode);
-
   ngOnInit(): void {
     const token = this.route.snapshot.queryParamMap.get('token');
     if (token) {

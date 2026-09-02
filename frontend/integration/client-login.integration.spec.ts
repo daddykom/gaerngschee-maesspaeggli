@@ -24,11 +24,11 @@ test.describe('Integration client login', () => {
     expect(response.status()).toBe(200);
 
     await page.goto(`/client-login?token=${encodeURIComponent(token)}`);
-    await expect(page.locator('p')).toContainText('Der Link ist ungültig oder bereits abgelaufen.');
+    await expect(page.locator('.info-box')).toContainText('Der Link ist ungültig oder bereits abgelaufen.');
   });
 
   test('rejects a missing registration token', async ({ page }) => {
     await page.goto('/client-login');
-    await expect(page.locator('p')).toContainText('Der Link ist ungültig oder bereits abgelaufen.');
+    await expect(page.locator('.info-box')).toContainText('Der Link ist ungültig oder bereits abgelaufen.');
   });
 });

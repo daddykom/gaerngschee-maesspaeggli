@@ -9,7 +9,6 @@ import { TranslatePipe, TranslateService } from '@ngx-translate/core';
 import { ControlErrorComponent } from '../../../../shared/components/control-error/control-error';
 import { InfoBoxComponent } from '../../../../shared/components/info-box/info-box';
 import { StartActions } from '../../../../store/start/start.actions';
-import { selectStartSendError } from '../../../../store/start/start.feature';
 
 @Component({
   selector: 'app-maesspaeggli-start',
@@ -31,8 +30,6 @@ import { selectStartSendError } from '../../../../store/start/start.feature';
 export class MaesspaeggliStartComponent {
   private readonly store = inject(Store);
   private readonly translate = inject(TranslateService);
-
-  readonly sendError = this.store.selectSignal(selectStartSendError);
 
   readonly model = signal({
     email: '',

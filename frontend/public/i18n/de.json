@@ -17,6 +17,7 @@
       "continue": "Weiter",
       "privacyHint": "Wir behandeln deine Daten vertraulich.",
       "sendError": "Die E-Mail konnte gerade nicht gesendet werden. Bitte versuche es später noch einmal.",
+      "errorTitle": "Fehler",
       "emailSentTitle": "E-Mail versandt",
       "emailSentMessage": "Wir haben dir eine E-Mail mit deinem persönlichen Bestelllink geschickt. Der Link ist 10 Minuten gültig.",
       "privacyTitle": "Deine Daten bleiben privat",
@@ -124,6 +125,7 @@
       },
       "fairgateTest": {
         "title": "Fairgate-Test",
+        "errorTitle": "Fehler",
         "description": "Testet die Verbindung zu Fairgate mit dem hinterlegten Testkontakt.",
         "run": "Fairgate-Abfrage starten",
         "loading": "Fairgate-Abfrage läuft ...",
