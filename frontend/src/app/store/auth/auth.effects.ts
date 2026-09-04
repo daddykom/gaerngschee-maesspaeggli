@@ -106,7 +106,7 @@ export const clearPersistedAuthEffect = createEffect(
 export const navigateOnRegistrationLoginSuccessEffect = createEffect(
   (actions$ = inject(Actions)) => actions$.pipe(
     ofType(AuthActions.registrationLoginSuccess),
-    map(() => NavigationActions.navigate({ target: '/order' })),
+    map(() => NavigationActions.navigate({ target: '/order/edit' })),
   ),
   { functional: true },
 );

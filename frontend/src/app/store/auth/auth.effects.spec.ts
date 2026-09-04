@@ -139,7 +139,7 @@ describe('loginEffect', () => {
       token: 'token', userId: 'client-1', group: 'client', fairgateUserExists: false,
       childrenCount: 0, adultsCount: 1, salutation: 'Guten Tag',
     }));
-    await expect(registration).resolves.toEqual(NavigationActions.navigate({ target: '/order' }));
+    await expect(registration).resolves.toEqual(NavigationActions.navigate({ target: '/order/edit' }));
 
     const password = firstValueFrom(TestBed.runInInjectionContext(() => navigateOnPasswordChangeSuccessEffect()));
     actions$.next(AuthActions.passwordChangeSuccess());

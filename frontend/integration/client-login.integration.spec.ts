@@ -7,7 +7,7 @@ test.describe('Integration client login', () => {
     const token = issueRegistrationToken(email);
 
     await page.goto(`/client-login?token=${encodeURIComponent(token)}`);
-    await page.waitForURL('**/order');
+    await page.waitForURL('**/order/edit');
     await expect(page.locator('h2')).toHaveText('Mässpäggli bestellen');
   });
 

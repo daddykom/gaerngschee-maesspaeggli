@@ -1,11 +1,11 @@
 export type OrderCategory = 'catA' | 'catB' | 'catC' | 'catD' | 'catE' | 'catF' | 'catG';
 export type OrderPersonType = 'adult' | 'child';
 
-export interface OrderDraft {
+export interface OrderForm {
   adultsCount: number;
   childrenCount: number;
-  adults: OrderCategory[];
-  children: OrderCategory[];
+  adults: (OrderCategory | '')[];
+  children: (OrderCategory | '')[];
 }
 
 export interface OrderItem {

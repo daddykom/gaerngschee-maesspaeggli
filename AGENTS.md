@@ -54,6 +54,47 @@ Angular components follow the View/Container pattern:
 
 See: [documents/frontend-conventions.md](./documents/frontend-conventions.md#viewcontainer-pattern)
 
+### Store- und Formulararchitektur
+
+- Der Inhalt eines Angular-Formulars wird immer vollständig im zuständigen
+  NgRx-Store gehalten und von dort in das Formular übertragen.
+- Der reaktive Datenfluss ist immer: Control-Änderung → Store-Action →
+  Reducer → Store → Selector → Formular-Darstellung.
+- Eine Formularänderung verwendet genau eine gemeinsame Update-Action mit
+  `Partial<Form>`. Das Partial enthält ausschließlich die geänderten Felder.
+- Der Reducer übernimmt Formularänderungen immutable mit
+  `form: { ...state.form, ...partialForm }`.
+- NgRx-Actions bezeichnen immer eingetretene Ereignisse und keine Befehle.
+- Asynchrone Zustände werden als discriminated union mit expliziten Zuständen
+  wie `initial`, `loading`, `loaded` und `error` modelliert. Parallele Boolean-
+  Flags für denselben Ladeprozess sind zu vermeiden.
+- Ein separater Draft-Zustand außerhalb der eigentlichen Formularstruktur ist
+  nicht zulässig.
+
+### Initiales Laden und Resolver
+
+- Initiales Laden von Seitendaten erfolgt über einen Route-Resolver.
+- Der Resolver dispatcht das Ladeereignis, wartet auf den passenden geladenen
+  oder fehlerhaften Store-Zustand und gibt danach die Navigation frei.
+- Bei verschachtelten Routen liegt der Resolver auf der gemeinsamen Parent-
+  Route, wenn die Child-Routen denselben Datenkontext verwenden. Die Navigation
+  zwischen diesen Child-Routen darf dadurch keinen erneuten Ladevorgang
+  auslösen.
+- Der Cursor wird ausschließlich während der Wartezeit innerhalb des
+  Resolvers als `progress` dargestellt. Vor der Freigabe bei `loaded` oder
+  `error` wird er zurückgesetzt. Allgemeine Router-Navigationen setzen den
+  Progress-Cursor nicht.
+
+### Fehleranzeige bei initialem Laden
+
+- Fehler beim initialen Laden werden nicht durch eine dauerhaft blockierte
+  Navigation verborgen.
+- Nach einem Ladefehler wird die Navigation freigegeben und der Fehler über
+  den globalen Notification-Store in der zentralen Informationszone
+  angezeigt.
+- Die betroffene Route bleibt für die Fehleranzeige erhalten und kann bei
+  Bedarf einen erneuten Ladeversuch anbieten.
+
 ## UI Design
 
 Das Frontend verwendet ein verbindliches, Mobile-First UI- und Layout-System.

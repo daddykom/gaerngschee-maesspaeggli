@@ -20,7 +20,7 @@ test.describe('Client login route', () => {
     });
 
     await page.goto('/client-login?token=registration-token');
-    await page.waitForURL('**/order');
+     await page.waitForURL('**/order/edit');
     await expect(page.locator('h1')).toHaveText('Mässpäggli bestellen');
   });
 

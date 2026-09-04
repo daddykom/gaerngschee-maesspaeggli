@@ -15,11 +15,11 @@
         <div class="count-fields">
           <mat-form-field appearance="outline">
             <mat-label>{{ 'app.order.manualCounts.adults' | translate }}</mat-label>
-            <input matInput type="number" [formField]="form.manualAdultsCount" />
+             <input matInput type="number" [formField]="form.adultsCount" (input)="onCountChange('adultsCount', $any($event.target).value)" />
           </mat-form-field>
           <mat-form-field appearance="outline" >
             <mat-label>{{ 'app.order.manualCounts.children' | translate }}</mat-label>
-            <input matInput type="number" [formField]="form.manualChildrenCount" />
+             <input matInput type="number" [formField]="form.childrenCount" (input)="onCountChange('childrenCount', $any($event.target).value)" />
           </mat-form-field>
         </div>
       </section>
@@ -52,8 +52,9 @@
                 <mat-label>{{ 'app.order.categories.category' | translate }}</mat-label>
                 <mat-select
                   [id]="personId('adult', $index)"
-                  [attr.aria-labelledby]="personLabelId('adult', $index)"
-                   [formField]="adultField($index)"
+                   [attr.aria-labelledby]="personLabelId('adult', $index)"
+                    [formField]="adultField($index)"
+                    (selectionChange)="onCategoryChange('adults', $index, $event.value)"
                  >
                    <mat-select-trigger>
                      @if (category === '') {
@@ -98,8 +99,9 @@
                 <mat-label>{{ 'app.order.categories.category' | translate }}</mat-label>
                 <mat-select
                   [id]="personId('child', $index)"
-                  [attr.aria-labelledby]="personLabelId('child', $index)"
+                    [attr.aria-labelledby]="personLabelId('child', $index)"
                     [formField]="childField($index)"
+                    (selectionChange)="onCategoryChange('children', $index, $event.value)"
                  >
                    <mat-select-trigger>
                      @if (category === '') {

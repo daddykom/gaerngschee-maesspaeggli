@@ -1,19 +1,9 @@
-import { ClientOrder, OrderDraft } from '../../shared/models/order.model';
+import { ClientOrder, OrderForm } from '../../shared/models/order.model';
 
-export interface OrderState {
-  order: ClientOrder | null;
-  draft: OrderDraft | null;
-  loading: boolean;
-  loaded: boolean;
-  saving: boolean;
-  errorCode: string | null;
-}
+export type OrderState =
+  | { status: 'initial' }
+  | { status: 'loading' }
+  | { status: 'loaded'; order: ClientOrder | null; form: OrderForm }
+  | { status: 'error'; errorCode: string };
 
-export const initialState: OrderState = {
-  order: null,
-  draft: null,
-  loading: false,
-  loaded: false,
-  saving: false,
-  errorCode: null,
-};
+export const initialState: OrderState = { status: 'initial' };

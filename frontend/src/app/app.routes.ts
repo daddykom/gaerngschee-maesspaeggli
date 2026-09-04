@@ -1,5 +1,6 @@
 import { Routes } from '@angular/router';
 import { groupGuard } from './shared/guards/group.guard';
+import { orderResolver } from './features/order/order.resolver';
 
 export const appRoutes: Routes = [
   {
@@ -27,16 +28,23 @@ export const appRoutes: Routes = [
       import('./features/auth/pages/client-login/client-login.component').then((m) => m.ClientLoginComponent),
   },
   {
-    path: 'order/summary',
-    canActivate: [groupGuard(['client'])],
-    data: { pageTitle: 'app.order.summary.pageTitle' },
-    loadComponent: () => import('./features/order/pages/order-summary/order-summary.component').then((m) => m.OrderSummaryComponent),
-  },
-  {
     path: 'order',
     canActivate: [groupGuard(['client'])],
+    resolve: { order: orderResolver },
     data: { pageTitle: 'app.order.pageTitle' },
-    loadComponent: () => import('./features/order/pages/order/order.component').then((m) => m.OrderComponent),
+    children: [
+      { path: '', redirectTo: 'edit', pathMatch: 'full' },
+      {
+        path: 'edit',
+        data: { pageTitle: 'app.order.pageTitle' },
+        loadComponent: () => import('./features/order/pages/order/order.component').then((m) => m.OrderComponent),
+      },
+      {
+        path: 'summary',
+        data: { pageTitle: 'app.order.summary.pageTitle' },
+        loadComponent: () => import('./features/order/pages/order-summary/order-summary.component').then((m) => m.OrderSummaryComponent),
+      },
+    ],
   },
   {
     path: 'password-change',

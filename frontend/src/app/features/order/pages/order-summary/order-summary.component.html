@@ -1,5 +1,5 @@
 <section class="gl-stack gl-stack--section">
-  @if (draft(); as order) {
+  @if (form(); as order) {
     <section class="summary-section gl-stack gl-stack--group" aria-labelledby="summary-heading">
       <h2 id="summary-heading">{{ 'app.order.summary.title' | translate }}</h2>
       <p>{{ 'app.order.summary.description' | translate: { year: savedOrder()?.year } }}</p>
@@ -38,12 +38,12 @@
       <button mat-stroked-button type="button" (click)="onBack()">
         {{ 'app.order.summary.back' | translate }}
       </button>
-      <button mat-flat-button color="primary" type="button" [disabled]="saving()" (click)="onOrder()">
+      <button mat-flat-button color="primary" type="button" (click)="onOrder()">
         {{ 'app.order.summary.order' | translate }}
       </button>
     </div>
   } @else {
-    <p>{{ 'app.order.summary.noDraft' | translate }}</p>
+    <p>{{ 'app.order.summary.noOrder' | translate }}</p>
     <button mat-stroked-button type="button" (click)="onBack()">
       {{ 'app.order.summary.back' | translate }}
     </button>

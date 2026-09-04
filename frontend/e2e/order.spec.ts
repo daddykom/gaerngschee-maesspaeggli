@@ -20,7 +20,7 @@ test.describe('Order route', () => {
     });
 
     await page.goto('/client-login?token=registration-token');
-    await page.waitForURL('**/order');
+     await page.waitForURL('**/order/edit');
 
     await expect(page.locator('h1')).toHaveText('Mässpäggli bestellen');
     await expect(
@@ -31,6 +31,9 @@ test.describe('Order route', () => {
   });
 
   test('allows manual person counts when Fairgate data is unavailable', async ({ page }) => {
+    await page.route('http://localhost:8080/client/order', async (route) => {
+      await route.fulfill({ status: 200, contentType: 'application/json', body: JSON.stringify({ order: null }) });
+    });
     await page.route('http://localhost:8080/public/configuration', async (route) => {
       await route.fulfill({
         status: 200,
@@ -59,7 +62,7 @@ test.describe('Order route', () => {
     });
 
     await page.goto('/client-login?token=registration-token');
-    await page.waitForURL('**/order');
+     await page.waitForURL('**/order/edit');
 
     const counts = page.locator('input[type="number"]');
     await counts.nth(0).fill('2');
@@ -69,7 +72,7 @@ test.describe('Order route', () => {
     await expect(page.getByText('Bitte auswählen', { exact: true })).toHaveCount(5);
     await page.getByRole('button', { name: 'Weiter' }).click();
     await expect(page.getByRole('alert')).toHaveCount(5);
-    await expect(page).toHaveURL('/order');
+     await expect(page).toHaveURL('/order/edit');
     await expect(page.getByText('Anzahl Personen erfassen')).toBeVisible();
     await expect(page.getByText('Lieber Besteller', { exact: true })).toBeVisible();
     await expect(page.getByText('Wir können Dich leider nicht bei Fairgate finden.')).toBeVisible();

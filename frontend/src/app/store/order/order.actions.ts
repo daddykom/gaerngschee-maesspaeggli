@@ -1,15 +1,15 @@
 import { createActionGroup, emptyProps, props } from '@ngrx/store';
-import { ClientOrder, OrderDraft } from '../../shared/models/order.model';
+import { ClientOrder, OrderForm } from '../../shared/models/order.model';
 
 export const OrderActions = createActionGroup({
   source: 'Order',
   events: {
-    'Load Current': emptyProps(),
-    'Load Current Success': props<{ order: ClientOrder | null }>(),
-    'Load Current Failure': props<{ errorCode: string }>(),
-    'Set Draft': props<{ draft: OrderDraft }>(),
-    Save: props<{ draft: OrderDraft }>(),
-    'Save Success': props<{ order: ClientOrder }>(),
-    'Save Failure': props<{ errorCode: string }>(),
+    'Order Load Requested': emptyProps(),
+    'Order Loaded': props<{ order: ClientOrder | null; form: OrderForm }>(),
+    'Order Load Failed': props<{ errorCode: string }>(),
+    'Order Form Updated': props<{ form: Partial<OrderForm> }>(),
+    'Order Save Requested': emptyProps(),
+    'Order Saved': props<{ order: ClientOrder }>(),
+    'Order Save Failed': props<{ errorCode: string }>(),
   },
 });

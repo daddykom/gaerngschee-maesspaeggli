@@ -38,6 +38,14 @@ body {
   font-family: 'Inter', sans-serif;
 }
 
+body.navigation-progress {
+  cursor: progress;
+}
+
+body.navigation-progress * {
+  cursor: progress;
+}
+
 h2,
 h3,
 h4 {

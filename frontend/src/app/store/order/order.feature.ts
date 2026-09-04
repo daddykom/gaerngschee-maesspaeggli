@@ -6,23 +6,26 @@ export const orderFeature = createFeature({
   name: 'order',
   reducer: createReducer<OrderState>(
     initialState,
-    on(OrderActions.loadCurrent, (state) => ({ ...state, loading: true, errorCode: null })),
-    on(OrderActions.loadCurrentSuccess, (state, { order }) => ({ ...state, order, loading: false, loaded: true })),
-    on(OrderActions.loadCurrentFailure, (state, { errorCode }) => ({ ...state, loading: false, loaded: true, errorCode })),
-    on(OrderActions.setDraft, (state, { draft }) => ({ ...state, draft })),
-    on(OrderActions.save, (state, { draft }) => ({ ...state, draft, saving: true, errorCode: null })),
-    on(OrderActions.saveSuccess, (state, { order }) => ({ ...state, order, saving: false })),
-    on(OrderActions.saveFailure, (state, { errorCode }) => ({ ...state, saving: false, errorCode })),
+    on(OrderActions.orderLoadRequested, () => ({ status: 'loading' })),
+    on(OrderActions.orderLoaded, (_, { order, form }) => ({ status: 'loaded', order, form })),
+    on(OrderActions.orderLoadFailed, (_, { errorCode }) => ({ status: 'error', errorCode })),
+    on(OrderActions.orderFormUpdated, (state, { form }) => state.status === 'loaded'
+      ? { ...state, form: { ...state.form, ...form } }
+      : state),
+    on(OrderActions.orderSaved, (state, { order }) => state.status === 'loaded'
+      ? { ...state, order }
+      : state),
   ),
 });
 
 export const {
   name: orderFeatureName,
   reducer: orderReducer,
-  selectOrder: selectCurrentOrder,
-  selectDraft: selectOrderDraft,
-  selectLoading: selectOrderLoading,
-  selectLoaded: selectOrderLoaded,
-  selectSaving: selectOrderSaving,
-  selectErrorCode: selectOrderErrorCode,
+  selectOrderState,
 } = orderFeature;
+
+export const selectOrderStatus = (state: { order: OrderState }): OrderState['status'] => state.order.status;
+export const selectCurrentOrder = (state: { order: OrderState }) =>
+  state.order.status === 'loaded' ? state.order.order : null;
+export const selectOrderForm = (state: { order: OrderState }) =>
+  state.order.status === 'loaded' ? state.order.form : null;

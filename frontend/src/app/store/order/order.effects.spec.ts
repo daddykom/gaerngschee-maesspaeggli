@@ -3,6 +3,8 @@ import { provideMockActions } from '@ngrx/effects/testing';
 import { Action } from '@ngrx/store';
 import { firstValueFrom, of, Subject } from 'rxjs';
 import { OrderService } from '../../shared/services/order.service';
+import { provideMockStore } from '@ngrx/store/testing';
+import { initialState as authInitialState } from '../auth/auth.state';
 import { OrderActions } from './order.actions';
 import { loadCurrentOrderEffect } from './order.effects';
 
@@ -12,13 +14,13 @@ describe('order effects', () => {
     const order = null;
     const service = { getCurrent: jest.fn(() => of({ order })) };
     TestBed.configureTestingModule({
-      providers: [provideMockActions(() => actions$), { provide: OrderService, useValue: service }],
+      providers: [provideMockActions(() => actions$), { provide: OrderService, useValue: service }, provideMockStore({ initialState: { auth: authInitialState } })],
     });
     const result = firstValueFrom(TestBed.runInInjectionContext(() => loadCurrentOrderEffect()));
 
-    actions$.next(OrderActions.loadCurrent());
+    actions$.next(OrderActions.orderLoadRequested());
 
-    await expect(result).resolves.toEqual(OrderActions.loadCurrentSuccess({ order }));
+    await expect(result).resolves.toEqual(OrderActions.orderLoaded({ order, form: { adultsCount: 0, childrenCount: 0, adults: [], children: [] } }));
     expect(service.getCurrent).toHaveBeenCalledTimes(1);
   });
 });

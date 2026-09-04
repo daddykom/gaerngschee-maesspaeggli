@@ -5,7 +5,10 @@ import { TranslatePipe } from '@ngx-translate/core';
 import { OrderCategory } from '../../../../shared/models/order.model';
 import { NavigationActions } from '../../../../store/navigation/navigation.actions';
 import { OrderActions } from '../../../../store/order/order.actions';
-import { selectCurrentOrder, selectOrderDraft, selectOrderSaving } from '../../../../store/order/order.feature';
+import {
+  selectCurrentOrder,
+   selectOrderForm,
+} from '../../../../store/order/order.feature';
 
 interface CategoryQuantity {
   category: OrderCategory;
@@ -23,27 +26,27 @@ interface CategoryQuantity {
 export class OrderSummaryComponent {
   private readonly store = inject(Store);
 
-  readonly draft = this.store.selectSignal(selectOrderDraft);
+  readonly form = this.store.selectSignal(selectOrderForm);
   readonly savedOrder = this.store.selectSignal(selectCurrentOrder);
-  readonly saving = this.store.selectSignal(selectOrderSaving);
-  readonly adults = computed(() => this.countCategories(this.draft()?.adults ?? []));
-  readonly children = computed(() => this.countCategories(this.draft()?.children ?? []));
+  readonly adults = computed(() => this.countCategories(this.form()?.adults ?? []));
+  readonly children = computed(() => this.countCategories(this.form()?.children ?? []));
   readonly status = computed(() => this.savedOrder()?.status ?? 'provisional');
-
   onBack(): void {
-    this.store.dispatch(NavigationActions.navigate({ target: '/order' }));
+    this.store.dispatch(NavigationActions.navigate({ target: 'back' }));
   }
 
   onOrder(): void {
-    const draft = this.draft();
-    if (draft !== null && !this.saving()) {
-      this.store.dispatch(OrderActions.save({ draft }));
+    if (this.form() !== null) {
+      this.store.dispatch(OrderActions.orderSaveRequested());
     }
   }
 
-  private countCategories(categories: OrderCategory[]): CategoryQuantity[] {
+  private countCategories(categories: (OrderCategory | '')[]): CategoryQuantity[] {
     return (['catA', 'catB', 'catC', 'catD', 'catE', 'catF', 'catG'] as OrderCategory[])
-      .map((category) => ({ category, quantity: categories.filter((value) => value === category).length }))
+      .map((category) => ({
+        category,
+        quantity: categories.filter((value) => value === category).length,
+      }))
       .filter(({ quantity }) => quantity > 0);
   }
 }

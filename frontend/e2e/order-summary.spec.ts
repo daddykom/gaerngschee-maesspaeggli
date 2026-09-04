@@ -43,7 +43,7 @@ test.describe('Order summary route', () => {
     });
 
     await page.goto('/client-login?token=registration-token');
-    await page.waitForURL('**/order');
+     await page.waitForURL('**/order/edit');
 
     const selects = page.getByRole('combobox');
     for (const [index, option] of ['Erwachsene ruhig', 'Erwachsene Action', 'Kinder 1-3 Jahre'].entries()) {
@@ -59,7 +59,7 @@ test.describe('Order summary route', () => {
     await expect(page.getByText('1 x Kinder 1-3 Jahre')).toBeVisible();
 
     await page.getByRole('button', { name: 'Zurück' }).click();
-    await page.waitForURL('**/order');
+     await page.waitForURL('**/order/edit');
     await expect(selects.nth(0)).toHaveText('Erwachsene ruhig');
 
     await page.getByRole('button', { name: 'Weiter' }).click();
