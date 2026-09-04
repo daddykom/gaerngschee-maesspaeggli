@@ -8,6 +8,7 @@ use App\Configuration\Data\FrontendConfigRepository;
 use App\Fairgate\Services\FairgateContactProvider;
 use App\Registration\Data\OrderEmailQueueRepository;
 use App\Registration\Data\OrderRepository;
+use App\Registration\Data\RegistrationTokenRepository;
 use App\Registration\Services\OrderBatchService;
 use App\Users\Data\UserRepository;
 use Tests\Support\RecordingEmailSender;
@@ -92,6 +93,7 @@ final class OrderBatchServiceTest extends TestCase
             new FrontendConfigRepository($pdo),
             $fairgate,
             $emails,
+            new RegistrationTokenRepository($pdo),
         );
     }
 
@@ -107,6 +109,17 @@ final class OrderBatchServiceTest extends TestCase
             'access' => json_encode(['admin'], JSON_THROW_ON_ERROR),
             'update' => json_encode(['admin'], JSON_THROW_ON_ERROR),
             'label' => 'Interval',
+        ]);
+        $pdo->prepare(
+            'INSERT INTO frontend_config (id, variable_name, value, access_group, update_group, label)
+             VALUES (:id, :name, :value, :access, :update, :label)',
+        )->execute([
+            'id' => 'config-retention',
+            'name' => 'registration_token_retention_days',
+            'value' => json_encode('365', JSON_THROW_ON_ERROR),
+            'access' => json_encode([], JSON_THROW_ON_ERROR),
+            'update' => json_encode([], JSON_THROW_ON_ERROR),
+            'label' => 'Token Retention',
         ]);
     }
 }

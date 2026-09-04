@@ -8,6 +8,7 @@ use App\Configuration\Data\FrontendConfigRepository;
 use App\Fairgate\Services\FairgateContactProvider;
 use App\Registration\Data\OrderEmailQueueRepository;
 use App\Registration\Data\OrderRepository;
+use App\Registration\Data\RegistrationTokenRepository;
 use App\Shared\Mail\EmailSenderInterface;
 use DateTimeImmutable;
 use DateTimeZone;
@@ -17,6 +18,7 @@ final class OrderBatchService
 {
     private const CATEGORIES = ['catA', 'catB', 'catC', 'catD', 'catE', 'catF', 'catG'];
     private const INTERVAL_CONFIG = 'fairgate_email_interval_days';
+    private const TOKEN_RETENTION_CONFIG = 'registration_token_retention_days';
 
     public function __construct(
         private readonly OrderRepository $orders,
@@ -24,14 +26,23 @@ final class OrderBatchService
         private readonly FrontendConfigRepository $config,
         private readonly FairgateContactProvider $fairgate,
         private readonly EmailSenderInterface $emails,
+        private readonly RegistrationTokenRepository $tokens,
     ) {
     }
 
-    /** @return array{loaded: int, sent: int, queued: int, failed: int} */
+    /** @return array{loaded: int, sent: int, queued: int, failed: int, tokensDeleted: int} */
     public function run(): array
     {
         $this->intervalDays();
-        $result = ['loaded' => 0, 'sent' => 0, 'queued' => 0, 'failed' => 0];
+        $retentionDays = $this->tokenRetentionDays();
+        $now = new DateTimeImmutable('now', new DateTimeZone('UTC'));
+        $result = [
+            'loaded' => 0,
+            'sent' => 0,
+            'queued' => 0,
+            'failed' => 0,
+            'tokensDeleted' => $this->tokens->deleteExpiredBefore($now->modify('-' . $retentionDays . ' days')),
+        ];
 
         foreach ($this->queue->pending() as $email) {
             try {
@@ -197,5 +208,14 @@ final class OrderBatchService
             throw new \RuntimeException('Invalid Fairgate URL configuration.');
         }
         return $value;
+    }
+
+    private function tokenRetentionDays(): int
+    {
+        $value = $this->config->findValueByVariableName(self::TOKEN_RETENTION_CONFIG);
+        if (!is_string($value) || !ctype_digit($value) || (int) $value < 1) {
+            throw new \RuntimeException('Invalid registration token retention configuration.');
+        }
+        return (int) $value;
     }
 }

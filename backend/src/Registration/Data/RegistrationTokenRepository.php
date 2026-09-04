@@ -84,6 +84,16 @@ final class RegistrationTokenRepository
         return $stmt->rowCount() === 1;
     }
 
+    public function deleteExpiredBefore(DateTimeImmutable $cutoff): int
+    {
+        $statement = $this->pdo->prepare(
+            'DELETE FROM registration_tokens WHERE expires_at <= :cutoff',
+        );
+        $statement->execute(['cutoff' => $cutoff->format('Y-m-d H:i:s')]);
+
+        return $statement->rowCount();
+    }
+
     private function createUuid(): string
     {
         $data = random_bytes(16);

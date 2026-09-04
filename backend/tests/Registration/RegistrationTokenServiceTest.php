@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Tests\Registration;
 
+use App\Registration\Data\RegistrationTokenRepository;
 use App\Registration\Services\RegistrationTokenService;
 use DateTimeImmutable;
 use DateTimeZone;
@@ -29,5 +30,20 @@ final class RegistrationTokenServiceTest extends TestCase
         $issued = $service->issue('person@example.com', $now);
 
         self::assertNull($service->consume($issued['token'], $now->modify('+10 minutes')));
+    }
+
+    public function testDeletesTokensOlderThanConfiguredRetentionPeriod(): void
+    {
+        $pdo = TestDatabase::create();
+        $service = new RegistrationTokenService($pdo);
+        $old = $service->issue('old@example.com', new DateTimeImmutable('2025-08-25 11:00:00', new DateTimeZone('UTC')));
+        $recent = $service->issue('recent@example.com', new DateTimeImmutable('2026-08-25 11:55:00', new DateTimeZone('UTC')));
+        $tokens = new RegistrationTokenRepository($pdo);
+
+        $deleted = $tokens->deleteExpiredBefore(new DateTimeImmutable('2026-08-25 12:00:00', new DateTimeZone('UTC')));
+
+        self::assertSame(1, $deleted);
+        self::assertNull($service->consume($old['token'], new DateTimeImmutable('2026-08-25 12:00:00', new DateTimeZone('UTC'))));
+        self::assertSame('recent@example.com', $service->consume($recent['token'], new DateTimeImmutable('2026-08-25 12:00:00', new DateTimeZone('UTC'))));
     }
 }
