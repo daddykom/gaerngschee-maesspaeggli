@@ -41,7 +41,7 @@ final class ClientRegistrationLoginAction
 
         $user = $result['user'];
         $token = ($this->jwt ?? new JwtService())->createToken($user['id']);
-        ($this->session ?? new SessionService())->setUser($user['id'], 'client');
+        ($this->session ?? new SessionService())->setUser($user['id'], 'client', $result['fairgateUserExists']);
 
         return JsonResponse::success($response, [
             'user' => $user,
