@@ -26,6 +26,8 @@ final class EmailSenderTest extends TestCase
                 self::assertSame($subject, $email->getSubject());
                 self::assertStringContainsString($content, $email->getHtmlBody());
                 self::assertStringContainsString($link, $email->getHtmlBody());
+                self::assertStringContainsString('cid:gaerngschee-logo', $email->getHtmlBody());
+                self::assertStringContainsString('gaerngschee-logo', $email->getBody()->toString());
 
                 return true;
             }));

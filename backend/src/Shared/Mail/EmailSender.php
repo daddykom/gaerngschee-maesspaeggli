@@ -67,6 +67,7 @@ final class EmailSender implements EmailSenderInterface
         $frontendBaseUrl = rtrim(getenv('FRONTEND_BASE_URL') ?: 'http://localhost:4200', '/');
         $html = $this->twig->render($variant->value . '.html.twig', [
             'LOGIN_URL' => $loginUrl ?? $frontendBaseUrl . '/login',
+            'LOGO_CID' => 'cid:gaerngschee-logo',
             'REGISTRATION_URL' => $frontendBaseUrl . '/register',
             'FAIRGATE_URL' => getenv('FAIRGATE_URL') ?: 'https://www.fairgate.ch',
         ]);
@@ -76,7 +77,12 @@ final class EmailSender implements EmailSenderInterface
             ->to($recipient)
             ->subject($this->translator->trans('anmeldung.' . $variant->value . '.subject', [], null, $locale))
             ->text($this->plainText($html))
-            ->html($html);
+            ->html($html)
+            ->embedFromPath(
+                dirname(__DIR__, 3) . '/resources/pictures/gaerngschee-logo.png',
+                'gaerngschee-logo',
+                'image/png',
+            );
 
         try {
             $this->mailer->send($message);
