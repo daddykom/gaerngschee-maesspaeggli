@@ -178,10 +178,29 @@
         "provisionalTitle": "Provisorische Bestellungen",
         "recentProvisionalTitle": "Provisorische Bestellungen in den letzten {{ days }} Tagen",
         "orderCount": "Anzahl Bestellungen",
+        "category": "Kategorie",
+        "provisional": "Provisorisch",
+        "recentProvisional": "Provisorisch letzte {{ days }} Tage",
+        "definitive": "Definitiv",
+        "toDeliver": "Auszuliefern",
+        "qrcode": "QR-Code versandt",
+        "delivered": "Ausgeliefert",
+        "tableCaption": "Bestellungen nach Kategorie und Status",
+        "empty": "Keine Bestellungen vorhanden.",
+        "deliver": "Bestellungen ausliefern",
+        "print": "Drucken",
+        "printDate": "Druckdatum",
+        "deliverTitle": "Bestellungen ausliefern",
+        "deliverQuestion": "Willst du wirklich alle definitiven Bestellungen ausliefern?",
+        "deliverConfirm": "Ausliefern",
+        "deliverCancel": "Abbrechen",
+        "successTitle": "Erfolgreich",
+        "deliveredMessage": "{{ updated }} definitive Bestellungen wurden zur Auslieferung markiert.",
         "errorTitle": "Übersicht konnte nicht geladen werden",
         "errors": {
           "INVALID_OVERVIEW_CONFIGURATION": "Die Konfiguration für die Übersicht ist ungültig.",
-          "REQUEST_FAILED": "Die Übersicht konnte nicht geladen werden."
+          "REQUEST_FAILED": "Die Übersicht konnte nicht geladen werden.",
+          "DELIVERY_FAILED": "Die definitiven Bestellungen konnten nicht zur Auslieferung markiert werden."
         }
       },
       "users": {

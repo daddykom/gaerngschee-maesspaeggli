@@ -140,11 +140,33 @@ final class AdminRoutesTest extends TestCase
         $data = json_decode((string) $response->getBody(), true, 512, JSON_THROW_ON_ERROR);
 
         self::assertSame(200, $response->getStatusCode());
-        self::assertSame(1, $data['definitive']['orderCount']);
-        self::assertSame(2, $data['provisional']['orderCount']);
-        self::assertSame(1, $data['recentProvisional']['orderCount']);
-        self::assertSame(2, $data['definitive']['categories'][0]['packageCount']);
-        self::assertSame('catA', $data['definitive']['categories'][0]['category']);
+        self::assertCount(7, $data['categories']);
+        self::assertSame(4, $data['categories'][0]['provisional']);
+        self::assertSame(3, $data['categories'][0]['recentProvisional']);
+        self::assertSame(2, $data['categories'][0]['definitive']);
+        self::assertSame('catA', $data['categories'][0]['category']);
+    }
+
+    public function testAdminCanMarkDefinitiveOrdersForDelivery(): void
+    {
+        $admin = $this->repository->createUser('admin@example.com', 'secret', 'admin');
+        $customer = $this->repository->createUser('customer@example.com', 'secret', 'client');
+        (new SessionService())->setUser($admin['id'], 'admin');
+        $year = (int) date('Y');
+        $this->insertOrder('definitive-order', $customer['id'], $year, 'definitive', date('Y-m-d H:i:s'), 1, 0);
+        $this->insertOrder('provisional-order', $admin['id'], $year, 'provisional', date('Y-m-d H:i:s'), 1, 0);
+
+        $response = $this->createApp(
+            null,
+            null,
+            new OrderRepository($this->pdo),
+        )->handle((new ServerRequestFactory())->createServerRequest('POST', '/admin/overview/deliver'));
+        $data = json_decode((string) $response->getBody(), true, 512, JSON_THROW_ON_ERROR);
+
+        self::assertSame(200, $response->getStatusCode());
+        self::assertSame(1, $data['updated']);
+        self::assertSame('toDeliver', $this->pdo->query("SELECT status FROM orders WHERE id = 'definitive-order'")->fetchColumn());
+        self::assertSame('provisional', $this->pdo->query("SELECT status FROM orders WHERE id = 'provisional-order'")->fetchColumn());
     }
 
     public function testAdminCanCreateUserAndEmailIsSentToNewAddress(): void

@@ -33,7 +33,50 @@ export const adminOverviewNotificationEffect = createEffect(
   { functional: true },
 );
 
+export const deliverAdminOverviewEffect = createEffect(
+  (actions$ = inject(Actions), service = inject(AdminOverviewService)) => actions$.pipe(
+    ofType(AdminOverviewActions.deliver),
+    exhaustMap(() => service.deliver().pipe(
+      map(({ updated }) => AdminOverviewActions.deliverSuccess({ updated })),
+      catchError((error: HttpErrorResponse) => of(AdminOverviewActions.deliverFailure({ errorCode: errorCode(error) }))),
+    )),
+  ),
+  { functional: true },
+);
+
+export const deliverAdminOverviewNotificationEffect = createEffect(
+  (actions$ = inject(Actions)) => actions$.pipe(
+    ofType(AdminOverviewActions.deliverSuccess, AdminOverviewActions.deliverFailure),
+    map((action) => action.type === AdminOverviewActions.deliverSuccess.type
+      ? NotificationActions.show({
+        variant: 'success',
+        titleKey: 'app.admin.overview.successTitle',
+        messageKey: 'app.admin.overview.deliveredMessage',
+        params: { updated: `${action.updated}` },
+        preserveOnRoutes: ['/admin/overview'],
+      })
+      : NotificationActions.show({
+        variant: 'error',
+        titleKey: 'app.admin.overview.errorTitle',
+        messageKey: `app.admin.overview.errors.${action.errorCode}`,
+        preserveOnRoutes: ['/admin/overview'],
+      })),
+  ),
+  { functional: true },
+);
+
+export const reloadAdminOverviewAfterDeliveryEffect = createEffect(
+  (actions$ = inject(Actions)) => actions$.pipe(
+    ofType(AdminOverviewActions.deliverSuccess),
+    map(() => AdminOverviewActions.load()),
+  ),
+  { functional: true },
+);
+
 export const adminOverviewEffects = {
   loadAdminOverviewEffect,
   adminOverviewNotificationEffect,
+  deliverAdminOverviewEffect,
+  deliverAdminOverviewNotificationEffect,
+  reloadAdminOverviewAfterDeliveryEffect,
 };

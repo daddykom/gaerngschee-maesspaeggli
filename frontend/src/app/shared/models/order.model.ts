@@ -14,11 +14,13 @@ export interface OrderItem {
   quantity: number;
 }
 
+export type OrderStatus = 'provisional' | 'definitive' | 'toDeliver' | 'qrcode' | 'delivered';
+
 export interface ClientOrder {
   id: string;
   userId: string;
   year: number;
-  status: 'provisional' | 'definitive';
+  status: OrderStatus;
   adultsCount: number;
   childrenCount: number;
   items: OrderItem[];

@@ -19,9 +19,7 @@ describe('AdminOverviewComponent', () => {
               overview: {
                 year: 2026,
                 recentDays: 14,
-                definitive: { orderCount: 7, categories: [{ category: 'catA', packageCount: 12 }, { category: 'catB', packageCount: 0 }] },
-                provisional: { orderCount: 3, categories: [{ category: 'catA', packageCount: 4 }] },
-                recentProvisional: { orderCount: 2, categories: [{ category: 'catA', packageCount: 2 }] },
+                categories: [{ category: 'catA', provisional: 4, recentProvisional: 2, definitive: 12, toDeliver: 3, qrcode: 1, delivered: 0 }, { category: 'catB', provisional: 0, recentProvisional: 0, definitive: 0, toDeliver: 0, qrcode: 0, delivered: 0 }],
               },
             },
           },
@@ -36,10 +34,22 @@ describe('AdminOverviewComponent', () => {
       app: {
         admin: {
           overview: {
-            definitiveTitle: 'Definitive Bestellungen',
-            provisionalTitle: 'Provisorische Bestellungen',
-            recentProvisionalTitle: 'Provisorische Bestellungen in den letzten {{days}} Tagen',
-            orderCount: 'Anzahl Bestellungen',
+            category: 'Kategorie',
+            provisional: 'Provisorisch',
+            recentProvisional: 'Provisorisch letzte {{days}} Tage',
+            definitive: 'Definitiv',
+            toDeliver: 'Auszuliefern',
+            qrcode: 'QR-Code versandt',
+            delivered: 'Ausgeliefert',
+            tableCaption: 'Bestellungen nach Kategorie und Status',
+            empty: 'Keine Bestellungen vorhanden.',
+            deliver: 'Bestellungen ausliefern',
+            print: 'Drucken',
+            printDate: 'Druckdatum',
+            deliverTitle: 'Bestellungen ausliefern',
+            deliverQuestion: 'Willst du wirklich alle definitiven Bestellungen ausliefern?',
+            deliverConfirm: 'Ausliefern',
+            deliverCancel: 'Abbrechen',
           },
         },
         order: { categories: { options: { catA: 'Erwachsene ruhig' } } },
@@ -54,15 +64,11 @@ describe('AdminOverviewComponent', () => {
   });
 
   it('displays orders and category package counts from the store', () => {
-    const rows = fixture.nativeElement.querySelectorAll('.overview-list__row');
+    const rows = fixture.nativeElement.querySelectorAll('tbody tr');
 
-    expect(rows).toHaveLength(6);
-    expect(rows[0].textContent).toContain('Anzahl Bestellungen');
-    expect(rows[0].textContent).toContain('7');
-    expect(rows[1].textContent).toContain('Erwachsene ruhig');
-    expect(rows[1].textContent).toContain('12');
-    expect(fixture.nativeElement.textContent).toContain('Definitive Bestellungen');
-    expect(fixture.nativeElement.textContent).toContain('Provisorische Bestellungen');
-    expect(fixture.nativeElement.textContent).toContain('Provisorische Bestellungen in den letzten 14 Tagen');
+    expect(rows).toHaveLength(1);
+    expect(rows[0].textContent).toContain('Erwachsene ruhig');
+    expect(rows[0].textContent).toContain('12');
+    expect(fixture.nativeElement.textContent).not.toContain('catB');
   });
 });

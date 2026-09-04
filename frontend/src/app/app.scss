@@ -58,6 +58,20 @@ main {
   }
 }
 
+@media print {
+  .app-header,
+  .app-navigation,
+  .app-main-content > .gl-stack > h1,
+  .app-main-content > .gl-stack > [role='alert'] {
+    display: none;
+  }
+
+  .app-main-content {
+    min-height: 0;
+    padding: 0;
+  }
+}
+
 .header-logo {
   width: 40px;
   height: 40px;

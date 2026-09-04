@@ -7,7 +7,7 @@ import {
   signal,
   untracked,
 } from '@angular/core';
-import { applyEach, FieldTree, form, FormField, required } from '@angular/forms/signals';
+import { applyEach, disabled, FieldTree, form, FormField, required } from '@angular/forms/signals';
 import { MatButtonModule } from '@angular/material/button';
 import { MatDividerModule } from '@angular/material/divider';
 import { MatFormFieldModule } from '@angular/material/form-field';
@@ -28,6 +28,7 @@ import {
   selectAuthFairgateUserExists,
   selectAuthSalutation,
 } from '../../../../store/auth/auth.feature';
+import { selectCurrentOrder } from '../../../../store/order/order.feature';
 
 export type Categorie = OrderCategory | '';
 
@@ -59,6 +60,7 @@ export class OrderComponent {
   readonly salutation = this.store.selectSignal(selectAuthSalutation);
   readonly publicConfigs = this.store.selectSignal(selectFrontendPublicConfigs);
   readonly orderForm = this.store.selectSignal(selectOrderForm);
+  readonly currentOrder = this.store.selectSignal(selectCurrentOrder);
   readonly categories = categories;
   readonly model = signal<OrderForm>({
     adultsCount: this.adultsCount() ?? 0,
@@ -67,8 +69,14 @@ export class OrderComponent {
     children: [],
   });
   readonly form = form(this.model, (schema) => {
-    applyEach(schema.adults, (category) => required(category));
-    applyEach(schema.children, (category) => required(category));
+    applyEach(schema.adults, (category) => {
+      required(category);
+      disabled(category, () => this.orderLocked());
+    });
+    applyEach(schema.children, (category) => {
+      required(category);
+      disabled(category, () => this.orderLocked());
+    });
   });
   readonly displayAdultsCount = computed(() => this.model().adultsCount);
   readonly displayChildrenCount = computed(() => this.model().childrenCount);
@@ -76,6 +84,7 @@ export class OrderComponent {
     const config = this.publicConfigs().find(({ variableName }) => variableName === 'fairgate_url');
     return typeof config?.value === 'string' ? config.value : null;
   });
+  readonly orderLocked = computed(() => ['toDeliver', 'qrcode', 'delivered'].includes(this.currentOrder()?.status ?? ''));
 
   constructor() {
     effect(() => {

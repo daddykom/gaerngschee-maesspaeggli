@@ -17,9 +17,7 @@ describe('adminOverviewFeature', () => {
         overview: {
           year: 2026,
           recentDays: 14,
-          definitive: { orderCount: 4, categories: [{ category: 'catA', packageCount: 12 }] },
-          provisional: { orderCount: 0, categories: [] },
-          recentProvisional: { orderCount: 0, categories: [] },
+          categories: [{ category: 'catA', provisional: 0, recentProvisional: 0, definitive: 12, toDeliver: 0, qrcode: 0, delivered: 0 }],
         },
       },
     };

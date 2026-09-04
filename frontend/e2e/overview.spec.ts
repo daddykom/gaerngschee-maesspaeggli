@@ -21,9 +21,7 @@ test.describe('Admin overview route', () => {
         body: JSON.stringify({
           year: 2026,
           recentDays: 14,
-          definitive: { orderCount: 2, categories: [{ category: 'catA', packageCount: 3 }] },
-          provisional: { orderCount: 1, categories: [{ category: 'catA', packageCount: 1 }] },
-          recentProvisional: { orderCount: 1, categories: [{ category: 'catA', packageCount: 1 }] },
+          categories: [{ category: 'catA', provisional: 1, recentProvisional: 1, definitive: 3, toDeliver: 0, qrcode: 0, delivered: 0 }],
         }),
       });
     });
@@ -35,8 +33,8 @@ test.describe('Admin overview route', () => {
     await page.waitForURL('**/admin/overview');
 
     await expect(page.locator('h1')).toHaveText('Admin-Übersicht');
-    await expect(page.getByRole('heading', { name: 'Definitive Bestellungen' })).toBeVisible();
-    await expect(page.getByRole('heading', { name: 'Provisorische Bestellungen in den letzten 14 Tagen' })).toBeVisible();
+    await expect(page.getByRole('columnheader', { name: 'Definitiv' })).toBeVisible();
+    await expect(page.getByRole('columnheader', { name: 'Provisorisch letzte 14 Tage' })).toBeVisible();
     await expect(page.getByRole('button', { name: 'Administrationsmenü öffnen' })).toBeVisible();
     await page.getByRole('button', { name: 'Administrationsmenü öffnen' }).click();
     await expect(page.getByRole('menuitem', { name: 'Benutzerverwaltung' })).toBeVisible();
@@ -62,9 +60,7 @@ test.describe('Admin overview route', () => {
         body: JSON.stringify({
           year: 2026,
           recentDays: 14,
-          definitive: { orderCount: 0, categories: [] },
-          provisional: { orderCount: 0, categories: [] },
-          recentProvisional: { orderCount: 0, categories: [] },
+          categories: [],
         }),
       });
     });

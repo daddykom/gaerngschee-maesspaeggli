@@ -81,17 +81,31 @@ final class OrderRepository
         return $orders;
     }
 
-    /** @return array{definitive: array{orderCount: int, categories: list<array{category: string, packageCount: int}>}, provisional: array{orderCount: int, categories: list<array{category: string, packageCount: int}>}, recentProvisional: array{orderCount: int, categories: list<array{category: string, packageCount: int}>}} */
+    /** @return array{categories: list<array{category: string, provisional: int, recentProvisional: int, definitive: int, toDeliver: int, qrcode: int, delivered: int}>} */
     public function findAdminOverview(int $year, string $recentSince): array
     {
-        return [
-            'definitive' => $this->aggregateStatus('definitive', $year),
-            'provisional' => $this->aggregateStatus('provisional', $year),
-            'recentProvisional' => $this->aggregateStatus('provisional', $year, $recentSince),
-        ];
+        $aggregates = array_map(
+            fn (string $status): array => $this->aggregateStatus($status, $year),
+            ['provisional', 'definitive', 'toDeliver', 'qrcode', 'delivered'],
+        );
+        $recent = $this->aggregateStatus('provisional', $year, $recentSince);
+        $categories = array_map(
+            static fn (string $category): array => [
+                'category' => $category,
+                'provisional' => $aggregates[0]['categories'][$category] ?? 0,
+                'recentProvisional' => $recent['categories'][$category] ?? 0,
+                'definitive' => $aggregates[1]['categories'][$category] ?? 0,
+                'toDeliver' => $aggregates[2]['categories'][$category] ?? 0,
+                'qrcode' => $aggregates[3]['categories'][$category] ?? 0,
+                'delivered' => $aggregates[4]['categories'][$category] ?? 0,
+            ],
+            self::CATEGORIES,
+        );
+
+        return ['categories' => $categories];
     }
 
-    /** @return array{orderCount: int, categories: list<array{category: string, packageCount: int}>} */
+    /** @return array{orderCount: int, categories: array<string, int>} */
     private function aggregateStatus(string $status, int $year, ?string $recentSince = null): array
     {
         $conditions = ['orders.status = :status', 'orders.year = :year'];
@@ -122,14 +136,19 @@ final class OrderRepository
 
         return [
             'orderCount' => (int) $count->fetchColumn(),
-            'categories' => array_map(
-                static fn (string $category): array => [
-                    'category' => $category,
-                    'packageCount' => $categoryCounts[$category] ?? 0,
-                ],
-                self::CATEGORIES,
-            ),
+            'categories' => $categoryCounts,
         ];
+    }
+
+    public function markDefinitiveForDelivery(int $year): int
+    {
+        $statement = $this->pdo->prepare(
+            "UPDATE orders SET status = 'toDeliver', updated_at = CURRENT_TIMESTAMP
+             WHERE year = :year AND status = 'definitive'",
+        );
+        $statement->execute(['year' => $year]);
+
+        return $statement->rowCount();
     }
 
     /** @param list<array{personType: string, category: string, quantity: int}> $items */
@@ -203,10 +222,13 @@ final class OrderRepository
 
         try {
             $find = $this->pdo->prepare(
-                'SELECT id FROM orders WHERE user_id = :user_id AND year = :year',
+                'SELECT id, status FROM orders WHERE user_id = :user_id AND year = :year',
             );
             $find->execute(['user_id' => $userId, 'year' => $year]);
             $existing = $find->fetch();
+            if (is_array($existing) && in_array($existing['status'], ['toDeliver', 'qrcode', 'delivered'], true)) {
+                throw new OrderNotEditableException();
+            }
             $orderId = is_array($existing) ? (string) $existing['id'] : $this->createUuid();
 
             if (is_array($existing)) {

@@ -11,4 +11,8 @@ export class AdminOverviewService {
   get(): Observable<AdminOverview> {
     return this.http.get<AdminOverview>(`${environment.apiUrl}/admin/overview`);
   }
+
+  deliver(): Observable<{ updated: number }> {
+    return this.http.post<{ updated: number }>(`${environment.apiUrl}/admin/overview/deliver`, {});
+  }
 }

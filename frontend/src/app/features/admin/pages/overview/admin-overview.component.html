@@ -1,41 +1,58 @@
 @if (overview(); as data) {
+  <div class="overview-print-header">
+    <img src="/android-chrome-512x512.png" [alt]="'app.title' | translate" />
+  </div>
+
   <div class="gl-stack gl-stack--section">
-    <section class="overview-section gl-stack gl-stack--group" aria-labelledby="definitive-heading">
-      <h2 id="definitive-heading">{{ 'app.admin.overview.definitiveTitle' | translate }}</h2>
-      <dl class="overview-list">
-        @for (row of sectionRows(data.definitive); track row.label) {
-          <div class="overview-list__row">
-            <dt>{{ row.label | translate }}</dt>
-            <dd>{{ row.count }}</dd>
-          </div>
-        }
-      </dl>
-    </section>
+    <p class="overview-print-date">
+      {{ 'app.admin.overview.printDate' | translate }}: {{ printDate }}
+    </p>
 
-    <section class="overview-section gl-stack gl-stack--group" aria-labelledby="provisional-heading">
-      <h2 id="provisional-heading">{{ 'app.admin.overview.provisionalTitle' | translate }}</h2>
-      <dl class="overview-list">
-        @for (row of sectionRows(data.provisional); track row.label) {
-          <div class="overview-list__row">
-            <dt>{{ row.label | translate }}</dt>
-            <dd>{{ row.count }}</dd>
-          </div>
-        }
-      </dl>
-    </section>
+    <div class="overview-table-wrapper">
+      <table class="overview-table">
+        <caption class="sr-only">{{ 'app.admin.overview.tableCaption' | translate }}</caption>
+        <colgroup>
+          <col class="overview-table__category-column" />
+          <col span="6" class="overview-table__number-column" />
+        </colgroup>
+        <thead>
+          <tr>
+            <th scope="col"><span class="overview-header__label" [title]="'app.admin.overview.category' | translate">{{ 'app.admin.overview.category' | translate }}</span></th>
+            <th scope="col"><span class="overview-header__label" [title]="'app.admin.overview.provisional' | translate">{{ 'app.admin.overview.provisional' | translate }}</span></th>
+            <th scope="col"><span class="overview-header__label" [title]="'app.admin.overview.recentProvisional' | translate: { days: data.recentDays }">{{ 'app.admin.overview.recentProvisional' | translate: { days: data.recentDays } }}</span></th>
+            <th scope="col"><span class="overview-header__label" [title]="'app.admin.overview.definitive' | translate">{{ 'app.admin.overview.definitive' | translate }}</span></th>
+            <th scope="col" class="delivery-column"><span class="overview-header__label" [title]="'app.admin.overview.toDeliver' | translate">{{ 'app.admin.overview.toDeliver' | translate }}</span></th>
+            <th scope="col" class="delivery-column"><span class="overview-header__label" [title]="'app.admin.overview.qrcode' | translate">{{ 'app.admin.overview.qrcode' | translate }}</span></th>
+            <th scope="col" class="delivery-column"><span class="overview-header__label" [title]="'app.admin.overview.delivered' | translate">{{ 'app.admin.overview.delivered' | translate }}</span></th>
+          </tr>
+        </thead>
+        <tbody>
+          @for (category of categories(data.categories); track category.category) {
+            <tr>
+              <th scope="row">{{ 'app.order.categories.options.' + category.category | translate }}</th>
+              <td>{{ category.provisional }}</td>
+              <td>{{ category.recentProvisional }}</td>
+              <td>{{ category.definitive }}</td>
+              <td class="delivery-column">{{ category.toDeliver }}</td>
+              <td class="delivery-column">{{ category.qrcode }}</td>
+              <td class="delivery-column">{{ category.delivered }}</td>
+            </tr>
+          } @empty {
+            <tr>
+              <td colspan="7">{{ 'app.admin.overview.empty' | translate }}</td>
+            </tr>
+          }
+        </tbody>
+      </table>
+    </div>
 
-    <section class="overview-section gl-stack gl-stack--group" aria-labelledby="recent-provisional-heading">
-      <h2 id="recent-provisional-heading">
-        {{ 'app.admin.overview.recentProvisionalTitle' | translate: { days: data.recentDays } }}
-      </h2>
-      <dl class="overview-list">
-        @for (row of sectionRows(data.recentProvisional); track row.label) {
-          <div class="overview-list__row">
-            <dt>{{ row.label | translate }}</dt>
-            <dd>{{ row.count }}</dd>
-          </div>
-        }
-      </dl>
-    </section>
+    <div class="gl-cluster overview-actions">
+      <button mat-flat-button color="primary" type="button" (click)="deliver()">
+        {{ 'app.admin.overview.deliver' | translate }}
+      </button>
+      <button mat-stroked-button type="button" (click)="print()">
+        {{ 'app.admin.overview.print' | translate }}
+      </button>
+    </div>
   </div>
 }

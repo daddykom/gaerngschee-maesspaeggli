@@ -7,5 +7,8 @@ export const AdminOverviewActions = createActionGroup({
     Load: emptyProps(),
     'Load Success': props<{ overview: AdminOverview }>(),
     'Load Failure': props<{ errorCode: string }>(),
+    Deliver: emptyProps(),
+    'Deliver Success': props<{ updated: number }>(),
+    'Deliver Failure': props<{ errorCode: string }>(),
   },
 });

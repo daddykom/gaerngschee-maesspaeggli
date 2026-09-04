@@ -1,17 +1,15 @@
 export interface AdminOverviewCategory {
   category: string;
-  packageCount: number;
-}
-
-export interface AdminOverviewSection {
-  orderCount: number;
-  categories: AdminOverviewCategory[];
+  provisional: number;
+  recentProvisional: number;
+  definitive: number;
+  toDeliver: number;
+  qrcode: number;
+  delivered: number;
 }
 
 export interface AdminOverview {
   year: number;
   recentDays: number;
-  definitive: AdminOverviewSection;
-  provisional: AdminOverviewSection;
-  recentProvisional: AdminOverviewSection;
+  categories: AdminOverviewCategory[];
 }

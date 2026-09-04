@@ -7,6 +7,7 @@ namespace App\Routes;
 use App\Users\Data\UserRepository;
 use App\Fairgate\Actions\FairgateTestAction;
 use App\Registration\Actions\GetAdminOverviewAction;
+use App\Registration\Actions\DeliverAdminOrdersAction;
 use App\Registration\Data\OrderRepository;
 use App\Configuration\Data\FrontendConfigRepository;
 use App\Middleware\AuthMiddleware;
@@ -33,6 +34,8 @@ final class AdminRoutes
         $app->group('/admin', function (RouteCollectorProxy $group) use ($userRepository, $emailSender, $fairgateTestAction, $orderRepository, $configRepository): void {
             $overview = $group->get('/overview', new GetAdminOverviewAction($orderRepository, $configRepository));
             $overview->add(new GroupMiddleware(['admin', 'user'], $userRepository))->add(new AuthMiddleware());
+            $deliver = $group->post('/overview/deliver', new DeliverAdminOrdersAction($orderRepository));
+            $deliver->add(new GroupMiddleware(['admin'], $userRepository))->add(new AuthMiddleware());
 
             $list = $group->get('/users', new ListUsersAction($userRepository));
             $list->add(new GroupMiddleware(['admin'], $userRepository))->add(new AuthMiddleware());

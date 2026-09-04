@@ -6,9 +6,9 @@ test.describe('Integration admin overview', () => {
     await loginAsAdmin(page);
     await page.goto('/admin/overview');
 
-    await expect(page.getByRole('heading', { name: 'Definitive Bestellungen' })).toBeVisible();
-    await expect(page.getByRole('heading', { name: 'Provisorische Bestellungen' })).toBeVisible();
-    await expect(page.getByRole('heading', { name: 'Provisorische Bestellungen in den letzten 14 Tagen' })).toBeVisible();
-    await expect(page.locator('.overview-list__row')).toHaveCount(24);
+    await expect(page.getByRole('columnheader', { name: 'Definitiv' })).toBeVisible();
+    await expect(page.getByRole('columnheader', { name: 'Provisorisch letzte 14 Tage' })).toBeVisible();
+    await expect(page.getByRole('button', { name: 'Bestellungen ausliefern' })).toBeVisible();
+    await expect(page.locator('.overview-table tbody tr')).toHaveCount(5);
   });
 });

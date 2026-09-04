@@ -7,6 +7,7 @@ namespace App\Registration\Actions;
 use App\Auth\Services\SessionService;
 use App\Registration\Data\OrderRepository;
 use App\Registration\Data\OrderEmailQueueRepository;
+use App\Registration\Data\OrderNotEditableException;
 use App\Shared\Database\Database;
 use App\Shared\Http\JsonRequest;
 use App\Shared\Http\JsonResponse;
@@ -76,6 +77,8 @@ final class SaveClientOrderAction
                 $childrenCount,
                 $items,
             );
+        } catch (OrderNotEditableException) {
+            return JsonResponse::error($response, 'ORDER_NOT_EDITABLE', 409);
         } catch (Throwable) {
             return JsonResponse::error($response, 'ORDER_SAVE_FAILED', 500);
         }
