@@ -22,6 +22,8 @@ use Twig\Loader\FilesystemLoader;
 
 final class EmailSender implements EmailSenderInterface
 {
+    private const LOGO_CID = 'gaerngschee-logo';
+
     private readonly MailerInterface $mailer;
     private readonly string $fromAddress;
     private readonly string $fromName;
@@ -96,6 +98,7 @@ final class EmailSender implements EmailSenderInterface
         $frontendBaseUrl = rtrim(getenv('FRONTEND_BASE_URL') ?: 'http://localhost:4200', '/');
         $html = $this->twig->render('user-created.html.twig', [
             'LOGIN_URL' => $frontendBaseUrl . '/login',
+            'LOGO_CID' => 'cid:' . self::LOGO_CID,
             'TEMPORARY_PASSWORD' => $temporaryPassword,
         ]);
 
@@ -107,6 +110,7 @@ final class EmailSender implements EmailSenderInterface
         $frontendBaseUrl = rtrim(getenv('FRONTEND_BASE_URL') ?: 'http://localhost:4200', '/');
         $html = $this->twig->render('user-email-changed.html.twig', [
             'LOGIN_URL' => $frontendBaseUrl . '/login',
+            'LOGO_CID' => 'cid:' . self::LOGO_CID,
         ]);
 
         $this->sendUserEmail($recipient, 'Deine E-Mail-Adresse wurde geändert', $html);
@@ -127,6 +131,7 @@ final class EmailSender implements EmailSenderInterface
             return $item;
         }, $order['items'] ?? []);
         $html = $this->twig->render('order-confirmation-' . $status . '.html.twig', [
+            'LOGO_CID' => 'cid:' . self::LOGO_CID,
             'ORDER' => $order,
         ]);
         $subject = $this->translator->trans('order.confirmation.' . $status . '.subject', [], null, 'de');
@@ -141,7 +146,12 @@ final class EmailSender implements EmailSenderInterface
             ->to($recipient)
             ->subject($subject)
             ->text($this->plainText($html))
-            ->html($html);
+            ->html($html)
+            ->embedFromPath(
+                dirname(__DIR__, 3) . '/resources/pictures/gaerngschee-logo.png',
+                self::LOGO_CID,
+                'image/png',
+            );
 
         try {
             $this->mailer->send($message);
