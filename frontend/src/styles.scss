@@ -17,6 +17,8 @@ $gaerngschee-theme: mat.define-theme(
   )
 );
 
+@include mat.system-level-colors($gaerngschee-theme);
+
 html {
   @include mat.all-component-themes($gaerngschee-theme);
   @include mat.typography-hierarchy($gaerngschee-theme);

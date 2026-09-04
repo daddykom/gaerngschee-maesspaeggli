@@ -8,6 +8,16 @@ test.describe('Start route', () => {
     await expect(page.locator('button[type="submit"]')).toBeVisible();
   });
 
+  test('displays the Fairgate info box with a background color', async ({ page }) => {
+    await page.goto('/start');
+
+    const backgroundColor = await page.locator('app-info-box .info-box').evaluate(
+      (element) => getComputedStyle(element).backgroundColor,
+    );
+
+    expect(backgroundColor).toMatch(/^rgb\(/);
+  });
+
   test('validates an invalid email without calling the backend', async ({ page }) => {
     let requestCalled = false;
     await page.route('http://localhost:8080/public/start', async (route) => {
