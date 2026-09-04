@@ -119,6 +119,13 @@ final class EmailSender implements EmailSenderInterface
     /** @param array<string, mixed> $order */
     public function sendOrderConfirmation(string $recipient, array $order): void
     {
+        $message = $this->renderOrderConfirmation($order);
+        $this->sendStoredEmail($recipient, $message['subject'], $message['html'], $message['text']);
+    }
+
+    /** @return array{subject: string, html: string, text: string} */
+    public function renderOrderConfirmation(array $order): array
+    {
         $status = $order['status'] === 'definitive' ? 'definitive' : 'provisional';
         $order['items'] = array_map(function (array $item): array {
             $item['categoryLabel'] = $this->translator->trans(
@@ -136,16 +143,21 @@ final class EmailSender implements EmailSenderInterface
         ]);
         $subject = $this->translator->trans('order.confirmation.' . $status . '.subject', [], null, 'de');
 
-        $this->sendUserEmail($recipient, $subject, $html);
+        return ['subject' => $subject, 'html' => $html, 'text' => $this->plainText($html)];
     }
 
-    private function sendUserEmail(string $recipient, string $subject, string $html): void
+    public function sendStoredEmail(string $recipient, string $subject, string $html, string $text): void
+    {
+        $this->sendUserEmail($recipient, $subject, $html, $text);
+    }
+
+    private function sendUserEmail(string $recipient, string $subject, string $html, ?string $text = null): void
     {
         $message = (new Email())
             ->from(new Address($this->fromAddress, $this->fromName))
             ->to($recipient)
             ->subject($subject)
-            ->text($this->plainText($html))
+            ->text($text ?? $this->plainText($html))
             ->html($html)
             ->embedFromPath(
                 dirname(__DIR__, 3) . '/resources/pictures/gaerngschee-logo.png',

@@ -56,7 +56,8 @@ final class TestDatabase
                 status TEXT NOT NULL,
                 adults_count INTEGER NOT NULL DEFAULT 0,
                 children_count INTEGER NOT NULL DEFAULT 0,
-                confirmation_email_sent_at TEXT NULL,
+                 confirmation_email_sent_at TEXT NULL,
+                 fairgate_reminder_email_sent_at TEXT NULL,
                 created_at TEXT,
                 updated_at TEXT,
                 UNIQUE (user_id, year)
@@ -72,6 +73,21 @@ final class TestDatabase
                 created_at TEXT,
                 updated_at TEXT,
                 UNIQUE (order_id, person_type, category)
+            )',
+        );
+        $pdo->exec(
+            'CREATE TABLE order_email_queue (
+                id TEXT PRIMARY KEY,
+                order_id TEXT NOT NULL,
+                email_type TEXT NOT NULL,
+                recipient TEXT NOT NULL,
+                subject TEXT NOT NULL,
+                html_body TEXT NOT NULL,
+                text_body TEXT NOT NULL,
+                last_error TEXT NULL,
+                created_at TEXT,
+                updated_at TEXT,
+                UNIQUE (order_id, email_type)
             )',
         );
 

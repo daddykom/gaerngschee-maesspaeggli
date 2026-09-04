@@ -18,6 +18,7 @@ final class RecordingEmailSender implements EmailSenderInterface
     /** @var list<array<string, mixed>> */
     public array $orderConfirmations = [];
     public bool $failOrderConfirmation = false;
+    public bool $failStoredEmail = false;
 
     public function sendAnmeldung(string $recipient, AnmeldungMailVariant $variant, string $locale = 'de', ?string $loginUrl = null): void
     {
@@ -42,5 +43,18 @@ final class RecordingEmailSender implements EmailSenderInterface
         }
 
         $this->orderConfirmations[] = ['recipient' => $recipient, 'order' => $order];
+    }
+
+    public function renderOrderConfirmation(array $order): array
+    {
+        return ['subject' => 'subject', 'html' => json_encode($order, JSON_THROW_ON_ERROR), 'text' => 'text'];
+    }
+
+    public function sendStoredEmail(string $recipient, string $subject, string $html, string $text): void
+    {
+        if ($this->failOrderConfirmation || $this->failStoredEmail) {
+            throw new \RuntimeException('SMTP failed');
+        }
+        $this->orderConfirmations[] = ['recipient' => $recipient, 'order' => ['subject' => $subject, 'html' => $html, 'text' => $text]];
     }
 }

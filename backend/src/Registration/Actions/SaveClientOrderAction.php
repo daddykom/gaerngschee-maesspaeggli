@@ -6,6 +6,7 @@ namespace App\Registration\Actions;
 
 use App\Auth\Services\SessionService;
 use App\Registration\Data\OrderRepository;
+use App\Registration\Data\OrderEmailQueueRepository;
 use App\Shared\Database\Database;
 use App\Shared\Http\JsonRequest;
 use App\Shared\Http\JsonResponse;
@@ -27,6 +28,7 @@ final class SaveClientOrderAction
         private readonly ?SessionService $session = null,
         private readonly ?UserRepository $users = null,
         private readonly ?EmailSenderInterface $emails = null,
+        private readonly ?OrderEmailQueueRepository $emailQueue = null,
     ) {
     }
 
@@ -81,13 +83,28 @@ final class SaveClientOrderAction
         $emailSent = false;
         if (is_array($user) && is_string($user['email'] ?? null)) {
             try {
-                ($this->emails ?? new EmailSender())->sendOrderConfirmation($user['email'], $order);
+                $emails = $this->emails ?? new EmailSender();
+                $message = $emails->renderOrderConfirmation($order);
+                $emails->sendStoredEmail($user['email'], $message['subject'], $message['html'], $message['text']);
                 ($this->orders ?? new OrderRepository(Database::getConnection()))
                     ->markConfirmationEmailSent((string) $order['id']);
                 $order = ($this->orders ?? new OrderRepository(Database::getConnection()))
                     ->findForYear($userId, $this->currentYear()) ?? $order;
                 $emailSent = true;
-            } catch (Throwable) {
+            } catch (Throwable $exception) {
+                try {
+                    $emails ??= $this->emails ?? new EmailSender();
+                    $message ??= $emails->renderOrderConfirmation($order);
+                    ($this->emailQueue ?? new OrderEmailQueueRepository(Database::getConnection()))->enqueue(
+                        (string) $order['id'],
+                        'order_confirmation',
+                        $user['email'],
+                        $message,
+                        $exception->getMessage(),
+                    );
+                } catch (Throwable) {
+                    // The original save response remains successful even if queue persistence fails.
+                }
                 $emailSent = false;
             }
         }

@@ -9,6 +9,7 @@ use App\Middleware\GroupMiddleware;
 use App\Registration\Actions\GetClientOrderAction;
 use App\Registration\Actions\SaveClientOrderAction;
 use App\Registration\Data\OrderRepository;
+use App\Registration\Data\OrderEmailQueueRepository;
 use App\Users\Data\UserRepository;
 use App\Shared\Mail\EmailSenderInterface;
 use Slim\App;
@@ -21,6 +22,7 @@ final class ClientRoutes
         ?OrderRepository $orderRepository = null,
         ?UserRepository $userRepository = null,
         ?EmailSenderInterface $emailSender = null,
+        ?OrderEmailQueueRepository $emailQueue = null,
     ): void {
         $app->group('/client', function (RouteCollectorProxy $group) use ($orderRepository, $userRepository, $emailSender): void {
             $get = $group->get('/order', new GetClientOrderAction($orderRepository));
@@ -31,6 +33,7 @@ final class ClientRoutes
                 null,
                 $userRepository,
                 $emailSender,
+                $emailQueue,
             ));
             $save->add(new GroupMiddleware(['client'], $userRepository))->add(new AuthMiddleware());
         });

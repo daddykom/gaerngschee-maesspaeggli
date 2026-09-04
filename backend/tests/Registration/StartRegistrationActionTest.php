@@ -43,6 +43,8 @@ final class StartRegistrationActionTest extends TestCase
                 public function sendUserCreated(string $recipient, string $temporaryPassword): void {}
                 public function sendUserEmailChanged(string $recipient): void {}
                 public function sendOrderConfirmation(string $recipient, array $order): void {}
+                public function renderOrderConfirmation(array $order): array { return []; }
+                public function sendStoredEmail(string $recipient, string $subject, string $html, string $text): void {}
             },
         );
     }

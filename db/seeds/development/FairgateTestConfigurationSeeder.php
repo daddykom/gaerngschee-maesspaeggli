@@ -29,6 +29,27 @@ final class FairgateTestConfigurationSeeder extends AbstractSeed
             );
         }
 
+        $variableName = 'fairgate_email_interval_days';
+        if ($this->query(
+            'SELECT id FROM frontend_config WHERE variable_name = :variable_name',
+            ['variable_name' => $variableName],
+        )->fetch() === false) {
+            $this->query(
+                'INSERT INTO frontend_config
+                    (id, variable_name, value, description, access_group, update_group, label)
+                 VALUES (:id, :variable_name, :value, :description, :access_group, :update_group, :label)',
+                [
+                    'id' => '00000000-0000-4000-8000-000000000012',
+                    'variable_name' => $variableName,
+                    'value' => json_encode('7', JSON_THROW_ON_ERROR),
+                    'description' => 'Abstand zwischen Erinnerungs-E-Mails an nicht registrierte Fairgate-Klienten in Tagen.',
+                    'access_group' => json_encode(['admin'], JSON_THROW_ON_ERROR),
+                    'update_group' => json_encode(['admin'], JSON_THROW_ON_ERROR),
+                    'label' => 'Fairgate-E-Mail-Abstand',
+                ],
+            );
+        }
+
         $variableName = 'fairgate_url';
         if ($this->query(
             'SELECT id FROM frontend_config WHERE variable_name = :variable_name',
