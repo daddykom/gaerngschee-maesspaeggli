@@ -99,10 +99,6 @@ export class OrderComponent {
     return `${group}-${index + 1}`;
   }
 
-  personLabelId(group: 'adult' | 'child', index: number): string {
-    return `${this.personId(group, index)}-label`;
-  }
-
   onSubmit(): void {
     if (!this.form().valid()) {
       this.form().markAsTouched();

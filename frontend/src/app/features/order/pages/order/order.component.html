@@ -42,17 +42,16 @@
 
       <section class="person-group" aria-labelledby="adults-heading">
         <h3 id="adults-heading">{{ 'app.order.categories.adults' | translate }}</h3>
-        <ul class="person-list">
+        <ul class="person-list list-as-form">
           @for (category of model().adults; track $index) {
             <li class="person-list__item">
-              <label [id]="personLabelId('adult', $index)" [for]="personId('adult', $index)">
-                {{ 'app.order.categories.adult' | translate }} {{ $index + 1 }}
-              </label>
               <mat-form-field appearance="outline" class="category-field">
-                <mat-label>{{ 'app.order.categories.category' | translate }}</mat-label>
+                <mat-label>
+                  {{ 'app.order.categories.adult' | translate }} {{ $index + 1 }}:
+                  {{ 'app.order.categories.category' | translate }}
+                </mat-label>
                 <mat-select
                   [id]="personId('adult', $index)"
-                   [attr.aria-labelledby]="personLabelId('adult', $index)"
                     [formField]="adultField($index)"
                     (selectionChange)="onCategoryChange('adults', $index, $event.value)"
                  >
@@ -72,11 +71,12 @@
                      </mat-option>
                    }
                  </mat-select>
-               </mat-form-field>
-               <app-control-error
-                 [control]="adultField($index)()"
-                 translationPrefix="app.order.categories.errors"
-               />
+                <app-control-error
+                  matError
+                  [control]="adultField($index)()"
+                  translationPrefix="app.order.categories.errors"
+                />
+              </mat-form-field>
             </li>
           } @empty {
             <li class="person-list__empty">{{ 'app.order.categories.noAdults' | translate }}</li>
@@ -89,17 +89,16 @@
         @if(model().children.length > 0){
       <section class="person-group" aria-labelledby="children-heading">
         <h3 id="children-heading">{{ 'app.order.categories.children' | translate }}</h3>
-        <ul class="person-list">
+        <ul class="person-list list-as-form">
           @for (category of model().children; track $index) {
             <li class="person-list__item">
-              <label [id]="personLabelId('child', $index)" [for]="personId('child', $index)">
-                {{ 'app.order.categories.child' | translate }} {{ $index + 1 }}
-              </label>
               <mat-form-field appearance="outline" class="category-field">
-                <mat-label>{{ 'app.order.categories.category' | translate }}</mat-label>
+                <mat-label>
+                  {{ 'app.order.categories.child' | translate }} {{ $index + 1 }}:
+                  {{ 'app.order.categories.category' | translate }}
+                </mat-label>
                 <mat-select
                   [id]="personId('child', $index)"
-                    [attr.aria-labelledby]="personLabelId('child', $index)"
                     [formField]="childField($index)"
                     (selectionChange)="onCategoryChange('children', $index, $event.value)"
                  >
@@ -119,11 +118,12 @@
                      </mat-option>
                    }
                  </mat-select>
-               </mat-form-field>
-               <app-control-error
-                 [control]="childField($index)()"
-                 translationPrefix="app.order.categories.errors"
-               />
+                <app-control-error
+                  matError
+                  [control]="childField($index)()"
+                  translationPrefix="app.order.categories.errors"
+                />
+              </mat-form-field>
             </li>
           } @empty {
             <li class="person-list__empty">{{ 'app.order.categories.noChildren' | translate }}</li>

@@ -61,27 +61,16 @@
   font-size: 1.25rem;
 }
 
-.person-list {
-  margin: 0;
-  padding: 0;
-  list-style: none;
-}
-
 .person-list__item {
   display: grid;
   grid-template-columns: 1fr;
-  gap: var(--gl-space-sm);
-  align-items: center;
+  gap: 0.25rem;
   padding: var(--gl-space-md) 0;
   border-top: 1px solid var(--mat-sys-outline-variant);
 }
 
 .person-list__item:last-child {
   border-bottom: 1px solid var(--mat-sys-outline-variant);
-}
-
-.person-list__item label {
-  font-weight: 600;
 }
 
 .person-list__empty {
@@ -95,11 +84,4 @@
     grid-template-columns: repeat(2, minmax(0, 1fr));
   }
 
-  .person-list__item {
-    grid-template-columns: max-content minmax(0, 1fr);
-  }
-
-  .person-list__item {
-    gap: var(--gl-space-md);
-  }
 }

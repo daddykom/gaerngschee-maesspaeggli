@@ -22,7 +22,7 @@ export class PasswordChange {
   readonly passwordChangeForm = form(this.passwordChangeModel, (schema) => {
     required(schema.newPassword);
     required(schema.passwordConfirmation);
-    validate(schema, ({ valueOf }) =>
+    validate(schema.passwordConfirmation, ({ valueOf }) =>
       valueOf(schema.newPassword) === valueOf(schema.passwordConfirmation)
         ? undefined
         : { kind: 'passwordsDoNotMatch' },

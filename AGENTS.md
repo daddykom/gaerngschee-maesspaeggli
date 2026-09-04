@@ -116,7 +116,9 @@ Grundprinzipien:
 - Reines Layout wird grundsätzlich über die vorhandenen globalen `gl-*` Layout-Primitives umgesetzt, nicht über Angular Components.
 - Vor neuem komponentenspezifischem Layout-CSS müssen die bestehenden Layout-Primitives geprüft und verwendet werden.
 - Seitenweite Informationen, Warnungen, Erfolgs- und Fehlermeldungen werden über den globalen Store gespeist und in der zentralen Informationszone dargestellt.
-- Feldbezogene Validierungsfehler werden ausschliesslich über die bestehende `ControlErrorComponent` dargestellt.
+ - Feldbezogene Validierungsfehler werden ausschliesslich über die bestehende `ControlErrorComponent` dargestellt.
+ - Beschriftungen von Formularfeldern werden über `mat-label` innerhalb des zugehörigen `mat-form-field` dargestellt; separate Labels ausserhalb des Material-Formularfelds werden nicht verwendet.
+ - Feldbezogene `app-control-error`-Komponenten stehen als letztes Element im zugehörigen `mat-form-field` und werden mit `matError` als Material-Fehlerbereich markiert. Formularübergreifende Fehler werden beim fachlich zugehörigen Feld angezeigt.
 
 Als Leitlinie gilt:
 

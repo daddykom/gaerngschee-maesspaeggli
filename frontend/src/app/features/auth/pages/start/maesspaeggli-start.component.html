@@ -32,12 +32,12 @@
             autocomplete="email"
             [placeholder]="'app.anmeldung.emailPlaceholder' | translate"
           />
+          <app-control-error
+            matError
+            [control]="form.email()"
+            translationPrefix="app.anmeldung.errors.email"
+          />
         </mat-form-field>
-
-        <app-control-error
-          [control]="form.email()"
-          translationPrefix="app.anmeldung.errors.email"
-        />
       </div>
 
       <button mat-flat-button type="submit" class="continue-button" (click)="$event.preventDefault(); submit()">

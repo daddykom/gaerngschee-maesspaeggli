@@ -3,23 +3,25 @@
     <form class="gl-stack gl-stack--group" (submit)="$event.preventDefault(); onSubmit()">
         <div class="auth-field-group">
           <mat-form-field appearance="outline" subscriptSizing="dynamic">
-            <mat-label>{{ 'app.login.emailLabel' | translate }}</mat-label>
+           <mat-label>{{ 'app.login.emailLabel' | translate }}</mat-label>
            <input matInput type="email" [formField]="loginForm.email" />
-          </mat-form-field>
-          <app-control-error
+           <app-control-error
+             matError
              [control]="loginForm.email()"
-            translationPrefix="app.login.errors.email"
-          />
+             translationPrefix="app.login.errors.email"
+           />
+          </mat-form-field>
         </div>
         <div class="auth-field-group">
           <mat-form-field appearance="outline" subscriptSizing="dynamic">
             <mat-label>{{ 'app.login.passwordLabel' | translate }}</mat-label>
            <input matInput type="password" [formField]="loginForm.password" />
-          </mat-form-field>
-          <app-control-error
+           <app-control-error
+             matError
              [control]="loginForm.password()"
-            translationPrefix="app.login.errors.password"
-          />
+             translationPrefix="app.login.errors.password"
+           />
+          </mat-form-field>
         </div>
         <button mat-button
           class="forgot-password-link"

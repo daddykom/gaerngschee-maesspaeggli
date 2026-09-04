@@ -128,11 +128,11 @@
         "newPassword": {
           "required": "Bitte gib ein neues Passwort ein."
         },
-        "passwordConfirmation": {
-          "required": "Bitte bestätige dein neues Passwort."
-        },
-        "passwordsDoNotMatch": "Die Passwörter stimmen nicht überein.",
-        "PASSWORD_CHANGE_FAILED": "Das Passwort konnte nicht geändert werden."
+          "passwordConfirmation": {
+            "required": "Bitte bestätige dein neues Passwort.",
+            "passwordsDoNotMatch": "Die Passwörter stimmen nicht überein."
+          },
+          "PASSWORD_CHANGE_FAILED": "Das Passwort konnte nicht geändert werden."
       }
     },
     "notFound": {

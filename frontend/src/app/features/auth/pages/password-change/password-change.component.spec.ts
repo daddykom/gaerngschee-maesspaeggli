@@ -46,7 +46,7 @@ describe('PasswordChange', () => {
       passwordConfirmation: 'different-secret',
     });
 
-    expect(component.passwordChangeForm().errors()).toEqual(
+    expect(component.passwordChangeForm.passwordConfirmation().errors()).toEqual(
       expect.arrayContaining([expect.objectContaining({ kind: 'passwordsDoNotMatch' })]),
     );
     expect(component.passwordChangeForm().valid()).toBe(false);

@@ -96,6 +96,12 @@ h4 {
   gap: var(--gl-space-md);
 }
 
+.list-as-form {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
 .gl-section-layout {
   display: grid;
   grid-template-columns: minmax(0, 1fr);
