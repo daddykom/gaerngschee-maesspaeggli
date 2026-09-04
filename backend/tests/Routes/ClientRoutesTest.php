@@ -48,7 +48,7 @@ final class ClientRoutesTest extends TestCase
         $saved = json_decode((string) $save->getBody(), true, 512, JSON_THROW_ON_ERROR)['order'];
 
         self::assertSame(200, $save->getStatusCode());
-        self::assertSame('definitiv', $saved['status']);
+        self::assertSame('definitive', $saved['status']);
         self::assertSame(2, $saved['adultsCount']);
         self::assertSame(1, $saved['childrenCount']);
         self::assertSame(2, $saved['items'][0]['quantity']);
@@ -84,7 +84,7 @@ final class ClientRoutesTest extends TestCase
         $secondOrder = json_decode((string) $second->getBody(), true, 512, JSON_THROW_ON_ERROR)['order'];
 
         self::assertSame($firstOrder['id'], $secondOrder['id']);
-        self::assertSame('provisorisch', $secondOrder['status']);
+        self::assertSame('provisional', $secondOrder['status']);
         self::assertSame('catG', $secondOrder['items'][0]['category']);
         self::assertSame(1, (int) $this->pdo->query('SELECT COUNT(*) FROM orders')->fetchColumn());
         self::assertSame(1, (int) $this->pdo->query('SELECT COUNT(*) FROM order_items')->fetchColumn());

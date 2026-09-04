@@ -54,7 +54,7 @@ final class SaveClientOrderAction
         }
 
         $session = $this->session ?? new SessionService();
-        $status = $session->getFairgateUserExists() === true ? 'definitiv' : 'provisorisch';
+        $status = $session->getFairgateUserExists() === true ? 'definitive' : 'provisional';
         try {
             $order = ($this->orders ?? new OrderRepository(Database::getConnection()))->saveForYear(
                 $userId,

@@ -16,6 +16,9 @@ import { MatSelectModule } from '@angular/material/select';
 import { Store } from '@ngrx/store';
 import { TranslatePipe } from '@ngx-translate/core';
 import { InfoBoxComponent } from '../../../../shared/components/info-box/info-box';
+import { ClientOrder, OrderCategory } from '../../../../shared/models/order.model';
+import { OrderActions } from '../../../../store/order/order.actions';
+import { selectCurrentOrder } from '../../../../store/order/order.feature';
 import { selectFrontendPublicConfigs } from '../../../../store/frontend-config/frontend-config.feature';
 import {
   selectAuthAdultsCount,
@@ -24,7 +27,7 @@ import {
   selectAuthSalutation,
 } from '../../../../store/auth/auth.feature';
 
-export type Categorie = 'catA' | 'catB' | 'catC' | 'catD' | 'catE' | 'catF' | 'catG';
+export type Categorie = OrderCategory;
 
 interface OrderFormModel {
   manualAdultsCount: number;
@@ -59,6 +62,7 @@ export class OrderComponent {
   readonly adultsCount = this.store.selectSignal(selectAuthAdultsCount);
   readonly salutation = this.store.selectSignal(selectAuthSalutation);
   readonly publicConfigs = this.store.selectSignal(selectFrontendPublicConfigs);
+  readonly currentOrder = this.store.selectSignal(selectCurrentOrder);
   readonly categories = categories;
   readonly model = signal<OrderFormModel>({
     manualAdultsCount: 1,
@@ -79,6 +83,13 @@ export class OrderComponent {
   });
 
   constructor() {
+    this.store.dispatch(OrderActions.loadCurrent());
+    effect(() => {
+      const order = this.currentOrder();
+      if (order !== null) {
+        untracked(() => this.applyOrder(order));
+      }
+    });
     effect(() => this.resizeCategories(this.displayAdultsCount(), this.displayChildrenCount()));
   }
 
@@ -114,5 +125,21 @@ export class OrderComponent {
 
   private resize(values: Categorie[], count: number): Categorie[] {
     return Array.from({ length: Math.max(0, count) }, (_, index) => values[index] ?? 'catA');
+  }
+
+  private applyOrder(order: ClientOrder): void {
+    this.model.set({
+      manualAdultsCount: order.adultsCount,
+      manualChildrenCount: order.childrenCount,
+      adults: this.categoriesFor(order, 'adult', order.adultsCount),
+      children: this.categoriesFor(order, 'child', order.childrenCount),
+    });
+  }
+
+  private categoriesFor(order: ClientOrder, personType: 'adult' | 'child', count: number): Categorie[] {
+    return order.items
+      .filter((item) => item.personType === personType)
+      .flatMap((item) => Array.from({ length: item.quantity }, () => item.category))
+      .slice(0, count);
   }
 }

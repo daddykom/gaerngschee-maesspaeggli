@@ -228,6 +228,14 @@ Für die Weiterverarbeitung gelten folgende Regeln:
 - Nach dem Token-Login werden JWT, Client-Gruppe und die berechneten Fairgate-Werte an das Frontend geliefert.
 - Das Frontend verarbeitet den Link unter `/client-login` und navigiert nach erfolgreichem Login zu `/order`.
 
+### Bestellstatus
+
+- Bestellungen werden pro Kunde und Kalenderjahr gespeichert.
+- Die technischen Statuswerte lauten `provisional` und `definitive`.
+- `fairgateUserExists = true` ergibt beim Speichern den Status `definitive`.
+- Jeder andere Fairgate-Status ergibt beim Speichern den Status `provisional`.
+- Sichtbare Übersetzungen dürfen diese technischen Werte lokalisieren.
+
 ## Arbeitsweise & Verhaltensregeln
 
 ### 1. Eigenständige Änderungen vermeiden

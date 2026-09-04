@@ -3,6 +3,7 @@ import { provideTranslateService } from '@ngx-translate/core';
 import { provideMockStore } from '@ngrx/store/testing';
 import { initialState } from '../../../../store/auth/auth.state';
 import { initialState as frontendConfigInitialState } from '../../../../store/frontend-config/frontend-config.state';
+import { initialState as orderInitialState } from '../../../../store/order/order.state';
 import { OrderComponent } from './order.component';
 
 describe('OrderComponent', () => {
@@ -23,6 +24,7 @@ describe('OrderComponent', () => {
               salutation: 'Hallo',
             },
             frontendConfig: frontendConfigInitialState,
+            order: orderInitialState,
           },
         }),
       ],
