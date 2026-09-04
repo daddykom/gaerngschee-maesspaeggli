@@ -40,7 +40,7 @@
         />
       </div>
 
-      <button mat-flat-button type="submit" class="continue-button">
+      <button mat-flat-button type="submit" class="continue-button" (click)="$event.preventDefault(); submit()">
         {{ 'app.anmeldung.continue' | translate }}
       </button>
     </form>

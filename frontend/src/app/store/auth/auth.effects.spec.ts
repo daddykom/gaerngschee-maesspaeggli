@@ -164,7 +164,7 @@ describe('loginEffect', () => {
     const effect$ = TestBed.runInInjectionContext(() => logoutEffect());
     const result = firstValueFrom(effect$);
 
-    actions$.next(AuthActions.logout());
+    actions$.next(AuthActions.logoutRequested({ redirectTo: '/login' }));
 
     expect(authService.logout).toHaveBeenCalledTimes(1);
     await expect(result).resolves.toEqual(NavigationActions.navigate({ target: '/login' }));
@@ -175,7 +175,7 @@ describe('loginEffect', () => {
     const effect$ = TestBed.runInInjectionContext(() => logoutEffect());
     const result = firstValueFrom(effect$);
 
-    actions$.next(AuthActions.logout());
+    actions$.next(AuthActions.logoutRequested({ redirectTo: '/login' }));
 
     expect(authService.logout).toHaveBeenCalledTimes(1);
     await expect(result).resolves.toEqual(NavigationActions.navigate({ target: '/login' }));
@@ -190,7 +190,7 @@ describe('loginEffect', () => {
     const loginSubscription = persistResult.subscribe();
     actions$.next(AuthActions.loginSuccess({ token: 'token', userId: 'user-1', group: 'admin', requiredPasswordReset: false }));
     const logoutSubscription = clearResult.subscribe();
-    actions$.next(AuthActions.logout());
+    actions$.next(AuthActions.logoutRequested({ redirectTo: '/login' }));
 
     expect(persist).toHaveBeenCalledWith({ token: 'token', userId: 'user-1', group: 'admin', fairgateUserExists: null, childrenCount: null, adultsCount: null, salutation: null });
     expect(clear).toHaveBeenCalledTimes(1);

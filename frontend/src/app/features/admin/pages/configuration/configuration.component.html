@@ -52,7 +52,7 @@
       }
 
       <div class="gl-cluster">
-        <button mat-flat-button color="primary" type="submit" [disabled]="saving() || loading()">
+        <button mat-flat-button color="primary" type="submit" [disabled]="saving() || loading()" (click)="$event.preventDefault(); onSubmit()">
           {{ 'app.admin.configuration.save' | translate }}
         </button>
       </div>

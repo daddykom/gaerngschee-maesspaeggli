@@ -8,6 +8,7 @@ import { ClientOrder, OrderForm } from '../../shared/models/order.model';
 import { selectOrderForm } from './order.feature';
 import { OrderService } from '../../shared/services/order.service';
 import { NotificationActions } from '../notification/notification.actions';
+import { AuthActions } from '../auth/auth.actions';
 import { OrderActions } from './order.actions';
 
 const errorCode = (error: HttpErrorResponse): string =>
@@ -52,7 +53,7 @@ export const orderNotificationEffect = createEffect(
         variant: 'success',
         titleKey: 'app.order.notifications.successTitle',
         messageKey: 'app.order.notifications.success',
-        preserveOnRoutes: ['/order'],
+         preserveOnRoutes: ['/start'],
       })
       : action.type === OrderActions.orderLoadFailed.type
         ? NotificationActions.show({
@@ -71,7 +72,15 @@ export const orderNotificationEffect = createEffect(
   { functional: true },
 );
 
-export const orderEffects = { loadCurrentOrderEffect, saveCurrentOrderEffect, orderNotificationEffect };
+export const orderLogoutEffect = createEffect(
+  (actions$ = inject(Actions)) => actions$.pipe(
+    ofType(OrderActions.orderSaved),
+    map(() => AuthActions.logoutRequested({ redirectTo: '/start' })),
+  ),
+  { functional: true },
+);
+
+export const orderEffects = { loadCurrentOrderEffect, saveCurrentOrderEffect, orderNotificationEffect, orderLogoutEffect };
 
 const orderForm = (order: ClientOrder | null, adultsCount: number, childrenCount: number): OrderForm => ({
   adultsCount: order?.adultsCount ?? adultsCount,

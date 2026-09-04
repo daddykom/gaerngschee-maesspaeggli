@@ -134,7 +134,7 @@
     </section>
 
     <div class="gl-cluster">
-      <button mat-flat-button color="primary" type="submit">
+      <button mat-flat-button color="primary" type="submit" (click)="$event.preventDefault(); onSubmit()">
         {{ 'app.order.submit' | translate }}
       </button>
     </div>

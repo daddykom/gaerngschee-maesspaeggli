@@ -56,7 +56,7 @@ export class App {
   readonly isAdmin = computed(() => this.authGroup() === 'admin');
 
   logout(): void {
-    this.store.dispatch(AuthActions.logout());
+    this.store.dispatch(AuthActions.logoutRequested({ redirectTo: '/login' }));
   }
 
   readonly isAdminRoute = computed(() => {

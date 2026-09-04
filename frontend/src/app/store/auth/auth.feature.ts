@@ -82,7 +82,7 @@ export const authFeature = createFeature({
       passwordChangeLoading: false,
       passwordChangeErrorCode: errorCode,
     })),
-    on(AuthActions.logout, () => initialState),
+    on(AuthActions.logoutRequested, () => initialState),
   ),
 });
 

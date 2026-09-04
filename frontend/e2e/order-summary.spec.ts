@@ -65,6 +65,7 @@ test.describe('Order summary route', () => {
     await page.getByRole('button', { name: 'Weiter' }).click();
     await page.waitForURL('**/order/summary');
     await page.getByRole('button', { name: 'Bestellen' }).click();
+    await page.waitForURL('**/start');
     await expect(page.getByText('Bestellung gespeichert')).toBeVisible();
   });
 });

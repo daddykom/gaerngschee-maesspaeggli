@@ -17,15 +17,16 @@ export class ControlErrorComponent {
 
   readonly firstErrorKey = computed(() => {
     this.statusVersion();
-    const control = this.control();
+      const control = this.control();
 
-    if (this.isSignalField(control)) {
-      const errors = control.errors();
-      if (errors.length > 0 && (control.touched() || (control.required() && !control.value()))) {
-        return errors[0]?.kind ?? null;
+      if (this.isSignalField(control)) {
+        if (!control.touched()) {
+          return null;
+        }
+
+        const errors = control.errors();
+        return errors[0]?.kind ?? (control.required() && !control.value() ? 'required' : null);
       }
-      return control.required() && !control.value() ? 'required' : null;
-    }
 
     if (!control.touched || !control.errors) {
       return null;
@@ -43,6 +44,10 @@ export class ControlErrorComponent {
     effect((onCleanup) => {
       const control = this.control();
       if (this.isSignalField(control)) {
+        control.touched();
+        control.errors();
+        control.value();
+        this.statusVersion.update((version) => version + 1);
         return;
       }
 

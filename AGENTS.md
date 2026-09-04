@@ -70,6 +70,10 @@ See: [documents/frontend-conventions.md](./documents/frontend-conventions.md#vie
   Flags für denselben Ladeprozess sind zu vermeiden.
 - Ein separater Draft-Zustand außerhalb der eigentlichen Formularstruktur ist
   nicht zulässig.
+- Feldbezogene Validierungsfehler werden nur für `touched` Controls angezeigt.
+  Initial unberührte Controls zeigen keine Fehlermeldung. Ungültiges Absenden
+  markiert die betroffenen Controls als `touched`, damit ihre Fehler angezeigt
+  werden.
 
 ### Initiales Laden und Resolver
 

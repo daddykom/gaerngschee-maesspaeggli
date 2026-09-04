@@ -32,10 +32,12 @@ describe('PasswordChange', () => {
 
   it('requires both password fields', () => {
     component.onSubmit();
+    fixture.detectChanges();
 
     expect(component.passwordChangeForm().valid()).toBe(false);
     expect(component.passwordChangeForm.newPassword().touched()).toBe(true);
     expect(component.passwordChangeForm.passwordConfirmation().touched()).toBe(true);
+    expect(fixture.nativeElement.querySelectorAll('.control-error')).toHaveLength(2);
   });
 
   it('rejects different passwords', () => {

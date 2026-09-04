@@ -36,7 +36,7 @@
         <button mat-button type="button" (click)="cancel()">
           {{ 'app.admin.users.cancel' | translate }}
         </button>
-        <button mat-flat-button color="primary" type="submit" [disabled]="saving()">
+        <button mat-flat-button color="primary" type="submit" [disabled]="saving()" (click)="$event.preventDefault(); onSubmit()">
           {{ 'app.admin.users.save' | translate }}
         </button>
       </div>

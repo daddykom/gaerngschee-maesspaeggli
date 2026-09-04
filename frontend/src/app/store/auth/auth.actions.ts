@@ -22,6 +22,6 @@ export const AuthActions = createActionGroup({
     'Password Change Success': emptyProps(),
     'Password Change Failure': props<{ errorCode: string }>(),
     'Forgot Password': emptyProps(),
-    Logout: emptyProps(),
+    'Logout Requested': props<{ redirectTo: '/login' | '/start' }>(),
   },
 });

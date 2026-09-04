@@ -79,7 +79,7 @@ describe('App', () => {
 
     fixture.componentInstance.logout();
 
-    expect(dispatch).toHaveBeenCalledWith(AuthActions.logout());
+    expect(dispatch).toHaveBeenCalledWith(AuthActions.logoutRequested({ redirectTo: '/login' }));
   });
 
   it('renders route metadata and the admin menu on an admin route', async () => {

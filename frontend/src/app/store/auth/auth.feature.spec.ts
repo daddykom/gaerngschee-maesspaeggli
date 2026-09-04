@@ -98,7 +98,7 @@ describe('authReducer', () => {
         adultsCount: null,
         salutation: null,
       },
-      AuthActions.logout(),
+      AuthActions.logoutRequested({ redirectTo: '/login' }),
     );
 
     expect(state).toEqual(initialState);

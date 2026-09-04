@@ -33,6 +33,7 @@
             mat-flat-button
             color="primary"
             type="submit"
+            (click)="$event.preventDefault(); onSubmit()"
             [disabled]="loading()"
             [attr.aria-busy]="loading()"
           >
