@@ -16,7 +16,8 @@ final class OrderRepository
     public function findForYear(string $userId, int $year): ?array
     {
         $statement = $this->pdo->prepare(
-            'SELECT id, user_id, year, status, adults_count, children_count, created_at, updated_at
+            'SELECT id, user_id, year, status, adults_count, children_count,
+                    confirmation_email_sent_at, created_at, updated_at
              FROM orders
              WHERE user_id = :user_id AND year = :year',
         );
@@ -41,6 +42,7 @@ final class OrderRepository
             'status' => $order['status'],
             'adultsCount' => (int) $order['adults_count'],
             'childrenCount' => (int) $order['children_count'],
+            'confirmationEmailSentAt' => $order['confirmation_email_sent_at'],
             'items' => array_map(
                 static fn (array $item): array => [
                     'personType' => $item['person_type'],
@@ -77,7 +79,8 @@ final class OrderRepository
                 $update = $this->pdo->prepare(
                     'UPDATE orders
                      SET status = :status, adults_count = :adults_count,
-                         children_count = :children_count, updated_at = CURRENT_TIMESTAMP
+                          children_count = :children_count, updated_at = CURRENT_TIMESTAMP
+                          , confirmation_email_sent_at = NULL
                      WHERE id = :id',
                 );
                 $update->execute([
@@ -125,6 +128,14 @@ final class OrderRepository
         }
 
         return $this->findForYear($userId, $year) ?? throw new \RuntimeException('Order was not saved.');
+    }
+
+    public function markConfirmationEmailSent(string $orderId): void
+    {
+        $statement = $this->pdo->prepare(
+            'UPDATE orders SET confirmation_email_sent_at = CURRENT_TIMESTAMP WHERE id = :id',
+        );
+        $statement->execute(['id' => $orderId]);
     }
 
     private function createUuid(): string

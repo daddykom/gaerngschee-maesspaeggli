@@ -51,6 +51,7 @@ final class StartRegistrationActionTest extends TestCase
                 public function sendAnmeldung(string $recipient, \App\Registration\Services\AnmeldungMailVariant $variant, string $locale = 'de', ?string $loginUrl = null): void {}
                 public function sendUserCreated(string $recipient, string $temporaryPassword): void {}
                 public function sendUserEmailChanged(string $recipient): void {}
+                public function sendOrderConfirmation(string $recipient, array $order): void {}
             },
         );
     }

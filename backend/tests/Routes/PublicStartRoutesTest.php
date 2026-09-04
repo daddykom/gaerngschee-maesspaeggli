@@ -144,9 +144,13 @@ final class PublicStartRoutesTest extends TestCase
                     {
                     }
 
-                    public function sendUserEmailChanged(string $recipient): void
-                    {
-                    }
+                     public function sendUserEmailChanged(string $recipient): void
+                     {
+                     }
+
+                     public function sendOrderConfirmation(string $recipient, array $order): void
+                     {
+                     }
                 }
                 : new class () implements EmailSenderInterface {
                 public function sendAnmeldung(string $recipient, \App\Registration\Services\AnmeldungMailVariant $variant, string $locale = 'de', ?string $loginUrl = null): void
@@ -157,10 +161,14 @@ final class PublicStartRoutesTest extends TestCase
                 {
                 }
 
-                public function sendUserEmailChanged(string $recipient): void
-                {
-                }
-            },
+                 public function sendUserEmailChanged(string $recipient): void
+                 {
+                 }
+
+                 public function sendOrderConfirmation(string $recipient, array $order): void
+                 {
+                 }
+             },
         );
     }
 

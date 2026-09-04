@@ -106,6 +106,28 @@ final class EmailSender implements EmailSenderInterface
         $this->sendUserEmail($recipient, 'Deine E-Mail-Adresse wurde geändert', $html);
     }
 
+    /** @param array<string, mixed> $order */
+    public function sendOrderConfirmation(string $recipient, array $order): void
+    {
+        $status = $order['status'] === 'definitive' ? 'definitive' : 'provisional';
+        $order['items'] = array_map(function (array $item): array {
+            $item['categoryLabel'] = $this->translator->trans(
+                'order.category.' . $item['category'],
+                [],
+                null,
+                'de',
+            );
+            $item['personTypeLabel'] = $item['personType'] === 'adult' ? 'Erwachsene' : 'Kinder';
+            return $item;
+        }, $order['items'] ?? []);
+        $html = $this->twig->render('order-confirmation-' . $status . '.html.twig', [
+            'ORDER' => $order,
+        ]);
+        $subject = $this->translator->trans('order.confirmation.' . $status . '.subject', [], null, 'de');
+
+        $this->sendUserEmail($recipient, $subject, $html);
+    }
+
     private function sendUserEmail(string $recipient, string $subject, string $html): void
     {
         $message = (new Email())

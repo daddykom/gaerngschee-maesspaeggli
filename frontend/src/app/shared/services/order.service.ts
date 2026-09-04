@@ -9,10 +9,10 @@ export class OrderService {
   private readonly http = inject(HttpClient);
 
   getCurrent(): Observable<ClientOrderResponse> {
-    return this.http.get<ClientOrderResponse>(`${environment.apiUrl}/client/order`);
+    return this.http.get<ClientOrderResponse>(`${environment.apiUrl}/client/order`, { withCredentials: true });
   }
 
   saveCurrent(form: OrderForm): Observable<ClientOrderResponse> {
-    return this.http.put<ClientOrderResponse>(`${environment.apiUrl}/client/order`, form);
+    return this.http.put<ClientOrderResponse>(`${environment.apiUrl}/client/order`, form, { withCredentials: true });
   }
 }

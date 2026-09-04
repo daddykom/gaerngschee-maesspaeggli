@@ -17,4 +17,7 @@ interface EmailSenderInterface
     public function sendUserCreated(string $recipient, string $temporaryPassword): void;
 
     public function sendUserEmailChanged(string $recipient): void;
+
+    /** @param array<string, mixed> $order */
+    public function sendOrderConfirmation(string $recipient, array $order): void;
 }

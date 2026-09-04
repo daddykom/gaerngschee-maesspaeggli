@@ -82,6 +82,34 @@ final class EmailSenderTest extends TestCase
         );
     }
 
+    public function testSendOrderConfirmationRendersDefinitiveOrder(): void
+    {
+        $mailer = $this->createMock(MailerInterface::class);
+        $mailer->expects(self::once())
+            ->method('send')
+            ->with(self::callback(static function (Email $email): bool {
+                self::assertSame('client@example.com', $email->getTo()[0]->getAddress());
+                self::assertSame('Deine Mässpäggli-Bestellung ist definitiv bestätigt', $email->getSubject());
+                self::assertStringContainsString('definitiv bestätigt', $email->getHtmlBody());
+                self::assertStringContainsString('Erwachsene ruhig: 2', $email->getHtmlBody());
+                self::assertStringContainsString('Barcode', $email->getHtmlBody());
+
+                return true;
+            }));
+
+        $sender = new EmailSender($mailer, 'noreply@example.com', 'Gärngschee-Mässpäggli');
+
+        $sender->sendOrderConfirmation('client@example.com', [
+            'year' => 2026,
+            'status' => 'definitive',
+            'adultsCount' => 2,
+            'childrenCount' => 0,
+            'items' => [
+                ['personType' => 'adult', 'category' => 'catA', 'quantity' => 2],
+            ],
+        ]);
+    }
+
     public function testSendUserEmailChangedNotifiesNewAddress(): void
     {
         $mailer = $this->createMock(MailerInterface::class);

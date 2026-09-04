@@ -9,6 +9,9 @@ use App\Registration\Data\OrderRepository;
 use App\Shared\Database\Database;
 use App\Shared\Http\JsonRequest;
 use App\Shared\Http\JsonResponse;
+use App\Shared\Mail\EmailSender;
+use App\Shared\Mail\EmailSenderInterface;
+use App\Users\Data\UserRepository;
 use DateTimeImmutable;
 use DateTimeZone;
 use Psr\Http\Message\ResponseInterface;
@@ -22,6 +25,8 @@ final class SaveClientOrderAction
     public function __construct(
         private readonly ?OrderRepository $orders = null,
         private readonly ?SessionService $session = null,
+        private readonly ?UserRepository $users = null,
+        private readonly ?EmailSenderInterface $emails = null,
     ) {
     }
 
@@ -53,6 +58,11 @@ final class SaveClientOrderAction
             }
         }
 
+        $user = ($this->users ?? new UserRepository())->findById($userId);
+        if (!is_array($user) || !is_string($user['email'] ?? null)) {
+            return JsonResponse::error($response, 'NOT_FOUND', 404);
+        }
+
         $session = $this->session ?? new SessionService();
         $status = $session->getFairgateUserExists() === true ? 'definitive' : 'provisional';
         try {
@@ -68,7 +78,21 @@ final class SaveClientOrderAction
             return JsonResponse::error($response, 'ORDER_SAVE_FAILED', 500);
         }
 
-        return JsonResponse::success($response, ['order' => $order]);
+        $emailSent = false;
+        if (is_array($user) && is_string($user['email'] ?? null)) {
+            try {
+                ($this->emails ?? new EmailSender())->sendOrderConfirmation($user['email'], $order);
+                ($this->orders ?? new OrderRepository(Database::getConnection()))
+                    ->markConfirmationEmailSent((string) $order['id']);
+                $order = ($this->orders ?? new OrderRepository(Database::getConnection()))
+                    ->findForYear($userId, $this->currentYear()) ?? $order;
+                $emailSent = true;
+            } catch (Throwable) {
+                $emailSent = false;
+            }
+        }
+
+        return JsonResponse::success($response, ['order' => $order, 'emailSent' => $emailSent]);
     }
 
     private function count(mixed $value): ?int

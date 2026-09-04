@@ -13,12 +13,14 @@ use PHPUnit\Framework\TestCase;
 use Slim\Factory\AppFactory;
 use Slim\Psr7\Factory\ServerRequestFactory;
 use Tests\Support\TestDatabase;
+use Tests\Support\RecordingEmailSender;
 
 final class ClientRoutesTest extends TestCase
 {
     private PDO $pdo;
     private UserRepository $users;
     private OrderRepository $orders;
+    private RecordingEmailSender $emails;
 
     protected function setUp(): void
     {
@@ -26,6 +28,7 @@ final class ClientRoutesTest extends TestCase
         $this->pdo = TestDatabase::create();
         $this->users = new UserRepository($this->pdo);
         $this->orders = new OrderRepository($this->pdo);
+        $this->emails = new RecordingEmailSender();
     }
 
     protected function tearDown(): void
@@ -52,6 +55,9 @@ final class ClientRoutesTest extends TestCase
         self::assertSame(2, $saved['adultsCount']);
         self::assertSame(1, $saved['childrenCount']);
         self::assertSame(2, $saved['items'][0]['quantity']);
+        self::assertTrue($this->emails->orderConfirmations !== []);
+        self::assertSame('client@example.com', $this->emails->orderConfirmations[0]['recipient']);
+        self::assertNotNull($saved['confirmationEmailSentAt']);
 
         $loadedResponse = $app->handle($this->request('GET'));
         $loaded = json_decode((string) $loadedResponse->getBody(), true, 512, JSON_THROW_ON_ERROR)['order'];
@@ -88,6 +94,26 @@ final class ClientRoutesTest extends TestCase
         self::assertSame('catG', $secondOrder['items'][0]['category']);
         self::assertSame(1, (int) $this->pdo->query('SELECT COUNT(*) FROM orders')->fetchColumn());
         self::assertSame(1, (int) $this->pdo->query('SELECT COUNT(*) FROM order_items')->fetchColumn());
+    }
+
+    public function testFailedConfirmationEmailLeavesTheOrderSavedAndTimestampNull(): void
+    {
+        $client = $this->users->createUser('client@example.com', 'secret', 'client');
+        (new SessionService())->setUser($client['id'], 'client', true);
+        $this->emails->failOrderConfirmation = true;
+
+        $response = $this->createApp()->handle($this->request('PUT', [
+            'adultsCount' => 1,
+            'childrenCount' => 0,
+            'adults' => ['catA'],
+            'children' => [],
+        ]));
+        $data = json_decode((string) $response->getBody(), true, 512, JSON_THROW_ON_ERROR);
+
+        self::assertSame(200, $response->getStatusCode());
+        self::assertFalse($data['emailSent']);
+        self::assertNull($data['order']['confirmationEmailSentAt']);
+        self::assertSame(1, (int) $this->pdo->query('SELECT COUNT(*) FROM orders')->fetchColumn());
     }
 
     public function testUnauthenticatedRequestsAreRejected(): void
@@ -140,7 +166,7 @@ final class ClientRoutesTest extends TestCase
     {
         $app = AppFactory::create();
         $app->addRoutingMiddleware();
-        ClientRoutes::register($app, $this->orders, $this->users);
+        ClientRoutes::register($app, $this->orders, $this->users, $this->emails);
 
         return $app;
     }

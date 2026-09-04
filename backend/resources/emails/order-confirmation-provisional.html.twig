@@ -1,0 +1,15 @@
+<!doctype html>
+<html lang="de">
+<body style="font-family:Arial,Helvetica,sans-serif; color:#10213c;">
+  <h1>Deine Mässpäggli-Bestellung ist provisorisch bestätigt</h1>
+  <p>Deine Bestellung für das Jahr {{ ORDER.year }} wurde gespeichert und provisorisch bestätigt.</p>
+  <p>Die Bestellung wird noch geprüft. Sobald die Prüfung abgeschlossen ist, erhältst Du eine definitive Bestätigung.</p>
+  <h2>Bestellübersicht</h2>
+  <p>Erwachsene: {{ ORDER.adultsCount }}<br>Kinder: {{ ORDER.childrenCount }}</p>
+  <ul>
+    {% for item in ORDER.items %}
+      <li>{{ item.personTypeLabel }} - {{ item.categoryLabel }}: {{ item.quantity }}</li>
+    {% endfor %}
+  </ul>
+</body>
+</html>
