@@ -53,18 +53,29 @@
                 <mat-select
                   [id]="personId('adult', $index)"
                   [attr.aria-labelledby]="personLabelId('adult', $index)"
-                  [formField]="adultField($index)"
-                >
-                  <mat-select-trigger>
-                    {{ 'app.order.categories.options.' + category | translate }}
-                  </mat-select-trigger>
-                  @for (option of categories; track option) {
-                    <mat-option [value]="option">
-                      {{ 'app.order.categories.options.' + option | translate }}
-                    </mat-option>
-                  }
-                </mat-select>
-              </mat-form-field>
+                   [formField]="adultField($index)"
+                 >
+                   <mat-select-trigger>
+                     @if (category === '') {
+                       {{ 'app.order.categories.pleaseSelect' | translate }}
+                     } @else {
+                       {{ 'app.order.categories.options.' + category | translate }}
+                     }
+                   </mat-select-trigger>
+                   <mat-option value="">
+                     {{ 'app.order.categories.pleaseSelect' | translate }}
+                   </mat-option>
+                   @for (option of categories; track option) {
+                     <mat-option [value]="option">
+                       {{ 'app.order.categories.options.' + option | translate }}
+                     </mat-option>
+                   }
+                 </mat-select>
+               </mat-form-field>
+               <app-control-error
+                 [control]="adultField($index)()"
+                 translationPrefix="app.order.categories.errors"
+               />
             </li>
           } @empty {
             <li class="person-list__empty">{{ 'app.order.categories.noAdults' | translate }}</li>
@@ -88,18 +99,29 @@
                 <mat-select
                   [id]="personId('child', $index)"
                   [attr.aria-labelledby]="personLabelId('child', $index)"
-                   [formField]="childField($index)"
-                >
-                  <mat-select-trigger>
-                    {{ 'app.order.categories.options.' + category | translate }}
-                  </mat-select-trigger>
-                  @for (option of categories; track option) {
-                    <mat-option [value]="option">
-                      {{ 'app.order.categories.options.' + option | translate }}
-                    </mat-option>
-                  }
-                </mat-select>
-              </mat-form-field>
+                    [formField]="childField($index)"
+                 >
+                   <mat-select-trigger>
+                     @if (category === '') {
+                       {{ 'app.order.categories.pleaseSelect' | translate }}
+                     } @else {
+                       {{ 'app.order.categories.options.' + category | translate }}
+                     }
+                   </mat-select-trigger>
+                   <mat-option value="">
+                     {{ 'app.order.categories.pleaseSelect' | translate }}
+                   </mat-option>
+                   @for (option of categories; track option) {
+                     <mat-option [value]="option">
+                       {{ 'app.order.categories.options.' + option | translate }}
+                     </mat-option>
+                   }
+                 </mat-select>
+               </mat-form-field>
+               <app-control-error
+                 [control]="childField($index)()"
+                 translationPrefix="app.order.categories.errors"
+               />
             </li>
           } @empty {
             <li class="person-list__empty">{{ 'app.order.categories.noChildren' | translate }}</li>

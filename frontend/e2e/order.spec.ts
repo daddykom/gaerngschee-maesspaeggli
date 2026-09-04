@@ -66,6 +66,10 @@ test.describe('Order route', () => {
     await counts.nth(1).fill('3');
 
     await expect(page.getByRole('combobox')).toHaveCount(5);
+    await expect(page.getByText('Bitte auswählen', { exact: true })).toHaveCount(5);
+    await page.getByRole('button', { name: 'Weiter' }).click();
+    await expect(page.getByRole('alert')).toHaveCount(5);
+    await expect(page).toHaveURL('/order');
     await expect(page.getByText('Anzahl Personen erfassen')).toBeVisible();
     await expect(page.getByText('Lieber Besteller', { exact: true })).toBeVisible();
     await expect(page.getByText('Wir können Dich leider nicht bei Fairgate finden.')).toBeVisible();

@@ -78,6 +78,10 @@
         "adult": "Erwachsene Person",
         "child": "Kind",
         "category": "Mässpäggli-Kategorie",
+        "pleaseSelect": "Bitte auswählen",
+        "errors": {
+          "required": "Bitte auswählen."
+        },
         "adult": "Erwachsene Person",
         "child": "Kind",
         "options": {

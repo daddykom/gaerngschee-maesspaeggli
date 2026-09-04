@@ -42,4 +42,14 @@ describe('OrderComponent', () => {
     expect(text).toContain('app.order.intro');
     expect(text).toContain('app.order.categories.title');
   });
+
+  it('requires a category for every person before continuing', () => {
+    const component = fixture.componentInstance;
+
+    expect(component.form().valid()).toBe(false);
+
+    component.onSubmit();
+
+    expect(component.adultField(0)().touched()).toBe(true);
+  });
 });

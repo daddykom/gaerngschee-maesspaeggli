@@ -7,7 +7,7 @@ import {
   signal,
   untracked,
 } from '@angular/core';
-import { FieldTree, form, FormField } from '@angular/forms/signals';
+import { applyEach, FieldTree, form, FormField, required } from '@angular/forms/signals';
 import { MatButtonModule } from '@angular/material/button';
 import { MatDividerModule } from '@angular/material/divider';
 import { MatFormFieldModule } from '@angular/material/form-field';
@@ -16,6 +16,7 @@ import { MatSelectModule } from '@angular/material/select';
 import { Store } from '@ngrx/store';
 import { TranslatePipe } from '@ngx-translate/core';
 import { InfoBoxComponent } from '../../../../shared/components/info-box/info-box';
+import { ControlErrorComponent } from '../../../../shared/components/control-error/control-error';
 import { ClientOrder, OrderCategory } from '../../../../shared/models/order.model';
 import { OrderActions } from '../../../../store/order/order.actions';
 import { selectCurrentOrder } from '../../../../store/order/order.feature';
@@ -27,7 +28,7 @@ import {
   selectAuthSalutation,
 } from '../../../../store/auth/auth.feature';
 
-export type Categorie = OrderCategory;
+export type Categorie = OrderCategory | '';
 
 interface OrderFormModel {
   manualAdultsCount: number;
@@ -43,6 +44,7 @@ export const categories: Categorie[] = ['catA', 'catB', 'catC', 'catD', 'catE', 
   standalone: true,
   imports: [
     FormField,
+    ControlErrorComponent,
     InfoBoxComponent,
     MatButtonModule,
     MatDividerModule,
@@ -70,7 +72,10 @@ export class OrderComponent {
     adults: [],
     children: [],
   });
-  readonly form = form(this.model);
+  readonly form = form(this.model, (schema) => {
+    applyEach(schema.adults, (category) => required(category));
+    applyEach(schema.children, (category) => required(category));
+  });
   readonly displayAdultsCount = computed(() =>
     this.fairgateUserExists() ? (this.adultsCount() ?? 0) : this.model().manualAdultsCount,
   );
@@ -110,7 +115,10 @@ export class OrderComponent {
   }
 
   onSubmit(): void {
-    // Ordering is intentionally not implemented yet.
+    if (!this.form().valid()) {
+      this.form().markAsTouched();
+      return;
+    }
   }
 
   private resizeCategories(adultCount: number, childCount: number): void {
@@ -124,7 +132,7 @@ export class OrderComponent {
   }
 
   private resize(values: Categorie[], count: number): Categorie[] {
-    return Array.from({ length: Math.max(0, count) }, (_, index) => values[index] ?? 'catA');
+    return Array.from({ length: Math.max(0, count) }, (_, index) => values[index] ?? '');
   }
 
   private applyOrder(order: ClientOrder): void {
