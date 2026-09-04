@@ -4,13 +4,11 @@ declare(strict_types=1);
 
 namespace Tests\Routes;
 
-use App\Users\Data\UserRepository;
 use App\Configuration\Data\FrontendConfigRepository;
 use App\Routes\PublicRoutes;
 use App\Registration\Services\AnmeldungService;
 use App\Registration\Services\RegistrationTokenService;
 use App\Shared\Mail\EmailSenderInterface;
-use App\Fairgate\Services\FairgateContactProvider;
 use Tests\Support\TestDatabase;
 use PDO;
 use PHPUnit\Framework\TestCase;
@@ -118,21 +116,7 @@ final class PublicStartRoutesTest extends TestCase
 
     private function service(bool $failToSend = false): AnmeldungService
     {
-        $pdo = TestDatabase::create();
-
         return new AnmeldungService(
-            new UserRepository($pdo),
-            new class () implements FairgateContactProvider {
-                public function hasContactByEmail(string $email): bool
-                {
-                    return false;
-                }
-
-                public function findContactDataByEmail(string $email): array
-                {
-                    return ['success' => true, 'data' => null];
-                }
-            },
             $failToSend
                 ? new class () implements EmailSenderInterface {
                     public function sendAnmeldung(string $recipient, \App\Registration\Services\AnmeldungMailVariant $variant, string $locale = 'de', ?string $loginUrl = null): void

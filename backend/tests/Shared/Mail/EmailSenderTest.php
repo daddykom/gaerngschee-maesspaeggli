@@ -6,20 +6,18 @@ namespace Tests\Shared\Mail;
 
 use App\Registration\Services\AnmeldungMailVariant;
 use App\Shared\Mail\EmailSender;
-use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\TestCase;
 use Symfony\Component\Mailer\MailerInterface;
 use Symfony\Component\Mime\Email;
 
 final class EmailSenderTest extends TestCase
 {
-    #[DataProvider('mailVariants')]
-    public function testSendAnmeldungRendersVariant(
-        AnmeldungMailVariant $variant,
-        string $subject,
-        string $content,
-        string $link,
-    ): void {
+    public function testSendAnmeldungRendersClientOrderVariant(): void
+    {
+        $variant = AnmeldungMailVariant::ClientOrder;
+        $subject = 'Dein Link zur Mässpäggli-Bestellung';
+        $content = 'Jetzt Mässpäggli bestellen';
+        $link = 'http://localhost:4200/login';
         $mailer = $this->createMock(MailerInterface::class);
         $mailer->expects(self::once())
             ->method('send')
@@ -128,33 +126,4 @@ final class EmailSenderTest extends TestCase
         $sender->sendUserEmailChanged('new@example.com');
     }
 
-    public static function mailVariants(): array
-    {
-        return [
-            [
-                AnmeldungMailVariant::UserAndFairgate,
-                'Dein Mässpäggli-Konto ist bereit',
-                'Du hast bereits ein Konto',
-                'http://localhost:4200/login',
-            ],
-            [
-                AnmeldungMailVariant::UserMissingFairgate,
-                'Erstelle dein Mässpäggli-Konto',
-                'Erstelle jetzt dein Konto',
-                'http://localhost:4200/register',
-            ],
-            [
-                AnmeldungMailVariant::UserMissingFairgateMissing,
-                'Registriere dich zuerst bei Fairgate',
-                'Du bist noch nicht bei Fairgate registriert.',
-                'https://www.fairgate.ch',
-            ],
-            [
-                AnmeldungMailVariant::UserAndFairgateMissing,
-                'Melde dich zuerst bei Fairgate an',
-                'Dein Konto besteht bereits.',
-                'https://www.fairgate.ch',
-            ],
-        ];
-    }
 }

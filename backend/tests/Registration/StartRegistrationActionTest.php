@@ -7,9 +7,7 @@ namespace Tests\Registration;
 use App\Registration\Actions\StartRegistrationAction;
 use App\Registration\Services\AnmeldungService;
 use App\Registration\Services\RegistrationTokenService;
-use App\Fairgate\Services\FairgateContactProvider;
 use App\Shared\Mail\EmailSenderInterface;
-use App\Users\Data\UserRepository;
 use Tests\Support\TestDatabase;
 use PHPUnit\Framework\TestCase;
 use Slim\Psr7\Response;
@@ -39,14 +37,7 @@ final class StartRegistrationActionTest extends TestCase
 
     private function service(): AnmeldungService
     {
-        $pdo = TestDatabase::create();
-
         return new AnmeldungService(
-            new UserRepository($pdo),
-            new class () implements FairgateContactProvider {
-                public function hasContactByEmail(string $email): bool { return false; }
-                public function findContactDataByEmail(string $email): array { return ['success' => true, 'data' => null]; }
-            },
             new class () implements EmailSenderInterface {
                 public function sendAnmeldung(string $recipient, \App\Registration\Services\AnmeldungMailVariant $variant, string $locale = 'de', ?string $loginUrl = null): void {}
                 public function sendUserCreated(string $recipient, string $temporaryPassword): void {}

@@ -4,11 +4,9 @@ declare(strict_types=1);
 
 namespace App\Registration\Actions;
 
-use App\Users\Data\UserRepository;
 use App\Registration\Services\AnmeldungService;
 use App\Registration\Services\RegistrationTokenService;
 use App\Shared\Mail\EmailSender;
-use App\Fairgate\Services\FairgateContactProviderFactory;
 use App\Shared\Http\JsonRequest;
 use App\Shared\Http\JsonResponse;
 use Psr\Http\Message\ResponseInterface;
@@ -52,6 +50,6 @@ final class StartRegistrationAction
 
     private static function createService(): AnmeldungService
     {
-        return new AnmeldungService(new UserRepository(), FairgateContactProviderFactory::create(), new EmailSender());
+        return new AnmeldungService(new EmailSender());
     }
 }
