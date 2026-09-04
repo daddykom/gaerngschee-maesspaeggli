@@ -36,6 +36,12 @@ body {
   font-family: 'Inter', sans-serif;
 }
 
+h2,
+h3,
+h4 {
+  margin: 0;
+}
+
 :root {
   --gl-space-sm: 0.5rem;
   --gl-space-md: 1rem;
