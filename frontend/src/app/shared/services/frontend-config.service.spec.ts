@@ -26,6 +26,15 @@ describe('FrontendConfigService', () => {
     request.flush(response);
   });
 
+  it('lists public frontend configuration', () => {
+    const response = [{ variableName: 'fairgate_url', value: 'https://fairgate.example' }];
+    service.listPublic().subscribe((value) => expect(value).toEqual(response));
+
+    const request = httpTesting.expectOne('http://localhost:8080/public/configuration');
+    expect(request.request.method).toBe('GET');
+    request.flush(response);
+  });
+
   it('updates a configuration value', () => {
     service.update('languages', ['de', 'fr']).subscribe();
 

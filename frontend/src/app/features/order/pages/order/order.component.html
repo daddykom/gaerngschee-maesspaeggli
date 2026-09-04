@@ -1,17 +1,14 @@
 <section class="gl-stack gl-stack--section">
-  <div class="order-intro">
-    <p class="order-intro__salutation">{{ salutation() }}</p>
-    <p class="order-intro__description">
-      {{
-        'app.order.intro'
-          | translate: { adults: displayAdultsCount(), children: displayChildrenCount() }
-      }}
-    </p>
-    <p class="order-intro__instruction">{{ 'app.order.introInstruction' | translate }}</p>
-  </div>
-
   <form class="order-form gl-stack gl-stack--section" (submit)="$event.preventDefault(); onSubmit()">
     @if (!fairgateUserExists()) {
+      <app-info-box [title]="'app.order.noFairgate.title' | translate">
+        <p
+          [innerHTML]="
+            'app.order.noFairgate.message' | translate: { fairgateUrl: fairgateUrl() }
+          "
+        ></p>
+      </app-info-box>
+
       <section class="order-section gl-stack gl-stack--group" aria-labelledby="manual-counts-heading">
         <h2 id="manual-counts-heading">{{ 'app.order.manualCounts.title' | translate }}</h2>
         <p>{{ 'app.order.manualCounts.description' | translate }}</p>
@@ -27,6 +24,17 @@
         </div>
       </section>
     }
+
+    <div class="order-intro">
+      <p class="order-intro__salutation">{{ salutation() }}</p>
+      <p class="order-intro__description">
+        {{
+          'app.order.intro'
+            | translate: { adults: displayAdultsCount(), children: displayChildrenCount() }
+        }}
+      </p>
+      <p class="order-intro__instruction">{{ 'app.order.introInstruction' | translate }}</p>
+    </div>
 
     <section class="order-section gl-stack gl-stack--group" aria-labelledby="categories-heading">
       <h2 id="categories-heading">{{ 'app.order.categories.title' | translate }}</h2>

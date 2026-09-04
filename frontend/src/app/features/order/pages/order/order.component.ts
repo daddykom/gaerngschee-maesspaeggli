@@ -15,6 +15,8 @@ import { MatInputModule } from '@angular/material/input';
 import { MatSelectModule } from '@angular/material/select';
 import { Store } from '@ngrx/store';
 import { TranslatePipe } from '@ngx-translate/core';
+import { InfoBoxComponent } from '../../../../shared/components/info-box/info-box';
+import { selectFrontendPublicConfigs } from '../../../../store/frontend-config/frontend-config.feature';
 import {
   selectAuthAdultsCount,
   selectAuthChildrenCount,
@@ -38,6 +40,7 @@ export const categories: Categorie[] = ['catA', 'catB', 'catC', 'catD', 'catE', 
   standalone: true,
   imports: [
     FormField,
+    InfoBoxComponent,
     MatButtonModule,
     MatDividerModule,
     MatFormFieldModule,
@@ -55,6 +58,7 @@ export class OrderComponent {
   readonly childrenCount = this.store.selectSignal(selectAuthChildrenCount);
   readonly adultsCount = this.store.selectSignal(selectAuthAdultsCount);
   readonly salutation = this.store.selectSignal(selectAuthSalutation);
+  readonly publicConfigs = this.store.selectSignal(selectFrontendPublicConfigs);
   readonly categories = categories;
   readonly model = signal<OrderFormModel>({
     manualAdultsCount: 1,
@@ -69,6 +73,10 @@ export class OrderComponent {
   readonly displayChildrenCount = computed(() =>
     this.fairgateUserExists() ? (this.childrenCount() ?? 0) : this.model().manualChildrenCount,
   );
+  readonly fairgateUrl = computed(() => {
+    const config = this.publicConfigs().find(({ variableName }) => variableName === 'fairgate_url');
+    return typeof config?.value === 'string' ? config.value : null;
+  });
 
   constructor() {
     effect(() => this.resizeCategories(this.displayAdultsCount(), this.displayChildrenCount()));

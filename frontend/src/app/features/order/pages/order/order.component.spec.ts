@@ -2,6 +2,7 @@ import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { provideTranslateService } from '@ngx-translate/core';
 import { provideMockStore } from '@ngrx/store/testing';
 import { initialState } from '../../../../store/auth/auth.state';
+import { initialState as frontendConfigInitialState } from '../../../../store/frontend-config/frontend-config.state';
 import { OrderComponent } from './order.component';
 
 describe('OrderComponent', () => {
@@ -21,6 +22,7 @@ describe('OrderComponent', () => {
               adultsCount: 2,
               salutation: 'Hallo',
             },
+            frontendConfig: frontendConfigInitialState,
           },
         }),
       ],

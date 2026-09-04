@@ -12,6 +12,7 @@ export const frontendConfigFeature = createFeature({
     on(FrontendConfigActions.save, (state) => ({ ...state, saving: true })),
     on(FrontendConfigActions.saveSuccess, (state, { configs }) => ({ ...state, configs, saving: false })),
     on(FrontendConfigActions.saveFailure, (state) => ({ ...state, saving: false })),
+    on(FrontendConfigActions.loadPublicSuccess, (state, { configs }) => ({ ...state, publicConfigs: configs })),
   ),
 });
 
@@ -19,6 +20,7 @@ export const {
   name: frontendConfigFeatureName,
   reducer: frontendConfigReducer,
   selectConfigs: selectFrontendConfigs,
+  selectPublicConfigs: selectFrontendPublicConfigs,
   selectLoading: selectFrontendConfigLoading,
   selectSaving: selectFrontendConfigSaving,
 } = frontendConfigFeature;

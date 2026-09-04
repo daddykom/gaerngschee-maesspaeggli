@@ -7,6 +7,7 @@ import { MockStore, provideMockStore } from '@ngrx/store/testing';
 import { App } from './app';
 import { initialState as authInitialState } from './store/auth/auth.state';
 import { AuthActions } from './store/auth/auth.actions';
+import { FrontendConfigActions } from './store/frontend-config/frontend-config.actions';
 
 @Component({ template: '' })
 class TestPage {}
@@ -29,6 +30,15 @@ describe('App', () => {
     await fixture.whenStable();
     const compiled = fixture.nativeElement as HTMLElement;
     expect(compiled.querySelector('router-outlet')).toBeTruthy();
+  });
+
+  it('loads public frontend configuration when the app starts', () => {
+    const store = TestBed.inject(MockStore);
+    const dispatch = jest.spyOn(store, 'dispatch');
+
+    TestBed.createComponent(App);
+
+    expect(dispatch).toHaveBeenCalledWith(FrontendConfigActions.loadPublic());
   });
 
   it('shows the global notification in the info box', async () => {

@@ -20,6 +20,17 @@ export const loadFrontendConfigEffect = createEffect(
   { functional: true },
 );
 
+export const loadPublicFrontendConfigEffect = createEffect(
+  (actions$ = inject(Actions), service = inject(FrontendConfigService)) => actions$.pipe(
+    ofType(FrontendConfigActions.loadPublic),
+    exhaustMap(() => service.listPublic().pipe(
+      map((configs) => FrontendConfigActions.loadPublicSuccess({ configs })),
+      catchError((error: HttpErrorResponse) => of(FrontendConfigActions.loadPublicFailure({ errorCode: errorCode(error) }))),
+    )),
+  ),
+  { functional: true },
+);
+
 export const saveFrontendConfigEffect = createEffect(
   (actions$ = inject(Actions), service = inject(FrontendConfigService)) => actions$.pipe(
     ofType(FrontendConfigActions.save),
@@ -53,6 +64,7 @@ export const frontendConfigNotificationEffect = createEffect(
 
 export const frontendConfigEffects = {
   loadFrontendConfigEffect,
+  loadPublicFrontendConfigEffect,
   saveFrontendConfigEffect,
   frontendConfigNotificationEffect,
 };

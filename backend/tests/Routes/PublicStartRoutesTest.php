@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Tests\Routes;
 
 use App\Users\Data\UserRepository;
+use App\Configuration\Data\FrontendConfigRepository;
 use App\Routes\PublicRoutes;
 use App\Registration\Services\AnmeldungService;
 use App\Registration\Services\RegistrationTokenService;
@@ -19,6 +20,42 @@ use Slim\Psr7\Stream;
 
 final class PublicStartRoutesTest extends TestCase
 {
+    public function testPublicConfigurationReturnsClientValuesOnly(): void
+    {
+        $pdo = TestDatabase::create();
+        $insert = $pdo->prepare(
+            'INSERT INTO frontend_config
+                (id, variable_name, value, description, access_group, update_group, label)
+             VALUES (:id, :variable_name, :value, :description, :access_group, :update_group, :label)',
+        );
+        foreach ([
+            ['id' => 'client-url', 'variable_name' => 'fairgate_url', 'value' => 'https://fairgate.example', 'access_group' => ['client']],
+            ['id' => 'client-message', 'variable_name' => 'client_message', 'value' => 'Message', 'access_group' => ['admin', 'client']],
+            ['id' => 'admin-email', 'variable_name' => 'fairgate_test_email', 'value' => 'admin@example.com', 'access_group' => ['admin']],
+        ] as $config) {
+            $insert->execute([
+                ...$config,
+                'value' => json_encode($config['value'], JSON_THROW_ON_ERROR),
+                'access_group' => json_encode($config['access_group'], JSON_THROW_ON_ERROR),
+                'description' => '',
+                'update_group' => '[]',
+                'label' => '',
+            ]);
+        }
+
+        $app = AppFactory::create();
+        $app->addRoutingMiddleware();
+        PublicRoutes::register($app, null, null, new FrontendConfigRepository($pdo));
+
+        $response = $app->handle((new ServerRequestFactory())->createServerRequest('GET', '/public/configuration'));
+
+        self::assertSame(200, $response->getStatusCode());
+        self::assertSame(
+            '[{"variableName":"client_message","value":"Message"},{"variableName":"fairgate_url","value":"https:\/\/fairgate.example"}]',
+            (string) $response->getBody(),
+        );
+    }
+
     public function testStartRequestReturnsValidationErrorForInvalidEmail(): void
     {
         $app = AppFactory::create();

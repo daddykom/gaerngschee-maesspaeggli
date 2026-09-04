@@ -60,6 +60,10 @@
       "fairgate": "Fairgate-Konto vorhanden",
       "yes": "Ja",
       "no": "Nein",
+      "noFairgate": {
+        "title": "Lieber Besteller",
+        "message": "Wir können Dich leider nicht bei Fairgate finden. Bitte melde Dich dort an, damit Du berechtigt bist, ein oder mehrere Mässpäggli zu bestellen. Verwende dabei die E-Mail, die Du hier verwendet hast. Du kannst Dich trotzdem provisorisch anmelden, Du musst uns einfach die richtige Anzahl Erwachsene und Kinder angeben. Sobald wir Deine Anmeldung bei Fairgate erhalten haben, wird Deine Anmeldung automatisch definitiv. Anmelden kannst Du Dich <a href=\"{{fairgateUrl}}\" target=\"_blank\" rel=\"noreferrer\">hier</a>."
+      },
       "manualCounts": {
         "title": "Anzahl Personen erfassen",
         "description": "Wie viele Erwachsene und Kinder möchtest du anmelden?",

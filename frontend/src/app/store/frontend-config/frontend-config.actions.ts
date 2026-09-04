@@ -1,5 +1,5 @@
 import { createActionGroup, emptyProps, props } from '@ngrx/store';
-import { FrontendConfig } from '../../shared/models/frontend-config.model';
+import { FrontendConfig, PublicFrontendConfig } from '../../shared/models/frontend-config.model';
 
 export const FrontendConfigActions = createActionGroup({
   source: 'Frontend Configuration',
@@ -10,5 +10,8 @@ export const FrontendConfigActions = createActionGroup({
     Save: props<{ configs: Array<{ id: string; value: string | string[] }> }>(),
     'Save Success': props<{ configs: FrontendConfig[] }>(),
     'Save Failure': props<{ errorCode: string }>(),
+    'Load Public': emptyProps(),
+    'Load Public Success': props<{ configs: PublicFrontendConfig[] }>(),
+    'Load Public Failure': props<{ errorCode: string }>(),
   },
 });

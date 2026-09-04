@@ -12,3 +12,8 @@ export interface FrontendConfig {
   createdAt: Date;
   updatedAt: Date;
 }
+
+export interface PublicFrontendConfig {
+  variableName: string;
+  value: string | string[] | null;
+}

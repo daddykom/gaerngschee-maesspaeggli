@@ -6,15 +6,15 @@ import { firstValueFrom, of, Subject, throwError } from 'rxjs';
 import { FrontendConfigService } from '../../shared/services/frontend-config.service';
 import { NotificationActions } from '../notification/notification.actions';
 import { FrontendConfigActions } from './frontend-config.actions';
-import { frontendConfigNotificationEffect, loadFrontendConfigEffect, saveFrontendConfigEffect } from './frontend-config.effects';
+import { frontendConfigNotificationEffect, loadFrontendConfigEffect, loadPublicFrontendConfigEffect, saveFrontendConfigEffect } from './frontend-config.effects';
 
 describe('frontend config effects', () => {
   let actions$: Subject<Action>;
-  let service: { list: jest.Mock; update: jest.Mock };
+  let service: { list: jest.Mock; listPublic: jest.Mock; update: jest.Mock };
 
   beforeEach(() => {
     actions$ = new Subject<Action>();
-    service = { list: jest.fn(), update: jest.fn() };
+    service = { list: jest.fn(), listPublic: jest.fn(), update: jest.fn() };
     TestBed.configureTestingModule({ providers: [provideMockActions(() => actions$), { provide: FrontendConfigService, useValue: service }] });
   });
 
@@ -31,6 +31,16 @@ describe('frontend config effects', () => {
     await expect(save).resolves.toEqual(FrontendConfigActions.saveSuccess({ configs: [{ id: 'site_name', value: 'Gaerngschee' }, { id: 'languages', value: ['de', 'fr'] }] as never }));
     expect(service.update).toHaveBeenNthCalledWith(1, 'site_name', 'Gaerngschee');
     expect(service.update).toHaveBeenNthCalledWith(2, 'languages', ['de', 'fr']);
+  });
+
+  it('loads public configuration values', async () => {
+    const configs = [{ variableName: 'fairgate_url', value: 'https://fairgate.example' }];
+    service.listPublic.mockReturnValue(of(configs));
+    const load = firstValueFrom(TestBed.runInInjectionContext(() => loadPublicFrontendConfigEffect()));
+
+    actions$.next(FrontendConfigActions.loadPublic());
+
+    await expect(load).resolves.toEqual(FrontendConfigActions.loadPublicSuccess({ configs }));
   });
 
   it('maps backend errors and emits notifications', async () => {

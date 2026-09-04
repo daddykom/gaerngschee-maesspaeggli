@@ -13,6 +13,7 @@ import { InfoBoxComponent } from './shared/components/info-box/info-box';
 import { AuthActions } from './store/auth/auth.actions';
 import { selectAuthGroup, selectAuthUserId } from './store/auth/auth.feature';
 import { selectNotification } from './store/notification/notification.feature';
+import { FrontendConfigActions } from './store/frontend-config/frontend-config.actions';
 
 @Component({
   imports: [
@@ -36,6 +37,10 @@ export class App {
   private readonly store = inject(Store);
   private readonly router = inject(Router);
   private readonly activatedRoute = inject(ActivatedRoute);
+
+  constructor() {
+    this.store.dispatch(FrontendConfigActions.loadPublic());
+  }
 
   private readonly navigation = toSignal(
     this.router.events.pipe(

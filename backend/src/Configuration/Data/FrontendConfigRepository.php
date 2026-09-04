@@ -34,6 +34,29 @@ final class FrontendConfigRepository
         return $configs;
     }
 
+    public function findValuesForGroup(string $group): array
+    {
+        $stmt = $this->pdo->query(
+            'SELECT variable_name, value, access_group
+             FROM frontend_config
+             ORDER BY variable_name',
+        );
+
+        $configs = [];
+        foreach ($stmt->fetchAll() as $row) {
+            if (!in_array($group, $this->decodeGroups($row['access_group']), true)) {
+                continue;
+            }
+
+            $configs[] = [
+                'variableName' => $row['variable_name'],
+                'value' => $this->decodeValue($row['value']),
+            ];
+        }
+
+        return $configs;
+    }
+
     public function update(string $id, string $group, string|array $value): array|false|null
     {
         $stmt = $this->pdo->prepare(
