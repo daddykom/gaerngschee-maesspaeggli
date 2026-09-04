@@ -36,8 +36,8 @@ test.describe('Client login route', () => {
     });
 
     await page.goto('/client-login?token=invalid-token');
-    await expect(page.locator('h1')).toHaveText('Direkte Anmeldung');
-    await expect(page.getByText('Der Anmeldelink ist ungültig')).toBeVisible();
-    await expect(page.getByText('Der Link ist ungültig oder bereits abgelaufen.')).toBeVisible();
+    await expect(page).toHaveURL(/\/start$/);
+    await expect(page.getByText('Fehler')).toBeVisible();
+    await expect(page.getByText('Der Anmeldelink ist ungültig oder abgelaufen. Bitte fordere auf der Startseite einen neuen Link an.')).toBeVisible();
   });
 });

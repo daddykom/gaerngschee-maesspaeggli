@@ -1,6 +1,7 @@
 import { Routes } from '@angular/router';
 import { groupGuard } from './shared/guards/group.guard';
 import { orderResolver } from './features/order/order.resolver';
+import { clientLoginGuard } from './features/auth/guards/client-login.guard';
 
 export const appRoutes: Routes = [
   {
@@ -23,9 +24,8 @@ export const appRoutes: Routes = [
   },
   {
     path: 'client-login',
-    data: { pageTitle: 'app.clientLogin.pageTitle' },
-    loadComponent: () =>
-      import('./features/auth/pages/client-login/client-login.component').then((m) => m.ClientLoginComponent),
+    canMatch: [clientLoginGuard],
+    redirectTo: 'start',
   },
   {
     path: 'order',

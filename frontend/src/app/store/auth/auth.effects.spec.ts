@@ -15,11 +15,9 @@ import {
   logoutEffect,
   navigateOnLoginSuccessEffect,
   navigateOnPasswordChangeSuccessEffect,
-  navigateOnRegistrationLoginSuccessEffect,
   passwordChangeEffect,
   persistLoginEffect,
   persistRegistrationLoginEffect,
-  registrationLoginEffect,
 } from './auth.effects';
 
 describe('loginEffect', () => {
@@ -85,26 +83,6 @@ describe('loginEffect', () => {
     await expect(result).resolves.toEqual(AuthActions.loginFailure({ errorCode: 'LOGIN_FAILED' }));
   });
 
-  it('maps registration login success and failure', async () => {
-    authService.registrationLogin.mockReturnValue(of({
-      token: 'client-token', user: { id: 'client-1', email: 'client@example.com', group: 'client' },
-      group: 'client', requiredPasswordReset: false, fairgateUserExists: true,
-      childrenCount: 2, adultsCount: 2, salutation: 'Hallo',
-    }));
-    const success = firstValueFrom(TestBed.runInInjectionContext(() => registrationLoginEffect()));
-    actions$.next(AuthActions.registrationLogin({ token: 'registration-token' }));
-    await expect(success).resolves.toEqual(AuthActions.registrationLoginSuccess({
-      token: 'client-token', userId: 'client-1', group: 'client', fairgateUserExists: true,
-      childrenCount: 2, adultsCount: 2, salutation: 'Hallo',
-    }));
-    expect(authService.registrationLogin).toHaveBeenCalledWith('registration-token');
-
-    authService.registrationLogin.mockReturnValue(throwError(() => new Error('expired')));
-    const failure = firstValueFrom(TestBed.runInInjectionContext(() => registrationLoginEffect()));
-    actions$.next(AuthActions.registrationLogin({ token: 'expired-token' }));
-    await expect(failure).resolves.toEqual(AuthActions.registrationLoginFailure({ errorCode: 'REGISTRATION_LOGIN_FAILED' }));
-  });
-
   it('dispatches navigation to the admin overview after a successful login', async () => {
     const effect$ = TestBed.runInInjectionContext(() => navigateOnLoginSuccessEffect());
     const result = firstValueFrom(effect$);
@@ -133,14 +111,7 @@ describe('loginEffect', () => {
     await expect(result).resolves.toEqual(NavigationActions.navigate({ target: '/password-change' }));
   });
 
-  it('navigates after registration login and password change', async () => {
-    const registration = firstValueFrom(TestBed.runInInjectionContext(() => navigateOnRegistrationLoginSuccessEffect()));
-    actions$.next(AuthActions.registrationLoginSuccess({
-      token: 'token', userId: 'client-1', group: 'client', fairgateUserExists: false,
-      childrenCount: 0, adultsCount: 1, salutation: 'Guten Tag',
-    }));
-    await expect(registration).resolves.toEqual(NavigationActions.navigate({ target: '/order/edit' }));
-
+  it('navigates after password change', async () => {
     const password = firstValueFrom(TestBed.runInInjectionContext(() => navigateOnPasswordChangeSuccessEffect()));
     actions$.next(AuthActions.passwordChangeSuccess());
     await expect(password).resolves.toEqual(NavigationActions.navigate({ target: '/admin/overview' }));

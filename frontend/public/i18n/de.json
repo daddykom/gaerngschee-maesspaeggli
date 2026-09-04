@@ -18,6 +18,7 @@
       "privacyHint": "Wir behandeln deine Daten vertraulich.",
       "sendError": "Die E-Mail konnte gerade nicht gesendet werden. Bitte versuche es später noch einmal.",
       "errorTitle": "Fehler",
+      "registrationTokenError": "Der Anmeldelink ist ungültig oder abgelaufen. Bitte fordere auf der Startseite einen neuen Link an.",
       "emailSentTitle": "E-Mail versandt",
       "emailSentMessage": "Wir haben dir eine E-Mail mit deinem persönlichen Bestelllink geschickt. Der Link ist 10 Minuten gültig.",
       "privacyTitle": "Deine Daten bleiben privat",
@@ -38,15 +39,6 @@
         "password": {
           "required": "Bitte gib dein Passwort ein."
         }
-      }
-    },
-    "clientLogin": {
-      "pageTitle": "Direkte Anmeldung",
-      "loading": "Du wirst direkt angemeldet ...",
-      "errorTitle": "Der Anmeldelink ist ungültig",
-      "errors": {
-        "INVALID_REGISTRATION_TOKEN": "Der Link ist ungültig oder bereits abgelaufen.",
-        "REGISTRATION_LOGIN_FAILED": "Die Anmeldung konnte nicht durchgeführt werden. Bitte versuche es später erneut."
       }
     },
     "order": {

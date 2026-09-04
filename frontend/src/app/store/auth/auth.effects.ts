@@ -33,30 +33,6 @@ export const loginEffect = createEffect(
   { functional: true },
 );
 
-export const registrationLoginEffect = createEffect(
-  (actions$ = inject(Actions), authService = inject(AuthService)) =>
-    actions$.pipe(
-      ofType(AuthActions.registrationLogin),
-      exhaustMap(({ token }) => authService.registrationLogin(token).pipe(
-        map((response) => AuthActions.registrationLoginSuccess({
-          token: response.token,
-          userId: response.user.id,
-          group: response.group,
-          fairgateUserExists: response.fairgateUserExists,
-          childrenCount: response.childrenCount,
-          adultsCount: response.adultsCount,
-          salutation: response.salutation,
-        })),
-        catchError((error: HttpErrorResponse) => of(AuthActions.registrationLoginFailure({
-          errorCode: typeof error.error?.error?.code === 'string'
-            ? error.error.error.code
-            : 'REGISTRATION_LOGIN_FAILED',
-        }))),
-      )),
-    ),
-  { functional: true },
-);
-
 export const persistLoginEffect = createEffect(
   (actions$ = inject(Actions)) => actions$.pipe(
     ofType(AuthActions.loginSuccess),
@@ -101,14 +77,6 @@ export const clearPersistedAuthEffect = createEffect(
     }),
   ),
   { functional: true, dispatch: false },
-);
-
-export const navigateOnRegistrationLoginSuccessEffect = createEffect(
-  (actions$ = inject(Actions)) => actions$.pipe(
-    ofType(AuthActions.registrationLoginSuccess),
-    map(() => NavigationActions.navigate({ target: '/order/edit' })),
-  ),
-  { functional: true },
 );
 
 export const navigateOnLoginSuccessEffect = createEffect(
@@ -171,15 +139,15 @@ export const authNotificationEffect = createEffect(
       titleKey: action.type === AuthActions.passwordChangeFailure.type
         ? 'app.passwordChange.heading'
         : action.type === AuthActions.registrationLoginFailure.type
-          ? 'app.clientLogin.errorTitle'
+          ? 'app.anmeldung.errorTitle'
           : 'app.auth.loginErrorTitle',
       messageKey: action.type === AuthActions.passwordChangeFailure.type
         ? `app.passwordChange.errors.${action.errorCode}`
         : action.type === AuthActions.registrationLoginFailure.type
-          ? `app.clientLogin.errors.${action.errorCode}`
+          ? 'app.anmeldung.registrationTokenError'
           : `app.auth.errors.${action.errorCode}`,
-      ...(action.type === AuthActions.registrationLoginFailure.type
-        ? { preserveOnRoutes: ['/client-login'] }
+        ...(action.type === AuthActions.registrationLoginFailure.type
+          ? { preserveOnRoutes: ['/start'] }
         : {}),
     })),
   ),
@@ -188,11 +156,9 @@ export const authNotificationEffect = createEffect(
 
 export const authEffects = {
   loginEffect,
-  registrationLoginEffect,
   persistLoginEffect,
   persistRegistrationLoginEffect,
   clearPersistedAuthEffect,
-  navigateOnRegistrationLoginSuccessEffect,
   navigateOnLoginSuccessEffect,
   passwordChangeEffect,
   navigateOnPasswordChangeSuccessEffect,
