@@ -114,6 +114,28 @@ final class ClientRoutesTest extends TestCase
         self::assertSame('INVALID_ORDER_DATA', json_decode((string) $response->getBody(), true)['error']['code']);
     }
 
+    public function testClientCannotLoadAnotherClientsOrder(): void
+    {
+        $owner = $this->users->createUser('owner@example.com', 'secret', 'client');
+        $otherClient = $this->users->createUser('other@example.com', 'secret', 'client');
+        (new SessionService())->setUser($owner['id'], 'client', true);
+        $app = $this->createApp();
+
+        $app->handle($this->request('PUT', [
+            'adultsCount' => 1,
+            'childrenCount' => 0,
+            'adults' => ['catA'],
+            'children' => [],
+        ]));
+
+        (new SessionService())->setUser($otherClient['id'], 'client', true);
+        $response = $app->handle($this->request('GET'));
+        $data = json_decode((string) $response->getBody(), true, 512, JSON_THROW_ON_ERROR);
+
+        self::assertSame(200, $response->getStatusCode());
+        self::assertNull($data['order']);
+    }
+
     private function createApp(): \Slim\App
     {
         $app = AppFactory::create();
