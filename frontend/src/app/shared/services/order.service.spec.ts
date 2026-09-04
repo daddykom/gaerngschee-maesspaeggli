@@ -23,4 +23,15 @@ describe('OrderService', () => {
     expect(request.request.method).toBe('GET');
     request.flush(response);
   });
+
+  it('saves the current client order', () => {
+    const draft = { adultsCount: 1, childrenCount: 0, adults: ['catA' as const], children: [] };
+    const response = { order: null };
+    service.saveCurrent(draft).subscribe((value) => expect(value).toEqual(response));
+
+    const request = httpTesting.expectOne('http://localhost:8080/client/order');
+    expect(request.request.method).toBe('PUT');
+    expect(request.request.body).toEqual(draft);
+    request.flush(response);
+  });
 });

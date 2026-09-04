@@ -94,7 +94,28 @@
           "catG": "Jugendliche 13-17 Jahre"
         }
       },
-      "submit": "Weiter"
+      "submit": "Weiter",
+      "summary": {
+        "pageTitle": "Bestellübersicht",
+        "title": "Bestellübersicht",
+        "description": "Deine Bestellung für das Jahr {{year}}.",
+        "status": "Status",
+        "statuses": {
+          "provisional": "Provisorisch",
+          "definitive": "Definitiv"
+        },
+        "back": "Zurück",
+        "order": "Bestellen",
+        "noDraft": "Es ist keine Bestellung zur Bestätigung vorhanden."
+      },
+      "notifications": {
+        "successTitle": "Bestellung gespeichert",
+        "success": "Deine Bestellung wurde erfolgreich gespeichert.",
+        "errorTitle": "Bestellung konnte nicht gespeichert werden",
+        "errors": {
+          "REQUEST_FAILED": "Die Bestellung konnte nicht gespeichert werden."
+        }
+      }
     },
     "passwordChange": {
       "pageTitle": "Passwort ändern",

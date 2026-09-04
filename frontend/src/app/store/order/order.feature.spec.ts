@@ -20,8 +20,10 @@ describe('orderFeature', () => {
     expect(orderFeature.reducer(initialState, OrderActions.loadCurrent()).loading).toBe(true);
     expect(orderFeature.reducer({ ...initialState, loading: true }, OrderActions.loadCurrentSuccess({ order }))).toEqual({
       order,
+      draft: null,
       loading: false,
       loaded: true,
+      saving: false,
       errorCode: null,
     });
   });

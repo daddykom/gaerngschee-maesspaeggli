@@ -17,9 +17,10 @@ import { Store } from '@ngrx/store';
 import { TranslatePipe } from '@ngx-translate/core';
 import { InfoBoxComponent } from '../../../../shared/components/info-box/info-box';
 import { ControlErrorComponent } from '../../../../shared/components/control-error/control-error';
-import { ClientOrder, OrderCategory } from '../../../../shared/models/order.model';
+import { ClientOrder, OrderCategory, OrderDraft } from '../../../../shared/models/order.model';
 import { OrderActions } from '../../../../store/order/order.actions';
-import { selectCurrentOrder } from '../../../../store/order/order.feature';
+import { selectCurrentOrder, selectOrderDraft } from '../../../../store/order/order.feature';
+import { NavigationActions } from '../../../../store/navigation/navigation.actions';
 import { selectFrontendPublicConfigs } from '../../../../store/frontend-config/frontend-config.feature';
 import {
   selectAuthAdultsCount,
@@ -65,6 +66,7 @@ export class OrderComponent {
   readonly salutation = this.store.selectSignal(selectAuthSalutation);
   readonly publicConfigs = this.store.selectSignal(selectFrontendPublicConfigs);
   readonly currentOrder = this.store.selectSignal(selectCurrentOrder);
+  readonly draft = this.store.selectSignal(selectOrderDraft);
   readonly categories = categories;
   readonly model = signal<OrderFormModel>({
     manualAdultsCount: 1,
@@ -95,6 +97,12 @@ export class OrderComponent {
         untracked(() => this.applyOrder(order));
       }
     });
+    effect(() => {
+      const draft = this.draft();
+      if (draft !== null && this.currentOrder() === null) {
+        untracked(() => this.applyDraft(draft));
+      }
+    });
     effect(() => this.resizeCategories(this.displayAdultsCount(), this.displayChildrenCount()));
   }
 
@@ -117,8 +125,13 @@ export class OrderComponent {
   onSubmit(): void {
     if (!this.form().valid()) {
       this.form().markAsTouched();
+      this.model().adults.forEach((_, index) => this.adultField(index)().markAsTouched());
+      this.model().children.forEach((_, index) => this.childField(index)().markAsTouched());
       return;
     }
+
+    this.store.dispatch(OrderActions.setDraft({ draft: this.createDraft() }));
+    this.store.dispatch(NavigationActions.navigate({ target: '/order/summary' }));
   }
 
   private resizeCategories(adultCount: number, childCount: number): void {
@@ -144,10 +157,28 @@ export class OrderComponent {
     });
   }
 
+  private applyDraft(draft: OrderDraft): void {
+    this.model.set({
+      manualAdultsCount: draft.adultsCount,
+      manualChildrenCount: draft.childrenCount,
+      adults: draft.adults,
+      children: draft.children,
+    });
+  }
+
   private categoriesFor(order: ClientOrder, personType: 'adult' | 'child', count: number): Categorie[] {
     return order.items
       .filter((item) => item.personType === personType)
       .flatMap((item) => Array.from({ length: item.quantity }, () => item.category))
       .slice(0, count);
+  }
+
+  private createDraft(): OrderDraft {
+    return {
+      adultsCount: this.displayAdultsCount(),
+      childrenCount: this.displayChildrenCount(),
+      adults: this.model().adults as OrderCategory[],
+      children: this.model().children as OrderCategory[],
+    };
   }
 }
