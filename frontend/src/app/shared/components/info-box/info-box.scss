@@ -51,11 +51,11 @@
   }
 
   &--success {
-    background: var(--mat-sys-primary-container);
-    border-color: var(--mat-sys-primary);
+    background: var(--gl-success-container);
+    border-color: var(--gl-success);
 
     .info-box__icon {
-      color: var(--mat-sys-on-primary-container);
+      color: var(--gl-on-success-container);
     }
   }
 }
