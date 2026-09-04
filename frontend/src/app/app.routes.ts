@@ -2,6 +2,7 @@ import { Routes } from '@angular/router';
 import { groupGuard } from './shared/guards/group.guard';
 import { orderResolver } from './features/order/order.resolver';
 import { clientLoginGuard } from './features/auth/guards/client-login.guard';
+import { adminOverviewResolver } from './features/admin/pages/overview/admin-overview.resolver';
 
 export const appRoutes: Routes = [
   {
@@ -70,6 +71,7 @@ export const appRoutes: Routes = [
     children: [
       {
         path: 'overview',
+        resolve: { overview: adminOverviewResolver },
         data: { pageTitle: 'app.admin.overview.title' },
         loadComponent: () =>
           import('./features/admin/pages/overview/admin-overview.component').then(

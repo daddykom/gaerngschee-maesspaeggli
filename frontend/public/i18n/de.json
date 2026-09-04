@@ -172,6 +172,18 @@
           "REQUEST_FAILED": "Die Anfrage konnte nicht durchgeführt werden."
         }
       },
+      "overview": {
+        "title": "Admin-Übersicht",
+        "definitiveTitle": "Definitive Bestellungen",
+        "provisionalTitle": "Provisorische Bestellungen",
+        "recentProvisionalTitle": "Provisorische Bestellungen in den letzten {{ days }} Tagen",
+        "orderCount": "Anzahl Bestellungen",
+        "errorTitle": "Übersicht konnte nicht geladen werden",
+        "errors": {
+          "INVALID_OVERVIEW_CONFIGURATION": "Die Konfiguration für die Übersicht ist ungültig.",
+          "REQUEST_FAILED": "Die Übersicht konnte nicht geladen werden."
+        }
+      },
       "users": {
         "title": "Benutzerverwaltung",
         "createTitle": "Benutzer erstellen",

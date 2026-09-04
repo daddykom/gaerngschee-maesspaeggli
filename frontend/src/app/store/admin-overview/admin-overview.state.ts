@@ -1,18 +1,9 @@
-export interface Kategory {
-  kategoryId: string;
-  numbPackages: number;
-}
+import { AdminOverview } from '../../shared/models/admin-overview.model';
 
-export interface AdminOverviewState {
-  numbOrders: number;
-  kategories: Kategory[];
-}
+export type AdminOverviewState =
+  | { status: 'initial' }
+  | { status: 'loading' }
+  | { status: 'loaded'; overview: AdminOverview }
+  | { status: 'error'; errorCode: string };
 
-export const initialState: AdminOverviewState = {
-  numbOrders: 253,
-  kategories: [
-    { kategoryId: 'A', numbPackages: 120 },
-    { kategoryId: 'B', numbPackages: 154 },
-    { kategoryId: 'C', numbPackages: 123 },
-  ],
-};
+export const initialState: AdminOverviewState = { status: 'initial' };

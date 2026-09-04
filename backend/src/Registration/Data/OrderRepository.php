@@ -8,6 +8,8 @@ use PDO;
 
 final class OrderRepository
 {
+    private const CATEGORIES = ['catA', 'catB', 'catC', 'catD', 'catE', 'catF', 'catG'];
+
     public function __construct(private readonly PDO $pdo)
     {
     }
@@ -77,6 +79,57 @@ final class OrderRepository
         }
 
         return $orders;
+    }
+
+    /** @return array{definitive: array{orderCount: int, categories: list<array{category: string, packageCount: int}>}, provisional: array{orderCount: int, categories: list<array{category: string, packageCount: int}>}, recentProvisional: array{orderCount: int, categories: list<array{category: string, packageCount: int}>}} */
+    public function findAdminOverview(int $year, string $recentSince): array
+    {
+        return [
+            'definitive' => $this->aggregateStatus('definitive', $year),
+            'provisional' => $this->aggregateStatus('provisional', $year),
+            'recentProvisional' => $this->aggregateStatus('provisional', $year, $recentSince),
+        ];
+    }
+
+    /** @return array{orderCount: int, categories: list<array{category: string, packageCount: int}>} */
+    private function aggregateStatus(string $status, int $year, ?string $recentSince = null): array
+    {
+        $conditions = ['orders.status = :status', 'orders.year = :year'];
+        $parameters = ['status' => $status, 'year' => $year];
+        if ($recentSince !== null) {
+            $conditions[] = '(orders.created_at >= :created_since OR orders.updated_at >= :updated_since)';
+            $parameters['created_since'] = $recentSince;
+            $parameters['updated_since'] = $recentSince;
+        }
+
+        $where = implode(' AND ', $conditions);
+        $count = $this->pdo->prepare("SELECT COUNT(*) FROM orders WHERE {$where}");
+        $count->execute($parameters);
+
+        $items = $this->pdo->prepare(
+            "SELECT order_items.category, COALESCE(SUM(order_items.quantity), 0) AS package_count
+             FROM order_items
+             INNER JOIN orders ON orders.id = order_items.order_id
+             WHERE {$where}
+             GROUP BY order_items.category
+             ORDER BY order_items.category",
+        );
+        $items->execute($parameters);
+        $categoryCounts = [];
+        foreach ($items->fetchAll() as $item) {
+            $categoryCounts[(string) $item['category']] = (int) $item['package_count'];
+        }
+
+        return [
+            'orderCount' => (int) $count->fetchColumn(),
+            'categories' => array_map(
+                static fn (string $category): array => [
+                    'category' => $category,
+                    'packageCount' => $categoryCounts[$category] ?? 0,
+                ],
+                self::CATEGORIES,
+            ),
+        ];
     }
 
     /** @param list<array{personType: string, category: string, quantity: int}> $items */

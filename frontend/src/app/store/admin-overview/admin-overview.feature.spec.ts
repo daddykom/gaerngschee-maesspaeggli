@@ -1,7 +1,7 @@
 import {
   adminOverviewFeature,
-  selectAdminOverviewKategories,
-  selectAdminOverviewNumbOrders,
+  selectAdminOverview,
+  selectAdminOverviewStatus,
 } from './admin-overview.feature';
 import { initialState } from './admin-overview.state';
 
@@ -10,17 +10,21 @@ describe('adminOverviewFeature', () => {
     expect(adminOverviewFeature.reducer(undefined, { type: '@@init' })).toEqual(initialState);
   });
 
-  it('exposes selectors for the overview values', () => {
+  it('exposes selectors for the overview state', () => {
     const state = {
       adminOverview: {
-        numbOrders: 4,
-        kategories: [{ kategoryId: 'standard', numbPackages: 12 }],
+        status: 'loaded' as const,
+        overview: {
+          year: 2026,
+          recentDays: 14,
+          definitive: { orderCount: 4, categories: [{ category: 'catA', packageCount: 12 }] },
+          provisional: { orderCount: 0, categories: [] },
+          recentProvisional: { orderCount: 0, categories: [] },
+        },
       },
     };
 
-    expect(selectAdminOverviewNumbOrders(state)).toBe(4);
-    expect(selectAdminOverviewKategories(state)).toEqual([
-      { kategoryId: 'standard', numbPackages: 12 },
-    ]);
+    expect(selectAdminOverviewStatus(state)).toBe('loaded');
+    expect(selectAdminOverview(state)).toEqual(state.adminOverview.overview);
   });
 });

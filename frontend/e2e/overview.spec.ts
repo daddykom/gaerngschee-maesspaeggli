@@ -14,6 +14,19 @@ test.describe('Admin overview route', () => {
         }),
       });
     });
+    await page.route('http://localhost:8080/admin/overview', async (route) => {
+      await route.fulfill({
+        status: 200,
+        contentType: 'application/json',
+        body: JSON.stringify({
+          year: 2026,
+          recentDays: 14,
+          definitive: { orderCount: 2, categories: [{ category: 'catA', packageCount: 3 }] },
+          provisional: { orderCount: 1, categories: [{ category: 'catA', packageCount: 1 }] },
+          recentProvisional: { orderCount: 1, categories: [{ category: 'catA', packageCount: 1 }] },
+        }),
+      });
+    });
 
     await page.goto('/login');
     await page.locator('input[type="email"]').fill('admin@example.com');
@@ -22,6 +35,8 @@ test.describe('Admin overview route', () => {
     await page.waitForURL('**/admin/overview');
 
     await expect(page.locator('h1')).toHaveText('Admin-Übersicht');
+    await expect(page.getByRole('heading', { name: 'Definitive Bestellungen' })).toBeVisible();
+    await expect(page.getByRole('heading', { name: 'Provisorische Bestellungen in den letzten 14 Tagen' })).toBeVisible();
     await expect(page.getByRole('button', { name: 'Administrationsmenü öffnen' })).toBeVisible();
     await page.getByRole('button', { name: 'Administrationsmenü öffnen' }).click();
     await expect(page.getByRole('menuitem', { name: 'Benutzerverwaltung' })).toBeVisible();
@@ -37,6 +52,19 @@ test.describe('Admin overview route', () => {
           token: 'user-token',
           group: 'user',
           requiredPasswordReset: false,
+        }),
+      });
+    });
+    await page.route('http://localhost:8080/admin/overview', async (route) => {
+      await route.fulfill({
+        status: 200,
+        contentType: 'application/json',
+        body: JSON.stringify({
+          year: 2026,
+          recentDays: 14,
+          definitive: { orderCount: 0, categories: [] },
+          provisional: { orderCount: 0, categories: [] },
+          recentProvisional: { orderCount: 0, categories: [] },
         }),
       });
     });

@@ -87,5 +87,26 @@ final class FairgateTestConfigurationSeeder extends AbstractSeed
                 ],
             );
         }
+
+        $variableName = 'provisional_order_recent_days';
+        if ($this->query(
+            'SELECT id FROM frontend_config WHERE variable_name = :variable_name',
+            ['variable_name' => $variableName],
+        )->fetch() === false) {
+            $this->query(
+                'INSERT INTO frontend_config
+                    (id, variable_name, value, description, access_group, update_group, label)
+                 VALUES (:id, :variable_name, :value, :description, :access_group, :update_group, :label)',
+                [
+                    'id' => '00000000-0000-4000-8000-000000000014',
+                    'variable_name' => $variableName,
+                    'value' => json_encode('14', JSON_THROW_ON_ERROR),
+                    'description' => 'Zeitraum für aktuelle provisorische Bestellungen in Tagen.',
+                    'access_group' => json_encode(['admin', 'user'], JSON_THROW_ON_ERROR),
+                    'update_group' => json_encode(['admin'], JSON_THROW_ON_ERROR),
+                    'label' => 'Zeitraum provisorischer Bestellungen',
+                ],
+            );
+        }
     }
 }

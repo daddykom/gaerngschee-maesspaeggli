@@ -8,6 +8,7 @@ use App\Users\Data\UserRepository;
 use App\Configuration\Data\FrontendConfigRepository;
 use App\Application;
 use App\Fairgate\Actions\FairgateTestAction;
+use App\Registration\Data\OrderRepository;
 use App\Routes\AdminRoutes;
 use App\Shared\Mail\EmailSenderInterface;
 use Tests\Support\TestDatabase;
@@ -112,6 +113,40 @@ final class AdminRoutesTest extends TestCase
         self::assertSame('isabelle.joss@gaerngschee.ch', json_decode((string) $response->getBody(), true)['email']);
     }
 
+    public function testAdminOverviewAggregatesOrdersByStatusAndRecentDate(): void
+    {
+        $admin = $this->repository->createUser('admin@example.com', 'secret', 'admin');
+        (new SessionService())->setUser($admin['id'], 'admin');
+        $year = (int) date('Y');
+        $this->pdo->prepare(
+            'INSERT INTO frontend_config (id, variable_name, value, description, access_group, update_group, label)
+             VALUES (?, ?, ?, ?, ?, ?, ?)',
+        )->execute([
+            'config-recent-days', 'provisional_order_recent_days', '14', 'Recent days', '["admin", "user"]', '["admin"]', 'Recent days',
+        ]);
+        $definitiveUser = $this->repository->createUser('definitive@example.com', 'secret', 'user');
+        $oldUser = $this->repository->createUser('old@example.com', 'secret', 'user');
+        $recentUser = $this->repository->createUser('recent@example.com', 'secret', 'user');
+        $this->insertOrder('definitive-order', $definitiveUser['id'], $year, 'definitive', '2000-01-01 00:00:00', 2, 1);
+        $this->insertOrder('provisional-old', $oldUser['id'], $year, 'provisional', '2000-01-01 00:00:00', 1, 0);
+        $this->insertOrder('provisional-recent', $recentUser['id'], $year, 'provisional', date('Y-m-d H:i:s'), 3, 0);
+
+        $response = $this->createApp(
+            null,
+            null,
+            new OrderRepository($this->pdo),
+            new FrontendConfigRepository($this->pdo),
+        )->handle((new ServerRequestFactory())->createServerRequest('GET', '/admin/overview'));
+        $data = json_decode((string) $response->getBody(), true, 512, JSON_THROW_ON_ERROR);
+
+        self::assertSame(200, $response->getStatusCode());
+        self::assertSame(1, $data['definitive']['orderCount']);
+        self::assertSame(2, $data['provisional']['orderCount']);
+        self::assertSame(1, $data['recentProvisional']['orderCount']);
+        self::assertSame(2, $data['definitive']['categories'][0]['packageCount']);
+        self::assertSame('catA', $data['definitive']['categories'][0]['category']);
+    }
+
     public function testAdminCanCreateUserAndEmailIsSentToNewAddress(): void
     {
         $admin = $this->repository->createUser('admin@example.com', 'secret', 'admin');
@@ -201,13 +236,30 @@ final class AdminRoutesTest extends TestCase
     private function createApp(
         ?EmailSenderInterface $emailSender = null,
         ?FairgateTestAction $fairgateTestAction = null,
-    ): \Slim\App
-    {
+        ?OrderRepository $orderRepository = null,
+        ?FrontendConfigRepository $configRepository = null,
+    ): \Slim\App {
         $app = AppFactory::create();
         $app->addRoutingMiddleware();
-        AdminRoutes::register($app, $this->repository, $emailSender, $fairgateTestAction);
+        AdminRoutes::register($app, $this->repository, $emailSender, $fairgateTestAction, $orderRepository, $configRepository);
 
         return $app;
+    }
+
+    private function insertOrder(string $id, string $userId, int $year, string $status, string $timestamp, int $catA, int $catB): void
+    {
+        $this->pdo->prepare(
+            'INSERT INTO orders (id, user_id, year, status, adults_count, children_count, created_at, updated_at)
+             VALUES (?, ?, ?, ?, ?, ?, ?, ?)',
+        )->execute([$id, $userId, $year, $status, $catA, $catB, $timestamp, $timestamp]);
+        $this->pdo->prepare(
+            'INSERT INTO order_items (id, order_id, person_type, category, quantity) VALUES (?, ?, ?, ?, ?)',
+        )->execute([$id . '-a', $id, 'adult', 'catA', $catA]);
+        if ($catB > 0) {
+            $this->pdo->prepare(
+                'INSERT INTO order_items (id, order_id, person_type, category, quantity) VALUES (?, ?, ?, ?, ?)',
+            )->execute([$id . '-b', $id, 'child', 'catB', $catB]);
+        }
     }
 
     private function request(string $method, string $path, array $body = []): \Psr\Http\Message\ServerRequestInterface

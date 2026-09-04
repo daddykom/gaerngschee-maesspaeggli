@@ -1,15 +1,41 @@
-<section class="gl-stack">
-  <dl class="overview-list">
-    <div class="overview-list__row">
-      <dt>Anzahl Bestellungen</dt>
-      <dd>{{ numbOrders() }}</dd>
-    </div>
+@if (overview(); as data) {
+  <div class="gl-stack gl-stack--section">
+    <section class="overview-section gl-stack gl-stack--group" aria-labelledby="definitive-heading">
+      <h2 id="definitive-heading">{{ 'app.admin.overview.definitiveTitle' | translate }}</h2>
+      <dl class="overview-list">
+        @for (row of sectionRows(data.definitive); track row.label) {
+          <div class="overview-list__row">
+            <dt>{{ row.label | translate }}</dt>
+            <dd>{{ row.count }}</dd>
+          </div>
+        }
+      </dl>
+    </section>
 
-    @for (kategory of kategories(); track kategory.kategoryId) {
-      <div class="overview-list__row">
-        <dt>Kategorie {{ kategory.kategoryId }}</dt>
-        <dd>{{ kategory.numbPackages }}</dd>
-      </div>
-    }
-  </dl>
-</section>
+    <section class="overview-section gl-stack gl-stack--group" aria-labelledby="provisional-heading">
+      <h2 id="provisional-heading">{{ 'app.admin.overview.provisionalTitle' | translate }}</h2>
+      <dl class="overview-list">
+        @for (row of sectionRows(data.provisional); track row.label) {
+          <div class="overview-list__row">
+            <dt>{{ row.label | translate }}</dt>
+            <dd>{{ row.count }}</dd>
+          </div>
+        }
+      </dl>
+    </section>
+
+    <section class="overview-section gl-stack gl-stack--group" aria-labelledby="recent-provisional-heading">
+      <h2 id="recent-provisional-heading">
+        {{ 'app.admin.overview.recentProvisionalTitle' | translate: { days: data.recentDays } }}
+      </h2>
+      <dl class="overview-list">
+        @for (row of sectionRows(data.recentProvisional); track row.label) {
+          <div class="overview-list__row">
+            <dt>{{ row.label | translate }}</dt>
+            <dd>{{ row.count }}</dd>
+          </div>
+        }
+      </dl>
+    </section>
+  </div>
+}
