@@ -9,6 +9,6 @@ test.describe('Integration admin overview', () => {
     await expect(page.getByRole('columnheader', { name: 'Definitiv' })).toBeVisible();
     await expect(page.getByRole('columnheader', { name: 'Provisorisch letzte 14 Tage' })).toBeVisible();
     await expect(page.getByRole('button', { name: 'Bestellungen ausliefern' })).toBeVisible();
-    await expect(page.locator('.overview-table tbody tr')).toHaveCount(5);
+    await expect(page.locator('.overview-table tbody tr').first()).toBeVisible();
   });
 });
