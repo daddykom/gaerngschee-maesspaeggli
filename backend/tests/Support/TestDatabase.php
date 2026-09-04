@@ -56,6 +56,7 @@ final class TestDatabase
                 status TEXT NOT NULL,
                 adults_count INTEGER NOT NULL DEFAULT 0,
                 children_count INTEGER NOT NULL DEFAULT 0,
+                confirmation_email_sent_at TEXT NULL,
                 created_at TEXT,
                 updated_at TEXT,
                 UNIQUE (user_id, year)
