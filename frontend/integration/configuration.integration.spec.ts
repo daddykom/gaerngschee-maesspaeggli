@@ -6,16 +6,16 @@ test.describe('Integration configuration', () => {
     await loginAsAdmin(page);
     await page.goto('/admin/configuration');
 
-    const input = page.locator('input').first();
+    const input = page.getByLabel('fairgate_test_email');
     await expect(input).toHaveValue('isabelle.joss@gaerngschee.ch');
     await input.fill('integration.changed@example.com');
     await page.getByRole('button', { name: 'Konfiguration speichern' }).click();
     await expect(page.getByText('Die Konfiguration wurde gespeichert.')).toBeVisible();
 
     await page.reload();
-    await expect(page.locator('input').first()).toHaveValue('integration.changed@example.com');
+    await expect(page.getByLabel('fairgate_test_email')).toHaveValue('integration.changed@example.com');
 
-    await page.locator('input').first().fill('isabelle.joss@gaerngschee.ch');
+    await page.getByLabel('fairgate_test_email').fill('isabelle.joss@gaerngschee.ch');
     await page.getByRole('button', { name: 'Konfiguration speichern' }).click();
     await expect(page.getByText('Die Konfiguration wurde gespeichert.')).toBeVisible();
   });

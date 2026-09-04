@@ -24,7 +24,7 @@ final class ClientRoutes
         ?EmailSenderInterface $emailSender = null,
         ?OrderEmailQueueRepository $emailQueue = null,
     ): void {
-        $app->group('/client', function (RouteCollectorProxy $group) use ($orderRepository, $userRepository, $emailSender): void {
+        $app->group('/client', function (RouteCollectorProxy $group) use ($orderRepository, $userRepository, $emailSender, $emailQueue): void {
             $get = $group->get('/order', new GetClientOrderAction($orderRepository));
             $get->add(new GroupMiddleware(['client'], $userRepository))->add(new AuthMiddleware());
 

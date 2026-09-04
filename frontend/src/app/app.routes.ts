@@ -25,7 +25,9 @@ export const appRoutes: Routes = [
   {
     path: 'client-login',
     canMatch: [clientLoginGuard],
-    redirectTo: 'start',
+    children: [
+      { path: '', redirectTo: 'start', pathMatch: 'full' },
+    ],
   },
   {
     path: 'order',
