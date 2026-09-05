@@ -58,7 +58,8 @@ final class TestDatabase
                 children_count INTEGER NOT NULL DEFAULT 0,
                  confirmation_email_sent_at TEXT NULL,
                  fairgate_reminder_email_sent_at TEXT NULL,
-                created_at TEXT,
+                 delivery_token TEXT NULL UNIQUE,
+                 created_at TEXT,
                 updated_at TEXT,
                 UNIQUE (user_id, year)
             )',

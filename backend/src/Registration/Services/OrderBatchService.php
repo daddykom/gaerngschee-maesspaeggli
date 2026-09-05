@@ -10,6 +10,7 @@ use App\Fairgate\Services\FairgateBatchContactProvider;
 use App\Registration\Data\OrderEmailQueueRepository;
 use App\Registration\Data\OrderRepository;
 use App\Registration\Data\RegistrationTokenRepository;
+use App\Registration\Services\QrCodeGenerator;
 use App\Shared\Mail\EmailSenderInterface;
 use DateTimeImmutable;
 use DateTimeZone;
@@ -28,6 +29,7 @@ final class OrderBatchService
         private readonly FairgateContactProvider $fairgate,
         private readonly EmailSenderInterface $emails,
         private readonly RegistrationTokenRepository $tokens,
+        private readonly ?QrCodeGenerator $qrCodes = null,
     ) {
     }
 
@@ -52,6 +54,8 @@ final class OrderBatchService
                 $this->queue->remove($email['id']);
                 if ($email['email_type'] === 'order_confirmation') {
                     $this->orders->markBatchEmailSent($email['order_id']);
+                } elseif ($email['email_type'] === 'delivery_qrcode') {
+                    $this->orders->markQrCodeSent($email['order_id']);
                 } else {
                     $this->orders->markFairgateReminderSent($email['order_id']);
                 }
@@ -94,7 +98,43 @@ final class OrderBatchService
             }
         }
 
+        foreach ($this->orders->findToDeliverWithUsers() as $entry) {
+            $result['loaded']++;
+            $order = $entry['order'];
+            if ($this->queue->hasPendingForOrder($order['id'])) {
+                continue;
+            }
+
+            try {
+                $token = is_string($order['deliveryToken']) && $order['deliveryToken'] !== ''
+                    ? $order['deliveryToken']
+                    : $this->createDeliveryToken($order['id']);
+                $deliveryUrl = rtrim(getenv('FRONTEND_BASE_URL') ?: 'http://localhost:4200', '/') . '/deliver?token=' . rawurlencode($token);
+                $qrDataUri = ($this->qrCodes ?? new QrCodeGenerator())->generateDataUri($deliveryUrl);
+                $message = $this->emails->renderDeliveryNotification($order, $deliveryUrl, $qrDataUri);
+                try {
+                    $this->emails->sendStoredEmail($entry['email'], $message['subject'], $message['html'], $message['text']);
+                    $this->orders->markQrCodeSent($order['id']);
+                    $result['sent']++;
+                } catch (Throwable $exception) {
+                    $this->queue->enqueue($order['id'], 'delivery_qrcode', $entry['email'], $message, $exception->getMessage());
+                    $this->log('Delivery notification failed and queued', $order['id'], $exception);
+                    $result['queued']++;
+                }
+            } catch (Throwable $exception) {
+                $this->log('Delivery batch failed', $order['id'], $exception);
+                $result['failed']++;
+            }
+        }
+
         return $result;
+    }
+
+    private function createDeliveryToken(string $orderId): string
+    {
+        $token = rtrim(strtr(base64_encode(random_bytes(32)), '+/', '-_'), '=');
+        $this->orders->setDeliveryToken($orderId, $token);
+        return $token;
     }
 
     /** @return array<string, string>|null */

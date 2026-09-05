@@ -19,7 +19,7 @@ final class OrderRepository
     {
         $statement = $this->pdo->prepare(
             'SELECT id, user_id, year, status, adults_count, children_count,
-                    confirmation_email_sent_at, fairgate_reminder_email_sent_at, created_at, updated_at
+                    confirmation_email_sent_at, fairgate_reminder_email_sent_at, delivery_token, created_at, updated_at
              FROM orders
              WHERE user_id = :user_id AND year = :year',
         );
@@ -46,6 +46,7 @@ final class OrderRepository
             'childrenCount' => (int) $order['children_count'],
             'confirmationEmailSentAt' => $order['confirmation_email_sent_at'],
             'fairgateReminderEmailSentAt' => $order['fairgate_reminder_email_sent_at'],
+            'deliveryToken' => $order['delivery_token'],
             'items' => array_map(
                 static fn (array $item): array => [
                     'personType' => $item['person_type'],
@@ -159,6 +160,46 @@ final class OrderRepository
         $statement->execute(['year' => $year]);
 
         return $statement->rowCount();
+    }
+
+    /** @return list<array{order: array<string, mixed>, email: string}> */
+    public function findToDeliverWithUsers(): array
+    {
+        $statement = $this->pdo->query(
+            "SELECT orders.id, orders.user_id, users.email
+             FROM orders
+             INNER JOIN users ON users.id = orders.user_id
+             WHERE orders.status = 'toDeliver'
+             ORDER BY orders.created_at, orders.id",
+        );
+
+        $orders = [];
+        foreach ($statement->fetchAll() as $row) {
+            $order = $this->findForId((string) $row['id']);
+            if ($order !== null) {
+                $orders[] = ['order' => $order, 'email' => (string) $row['email']];
+            }
+        }
+
+        return $orders;
+    }
+
+    public function setDeliveryToken(string $orderId, string $token): void
+    {
+        $statement = $this->pdo->prepare(
+            "UPDATE orders SET delivery_token = :token, updated_at = CURRENT_TIMESTAMP
+             WHERE id = :id AND status = 'toDeliver' AND delivery_token IS NULL",
+        );
+        $statement->execute(['id' => $orderId, 'token' => $token]);
+    }
+
+    public function markQrCodeSent(string $orderId): void
+    {
+        $statement = $this->pdo->prepare(
+            "UPDATE orders SET status = 'qrcode', updated_at = CURRENT_TIMESTAMP
+             WHERE id = :id AND status = 'toDeliver'",
+        );
+        $statement->execute(['id' => $orderId]);
     }
 
     /** @param list<array{personType: string, category: string, quantity: int}> $items */

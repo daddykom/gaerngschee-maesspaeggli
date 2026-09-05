@@ -50,6 +50,11 @@ final class RecordingEmailSender implements EmailSenderInterface
         return ['subject' => 'subject', 'html' => json_encode($order, JSON_THROW_ON_ERROR), 'text' => 'text'];
     }
 
+    public function renderDeliveryNotification(array $order, string $deliveryUrl, string $qrDataUri): array
+    {
+        return ['subject' => 'delivery', 'html' => $qrDataUri . $deliveryUrl, 'text' => $deliveryUrl];
+    }
+
     public function sendStoredEmail(string $recipient, string $subject, string $html, string $text): void
     {
         if ($this->failOrderConfirmation || $this->failStoredEmail) {

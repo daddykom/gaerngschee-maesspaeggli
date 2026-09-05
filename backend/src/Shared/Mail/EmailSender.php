@@ -146,6 +146,22 @@ final class EmailSender implements EmailSenderInterface
         return ['subject' => $subject, 'html' => $html, 'text' => $this->plainText($html)];
     }
 
+    /** @param array<string, mixed> $order */
+    public function renderDeliveryNotification(array $order, string $deliveryUrl, string $qrDataUri): array
+    {
+        $html = $this->twig->render('delivery-notification.html.twig', [
+            'LOGO_CID' => 'cid:' . self::LOGO_CID,
+            'QR_DATA_URI' => $qrDataUri,
+            'DELIVERY_URL' => $deliveryUrl,
+        ]);
+
+        return [
+            'subject' => 'Deine Mässpäggli sind bereit',
+            'html' => $html,
+            'text' => $this->plainText($html),
+        ];
+    }
+
     public function sendStoredEmail(string $recipient, string $subject, string $html, string $text): void
     {
         $this->sendUserEmail($recipient, $subject, $html, $text);

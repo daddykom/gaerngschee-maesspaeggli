@@ -85,6 +85,29 @@ final class OrderBatchServiceTest extends TestCase
         self::assertCount(0, (new OrderEmailQueueRepository($pdo))->pending());
     }
 
+    public function testSendsDeliveryQrCodeAndMarksOrderAsQrCode(): void
+    {
+        $pdo = TestDatabase::create();
+        $user = (new UserRepository($pdo))->createUser('delivery@example.com', 'secret', 'client');
+        $orders = new OrderRepository($pdo);
+        $order = $orders->saveForYear($user['id'], 2026, 'definitive', 1, 0, [
+            ['personType' => 'adult', 'category' => 'catA', 'quantity' => 1],
+        ]);
+        $pdo->prepare("UPDATE orders SET status = 'toDeliver' WHERE id = :id")->execute(['id' => $order['id']]);
+        $this->addInterval($pdo);
+        $emails = new RecordingEmailSender();
+
+        $result = $this->service($pdo, $emails, new FixedFairgateProvider(1, 0))->run();
+        $updated = $orders->findForYear($user['id'], 2026);
+
+        self::assertSame(1, $result['loaded']);
+        self::assertSame(1, $result['sent']);
+        self::assertSame('qrcode', $updated['status']);
+        self::assertMatchesRegularExpression('/^[A-Za-z0-9_-]{43}$/', $updated['deliveryToken']);
+        self::assertStringContainsString('/deliver?token=' . $updated['deliveryToken'], $emails->orderConfirmations[0]['order']['html']);
+        self::assertStringContainsString('data:image/png;base64,', $emails->orderConfirmations[0]['order']['html']);
+    }
+
     private function service($pdo, RecordingEmailSender $emails, FairgateContactProvider $fairgate): OrderBatchService
     {
         return new OrderBatchService(

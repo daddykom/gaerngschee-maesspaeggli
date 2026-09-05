@@ -24,5 +24,8 @@ interface EmailSenderInterface
     /** @param array<string, mixed> $order */
     public function renderOrderConfirmation(array $order): array;
 
+    /** @param array<string, mixed> $order */
+    public function renderDeliveryNotification(array $order, string $deliveryUrl, string $qrDataUri): array;
+
     public function sendStoredEmail(string $recipient, string $subject, string $html, string $text): void;
 }

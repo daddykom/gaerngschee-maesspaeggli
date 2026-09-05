@@ -109,6 +109,9 @@
       <path value="$PROJECT_DIR$/backend/vendor/symfony/translation-contracts" />
       <path value="$PROJECT_DIR$/backend/vendor/symfony/translation" />
       <path value="$PROJECT_DIR$/backend/vendor/twig/twig" />
+      <path value="$PROJECT_DIR$/backend/vendor/bacon/bacon-qr-code" />
+      <path value="$PROJECT_DIR$/backend/vendor/dasprid/enum" />
+      <path value="$PROJECT_DIR$/backend/vendor/endroid/qr-code" />
     </include_path>
   </component>
   <component name="PhpUnit">
