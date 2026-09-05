@@ -15,7 +15,7 @@ use Lcobucci\JWT\Validation\Constraint\SignedWith;
 use Lcobucci\JWT\Validation\Validator;
 use Psr\Http\Client\ClientInterface;
 
-final class FairgateClient implements FairgateContactProvider
+final class FairgateClient implements FairgateContactProvider, FairgateBatchContactProvider
 {
     private const CONTACTS_PATH = '/fsa/v1.1/contact/%s/contacts/list';
     private const CONTACT_DATA_PATH = '/fsa/v2.0/contact/%s/data/%s';
@@ -63,22 +63,38 @@ final class FairgateClient implements FairgateContactProvider
             return ['success' => true, 'data' => ['contacts' => []]];
         }
 
-        try {
-            $response = $this->client()->request('GET', sprintf(self::CONTACTS_PATH, $this->organizationId()), [
-                'headers' => $this->headers(),
-                'query' => [
-                    'primary_email' => $email,
-                    'pageNo' => 1,
-                    'pageLimit' => 1,
-                ],
-            ]);
-        } catch (GuzzleException $exception) {
-            throw new FairgateException('FSA contact request failed.', 0, $exception);
-        }
+        return $this->requestContacts($email, 1, 1);
+    }
 
-        $data = $this->decodeResponse($response->getStatusCode(), (string) $response->getBody());
+    /** @return list<array{email: string, contactId: string}> */
+    public function findAllContacts(): array
+    {
+        $contacts = [];
+        $page = 1;
+        $pageLimit = 100;
 
-        return $data;
+        do {
+            $data = $this->requestContacts(null, $page, $pageLimit);
+            $pageContacts = $data['data']['contacts'] ?? [];
+            if (!is_array($pageContacts)) {
+                break;
+            }
+
+            foreach ($pageContacts as $contact) {
+                if (!is_array($contact)) {
+                    continue;
+                }
+                $email = strtolower(trim((string) ($contact['primary_email'] ?? $contact['communication']['primary_email'] ?? '')));
+                $contactId = $contact['contact_id'] ?? $contact['basefields']['contact_id'] ?? null;
+                if ($email !== '' && $contactId !== null) {
+                    $contacts[] = ['email' => $email, 'contactId' => (string) $contactId];
+                }
+            }
+
+            $page++;
+        } while (count($pageContacts) === $pageLimit);
+
+        return $contacts;
     }
 
     /** @return array<string, mixed> */
@@ -95,19 +111,7 @@ final class FairgateClient implements FairgateContactProvider
                 continue;
             }
 
-            try {
-                $response = $this->client()->request('GET', sprintf(
-                    self::CONTACT_DATA_PATH,
-                    $this->organizationId(),
-                    (string) $contactId,
-                ), [
-                    'headers' => $this->headers(),
-                ]);
-            } catch (GuzzleException $exception) {
-                throw new FairgateException('FSA contact data request failed.', 0, $exception);
-            }
-
-            return $this->decodeResponse($response->getStatusCode(), (string) $response->getBody());
+            return $this->findContactDataById((string) $contactId);
         }
 
         return [
@@ -115,6 +119,44 @@ final class FairgateClient implements FairgateContactProvider
             'code' => 200,
             'data' => null,
         ];
+    }
+
+    /** @return array<string, mixed> */
+    public function findContactDataById(string $contactId): array
+    {
+        try {
+            $response = $this->client()->request('GET', sprintf(
+                self::CONTACT_DATA_PATH,
+                $this->organizationId(),
+                $contactId,
+            ), [
+                'headers' => $this->headers(),
+            ]);
+        } catch (GuzzleException $exception) {
+            throw new FairgateException('FSA contact data request failed.', 0, $exception);
+        }
+
+        return $this->decodeResponse($response->getStatusCode(), (string) $response->getBody());
+    }
+
+    /** @return array<string, mixed> */
+    private function requestContacts(?string $email, int $page, int $pageLimit): array
+    {
+        $query = ['pageNo' => $page, 'pageLimit' => $pageLimit];
+        if ($email !== null) {
+            $query['primary_email'] = $email;
+        }
+
+        try {
+            $response = $this->client()->request('GET', sprintf(self::CONTACTS_PATH, $this->organizationId()), [
+                'headers' => $this->headers(),
+                'query' => $query,
+            ]);
+        } catch (GuzzleException $exception) {
+            throw new FairgateException('FSA contact request failed.', 0, $exception);
+        }
+
+        return $this->decodeResponse($response->getStatusCode(), (string) $response->getBody());
     }
 
     private function client(): ClientInterface

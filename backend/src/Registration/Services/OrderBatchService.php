@@ -6,6 +6,7 @@ namespace App\Registration\Services;
 
 use App\Configuration\Data\FrontendConfigRepository;
 use App\Fairgate\Services\FairgateContactProvider;
+use App\Fairgate\Services\FairgateBatchContactProvider;
 use App\Registration\Data\OrderEmailQueueRepository;
 use App\Registration\Data\OrderRepository;
 use App\Registration\Data\RegistrationTokenRepository;
@@ -43,6 +44,7 @@ final class OrderBatchService
             'failed' => 0,
             'tokensDeleted' => $this->tokens->deleteExpiredBefore($now->modify('-' . $retentionDays . ' days')),
         ];
+        $fairgateContacts = $this->fairgateContacts();
 
         foreach ($this->queue->pending() as $email) {
             try {
@@ -69,7 +71,7 @@ final class OrderBatchService
             }
 
             try {
-                $data = $this->fairgate->findContactDataByEmail($entry['email'])['data'] ?? null;
+                $data = $this->contactData($entry['email'], $fairgateContacts);
                 if (!is_array($data)) {
                     $this->processMissingFairgate($order, $entry['email'], $result);
                     continue;
@@ -93,6 +95,38 @@ final class OrderBatchService
         }
 
         return $result;
+    }
+
+    /** @return array<string, string>|null */
+    private function fairgateContacts(): ?array
+    {
+        if (!$this->fairgate instanceof FairgateBatchContactProvider) {
+            return null;
+        }
+
+        $contacts = [];
+        foreach ($this->fairgate->findAllContacts() as $contact) {
+            $contacts[strtolower(trim($contact['email']))] = $contact['contactId'];
+        }
+
+        return $contacts;
+    }
+
+    /** @param array<string, string>|null $contacts */
+    private function contactData(string $email, ?array $contacts): ?array
+    {
+        if ($contacts === null) {
+            $data = $this->fairgate->findContactDataByEmail($email)['data'] ?? null;
+            return is_array($data) ? $data : null;
+        }
+
+        $contactId = $contacts[strtolower(trim($email))] ?? null;
+        if ($contactId === null) {
+            return null;
+        }
+
+        $data = $this->fairgate->findContactDataById($contactId)['data'] ?? null;
+        return is_array($data) ? $data : null;
     }
 
     /** @param array<string, mixed> $order */
