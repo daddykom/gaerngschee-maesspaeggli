@@ -21,6 +21,7 @@ test.describe('Admin overview route', () => {
         body: JSON.stringify({
           year: 2026,
           recentDays: 14,
+          orders: { provisional: 1, recentProvisional: 1, definitive: 1, toDeliver: 0, qrcode: 0, delivered: 0 },
           categories: [{ category: 'catA', provisional: 1, recentProvisional: 1, definitive: 3, toDeliver: 0, qrcode: 0, delivered: 0 }],
         }),
       });
@@ -60,6 +61,7 @@ test.describe('Admin overview route', () => {
         body: JSON.stringify({
           year: 2026,
           recentDays: 14,
+          orders: { provisional: 0, recentProvisional: 0, definitive: 0, toDeliver: 0, qrcode: 0, delivered: 0 },
           categories: [],
         }),
       });

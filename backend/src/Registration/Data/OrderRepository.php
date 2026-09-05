@@ -81,7 +81,7 @@ final class OrderRepository
         return $orders;
     }
 
-    /** @return array{categories: list<array{category: string, provisional: int, recentProvisional: int, definitive: int, toDeliver: int, qrcode: int, delivered: int}>} */
+    /** @return array{orders: array{provisional: int, recentProvisional: int, definitive: int, toDeliver: int, qrcode: int, delivered: int}, categories: list<array{category: string, provisional: int, recentProvisional: int, definitive: int, toDeliver: int, qrcode: int, delivered: int}>} */
     public function findAdminOverview(int $year, string $recentSince): array
     {
         $aggregates = array_map(
@@ -102,7 +102,17 @@ final class OrderRepository
             self::CATEGORIES,
         );
 
-        return ['categories' => $categories];
+        return [
+            'orders' => [
+                'provisional' => $aggregates[0]['orderCount'],
+                'recentProvisional' => $recent['orderCount'],
+                'definitive' => $aggregates[1]['orderCount'],
+                'toDeliver' => $aggregates[2]['orderCount'],
+                'qrcode' => $aggregates[3]['orderCount'],
+                'delivered' => $aggregates[4]['orderCount'],
+            ],
+            'categories' => $categories,
+        ];
     }
 
     /** @return array{orderCount: int, categories: array<string, int>} */

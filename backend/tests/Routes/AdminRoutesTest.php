@@ -141,6 +141,9 @@ final class AdminRoutesTest extends TestCase
 
         self::assertSame(200, $response->getStatusCode());
         self::assertCount(7, $data['categories']);
+        self::assertSame(2, $data['orders']['provisional']);
+        self::assertSame(1, $data['orders']['recentProvisional']);
+        self::assertSame(1, $data['orders']['definitive']);
         self::assertSame(4, $data['categories'][0]['provisional']);
         self::assertSame(3, $data['categories'][0]['recentProvisional']);
         self::assertSame(2, $data['categories'][0]['definitive']);

@@ -27,6 +27,15 @@
           </tr>
         </thead>
         <tbody>
+          <tr class="overview-orders-row">
+            <th scope="row">{{ 'app.admin.overview.orders' | translate }}</th>
+            <td>{{ data.orders.provisional }}</td>
+            <td>{{ data.orders.recentProvisional }}</td>
+            <td>{{ data.orders.definitive }}</td>
+            <td class="delivery-column">{{ data.orders.toDeliver }}</td>
+            <td class="delivery-column">{{ data.orders.qrcode }}</td>
+            <td class="delivery-column">{{ data.orders.delivered }}</td>
+          </tr>
           @for (category of categories(data.categories); track category.category) {
             <tr>
               <th scope="row">{{ 'app.order.categories.options.' + category.category | translate }}</th>
