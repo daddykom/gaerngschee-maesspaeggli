@@ -1,58 +1,78 @@
-.app-container {
-  height: 100vh;
-  overflow: hidden;
+@use '../layout-variables' as layout;
+
+.app-header {
+  border-bottom: 1px solid var(--mat-sys-outline-variant);
+  background: var(--mat-sys-surface);
 }
 
-mat-toolbar {
-  position: sticky;
-  top: 0;
-  z-index: 1000;
+.app-header__content {
+  min-height: 4rem;
 }
 
-.spacer {
-  flex: 1 1 auto;
+.app-header__title {
+  font-weight: 500;
+}
+
+.admin-menu-button {
+  margin-left: auto;
+}
+
+.app-navigation {
+  border-bottom: 1px solid var(--mat-sys-outline-variant);
+  background: var(--mat-sys-surface-container-low);
+}
+
+.app-navigation__links {
+  display: none;
+}
+
+.app-navigation a.active {
+  font-weight: 700;
+}
+
+main {
+  min-height: calc(100vh - 4rem);
+}
+
+.app-main-content {
+  padding-block: var(--gl-space-xl);
+  min-height: calc(100vh - 4rem);
+  background-color: #fff;
+}
+
+.app-main-content > .gl-stack {
+  gap: var(--gl-space-lg);
+}
+
+.app-main-content h1 {
+  margin: 0;
+}
+
+.app-main-content > .gl-stack > router-outlet {
+  display: contents;
+}
+
+@media (min-width: layout.$gl-section-breakpoint) {
+  .app-navigation__links {
+    display: flex;
+  }
+}
+
+@media print {
+  .app-header,
+  .app-navigation,
+  .app-main-content > .gl-stack > h1,
+  .app-main-content > .gl-stack > [role='alert'] {
+    display: none;
+  }
+
+  .app-main-content {
+    min-height: 0;
+    padding: 0;
+  }
 }
 
 .header-logo {
+  width: 40px;
   height: 40px;
-  width: auto;
-  margin-right: 0.5rem;
-}
-
-.header-title {
-  font-size: 1.2rem;
-
-  @media (max-width: 480px) {
-    display: none;
-  }
-}
-
-.desktop-nav {
-  display: flex;
-  gap: 0.5rem;
-
-  @media (max-width: 768px) {
-    display: none;
-  }
-}
-
-.mobile-menu-button {
-  display: none;
-
-  @media (max-width: 768px) {
-    display: inline-flex;
-  }
-}
-
-mat-sidenav {
-  width: 250px;
-  background: rgb(245, 245, 245);
-}
-
-mat-nav-list a.active {
-  background: rgba(0, 0, 0, 0.04);
-}
-
-.main-container {
-  height: calc(100vh - 64px);
 }

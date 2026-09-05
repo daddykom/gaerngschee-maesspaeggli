@@ -1,0 +1,27 @@
+.configuration-form {
+  width: 100%;
+}
+
+.configuration-field {
+  min-width: 0;
+  padding: var(--gl-space-md);
+  border: 1px solid var(--mat-sys-outline-variant);
+  border-radius: 0.5rem;
+}
+
+.configuration-field--readonly {
+  opacity: 0.6;
+}
+
+.configuration-field legend {
+  padding: 0 var(--gl-space-sm);
+  font-weight: 600;
+}
+
+.configuration-description {
+  margin: 0;
+}
+
+.configuration-values {
+  width: 100%;
+}

@@ -1,0 +1,11 @@
+.fairgate-test-result {
+  width: 100%;
+  box-sizing: border-box;
+  overflow: auto;
+  padding: var(--gl-space-md);
+  border: 1px solid var(--mat-sys-outline-variant);
+  border-radius: 0.5rem;
+  background: var(--mat-sys-surface-container-low);
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+}

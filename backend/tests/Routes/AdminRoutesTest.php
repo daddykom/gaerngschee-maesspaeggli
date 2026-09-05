@@ -1,0 +1,301 @@
+<?php
+
+declare(strict_types=1);
+
+namespace Tests\Routes;
+
+use App\Users\Data\UserRepository;
+use App\Configuration\Data\FrontendConfigRepository;
+use App\Application;
+use App\Fairgate\Actions\FairgateTestAction;
+use App\Registration\Data\OrderRepository;
+use App\Routes\AdminRoutes;
+use App\Shared\Mail\EmailSenderInterface;
+use Tests\Support\TestDatabase;
+use App\Auth\Services\SessionService;
+use Tests\Support\RecordingEmailSender;
+use PDO;
+use PHPUnit\Framework\TestCase;
+use Slim\Factory\AppFactory;
+use Slim\Psr7\Factory\ServerRequestFactory;
+use Slim\Psr7\Stream;
+
+final class AdminRoutesTest extends TestCase
+{
+    private PDO $pdo;
+    private UserRepository $repository;
+
+    protected function setUp(): void
+    {
+        (new SessionService())->clear();
+        $this->pdo = TestDatabase::create();
+        $this->repository = new UserRepository($this->pdo);
+    }
+
+    protected function tearDown(): void
+    {
+        (new SessionService())->clear();
+    }
+
+    public function testAdminUsersRequiresAuthentication(): void
+    {
+        $response = Application::create()->handle(
+            (new ServerRequestFactory())->createServerRequest('GET', '/admin/users'),
+        );
+
+        self::assertSame(404, $response->getStatusCode());
+    }
+
+    public function testAdminCanListUsersWithSession(): void
+    {
+        $admin = $this->repository->createUser('admin@example.com', 'secret', 'admin');
+        $this->repository->createUser('user@example.com', 'secret', 'user');
+        (new SessionService())->setUser($admin['id'], 'admin');
+        $app = AppFactory::create();
+        $app->addRoutingMiddleware();
+        AdminRoutes::register($app, $this->repository);
+
+        $response = $app->handle((new ServerRequestFactory())->createServerRequest('GET', '/admin/users'));
+
+        self::assertSame(200, $response->getStatusCode());
+        self::assertCount(2, json_decode((string) $response->getBody(), true, 512, JSON_THROW_ON_ERROR));
+    }
+
+    public function testUserCannotListAdminUsers(): void
+    {
+        $user = $this->repository->createUser('user@example.com', 'secret', 'user');
+        (new SessionService())->setUser($user['id'], 'user');
+        $app = AppFactory::create();
+        $app->addRoutingMiddleware();
+        AdminRoutes::register($app, $this->repository);
+
+        $response = $app->handle((new ServerRequestFactory())->createServerRequest('GET', '/admin/users'));
+
+        self::assertSame(404, $response->getStatusCode());
+    }
+
+    public function testClientCannotListAdminUsers(): void
+    {
+        $client = $this->repository->createUser('client@example.com', 'secret', 'client');
+        (new SessionService())->setUser($client['id'], 'client');
+        $app = AppFactory::create();
+        $app->addRoutingMiddleware();
+        AdminRoutes::register($app, $this->repository);
+
+        $response = $app->handle((new ServerRequestFactory())->createServerRequest('GET', '/admin/users'));
+
+        self::assertSame(404, $response->getStatusCode());
+    }
+
+    public function testAdminCanRunFairgateTest(): void
+    {
+        $admin = $this->repository->createUser('admin@example.com', 'secret', 'admin');
+        (new SessionService())->setUser($admin['id'], 'admin');
+        $statement = $this->pdo->prepare(
+            'INSERT INTO frontend_config
+                (id, variable_name, value, description, access_group, update_group, label)
+             VALUES (?, ?, ?, ?, ?, ?, ?)',
+        );
+        $statement->execute([
+            'config-1', 'fairgate_test_email', '"isabelle.joss@gaerngschee.ch"',
+            'Test', '["admin"]', '["admin"]', 'Fairgate Test E-Mail',
+        ]);
+        $app = $this->createApp(null, new FairgateTestAction(static fn (string $email): array => [
+            'success' => true,
+            'data' => ['email' => $email],
+        ], new FrontendConfigRepository($this->pdo)));
+
+        $response = $app->handle(
+            (new ServerRequestFactory())->createServerRequest('GET', '/admin/fairgate/test'),
+        );
+
+        self::assertSame(200, $response->getStatusCode());
+        self::assertSame('isabelle.joss@gaerngschee.ch', json_decode((string) $response->getBody(), true)['email']);
+    }
+
+    public function testAdminOverviewAggregatesOrdersByStatusAndRecentDate(): void
+    {
+        $admin = $this->repository->createUser('admin@example.com', 'secret', 'admin');
+        (new SessionService())->setUser($admin['id'], 'admin');
+        $year = (int) date('Y');
+        $this->pdo->prepare(
+            'INSERT INTO frontend_config (id, variable_name, value, description, access_group, update_group, label)
+             VALUES (?, ?, ?, ?, ?, ?, ?)',
+        )->execute([
+            'config-recent-days', 'provisional_order_recent_days', '14', 'Recent days', '["admin", "user"]', '["admin"]', 'Recent days',
+        ]);
+        $definitiveUser = $this->repository->createUser('definitive@example.com', 'secret', 'user');
+        $oldUser = $this->repository->createUser('old@example.com', 'secret', 'user');
+        $recentUser = $this->repository->createUser('recent@example.com', 'secret', 'user');
+        $this->insertOrder('definitive-order', $definitiveUser['id'], $year, 'definitive', '2000-01-01 00:00:00', 2, 1);
+        $this->insertOrder('provisional-old', $oldUser['id'], $year, 'provisional', '2000-01-01 00:00:00', 1, 0);
+        $this->insertOrder('provisional-recent', $recentUser['id'], $year, 'provisional', date('Y-m-d H:i:s'), 3, 0);
+
+        $response = $this->createApp(
+            null,
+            null,
+            new OrderRepository($this->pdo),
+            new FrontendConfigRepository($this->pdo),
+        )->handle((new ServerRequestFactory())->createServerRequest('GET', '/admin/overview'));
+        $data = json_decode((string) $response->getBody(), true, 512, JSON_THROW_ON_ERROR);
+
+        self::assertSame(200, $response->getStatusCode());
+        self::assertCount(7, $data['categories']);
+        self::assertSame(2, $data['orders']['provisional']);
+        self::assertSame(1, $data['orders']['recentProvisional']);
+        self::assertSame(1, $data['orders']['definitive']);
+        self::assertSame(4, $data['categories'][0]['provisional']);
+        self::assertSame(3, $data['categories'][0]['recentProvisional']);
+        self::assertSame(2, $data['categories'][0]['definitive']);
+        self::assertSame('catA', $data['categories'][0]['category']);
+    }
+
+    public function testAdminCanMarkDefinitiveOrdersForDelivery(): void
+    {
+        $admin = $this->repository->createUser('admin@example.com', 'secret', 'admin');
+        $customer = $this->repository->createUser('customer@example.com', 'secret', 'client');
+        (new SessionService())->setUser($admin['id'], 'admin');
+        $year = (int) date('Y');
+        $this->insertOrder('definitive-order', $customer['id'], $year, 'definitive', date('Y-m-d H:i:s'), 1, 0);
+        $this->insertOrder('provisional-order', $admin['id'], $year, 'provisional', date('Y-m-d H:i:s'), 1, 0);
+
+        $response = $this->createApp(
+            null,
+            null,
+            new OrderRepository($this->pdo),
+        )->handle((new ServerRequestFactory())->createServerRequest('POST', '/admin/overview/deliver'));
+        $data = json_decode((string) $response->getBody(), true, 512, JSON_THROW_ON_ERROR);
+
+        self::assertSame(200, $response->getStatusCode());
+        self::assertSame(1, $data['updated']);
+        self::assertSame('toDeliver', $this->pdo->query("SELECT status FROM orders WHERE id = 'definitive-order'")->fetchColumn());
+        self::assertSame('provisional', $this->pdo->query("SELECT status FROM orders WHERE id = 'provisional-order'")->fetchColumn());
+    }
+
+    public function testAdminCanCreateUserAndEmailIsSentToNewAddress(): void
+    {
+        $admin = $this->repository->createUser('admin@example.com', 'secret', 'admin');
+        (new SessionService())->setUser($admin['id'], 'admin');
+        $emailSender = new RecordingEmailSender();
+        $app = $this->createApp($emailSender);
+
+        $response = $app->handle($this->request('POST', '/admin/users', [
+            'email' => ' New@Example.com ',
+            'group' => 'user',
+        ]));
+        $data = json_decode((string) $response->getBody(), true, 512, JSON_THROW_ON_ERROR);
+
+        self::assertSame(201, $response->getStatusCode());
+        self::assertSame('new@example.com', $data['user']['email']);
+        self::assertTrue((bool) $data['user']['required_password_reset']);
+        self::assertSame('new@example.com', $emailSender->createdRecipient);
+        self::assertSame('new@example.com', $data['emailSentTo']);
+    }
+
+    public function testUserCanUpdateOwnEmailButNotAnotherUser(): void
+    {
+        $user = $this->repository->createUser('user@example.com', 'secret', 'user');
+        $other = $this->repository->createUser('other@example.com', 'secret', 'user');
+        (new SessionService())->setUser($user['id'], 'user');
+        $emailSender = new RecordingEmailSender();
+        $app = $this->createApp($emailSender);
+
+        $ownResponse = $app->handle($this->request('PATCH', '/admin/users/' . $user['id'], [
+            'email' => 'changed@example.com',
+        ]));
+        $otherResponse = $app->handle($this->request('PATCH', '/admin/users/' . $other['id'], [
+            'email' => 'blocked@example.com',
+        ]));
+
+        self::assertSame(200, $ownResponse->getStatusCode());
+        self::assertSame('changed@example.com', $emailSender->changedRecipient);
+        self::assertSame(404, $otherResponse->getStatusCode());
+    }
+
+    public function testAdminCanUpdateUserGroupAndPasswordResetFlag(): void
+    {
+        $admin = $this->repository->createUser('admin@example.com', 'secret', 'admin');
+        $user = $this->repository->createUser('user@example.com', 'secret', 'user', true);
+        (new SessionService())->setUser($admin['id'], 'admin');
+        $app = $this->createApp();
+
+        $response = $app->handle($this->request('PATCH', '/admin/users/' . $user['id'], [
+            'email' => $user['email'],
+            'group' => 'admin',
+            'required_password_reset' => false,
+        ]));
+        $data = json_decode((string) $response->getBody(), true, 512, JSON_THROW_ON_ERROR);
+
+        self::assertSame(200, $response->getStatusCode());
+        self::assertSame('admin', $data['user']['group']);
+        self::assertFalse((bool) $data['user']['required_password_reset']);
+    }
+
+    public function testAdminCanReadUserDetails(): void
+    {
+        $admin = $this->repository->createUser('admin@example.com', 'secret', 'admin');
+        $user = $this->repository->createUser('user@example.com', 'secret', 'user');
+        (new SessionService())->setUser($admin['id'], 'admin');
+        $response = $this->createApp()->handle(
+            (new ServerRequestFactory())->createServerRequest('GET', '/admin/users/' . $user['id']),
+        );
+        $data = json_decode((string) $response->getBody(), true, 512, JSON_THROW_ON_ERROR);
+
+        self::assertSame(200, $response->getStatusCode());
+        self::assertSame($user['id'], $data['user']['id']);
+    }
+
+    public function testAdminCanDeleteUser(): void
+    {
+        $admin = $this->repository->createUser('admin@example.com', 'secret', 'admin');
+        $user = $this->repository->createUser('user@example.com', 'secret', 'user');
+        (new SessionService())->setUser($admin['id'], 'admin');
+        $app = $this->createApp();
+
+        $response = $app->handle($this->request('DELETE', '/admin/users/' . $user['id']));
+
+        self::assertSame(200, $response->getStatusCode());
+        self::assertNull($this->repository->findById($user['id']));
+    }
+
+    private function createApp(
+        ?EmailSenderInterface $emailSender = null,
+        ?FairgateTestAction $fairgateTestAction = null,
+        ?OrderRepository $orderRepository = null,
+        ?FrontendConfigRepository $configRepository = null,
+    ): \Slim\App {
+        $app = AppFactory::create();
+        $app->addRoutingMiddleware();
+        AdminRoutes::register($app, $this->repository, $emailSender, $fairgateTestAction, $orderRepository, $configRepository);
+
+        return $app;
+    }
+
+    private function insertOrder(string $id, string $userId, int $year, string $status, string $timestamp, int $catA, int $catB): void
+    {
+        $this->pdo->prepare(
+            'INSERT INTO orders (id, user_id, year, status, adults_count, children_count, created_at, updated_at)
+             VALUES (?, ?, ?, ?, ?, ?, ?, ?)',
+        )->execute([$id, $userId, $year, $status, $catA, $catB, $timestamp, $timestamp]);
+        $this->pdo->prepare(
+            'INSERT INTO order_items (id, order_id, person_type, category, quantity) VALUES (?, ?, ?, ?, ?)',
+        )->execute([$id . '-a', $id, 'adult', 'catA', $catA]);
+        if ($catB > 0) {
+            $this->pdo->prepare(
+                'INSERT INTO order_items (id, order_id, person_type, category, quantity) VALUES (?, ?, ?, ?, ?)',
+            )->execute([$id . '-b', $id, 'child', 'catB', $catB]);
+        }
+    }
+
+    private function request(string $method, string $path, array $body = []): \Psr\Http\Message\ServerRequestInterface
+    {
+        $stream = fopen('php://temp', 'r+');
+        fwrite($stream, json_encode($body, JSON_THROW_ON_ERROR));
+        rewind($stream);
+
+        return (new ServerRequestFactory())
+            ->createServerRequest($method, $path)
+            ->withHeader('Content-Type', 'application/json')
+            ->withBody(new Stream($stream));
+    }
+}

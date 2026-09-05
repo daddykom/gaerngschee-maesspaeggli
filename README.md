@@ -113,6 +113,37 @@ cd frontend && npm install
 cd backend && composer install
 ```
 
+### Fairgate-Testdaten
+
+Die lokale Docker-Umgebung läuft mit `APP_ENV=test` und verwendet deshalb den
+Fairgate-Fake. Bei einer E-Mail-Adresse mit `+` wird der Teil nach dem Plus im
+lokalen Teil der Adresse als Testmarker ausgewertet. Die Prüfung ist unabhängig
+von Gross-/Kleinschreibung und der Marker darf von weiterem Text umgeben sein.
+
+Beispiele:
+
+| E-Mail-Adresse | Simuliertes Ergebnis |
+|---|---|
+| `person+fair1@example.com` | Kontakt gefunden, 2 Erwachsene und 3 Kinder |
+| `person+fair1-alice@example.com` | Dasselbe Profil wie `fair1`, aber eine weitere eindeutige Testadresse |
+| `person+fair2@example.com` | Kontakt gefunden, 1 Erwachsener und 2 Kinder |
+| `person+fair3@example.com` | Kontakt gefunden, 2 Erwachsene und 0 Kinder |
+| `person+fair4@example.com` | Kontakt gefunden, 2 Erwachsene und 7 Kinder |
+| `person+test@example.com` | Kein Kontakt gefunden |
+| `person@example.com` | Kein Kontakt gefunden |
+
+Für einen Test muss `fair1`, `fair2`, `fair3` oder `fair4` nach dem `+` im
+lokalen Teil der Adresse vorkommen. Weitere Zeichen sind erlaubt, zum Beispiel
+`person+fair1-alice@example.com` oder
+`person+fair1-kunde-123@example.com`. Damit können mit einer einzigen
+Empfänger-Domain unzählige eindeutige Testkunden simuliert werden. Die Domain
+kann frei gewählt werden. Der Mailserver ignoriert bei der Zustellung alles ab
+dem `+` und liefert alle diese Varianten an dasselbe Postfach. Die Anwendung
+wertet den Teil ab dem `+` hingegen aus und verwendet ihn zur Auswahl des
+simulierten Fairgate-Profils. In der Produktionsumgebung wird mit `APP_ENV=prod`
+der echte Fairgate-Service verwendet. Details stehen in den
+[Backend-Konventionen](./documents/backend-conventions.md#testumgebung-und-fairgate-fake).
+
 ### Verfügbare Scripts
 
 #### Frontend (frontend/package.json)

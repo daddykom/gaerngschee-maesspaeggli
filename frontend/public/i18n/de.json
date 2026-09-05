@@ -1,0 +1,291 @@
+{
+  "app": {
+    "title": "Gärngschee-Mässpäggli",
+    "anmeldung": {
+      "title": "Mässpäggli bekommen",
+      "lead": "Schreib deine E-Mail-Adresse hier hinein. Wir schicken dir dann einen direkten Link zum Bestellformular.",
+      "fairgate": "Hast du ein Konto bei Fairgate? Dann gib hier dieselbe E-Mail-Adresse ein.",
+      "emailHeading": "Deine E-Mail-Adresse",
+      "emailLabel": "E-Mail-Adresse",
+      "emailPlaceholder": "name@example.com",
+      "errors": {
+        "email": {
+          "required": "Bitte gib deine E-Mail-Adresse ein.",
+          "email": "Bitte prüfe deine E-Mail-Adresse."
+        }
+      },
+      "continue": "Weiter",
+      "privacyHint": "Wir behandeln deine Daten vertraulich.",
+      "sendError": "Die E-Mail konnte gerade nicht gesendet werden. Bitte versuche es später noch einmal.",
+      "errorTitle": "Fehler",
+      "registrationTokenError": "Der Anmeldelink ist ungültig oder abgelaufen. Bitte fordere auf der Startseite einen neuen Link an.",
+      "emailSentTitle": "E-Mail versandt",
+      "emailSentMessage": "Wir haben dir eine E-Mail mit deinem persönlichen Bestelllink geschickt. Der Link ist 10 Minuten gültig.",
+      "privacyTitle": "Deine Daten bleiben privat",
+      "privacyText": "Wir prüfen deine Angaben. Auf dieser Seite zeigen wir nicht, ob diese E-Mail-Adresse bei uns oder bei Fairgate gespeichert ist. Die nächsten Schritte schicken wir dir per E-Mail."
+    },
+    "login": {
+      "pageTitle": "Mässpäggli verwalten",
+      "heading": "Anmelden",
+      "emailLabel": "E-Mail-Adresse",
+      "passwordLabel": "Passwort",
+      "submit": "Anmelden",
+      "forgotPassword": "Passwort vergessen?",
+      "errors": {
+        "email": {
+          "required": "Bitte gib deine E-Mail-Adresse ein.",
+          "email": "Bitte prüfe deine E-Mail-Adresse."
+        },
+        "password": {
+          "required": "Bitte gib dein Passwort ein."
+        }
+      }
+    },
+    "order": {
+      "pageTitle": "Mässpäggli bestellen",
+      "heading": "Mässpäggli bestellen",
+      "description": "Dies ist die vorbereitete Bestellseite.",
+      "intro": "Für deine Bestellung sind {{adults}} Erwachsene und {{children}} Kinder erfasst.",
+      "introInstruction": "Wähle für jede Person das passende Mässpäggli aus.",
+      "adults": "Erwachsene",
+      "children": "Kinder",
+      "fairgate": "Fairgate-Konto vorhanden",
+      "yes": "Ja",
+      "no": "Nein",
+      "noFairgate": {
+        "title": "Lieber Besteller",
+        "message": "Wir können Dich leider nicht bei Fairgate finden. Bitte melde Dich dort an, damit Du berechtigt bist, ein oder mehrere Mässpäggli zu bestellen. Verwende dabei die E-Mail, die Du hier verwendet hast. Du kannst Dich trotzdem provisorisch anmelden, Du musst uns einfach die richtige Anzahl Erwachsene und Kinder angeben. Sobald wir Deine Anmeldung bei Fairgate erhalten haben, wird Deine Anmeldung automatisch definitiv. Anmelden kannst Du Dich <a href=\"{{fairgateUrl}}\" target=\"_blank\" rel=\"noreferrer\">hier</a>."
+      },
+      "manualCounts": {
+        "title": "Anzahl Personen erfassen",
+        "description": "Wie viele Erwachsene und Kinder möchtest du anmelden?",
+        "adults": "Anzahl Erwachsene",
+        "children": "Anzahl Kinder"
+      },
+      "categories": {
+        "title": "Mässpäggli bestellen",
+        "description": "Wähle für jede Person die passende Kategorie aus.",
+        "adults": "Erwachsene",
+        "children": "Kinder",
+        "adult": "Erwachsene Person",
+        "child": "Kind",
+        "category": "Mässpäggli-Kategorie",
+        "pleaseSelect": "Bitte auswählen",
+        "errors": {
+          "required": "Bitte auswählen."
+        },
+        "adult": "Erwachsene Person",
+        "child": "Kind",
+        "options": {
+          "catA": "Erwachsene ruhig",
+          "catB": "Erwachsene Action",
+          "catC": "Kinder 1-3 Jahre",
+          "catD": "Kinder 4-6 Jahre",
+          "catE": "Kinder 7-9 Jahre",
+          "catF": "Kinder 10-12 Jahre",
+          "catG": "Jugendliche 13-17 Jahre"
+        }
+      },
+      "submit": "Weiter",
+      "summary": {
+        "pageTitle": "Bestellübersicht",
+        "title": "Bestellübersicht",
+        "description": "Deine Bestellung für das Jahr {{year}}.",
+        "status": "Status",
+        "statuses": {
+          "provisional": "Provisorisch",
+          "definitive": "Definitiv"
+        },
+        "back": "Zurück",
+        "order": "Bestellen",
+        "noOrder": "Es ist keine Bestellung zur Bestätigung vorhanden."
+      },
+      "notifications": {
+        "successTitle": "Bestellung gespeichert",
+        "success": "Deine Bestellung wurde erfolgreich gespeichert.",
+        "loadErrorTitle": "Bestellung konnte nicht geladen werden",
+        "errorTitle": "Bestellung konnte nicht gespeichert werden",
+        "errors": {
+          "REQUEST_FAILED": "Die Bestellung konnte nicht gespeichert werden."
+        }
+      }
+    },
+    "passwordChange": {
+      "pageTitle": "Passwort ändern",
+      "heading": "Passwort ändern",
+      "newPasswordLabel": "Neues Passwort",
+      "confirmationLabel": "Neues Passwort bestätigen",
+      "submit": "Passwort ändern",
+      "errors": {
+        "newPassword": {
+          "required": "Bitte gib ein neues Passwort ein."
+        },
+          "passwordConfirmation": {
+            "required": "Bitte bestätige dein neues Passwort.",
+            "passwordsDoNotMatch": "Die Passwörter stimmen nicht überein."
+          },
+          "PASSWORD_CHANGE_FAILED": "Das Passwort konnte nicht geändert werden."
+      }
+    },
+    "notFound": {
+      "pageTitle": "Seite nicht gefunden",
+      "heading": "Diese Seite gibt es nicht",
+      "login": "Anmelden",
+      "start": "Mässpäggli bestellen"
+    },
+    "auth": {
+      "loginErrorTitle": "Anmeldung fehlgeschlagen",
+      "errors": {
+        "INVALID_CREDENTIALS": "E-Mail-Adresse oder Passwort ist ungültig.",
+        "LOGIN_FAILED": "Die Anmeldung konnte nicht durchgeführt werden. Bitte versuche es später erneut."
+      }
+    },
+    "admin": {
+      "overview": {
+        "title": "Admin-Übersicht"
+      },
+      "fairgateTest": {
+        "title": "Fairgate-Test",
+        "errorTitle": "Fehler",
+        "description": "Testet die Verbindung zu Fairgate mit dem hinterlegten Testkontakt.",
+        "run": "Fairgate-Abfrage starten",
+        "loading": "Fairgate-Abfrage läuft ...",
+        "errors": {
+          "FAIRGATE_TEST_FAILED": "Die Fairgate-Abfrage ist fehlgeschlagen.",
+          "REQUEST_FAILED": "Die Anfrage konnte nicht durchgeführt werden."
+        }
+      },
+      "configuration": {
+        "title": "Konfiguration",
+        "loading": "Konfiguration wird geladen ...",
+        "empty": "Es sind keine Konfigurationsvariablen vorhanden.",
+        "save": "Konfiguration speichern",
+        "addValue": "Wert hinzufügen",
+        "removeValue": "Wert entfernen",
+        "successTitle": "Erfolgreich",
+        "saved": "Die Konfiguration wurde gespeichert.",
+        "errorTitle": "Fehler",
+        "errors": {
+          "FORBIDDEN": "Du darfst mindestens eine Konfiguration nicht verändern.",
+          "INVALID_CONFIGURATION_DATA": "Bitte prüfe die Konfigurationswerte.",
+          "CONFIGURATION_UPDATE_FAILED": "Die Konfiguration konnte nicht gespeichert werden.",
+          "REQUEST_FAILED": "Die Anfrage konnte nicht durchgeführt werden."
+        }
+      },
+      "overview": {
+        "title": "Admin-Übersicht",
+        "definitiveTitle": "Definitive Bestellungen",
+        "provisionalTitle": "Provisorische Bestellungen",
+        "recentProvisionalTitle": "Provisorische Bestellungen in den letzten {{ days }} Tagen",
+        "orderCount": "Anzahl Bestellungen",
+        "category": "Bestellungen/Kategorie",
+        "orders": "Bestellungen",
+        "provisional": "Provisorisch",
+        "provisionalShort": "Prov.",
+        "recentProvisional": "Provisorisch letzte {{ days }} Tage",
+        "recentProvisionalShort": "P. {{ days }} Tg",
+        "definitive": "Definitiv",
+        "definitiveShort": "Def.",
+        "toDeliver": "Auszuliefern",
+        "toDeliverShort": "Bereit",
+        "qrcode": "QR-Code versandt",
+        "qrcodeShort": "QR",
+        "delivered": "Ausgeliefert",
+        "deliveredShort": "Gelief.",
+        "tableCaption": "Bestellungen nach Kategorie und Status",
+        "empty": "Keine Bestellungen vorhanden.",
+        "deliver": "Bestellungen ausliefern",
+        "print": "Drucken",
+        "printDate": "Druckdatum",
+        "deliverTitle": "Bestellungen ausliefern",
+        "deliverQuestion": "Willst du wirklich alle definitiven Bestellungen ausliefern?",
+        "deliverConfirm": "Ausliefern",
+        "deliverCancel": "Abbrechen",
+        "successTitle": "Erfolgreich",
+        "deliveredMessage": "{{ updated }} definitive Bestellungen wurden zur Auslieferung markiert.",
+        "errorTitle": "Übersicht konnte nicht geladen werden",
+        "errors": {
+          "INVALID_OVERVIEW_CONFIGURATION": "Die Konfiguration für die Übersicht ist ungültig.",
+          "REQUEST_FAILED": "Die Übersicht konnte nicht geladen werden.",
+          "DELIVERY_FAILED": "Die definitiven Bestellungen konnten nicht zur Auslieferung markiert werden."
+        }
+      },
+      "users": {
+        "title": "Benutzerverwaltung",
+        "createTitle": "Benutzer erstellen",
+        "editTitle": "Benutzer bearbeiten",
+        "heading": "Benutzer",
+        "createHeading": "Neuen Benutzer erstellen",
+        "editHeading": "Benutzer bearbeiten",
+        "create": "Benutzer erstellen",
+        "edit": "Bearbeiten",
+        "delete": "Löschen",
+        "save": "Speichern",
+        "cancel": "Abbrechen",
+        "loading": "Benutzer werden geladen ...",
+        "empty": "Es sind keine Benutzer vorhanden.",
+        "emailLabel": "E-Mail-Adresse",
+        "groupLabel": "Gruppe",
+        "passwordResetRequired": "Passwort muss neu gesetzt werden",
+        "deleteTitle": "Benutzer löschen",
+        "deleteMessage": "Soll dieser Benutzer wirklich gelöscht werden?",
+        "deleteConfirm": "Löschen",
+        "successTitle": "Erfolgreich",
+        "created": "Der Benutzer wurde erstellt.",
+        "createdWithEmail": "Der Benutzer wurde erstellt. Eine E-Mail wurde an {{ recipient }} versendet.",
+        "updated": "Der Benutzer wurde geändert.",
+        "updatedWithEmail": "Der Benutzer wurde geändert. Eine E-Mail wurde an {{ recipient }} versendet.",
+        "deleted": "Der Benutzer wurde gelöscht.",
+        "emailSentTo": "Eine E-Mail wurde an {{ recipient }} versendet.",
+        "errorTitle": "Fehler",
+        "groups": {
+          "admin": "Administrator",
+          "user": "Benutzer",
+          "client": "Klient"
+        },
+        "errors": {
+          "email": {
+            "required": "Dieses Feld ist erforderlich.",
+            "email": "Bitte prüfe die E-Mail-Adresse."
+          },
+          "EMAIL_ALREADY_REGISTERED": "Diese E-Mail-Adresse ist bereits registriert.",
+          "INVALID_USER_DATA": "Bitte prüfe die Eingaben.",
+          "NOT_FOUND": "Der Benutzer wurde nicht gefunden.",
+          "EMAIL_DELIVERY_FAILED": "Die E-Mail konnte nicht versendet werden.",
+          "USER_CREATION_FAILED": "Der Benutzer konnte nicht erstellt werden.",
+          "USER_UPDATE_FAILED": "Der Benutzer konnte nicht geändert werden.",
+          "REQUEST_FAILED": "Die Anfrage konnte nicht durchgeführt werden."
+        }
+      }
+    },
+    "delivery": {
+      "title": "Auslieferung",
+      "email": "E-Mail-Adresse",
+      "search": "Bestellung suchen",
+      "loading": "Bestellung wird geladen ...",
+      "error": "Die Bestellung konnte nicht geladen werden.",
+      "orderTitle": "Bestellung",
+      "adults": "Erwachsene",
+      "children": "Kinder",
+      "deliver": "Aufliefern",
+      "undo": "Rückgängig machen",
+      "cancel": "Abbrechen",
+      "deliverTitle": "Bestellung aufliefern",
+      "identityQuestion": "Hast du den Ausweis überprüft?",
+      "undoTitle": "Auslieferung rückgängig machen",
+      "undoQuestion": "Bist du sicher, dass du die Auslieferung rückgängig machen willst?"
+    },
+    "navigation": {
+      "menuLabel": "Administrationsmenü",
+      "openMenu": "Administrationsmenü öffnen",
+      "start": "Startseite",
+      "adminOverview": "Admin-Übersicht",
+      "delivery": "Auslieferung",
+      "configuration": "Konfiguration",
+      "fairgateTest": "Fairgate-Test",
+      "userManagement": "Benutzerverwaltung",
+      "myUser": "Meine Daten",
+      "logout": "Abmelden"
+    }
+  }
+}

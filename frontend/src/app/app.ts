@@ -1,10 +1,19 @@
-import { Component } from '@angular/core';
-import { RouterOutlet, RouterLink, RouterLinkActive } from '@angular/router';
-import { MatToolbarModule } from '@angular/material/toolbar';
+import { Component, computed, inject } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
-import { MatSidenavModule } from '@angular/material/sidenav';
-import { MatListModule } from '@angular/material/list';
+import { MatDividerModule } from '@angular/material/divider';
 import { MatIconModule } from '@angular/material/icon';
+import { MatMenuModule } from '@angular/material/menu';
+import { MatToolbarModule } from '@angular/material/toolbar';
+import { ActivatedRoute, NavigationEnd, Router, RouterLink, RouterLinkActive, RouterOutlet } from '@angular/router';
+import { Store } from '@ngrx/store';
+import { TranslatePipe } from '@ngx-translate/core';
+import { toSignal } from '@angular/core/rxjs-interop';
+import { filter, startWith } from 'rxjs';
+import { InfoBoxComponent } from './shared/components/info-box/info-box';
+import { AuthActions } from './store/auth/auth.actions';
+import { selectAuthGroup, selectAuthUserId } from './store/auth/auth.feature';
+import { selectNotification } from './store/notification/notification.feature';
+import { FrontendConfigActions } from './store/frontend-config/frontend-config.actions';
 
 @Component({
   imports: [
@@ -13,9 +22,11 @@ import { MatIconModule } from '@angular/material/icon';
     RouterLinkActive,
     MatToolbarModule,
     MatButtonModule,
-    MatSidenavModule,
-    MatListModule,
+    MatDividerModule,
+    MatMenuModule,
     MatIconModule,
+    TranslatePipe,
+    InfoBoxComponent,
   ],
   selector: 'app-root',
   templateUrl: './app.html',
@@ -23,4 +34,45 @@ import { MatIconModule } from '@angular/material/icon';
 })
 export class App {
   protected title = 'Gaerngschee';
+  private readonly store = inject(Store);
+  private readonly router = inject(Router);
+  private readonly activatedRoute = inject(ActivatedRoute);
+
+  constructor() {
+    this.store.dispatch(FrontendConfigActions.loadPublic());
+  }
+
+  private readonly navigation = toSignal(
+    this.router.events.pipe(
+      filter((event) => event instanceof NavigationEnd),
+      startWith(null),
+    ),
+    { initialValue: null },
+  );
+
+  readonly notification = this.store.selectSignal(selectNotification);
+  readonly authGroup = this.store.selectSignal(selectAuthGroup);
+  readonly authUserId = this.store.selectSignal(selectAuthUserId);
+  readonly isAdmin = computed(() => this.authGroup() === 'admin');
+
+  logout(): void {
+    this.store.dispatch(AuthActions.logoutRequested({ redirectTo: '/login' }));
+  }
+
+  readonly isAdminRoute = computed(() => {
+    this.navigation();
+    return this.router.url.startsWith('/admin') || this.router.url.startsWith('/delivery');
+  });
+
+  readonly pageTitleKey = computed(() => {
+    this.navigation();
+
+    let route = this.activatedRoute;
+    while (route.firstChild) {
+      route = route.firstChild;
+    }
+
+    return route.snapshot.data['pageTitle'] as string | undefined;
+  });
+
 }

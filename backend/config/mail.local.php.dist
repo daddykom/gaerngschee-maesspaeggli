@@ -1,0 +1,7 @@
+<?php
+
+return [
+    'mailer_dsn' => 'smtps://mailbox%40example.ch:password@mail.cyon.ch:465',
+    'from_address' => 'mailbox@example.ch',
+    'from_name' => 'Gärngschee-Mässpäggli',
+];

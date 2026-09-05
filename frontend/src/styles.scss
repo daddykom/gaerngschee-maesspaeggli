@@ -1,28 +1,130 @@
 @use '@angular/material' as mat;
+@use './layout-variables' as layout;
 
-@import '@fontsource/inter/400.css';
-@import '@fontsource/inter/500.css';
-@import '@fontsource/inter/700.css';
+@use '@fontsource/inter/400.css' as inter400;
+@use '@fontsource/inter/500.css' as inter500;
+@use '@fontsource/inter/700.css' as inter700;
+@use '@fontsource/material-icons' as materialicons;
 
 @include mat.core();
 
-$gaerngschee-theme: mat.define-theme((
-  color: (
-    theme-type: light,
-    primary: mat.$azure-palette,
-  ),
-));
+$gaerngschee-theme: mat.define-theme(
+  (
+    color: (
+      theme-type: light,
+      primary: mat.$azure-palette,
+    ),
+  )
+);
+
+@include mat.system-level-colors($gaerngschee-theme);
 
 html {
   @include mat.all-component-themes($gaerngschee-theme);
-  overflow: hidden;
+  @include mat.typography-hierarchy($gaerngschee-theme);
   height: 100%;
+  font-family: 'Inter', sans-serif;
+
+  @media (min-width: layout.$gl-section-breakpoint) {
+    font-size: 1.4em;
+  }
+}
+
+html,
+body {
+  margin: 0;
+  padding: 0;
+  min-height: 100%;
   font-family: 'Inter', sans-serif;
 }
 
-body {
+body.navigation-progress {
+  cursor: progress;
+}
+
+body.navigation-progress * {
+  cursor: progress;
+}
+
+h2,
+h3,
+h4 {
   margin: 0;
-  overflow: hidden;
-  height: 100%;
-  font-family: 'Inter', sans-serif;
+}
+
+:root {
+  --gl-space-sm: 0.5rem;
+  --gl-space-md: 1rem;
+  --gl-space-lg: 1.5rem;
+  --gl-space-xl: 2rem;
+  --gl-content-max-width: 1180px;
+  --gl-success-container: #e8f5e9;
+  --gl-success: #2e7d32;
+  --gl-on-success-container: #1b5e20;
+}
+
+.gl-container {
+  box-sizing: border-box;
+  width: 100%;
+  max-width: var(--gl-content-max-width);
+  margin-inline: auto;
+  padding-inline: var(--gl-space-md);
+}
+
+.gl-stack {
+  display: flex;
+  flex-direction: column;
+  gap: var(--gl-space-md);
+
+  &--group {
+    gap: var(--gl-space-lg);
+  }
+
+  &--section {
+    gap: var(--gl-space-xl);
+  }
+}
+
+.gl-stack mat-form-field {
+  width: 100%;
+}
+
+.gl-cluster {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--gl-space-md);
+}
+
+.list-as-form {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.gl-section-layout {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: var(--gl-space-xl);
+
+  @media (min-width: layout.$gl-section-breakpoint) {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+body {
+  background-image: url('/herbstmesse.png');
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  background-attachment: fixed;
+}
+
+app-root {
+  display: block;
+  min-height: 100%;
+}
+
+mat-icon {
+  font-family: 'Material Icons', sans-serif;
 }

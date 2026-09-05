@@ -62,7 +62,6 @@ AGENTS.md serves as an index document that links to:
    - `documents/backend-conventions.md` - PHP patterns
 
 2. **Agent-specific specs** in `openspec/specs/`:
-   - `openspec/specs/offers/spec.md` - Offer capability
    - `openspec/specs/categories/spec.md` - Category capability
    - `openspec/specs/map/spec.md` - Map capability
    - `openspec/specs/moderation/spec.md` - Moderation capability

@@ -1,0 +1,54 @@
+services:
+  integration-database:
+    image: mariadb:10.11
+    environment:
+      MYSQL_ROOT_PASSWORD: integration-root-password
+      MYSQL_DATABASE: gaerngschee_integration
+      MYSQL_USER: gaerngschee_integration
+      MYSQL_PASSWORD: integration-password
+    ports:
+      - "3307:3306"
+    volumes:
+      - integration_db_data:/var/lib/mysql
+    healthcheck:
+      test: ["CMD", "healthcheck.sh", "--connect", "--innodb_initialized"]
+      interval: 5s
+      timeout: 5s
+      retries: 20
+
+  integration-backend:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - "8082:80"
+    volumes:
+      - ./backend:/var/www/html
+      - ./db:/var/www/db
+      - ./backend/config/integration:/var/www/html/config:ro
+    environment:
+      PHP_DISPLAY_ERRORS: 1
+      APP_ENV: test
+      DB_HOST: integration-database
+      DB_PORT: 3306
+      DB_NAME: gaerngschee_integration
+      DB_TEST_NAME: gaerngschee_integration
+      DB_USER: gaerngschee_integration
+      DB_PASS: integration-password
+      JWT_SECRET: integration-only-jwt-secret-change-me
+      FRONTEND_BASE_URL: http://localhost:4300
+      PHINX_SEED_PATH: /var/www/db/seeds/test
+    depends_on:
+      integration-database:
+        condition: service_healthy
+      integration-mail:
+        condition: service_started
+
+  integration-mail:
+    image: axllent/mailpit:v1.21
+    ports:
+      - "8025:8025"
+      - "1025:1025"
+
+volumes:
+  integration_db_data:
