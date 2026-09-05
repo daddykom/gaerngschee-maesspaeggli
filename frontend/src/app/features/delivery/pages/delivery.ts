@@ -1,13 +1,23 @@
-import { ChangeDetectionStrategy, Component, computed, inject, signal } from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, inject } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { MatButtonModule } from '@angular/material/button';
 import { MatDialog } from '@angular/material/dialog';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { TranslatePipe } from '@ngx-translate/core';
-import { ClientOrder, OrderCategory } from '../../../shared/models/order.model';
-import { DeliveryService } from '../../../shared/services/delivery.service';
+import { Store } from '@ngrx/store';
+import { OrderCategory } from '../../../shared/models/order.model';
 import { ConfirmDialogComponent, ConfirmDialogData } from '../../../shared/components/confirm-dialog/confirm-dialog';
+import { DeliveryActions } from '../../../store/delivery/delivery.actions';
+import {
+  selectDeliveryAction,
+  selectDeliveryChildren,
+  selectDeliveryClientName,
+  selectDeliveryEmail,
+  selectDeliveryLoad,
+  selectDeliveryOrder,
+  selectDeliveryViaToken,
+} from '../../../store/delivery/delivery.feature';
 
 @Component({
   selector: 'app-delivery',
@@ -17,15 +27,20 @@ import { ConfirmDialogComponent, ConfirmDialogData } from '../../../shared/compo
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class Delivery {
-  private readonly service = inject(DeliveryService);
+  private readonly store = inject(Store);
   private readonly dialog = inject(MatDialog);
   private readonly route = inject(ActivatedRoute);
 
-  readonly email = signal('');
-  readonly order = signal<ClientOrder | null>(null);
-  readonly viaToken = signal(false);
-  readonly loading = signal(false);
-  readonly error = signal(false);
+  readonly email = this.store.selectSignal(selectDeliveryEmail);
+  readonly order = this.store.selectSignal(selectDeliveryOrder);
+  readonly viaToken = this.store.selectSignal(selectDeliveryViaToken);
+  readonly clientName = this.store.selectSignal(selectDeliveryClientName);
+  readonly fairgateChildren = this.store.selectSignal(selectDeliveryChildren);
+  readonly load = this.store.selectSignal(selectDeliveryLoad);
+  readonly action = this.store.selectSignal(selectDeliveryAction);
+  readonly loading = computed(() => this.load().status === 'loading');
+  readonly error = computed(() => this.load().status === 'error' || this.action().status === 'error');
+  readonly changingStatus = computed(() => this.action().status === 'loading');
   readonly categories = computed(() => {
     const items = this.order()?.items ?? [];
     return (['catA', 'catB', 'catC', 'catD', 'catE', 'catF', 'catG'] as OrderCategory[])
@@ -35,12 +50,16 @@ export class Delivery {
 
   constructor() {
     const token = this.route.snapshot.queryParamMap.get('token');
-    if (token) this.load({ token });
+    if (token) this.store.dispatch(DeliveryActions.loadRequested({ token }));
   }
 
   search(): void {
     const email = this.email().trim();
-    if (email) this.load({ email });
+    if (email) this.store.dispatch(DeliveryActions.loadRequested({ email }));
+  }
+
+  emailChanged(email: string): void {
+    this.store.dispatch(DeliveryActions.emailChanged({ email }));
   }
 
   changeStatus(): void {
@@ -60,20 +79,7 @@ export class Delivery {
     });
   }
 
-  private load(search: { email?: string; token?: string }): void {
-    this.loading.set(true);
-    this.error.set(false);
-    this.service.getOrder(search).subscribe({
-      next: (response) => { this.order.set(response.order); this.viaToken.set(response.viaToken); this.loading.set(false); },
-      error: () => { this.order.set(null); this.loading.set(false); this.error.set(true); },
-    });
-  }
-
   private updateStatus(orderId: string, transition: 'deliver' | 'undo'): void {
-    const request = transition === 'deliver' ? this.service.deliver(orderId) : this.service.undo(orderId);
-    request.subscribe({
-      next: () => this.load(this.viaToken() ? { token: this.route.snapshot.queryParamMap.get('token') ?? undefined } : { email: this.email().trim() }),
-      error: () => this.error.set(true),
-    });
+    this.store.dispatch(DeliveryActions.statusChangeRequested({ orderId, transition }));
   }
 }

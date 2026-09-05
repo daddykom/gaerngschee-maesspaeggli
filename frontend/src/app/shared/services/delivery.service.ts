@@ -15,11 +15,11 @@ export class DeliveryService {
     return this.http.get<DeliveryOrderResponse>(`${environment.apiUrl}/delivery/order`, { params });
   }
 
-  deliver(orderId: string): Observable<{ status: string }> {
-    return this.http.post<{ status: string }>(`${environment.apiUrl}/delivery/orders/${orderId}/deliver`, {});
+  deliver(orderId: string): Observable<{ status: 'qrcode' | 'delivered' }> {
+    return this.http.post<{ status: 'qrcode' | 'delivered' }>(`${environment.apiUrl}/delivery/orders/${orderId}/deliver`, {});
   }
 
-  undo(orderId: string): Observable<{ status: string }> {
-    return this.http.post<{ status: string }>(`${environment.apiUrl}/delivery/orders/${orderId}/undo`, {});
+  undo(orderId: string): Observable<{ status: 'qrcode' | 'delivered' }> {
+    return this.http.post<{ status: 'qrcode' | 'delivered' }>(`${environment.apiUrl}/delivery/orders/${orderId}/undo`, {});
   }
 }

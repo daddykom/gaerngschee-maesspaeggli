@@ -266,6 +266,8 @@
       "error": "Die Bestellung konnte nicht geladen werden.",
       "orderTitle": "Bestellung",
       "status": "Status",
+      "client": "Bezüger/in",
+      "fairgateChildren": "Kinder aus Fairgate",
       "adults": "Erwachsene",
       "children": "Kinder",
       "deliver": "Aufliefern",

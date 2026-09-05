@@ -50,6 +50,8 @@ final class FakeFairgateClient implements FairgateContactProvider
             if (str_contains($marker, $fairMarker)) {
                 $data = [
                     'contactId' => 1,
+                    'first_name' => 'Test',
+                    'last_name' => 'Bezüger',
                     'salutation' => 'Informal',
                     'gender' => 'Female',
                     'correspondence_lang' => 'de',

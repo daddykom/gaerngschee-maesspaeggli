@@ -26,6 +26,8 @@ test.describe('Delivery route', () => {
             items: [{ personType: 'adult', category: 'catA', quantity: 2 }, { personType: 'child', category: 'catC', quantity: 1 }],
             createdAt: null, updatedAt: null,
           },
+          clientName: 'Jane Doe',
+          children: [{ name: 'Baby Doe', birthDate: null }],
         }),
       });
     });
@@ -43,6 +45,8 @@ test.describe('Delivery route', () => {
     await page.getByRole('button', { name: 'Bestellung suchen' }).click();
     await expect(page.getByText('Erwachsene: 2')).toBeVisible();
     await expect(page.getByText('Kinder: 1')).toBeVisible();
+    await expect(page.getByText('Bezüger/in: Jane Doe')).toBeVisible();
+    await expect(page.getByText('Baby Doe')).toBeVisible();
     await page.getByRole('button', { name: 'Aufliefern' }).click();
     await expect(page.getByText('Hast du den Ausweis überprüft?')).toBeVisible();
     await page.getByRole('button', { name: 'Aufliefern' }).last().click();
