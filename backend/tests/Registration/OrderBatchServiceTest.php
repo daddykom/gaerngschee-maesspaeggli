@@ -104,7 +104,7 @@ final class OrderBatchServiceTest extends TestCase
         self::assertSame(1, $result['sent']);
         self::assertSame('qrcode', $updated['status']);
         self::assertMatchesRegularExpression('/^[A-Za-z0-9_-]{43}$/', $updated['deliveryToken']);
-        self::assertStringContainsString('/deliver?token=' . $updated['deliveryToken'], $emails->orderConfirmations[0]['order']['html']);
+        self::assertStringContainsString('/delivery?token=' . $updated['deliveryToken'], $emails->orderConfirmations[0]['order']['html']);
         self::assertStringContainsString('data:image/png;base64,', $emails->orderConfirmations[0]['order']['html']);
     }
 

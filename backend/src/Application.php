@@ -8,6 +8,7 @@ use App\Routes\AdminRoutes;
 use App\Routes\ConfigurationRoutes;
 use App\Routes\AuthRoutes;
 use App\Routes\ClientRoutes;
+use App\Routes\DeliveryRoutes;
 use App\Routes\PublicRoutes;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
@@ -49,6 +50,7 @@ final class Application
         PublicRoutes::register($app);
         AuthRoutes::register($app);
         ClientRoutes::register($app);
+        DeliveryRoutes::register($app);
         AdminRoutes::register($app);
         ConfigurationRoutes::register($app);
 

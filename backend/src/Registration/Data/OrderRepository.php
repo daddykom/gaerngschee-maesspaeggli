@@ -202,6 +202,68 @@ final class OrderRepository
         $statement->execute(['id' => $orderId]);
     }
 
+    /** @return array<string, mixed>|null */
+    public function findDeliveryOrderByToken(string $token): ?array
+    {
+        $statement = $this->pdo->prepare(
+            "SELECT user_id FROM orders WHERE delivery_token = :token AND status IN ('qrcode', 'delivered') LIMIT 1",
+        );
+        $statement->execute(['token' => $token]);
+        $userId = $statement->fetchColumn();
+        if (!is_string($userId)) {
+            return null;
+        }
+
+        return $this->findForYear($userId, $this->currentYear());
+    }
+
+    /** @return array<string, mixed>|null */
+    public function findDeliveryOrderByEmail(string $email): ?array
+    {
+        $statement = $this->pdo->prepare(
+            "SELECT orders.user_id FROM orders
+             INNER JOIN users ON users.id = orders.user_id
+             WHERE LOWER(users.email) = LOWER(:email)
+               AND orders.year = :year
+               AND orders.status IN ('qrcode', 'delivered')
+             LIMIT 1",
+        );
+        $statement->execute(['email' => trim($email), 'year' => $this->currentYear()]);
+        $userId = $statement->fetchColumn();
+        if (!is_string($userId)) {
+            return null;
+        }
+
+        return $this->findForYear($userId, $this->currentYear());
+    }
+
+    public function markDelivered(string $orderId): bool
+    {
+        $statement = $this->pdo->prepare(
+            "UPDATE orders SET status = 'delivered', updated_at = CURRENT_TIMESTAMP
+             WHERE id = :id AND status = 'qrcode'",
+        );
+        $statement->execute(['id' => $orderId]);
+
+        return $statement->rowCount() === 1;
+    }
+
+    public function undoDelivery(string $orderId): bool
+    {
+        $statement = $this->pdo->prepare(
+            "UPDATE orders SET status = 'qrcode', updated_at = CURRENT_TIMESTAMP
+             WHERE id = :id AND status = 'delivered'",
+        );
+        $statement->execute(['id' => $orderId]);
+
+        return $statement->rowCount() === 1;
+    }
+
+    private function currentYear(): int
+    {
+        return (int) (new \DateTimeImmutable('now', new \DateTimeZone('UTC')))->format('Y');
+    }
+
     /** @param list<array{personType: string, category: string, quantity: int}> $items */
     public function updateFromBatch(
         string $orderId,

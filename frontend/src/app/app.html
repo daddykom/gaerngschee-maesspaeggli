@@ -29,6 +29,9 @@
         <a mat-button routerLink="/admin/overview" routerLinkActive="active">
           {{ 'app.navigation.adminOverview' | translate }}
         </a>
+        <a mat-button routerLink="/delivery" routerLinkActive="active">
+          {{ 'app.navigation.delivery' | translate }}
+        </a>
         @if (isAdmin()) {
           <a mat-button routerLink="/admin/fairgate-test" routerLinkActive="active">
             {{ 'app.navigation.fairgateTest' | translate }}
@@ -61,6 +64,9 @@
     </a>
     <a mat-menu-item routerLink="/admin/overview" routerLinkActive="active">
       {{ 'app.navigation.adminOverview' | translate }}
+    </a>
+    <a mat-menu-item routerLink="/delivery" routerLinkActive="active">
+      {{ 'app.navigation.delivery' | translate }}
     </a>
     @if (isAdmin()) {
       <a mat-menu-item routerLink="/admin/fairgate-test" routerLinkActive="active">

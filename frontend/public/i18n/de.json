@@ -258,11 +258,29 @@
         }
       }
     },
+    "delivery": {
+      "title": "Auslieferung",
+      "email": "E-Mail-Adresse",
+      "search": "Bestellung suchen",
+      "loading": "Bestellung wird geladen ...",
+      "error": "Die Bestellung konnte nicht geladen werden.",
+      "orderTitle": "Bestellung",
+      "adults": "Erwachsene",
+      "children": "Kinder",
+      "deliver": "Aufliefern",
+      "undo": "Rückgängig machen",
+      "cancel": "Abbrechen",
+      "deliverTitle": "Bestellung aufliefern",
+      "identityQuestion": "Hast du den Ausweis überprüft?",
+      "undoTitle": "Auslieferung rückgängig machen",
+      "undoQuestion": "Bist du sicher, dass du die Auslieferung rückgängig machen willst?"
+    },
     "navigation": {
       "menuLabel": "Administrationsmenü",
       "openMenu": "Administrationsmenü öffnen",
       "start": "Startseite",
       "adminOverview": "Admin-Übersicht",
+      "delivery": "Auslieferung",
       "configuration": "Konfiguration",
       "fairgateTest": "Fairgate-Test",
       "userManagement": "Benutzerverwaltung",

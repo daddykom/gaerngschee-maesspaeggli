@@ -32,7 +32,7 @@ test.describe('Password change route', () => {
     await page.locator('input[type="password"]').nth(1).fill('new-secret');
     await page.getByRole('button', { name: 'Passwort ändern' }).click();
 
-    await page.waitForURL('**/admin/overview');
+    await page.waitForURL('**/delivery');
     expect(requestReceived).toBe(true);
   });
 

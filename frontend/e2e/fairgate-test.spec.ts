@@ -19,7 +19,7 @@ test.describe('Fairgate test route', () => {
     await page.locator('input[type="email"]').fill('user@example.com');
     await page.locator('input[type="password"]').fill('secret');
     await page.locator('button[type="submit"]').click();
-    await page.waitForURL('**/admin/overview');
+    await page.waitForURL('**/delivery');
     await page.goto('/admin/fairgate-test');
     await page.waitForURL('**/not-found');
     await expect(page.locator('h1')).toHaveText('Seite nicht gefunden');

@@ -17,6 +17,7 @@
     "db:stop": "cd .. && docker-compose down",
     "db:migrate": "cd .. && docker compose exec -T backend vendor/bin/phinx migrate -c /var/www/db/phinx.php",
     "db:seed": "cd .. && docker compose exec -T backend vendor/bin/phinx seed:run -e development -c /var/www/db/phinx.php",
+    "batch:orders": "cd .. && docker compose exec -T backend php /var/www/html/bin/process-orders.php",
     "db:setup": "npm run db:start && sleep 5 && npm run db:migrate && npm run db:seed",
     "db:reset": "npm run db:stop && npm run db:start && sleep 5 && npm run db:migrate && npm run db:seed",
     "integration:start": "cd .. && docker compose -f docker-compose.integration.yml up -d --build --wait integration-database integration-backend",

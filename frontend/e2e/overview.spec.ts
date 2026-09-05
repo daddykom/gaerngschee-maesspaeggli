@@ -41,7 +41,7 @@ test.describe('Admin overview route', () => {
     await expect(page.getByRole('menuitem', { name: 'Benutzerverwaltung' })).toBeVisible();
   });
 
-  test('allows a normal user to open the overview', async ({ page }) => {
+  test('sends a normal user to delivery', async ({ page }) => {
     await page.route('http://localhost:8080/auth/login', async (route) => {
       await route.fulfill({
         status: 200,
@@ -54,16 +54,11 @@ test.describe('Admin overview route', () => {
         }),
       });
     });
-    await page.route('http://localhost:8080/admin/overview', async (route) => {
+    await page.route('http://localhost:8080/delivery/order', async (route) => {
       await route.fulfill({
         status: 200,
         contentType: 'application/json',
-        body: JSON.stringify({
-          year: 2026,
-          recentDays: 14,
-          orders: { provisional: 0, recentProvisional: 0, definitive: 0, toDeliver: 0, qrcode: 0, delivered: 0 },
-          categories: [],
-        }),
+        body: JSON.stringify({ order: null, viaToken: false }),
       });
     });
 
@@ -71,7 +66,7 @@ test.describe('Admin overview route', () => {
     await page.locator('input[type="email"]').fill('user@example.com');
     await page.locator('input[type="password"]').fill('secret');
     await page.locator('button[type="submit"]').click();
-    await page.waitForURL('**/admin/overview');
-    await expect(page.locator('h1')).toHaveText('Admin-Übersicht');
+    await page.waitForURL('**/delivery');
+    await expect(page.locator('h1')).toHaveText('Auslieferung');
   });
 });

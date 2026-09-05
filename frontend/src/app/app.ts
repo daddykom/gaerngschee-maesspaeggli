@@ -61,7 +61,7 @@ export class App {
 
   readonly isAdminRoute = computed(() => {
     this.navigation();
-    return this.router.url.startsWith('/admin');
+    return this.router.url.startsWith('/admin') || this.router.url.startsWith('/delivery');
   });
 
   readonly pageTitleKey = computed(() => {

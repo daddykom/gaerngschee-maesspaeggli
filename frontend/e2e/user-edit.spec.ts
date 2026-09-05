@@ -100,5 +100,5 @@ async function login(page: Page, email: string, group: 'admin' | 'user', id: str
   await page.locator('input[type="email"]').fill(email);
   await page.locator('input[type="password"]').fill('secret');
   await page.getByRole('button', { name: 'Anmelden' }).click();
-  await page.waitForURL('**/admin/overview');
+  await page.waitForURL(group === 'user' ? '**/delivery' : '**/admin/overview');
 }

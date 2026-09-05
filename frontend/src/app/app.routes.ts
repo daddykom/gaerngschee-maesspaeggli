@@ -66,6 +66,12 @@ export const appRoutes: Routes = [
       ),
   },
   {
+    path: 'delivery',
+    canActivate: [groupGuard(['user', 'admin'])],
+    data: { pageTitle: 'app.delivery.title' },
+    loadComponent: () => import('./features/delivery/pages/delivery').then((m) => m.Delivery),
+  },
+  {
     path: 'admin',
     canActivate: [groupGuard(['user', 'admin'])],
     children: [

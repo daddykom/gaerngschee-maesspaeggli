@@ -7,6 +7,8 @@ import { AuthActions } from './auth.actions';
 import { NavigationActions } from '../navigation/navigation.actions';
 import { NotificationActions } from '../notification/notification.actions';
 import { clearPersistedAuthState, persistAuthState } from '../../shared/services/auth-storage';
+import { Store } from '@ngrx/store';
+import { selectAuthGroup } from './auth.feature';
 
 export const loginEffect = createEffect(
   (actions$ = inject(Actions), authService = inject(AuthService)) =>
@@ -83,8 +85,8 @@ export const navigateOnLoginSuccessEffect = createEffect(
   (actions$ = inject(Actions)) =>
     actions$.pipe(
       ofType(AuthActions.loginSuccess),
-      map(({ requiredPasswordReset }) => NavigationActions.navigate({
-        target: requiredPasswordReset ? '/password-change' : '/admin/overview',
+       map(({ requiredPasswordReset, group }) => NavigationActions.navigate({
+         target: requiredPasswordReset ? '/password-change' : group === 'user' ? '/delivery' : '/admin/overview',
       })),
     ),
   { functional: true },
@@ -106,9 +108,9 @@ export const passwordChangeEffect = createEffect(
 );
 
 export const navigateOnPasswordChangeSuccessEffect = createEffect(
-  (actions$ = inject(Actions)) => actions$.pipe(
+  (actions$ = inject(Actions), store = inject(Store, { optional: true })) => actions$.pipe(
     ofType(AuthActions.passwordChangeSuccess),
-    map(() => NavigationActions.navigate({ target: '/admin/overview' })),
+    map(() => NavigationActions.navigate({ target: store?.selectSignal(selectAuthGroup)() === 'user' ? '/delivery' : '/admin/overview' })),
   ),
   { functional: true },
 );
