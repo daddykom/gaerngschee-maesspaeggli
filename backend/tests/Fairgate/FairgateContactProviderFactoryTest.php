@@ -33,6 +33,17 @@ final class FairgateContactProviderFactoryTest extends TestCase
         ]));
     }
 
+    public function testCreateRealAlwaysUsesRealClient(): void
+    {
+        self::assertInstanceOf(FairgateClient::class, FairgateContactProviderFactory::createReal([
+            'mode' => 'fake',
+            'base_url' => 'https://example.test',
+            'organization_id' => 'org',
+            'access_key' => 'access',
+            'public_key' => 'public',
+        ]));
+    }
+
     public function testUnknownEnvironmentIsRejected(): void
     {
         $this->expectException(LogicException::class);

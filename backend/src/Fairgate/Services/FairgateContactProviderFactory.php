@@ -24,4 +24,14 @@ final class FairgateContactProviderFactory
                 publicKey: $configuration['public_key'],
             );
     }
+
+    /** @param array{base_url?: string, organization_id?: string, access_key?: string, public_key?: string}|null $configuration */
+    public static function createReal(?array $configuration = null): FairgateContactProvider
+    {
+        $configuration = $configuration === null
+            ? FairgateConfiguration::loadReal()
+            : [...$configuration, 'mode' => 'real'];
+
+        return self::create($configuration);
+    }
 }

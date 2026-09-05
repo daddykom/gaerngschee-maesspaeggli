@@ -33,7 +33,7 @@ final class FairgateTestAction
     {
         try {
             $email = $this->testEmail();
-            $lookup = $this->lookup ?? FairgateContactProviderFactory::create()->findContactDataByEmail(...);
+            $lookup = $this->lookup ?? FairgateContactProviderFactory::createReal()->findContactDataByEmail(...);
 
             return JsonResponse::success($response, [
                 'email' => $email,
