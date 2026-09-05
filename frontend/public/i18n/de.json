@@ -265,6 +265,7 @@
       "loading": "Bestellung wird geladen ...",
       "error": "Die Bestellung konnte nicht geladen werden.",
       "orderTitle": "Bestellung",
+      "status": "Status",
       "adults": "Erwachsene",
       "children": "Kinder",
       "deliver": "Aufliefern",

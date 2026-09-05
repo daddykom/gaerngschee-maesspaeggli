@@ -15,6 +15,10 @@
   @if (order(); as currentOrder) {
     <section class="gl-stack gl-stack--group" aria-labelledby="delivery-order-heading">
       <h2 id="delivery-order-heading">{{ 'app.delivery.orderTitle' | translate }}</h2>
+      <p>
+        <strong>{{ 'app.delivery.status' | translate }}:</strong>
+        {{ ('app.admin.overview.' + currentOrder.status) | translate }}
+      </p>
       <p>{{ 'app.delivery.adults' | translate }}: {{ currentOrder.adultsCount }}</p>
       <p>{{ 'app.delivery.children' | translate }}: {{ currentOrder.childrenCount }}</p>
       <ul>
