@@ -35,7 +35,7 @@ describe('ConfirmDialogComponent', () => {
   });
 
   it('closes with true when confirmed', () => {
-    fixture.nativeElement.querySelector('button[color="warn"]').click();
+    fixture.nativeElement.querySelector('button[color="primary"]').click();
 
     expect(dialogRef.close).toHaveBeenCalledWith(true);
   });
