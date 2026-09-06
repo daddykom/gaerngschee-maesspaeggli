@@ -4,7 +4,10 @@ import { initialState } from './start.state';
 
 describe('startReducer', () => {
   it('sets loading when an email is submitted', () => {
-    const state = startReducer(initialState, StartActions.submit({ email: 'person@example.com' }));
+    const state = startReducer(
+      initialState,
+      StartActions.submit({ email: 'person@example.com', language: 'de' }),
+    );
 
     expect(state).toEqual({ loading: true, sent: null });
   });

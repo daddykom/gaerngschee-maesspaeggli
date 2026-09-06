@@ -14,7 +14,7 @@ describe('order effects', () => {
   it('loads the current order', async () => {
     const actions$ = new Subject<Action>();
     const order = null;
-    const service = { getCurrent: jest.fn(() => of({ order })) };
+    const service = { getCurrent: vi.fn(() => of({ order })) };
     TestBed.configureTestingModule({
       providers: [provideMockActions(() => actions$), { provide: OrderService, useValue: service }, provideMockStore({ initialState: { auth: authInitialState } })],
     });

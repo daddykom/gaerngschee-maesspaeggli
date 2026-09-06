@@ -38,7 +38,7 @@ describe('FairgateTestComponent', () => {
   });
 
   it('dispatches the Fairgate test action', () => {
-    const dispatch = jest.spyOn(store, 'dispatch');
+    const dispatch = vi.spyOn(store, 'dispatch');
 
     component.runTest();
 

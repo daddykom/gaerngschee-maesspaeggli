@@ -18,7 +18,7 @@ describe('authTokenInterceptor', () => {
     store.overrideSelector(selectAuthToken, 'jwt-token');
     store.refreshState();
     const request = new HttpRequest('GET', '/protected');
-    const next = jest.fn().mockReturnValue(of(response));
+    const next = vi.fn().mockReturnValue(of(response));
 
     TestBed.runInInjectionContext(() => authTokenInterceptor(request, next));
 
@@ -32,7 +32,7 @@ describe('authTokenInterceptor', () => {
     store.overrideSelector(selectAuthToken, null);
     store.refreshState();
     const request = new HttpRequest('GET', '/public');
-    const next = jest.fn().mockReturnValue(of(response));
+    const next = vi.fn().mockReturnValue(of(response));
 
     TestBed.runInInjectionContext(() => authTokenInterceptor(request, next));
 

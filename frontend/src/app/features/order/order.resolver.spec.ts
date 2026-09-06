@@ -1,4 +1,5 @@
 import { TestBed } from '@angular/core/testing';
+import { type Mock } from 'vitest';
 import { provideMockStore, MockStore } from '@ngrx/store/testing';
 import { firstValueFrom, Observable } from 'rxjs';
 import { NavigationProgressService } from '../../shared/services/navigation-progress.service';
@@ -8,10 +9,10 @@ import { orderResolver } from './order.resolver';
 
 describe('orderResolver', () => {
   let store: MockStore;
-  let progress: { start: jest.Mock; stop: jest.Mock };
+  let progress: { start: Mock; stop: Mock };
 
   beforeEach(() => {
-    progress = { start: jest.fn(), stop: jest.fn() };
+    progress = { start: vi.fn(), stop: vi.fn() };
     TestBed.configureTestingModule({
       providers: [
         provideMockStore({ initialState: { order: initialState } }),
@@ -22,7 +23,7 @@ describe('orderResolver', () => {
   });
 
   it('loads and waits for a terminal state while showing progress', async () => {
-    const dispatch = jest.spyOn(store, 'dispatch');
+    const dispatch = vi.spyOn(store, 'dispatch');
     const result = TestBed.runInInjectionContext(() => orderResolver({} as never, {} as never)) as Observable<boolean>;
     const resolved = firstValueFrom(result);
 

@@ -1,4 +1,5 @@
 import { TestBed } from '@angular/core/testing';
+import { type Mock } from 'vitest';
 import { provideMockActions } from '@ngrx/effects/testing';
 import { Action } from '@ngrx/store';
 import { firstValueFrom, of, Subject, throwError } from 'rxjs';
@@ -12,11 +13,11 @@ import {
 
 describe('submitStartEffect', () => {
   let actions$: Subject<Action>;
-  let anmeldungService: { requestInformation: jest.Mock };
+  let anmeldungService: { requestInformation: Mock };
 
   beforeEach(() => {
     actions$ = new Subject<Action>();
-    anmeldungService = { requestInformation: jest.fn() };
+    anmeldungService = { requestInformation: vi.fn() };
 
     TestBed.configureTestingModule({
       providers: [

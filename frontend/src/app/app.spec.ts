@@ -35,7 +35,7 @@ describe('App', () => {
 
   it('loads public frontend configuration when the app starts', () => {
     const store = TestBed.inject(MockStore);
-    const dispatch = jest.spyOn(store, 'dispatch');
+    const dispatch = vi.spyOn(store, 'dispatch');
 
     TestBed.createComponent(App);
 
@@ -75,7 +75,7 @@ describe('App', () => {
 
   it('dispatches logout from the app shell', () => {
     const store = TestBed.inject(MockStore);
-    const dispatch = jest.spyOn(store, 'dispatch');
+    const dispatch = vi.spyOn(store, 'dispatch');
     const fixture = TestBed.createComponent(App);
 
     fixture.componentInstance.logout();

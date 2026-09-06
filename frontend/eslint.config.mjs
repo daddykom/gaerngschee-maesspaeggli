@@ -12,7 +12,7 @@ export default [
   ...nx.configs['flat/javascript'],
   prettier,
   {
-    ignores: ['**/dist', '**/out-tsc'],
+    ignores: ['**/dist', '**/out-tsc', '**/vitest.config.*.timestamp*'],
   },
   {
     files: [
