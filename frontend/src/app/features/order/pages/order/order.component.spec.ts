@@ -52,4 +52,15 @@ describe('OrderComponent', () => {
 
     expect(component.adultField(0)().touched()).toBe(true);
   });
+
+  it('separates person headings from their fields and keeps labels concise', () => {
+    const personGroups = fixture.nativeElement.querySelectorAll('.person-group');
+    const labels = fixture.nativeElement.querySelectorAll('mat-label');
+
+    expect(personGroups).toHaveLength(2);
+    expect(personGroups[0].classList).toContain('gl-stack');
+    expect(personGroups[1].classList).toContain('gl-stack');
+    expect(labels[0].textContent).toContain('app.order.categories.adult 1');
+    expect(labels[0].textContent).not.toContain('app.order.categories.category');
+  });
 });
