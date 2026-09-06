@@ -50,7 +50,7 @@ jobs:
       - name: Install dependencies
         run: npm ci
       - name: Build frontend
-        run: npm run build
+        run: npm run build -- --configuration=production
 
   lint:
     name: lint
@@ -71,6 +71,15 @@ jobs:
         run: npm ci
       - name: Run lint
         run: npm run lint
+
+  deployment-script-test:
+    name: deployment-script-test
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Run deployment script test
+        run: bash scripts/test-deploy.sh
 
   backend-tests:
     name: backend-tests

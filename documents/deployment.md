@@ -4,7 +4,7 @@ Die Anwendung wird pro Umgebung in einem eigenen Verzeichnis installiert. Das
 Verzeichnis darf beispielsweise `prod`, `test` oder `staging` heissen:
 
 ```text
-/srv/gaerngschee/<umgebung>/
+$HOME/public_html/gaerngschee/maesspaeggli/<umgebung>/
 ├── backend/
 │   ├── .env
 │   └── public/
@@ -58,6 +58,36 @@ vendor/bin/phinx migrate -e production
 
 Die Datenbank wird vor dem Aktivieren des neuen Frontend-Builds migriert. Danach
 wird der Inhalt des Angular-Builds nach `<deployment>/frontend` veröffentlicht.
+
+## Deployment-Script
+
+Das versionierte Script deployt den `main`-Branch in die für die Umgebung
+vorgesehene Installation. Standardmässig wird
+`$HOME/public_html/gaerngschee/maesspaeggli` als Basisverzeichnis verwendet:
+
+```bash
+scripts/deploy.sh test
+scripts/deploy.sh prod
+```
+
+Die Ziele sind damit:
+
+```text
+$HOME/public_html/gaerngschee/maesspaeggli/test/
+$HOME/public_html/gaerngschee/maesspaeggli/prod/
+```
+
+Vor dem ersten Lauf muss in jeder Umgebung die Datei
+`<ziel>/backend/.env` vorhanden sein. Das Script überschreibt sie nicht. Das
+Basisverzeichnis kann über `DEPLOY_BASE_DIR` und die Repository-URL über
+`REPO_URL` geändert werden. Ein produktives Deployment verlangt zusätzlich
+die Eingabe `DEPLOY PROD`.
+
+Der lokale Test des Scripts benötigt keinen Server und keinen GitHub-Zugriff:
+
+```bash
+bash scripts/test-deploy.sh
+```
 
 ## Testumgebung
 
