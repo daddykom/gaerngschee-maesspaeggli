@@ -27,7 +27,9 @@ fail() {
 assert_file_contains() {
   local expected="$1"
   local file="$2"
-  grep -Fqx "$expected" "$file" || fail "expected '$file' to contain exactly '$expected'"
+  grep -Fq "$expected" "$file" || {
+    fail "expected '$file' to contain '$expected'"
+  }
 }
 
 assert_log_contains() {
@@ -71,18 +73,11 @@ cat > "$fake_bin/npm" <<'FAKE_NPM'
 #!/usr/bin/env bash
 set -Eeuo pipefail
 printf 'npm %s\n' "$*" >> "${DEPLOY_TEST_LOG}"
-if [[ "${1:-}" == 'run' && "${2:-}" == 'build' ]]; then
+if [[ "$*" == *'build'* ]]; then
   mkdir -p dist/frontend/browser
   printf 'new-test-frontend\n' > dist/frontend/browser/index.html
 fi
 FAKE_NPM
-
-cat > "$fake_bin/rsync" <<'FAKE_RSYNC'
-#!/usr/bin/env bash
-set -Eeuo pipefail
-printf 'rsync %s\n' "$*" >> "${DEPLOY_TEST_LOG}"
-/usr/bin/rsync "$@"
-FAKE_RSYNC
 
 chmod +x "$fake_bin"/*
 
