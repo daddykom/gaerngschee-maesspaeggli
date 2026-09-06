@@ -1,4 +1,4 @@
-import { Component, computed, input } from '@angular/core';
+import { Component, computed, input, ChangeDetectionStrategy } from '@angular/core';
 import { MatIconModule } from '@angular/material/icon';
 
 export type InfoBoxVariant = 'info' | 'warning' | 'error' | 'success';
@@ -9,6 +9,7 @@ export type InfoBoxVariant = 'info' | 'warning' | 'error' | 'success';
     MatIconModule,
   ],
   templateUrl: './info-box.html',
+  changeDetection: ChangeDetectionStrategy.Eager,
   styleUrl: './info-box.scss',
 })
 export class InfoBoxComponent {

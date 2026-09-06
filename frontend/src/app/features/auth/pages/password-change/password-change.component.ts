@@ -1,4 +1,4 @@
-import { Component, inject, signal } from '@angular/core';
+import { Component, inject, signal, ChangeDetectionStrategy } from '@angular/core';
 import { form, FormField, required, validate } from '@angular/forms/signals';
 import { MatButtonModule } from '@angular/material/button';
 import { MatInputModule } from '@angular/material/input';
@@ -12,6 +12,7 @@ import { selectAuthPasswordChangeLoading } from '../../../../store/auth/auth.fea
   selector: 'app-password-change',
   imports: [MatInputModule, MatButtonModule, FormField, TranslatePipe, ControlErrorComponent],
   templateUrl: './password-change.component.html',
+  changeDetection: ChangeDetectionStrategy.Eager,
   styleUrl: './password-change.component.scss',
 })
 export class PasswordChange {
