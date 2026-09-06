@@ -101,6 +101,29 @@ jobs:
         working-directory: backend
         run: vendor/bin/phpunit
 
+  backend-production-dependencies:
+    name: backend-production-dependencies
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Setup PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: "8.4"
+          extensions: mbstring, pdo, pdo_mysql, zip
+          tools: composer
+          coverage: none
+      - name: Validate Composer configuration
+        working-directory: backend
+        run: composer validate --no-check-publish
+      - name: Install production dependencies
+        working-directory: backend
+        run: composer install --no-dev --no-interaction --prefer-dist --optimize-autoloader
+      - name: Check production platform requirements
+        working-directory: backend
+        run: composer check-platform-reqs --no-dev
+
   e2e-tests:
     name: e2e-tests
     runs-on: ubuntu-latest

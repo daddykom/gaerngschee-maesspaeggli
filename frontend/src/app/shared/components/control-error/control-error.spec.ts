@@ -1,4 +1,4 @@
-import { Component, signal } from '@angular/core';
+import { Component, signal, ChangeDetectionStrategy } from '@angular/core';
 import { FormControl, ReactiveFormsModule, Validators } from '@angular/forms';
 import { form, FormField, required } from '@angular/forms/signals';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
@@ -7,6 +7,7 @@ import { ControlErrorComponent } from './control-error';
 
 @Component({
   imports: [ReactiveFormsModule, ControlErrorComponent],
+  changeDetection: ChangeDetectionStrategy.Eager,
   template: `
     <app-control-error
       [control]="control"
@@ -20,6 +21,7 @@ class TestHostComponent {
 
 @Component({
   imports: [ControlErrorComponent, FormField],
+  changeDetection: ChangeDetectionStrategy.Eager,
   template: '<app-control-error [control]="form.email()" translationPrefix="errors.email" />',
 })
 class SignalTestHostComponent {

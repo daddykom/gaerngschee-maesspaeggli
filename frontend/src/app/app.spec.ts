@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, ChangeDetectionStrategy } from '@angular/core';
 import { TestBed } from '@angular/core/testing';
 import { Router } from '@angular/router';
 import { RouterTestingModule } from '@angular/router/testing';
@@ -9,7 +9,8 @@ import { initialState as authInitialState } from './store/auth/auth.state';
 import { AuthActions } from './store/auth/auth.actions';
 import { FrontendConfigActions } from './store/frontend-config/frontend-config.actions';
 
-@Component({ template: '' })
+@Component({ changeDetection: ChangeDetectionStrategy.Eager,
+ template: '' })
 class TestPage {}
 
 describe('App', () => {

@@ -5,6 +5,7 @@ set -Eeuo pipefail
 readonly repository_url="${REPO_URL:-https://github.com/daddykom/gaerngschee-maesspaeggli.git}"
 readonly branch="${DEPLOY_BRANCH:-main}"
 readonly base_directory="${DEPLOY_BASE_DIR:-$HOME/public_html/gaerngschee/maesspaeggli}"
+readonly composer_binary="${COMPOSER_BIN:-$HOME/bin/composer}"
 
 usage() {
   printf 'Usage: %s <prod|test>\n' "$0" >&2
@@ -32,9 +33,14 @@ if [[ "$environment" == 'prod' ]]; then
   fi
 fi
 
-for command_name in git composer npm rsync; do
+for command_name in git php84 npm rsync; do
   require_command "$command_name"
 done
+
+if [[ ! -f "$composer_binary" ]]; then
+  printf 'Composer executable not found: %s\n' "$composer_binary" >&2
+  exit 1
+fi
 
 target_directory="$base_directory/$environment"
 environment_file="$target_directory/backend/.env"
@@ -44,7 +50,9 @@ if [[ ! -f "$environment_file" ]]; then
   exit 1
 fi
 
-temporary_directory="$(mktemp -d "${TMPDIR:-/tmp}/gaerngschee-deploy.XXXXXX")"
+temporary_parent="${DEPLOY_TMP_DIR:-$HOME/tmp}"
+mkdir -p "$temporary_parent"
+temporary_directory="$(mktemp -d "$temporary_parent/gaerngschee-deploy.XXXXXX")"
 cleanup() {
   rm -rf "$temporary_directory"
 }
@@ -57,7 +65,9 @@ rsync -a "$temporary_directory/source/backend/" "$temporary_directory/release/ba
 rsync -a "$temporary_directory/source/db/" "$temporary_directory/release/db/"
 rsync -a "$environment_file" "$temporary_directory/release/backend/.env"
 
-composer install --working-dir="$temporary_directory/release/backend" --no-dev --optimize-autoloader --no-interaction
+pushd "$target_directory" >/dev/null
+php84 "$composer_binary" install --working-dir="$temporary_directory/release/backend" --no-dev --optimize-autoloader --no-interaction
+popd >/dev/null
 
 pushd "$temporary_directory/source/frontend" >/dev/null
 npm ci

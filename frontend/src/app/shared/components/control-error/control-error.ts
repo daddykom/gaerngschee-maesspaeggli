@@ -1,4 +1,4 @@
-import { Component, computed, effect, input, signal } from '@angular/core';
+import { Component, computed, effect, input, signal, ChangeDetectionStrategy } from '@angular/core';
 import { AbstractControl } from '@angular/forms';
 import { FieldState } from '@angular/forms/signals';
 import { TranslatePipe } from '@ngx-translate/core';
@@ -7,6 +7,7 @@ import { TranslatePipe } from '@ngx-translate/core';
   selector: 'app-control-error',
   imports: [TranslatePipe],
   templateUrl: './control-error.html',
+  changeDetection: ChangeDetectionStrategy.Eager,
   styleUrl: './control-error.scss',
 })
 export class ControlErrorComponent {

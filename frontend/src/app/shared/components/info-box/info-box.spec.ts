@@ -1,9 +1,10 @@
-import { Component, Input } from '@angular/core';
+import { Component, Input, ChangeDetectionStrategy } from '@angular/core';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { InfoBoxComponent } from './info-box';
 
 @Component({
   imports: [InfoBoxComponent],
+  changeDetection: ChangeDetectionStrategy.Eager,
   template: '<app-info-box [variant]="variant" [icon]="icon" [title]="title">Content</app-info-box>',
 })
 class TestHostComponent {

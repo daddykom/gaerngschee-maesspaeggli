@@ -32,6 +32,8 @@ export default [
   {
     files: ['**/*.ts'],
     rules: {
+      // Angular v22 migration explicitly uses Eager change detection here.
+      '@angular-eslint/prefer-on-push-component-change-detection': 'off',
       '@angular-eslint/directive-selector': [
         'error',
         {
