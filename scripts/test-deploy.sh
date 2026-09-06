@@ -13,6 +13,28 @@ cleanup() {
 }
 trap cleanup EXIT
 
+fail() {
+  printf 'Deployment script test failed: %s\n' "$1" >&2
+  if [[ -f "$log_file" ]]; then
+    printf '%s\n' 'Command log:' >&2
+    while IFS= read -r line; do
+      printf '%s\n' "$line" >&2
+    done < "$log_file"
+  fi
+  exit 1
+}
+
+assert_file_contains() {
+  local expected="$1"
+  local file="$2"
+  grep -Fqx "$expected" "$file" || fail "expected '$file' to contain exactly '$expected'"
+}
+
+assert_log_contains() {
+  local expected="$1"
+  grep -Fq "$expected" "$log_file" || fail "expected command log to contain '$expected'"
+}
+
 mkdir -p "$fake_bin" "$target_base/test/backend" "$target_base/test/frontend" "$target_base/prod/backend"
 printf 'APP_ENV=test\n' > "$target_base/test/backend/.env"
 printf 'APP_ENV=prod\n' > "$target_base/prod/backend/.env"
@@ -86,19 +108,19 @@ run_deploy() {
 
 run_deploy test
 
-[[ "$(<"$target_base/test/backend/.env")" == $'APP_ENV=test\n' ]]
-[[ "$(<"$target_base/test/frontend/index.html")" == $'new-test-frontend\n' ]]
-grep -Fq 'git clone --branch main --single-branch https://example.test/repository.git' "$log_file"
-grep -Fq 'phinx migrate -e test' "$log_file"
+assert_file_contains 'APP_ENV=test' "$target_base/test/backend/.env"
+assert_file_contains 'new-test-frontend' "$target_base/test/frontend/index.html"
+assert_log_contains 'git clone --branch main --single-branch https://example.test/repository.git'
+assert_log_contains 'phinx migrate -e test'
 
 if run_deploy prod 'NO'; then
   printf 'Expected production deployment to require confirmation.\n' >&2
   exit 1
 fi
-[[ "$(<"$target_base/prod/frontend-placeholder")" == $'old-prod-frontend\n' ]]
+assert_file_contains 'old-prod-frontend' "$target_base/prod/frontend-placeholder"
 
 run_deploy prod 'DEPLOY PROD'
-[[ "$(<"$target_base/prod/backend/.env")" == $'APP_ENV=prod\n' ]]
-grep -Fq 'phinx migrate -e production' "$log_file"
+assert_file_contains 'APP_ENV=prod' "$target_base/prod/backend/.env"
+assert_log_contains 'phinx migrate -e production'
 
 printf 'Deployment script tests passed.\n'
