@@ -1,0 +1,137 @@
+.overview-table-wrapper {
+  overflow: visible;
+}
+
+.overview-table {
+  width: 100%;
+  border-collapse: collapse;
+  table-layout: fixed;
+}
+
+.overview-table__category-column {
+  width: 28%;
+}
+
+.overview-table__number-column {
+  width: 12%;
+}
+
+.overview-table th,
+.overview-table td {
+  padding: var(--gl-space-md);
+  border-bottom: 1px solid var(--mat-sys-outline-variant);
+  text-align: right;
+  white-space: nowrap;
+}
+
+.overview-table th:first-child,
+.overview-table td:first-child {
+  text-align: left;
+}
+
+.overview-table thead th {
+  border-top: 1px solid var(--mat-sys-outline-variant);
+  font-weight: 600;
+}
+
+.overview-orders-row th,
+.overview-orders-row td {
+  font-weight: 600;
+}
+
+.overview-header__label {
+  display: block;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.overview-header__label:has(.overview-header__short:hover),
+.overview-header__label:has(.overview-header__short:focus-visible) {
+  overflow: visible;
+}
+
+.overview-header__short {
+  position: relative;
+  display: inline-block;
+  cursor: help;
+}
+
+.overview-header__short::after {
+  position: absolute;
+  z-index: 1;
+  top: calc(100% + var(--gl-space-sm));
+  left: 50%;
+  width: max-content;
+  max-width: min(22rem, 80vw);
+  padding: var(--gl-space-sm) var(--gl-space-md);
+  border-radius: 0.25rem;
+  background: var(--mat-sys-inverse-surface);
+  box-shadow: var(--mat-sys-level2);
+  color: var(--mat-sys-inverse-on-surface);
+  content: attr(data-tooltip);
+  font-size: 1rem;
+  font-weight: 400;
+  line-height: 1.4;
+  opacity: 0;
+  pointer-events: none;
+  transform: translate(-50%, var(--gl-space-sm));
+  transition: opacity 120ms ease, transform 120ms ease;
+  visibility: hidden;
+  white-space: normal;
+}
+
+.overview-header__short:hover::after,
+.overview-header__short:focus-visible::after {
+  opacity: 1;
+  transform: translate(-50%, 0);
+  visibility: visible;
+}
+
+.overview-header__full {
+  display: none;
+}
+
+.overview-print-header,
+.overview-print-date {
+  display: none;
+}
+
+@media print {
+  .overview-print-header {
+    display: block;
+    margin-bottom: 1rem;
+  }
+
+  .overview-print-header img {
+    width: 64px;
+    height: 64px;
+  }
+
+  .overview-print-date {
+    display: block;
+  }
+
+  .overview-actions,
+  .delivery-column {
+    display: none;
+  }
+
+  .overview-table {
+    table-layout: auto;
+  }
+
+  .overview-header__label {
+    overflow: visible;
+    text-overflow: clip;
+    white-space: normal;
+  }
+
+  .overview-header__short {
+    display: none;
+  }
+
+  .overview-header__full {
+    display: inline;
+  }
+}

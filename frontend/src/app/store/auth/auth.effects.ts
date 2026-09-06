@@ -1,0 +1,169 @@
+import { HttpErrorResponse } from '@angular/common/http';
+import { inject } from '@angular/core';
+import { Actions, createEffect, ofType } from '@ngrx/effects';
+import { catchError, exhaustMap, map, of, tap } from 'rxjs';
+import { AuthService } from '../../shared/services/auth.service';
+import { AuthActions } from './auth.actions';
+import { NavigationActions } from '../navigation/navigation.actions';
+import { NotificationActions } from '../notification/notification.actions';
+import { clearPersistedAuthState, persistAuthState } from '../../shared/services/auth-storage';
+import { Store } from '@ngrx/store';
+import { selectAuthGroup } from './auth.feature';
+
+export const loginEffect = createEffect(
+  (actions$ = inject(Actions), authService = inject(AuthService)) =>
+    actions$.pipe(
+      ofType(AuthActions.login),
+      exhaustMap(({ email, password }) =>
+        authService.login(email, password).pipe(
+          map(({ token, user, group, requiredPasswordReset }) => AuthActions.loginSuccess({
+            token,
+            userId: user.id,
+            group,
+            requiredPasswordReset,
+          })),
+          catchError((error: HttpErrorResponse) =>
+            of(AuthActions.loginFailure({
+              errorCode: typeof error.error?.error?.code === 'string'
+                ? error.error.error.code
+                : 'LOGIN_FAILED',
+            })),
+          ),
+        ),
+      ),
+    ),
+  { functional: true },
+);
+
+export const persistLoginEffect = createEffect(
+  (actions$ = inject(Actions)) => actions$.pipe(
+    ofType(AuthActions.loginSuccess),
+    tap(({ token, userId, group }) => {
+      persistAuthState({
+        token,
+        userId,
+        group,
+        fairgateUserExists: null,
+        childrenCount: null,
+        adultsCount: null,
+        salutation: null,
+      });
+    }),
+  ),
+  { functional: true, dispatch: false },
+);
+
+export const persistRegistrationLoginEffect = createEffect(
+  (actions$ = inject(Actions)) => actions$.pipe(
+    ofType(AuthActions.registrationLoginSuccess),
+    tap(({ token, userId, group, fairgateUserExists, childrenCount, adultsCount, salutation }) => {
+      persistAuthState({
+        token,
+        userId,
+        group,
+        fairgateUserExists,
+        childrenCount,
+        adultsCount,
+        salutation,
+      });
+    }),
+  ),
+  { functional: true, dispatch: false },
+);
+
+export const clearPersistedAuthEffect = createEffect(
+  (actions$ = inject(Actions)) => actions$.pipe(
+    ofType(AuthActions.logoutRequested),
+    tap(() => {
+      clearPersistedAuthState();
+    }),
+  ),
+  { functional: true, dispatch: false },
+);
+
+export const navigateOnLoginSuccessEffect = createEffect(
+  (actions$ = inject(Actions)) =>
+    actions$.pipe(
+      ofType(AuthActions.loginSuccess),
+       map(({ requiredPasswordReset, group }) => NavigationActions.navigate({
+         target: requiredPasswordReset ? '/password-change' : group === 'user' ? '/delivery' : '/admin/overview',
+      })),
+    ),
+  { functional: true },
+);
+
+export const passwordChangeEffect = createEffect(
+  (actions$ = inject(Actions), authService = inject(AuthService)) => actions$.pipe(
+    ofType(AuthActions.passwordChange),
+    exhaustMap(({ password }) => authService.changePassword(password).pipe(
+      map(() => AuthActions.passwordChangeSuccess()),
+      catchError((error: HttpErrorResponse) => of(AuthActions.passwordChangeFailure({
+        errorCode: typeof error.error?.error?.code === 'string'
+          ? error.error.error.code
+          : 'PASSWORD_CHANGE_FAILED',
+      }))),
+    )),
+  ),
+  { functional: true },
+);
+
+export const navigateOnPasswordChangeSuccessEffect = createEffect(
+  (actions$ = inject(Actions), store = inject(Store, { optional: true })) => actions$.pipe(
+    ofType(AuthActions.passwordChangeSuccess),
+    map(() => NavigationActions.navigate({ target: store?.selectSignal(selectAuthGroup)() === 'user' ? '/delivery' : '/admin/overview' })),
+  ),
+  { functional: true },
+);
+
+export const logoutEffect = createEffect(
+  (actions$ = inject(Actions), authService = inject(AuthService)) =>
+    actions$.pipe(
+      ofType(AuthActions.logoutRequested),
+      exhaustMap(({ redirectTo }) =>
+        authService.logout().pipe(
+          map(() => NavigationActions.navigate({ target: redirectTo })),
+          catchError(() => of(NavigationActions.navigate({ target: redirectTo }))),
+        ),
+      ),
+    ),
+  { functional: true },
+);
+
+export const authNotificationEffect = createEffect(
+  (actions$ = inject(Actions)) => actions$.pipe(
+    ofType(
+      AuthActions.loginFailure,
+      AuthActions.passwordChangeFailure,
+      AuthActions.registrationLoginFailure,
+    ),
+    map((action) => NotificationActions.show({
+      variant: 'error',
+      titleKey: action.type === AuthActions.passwordChangeFailure.type
+        ? 'app.passwordChange.heading'
+        : action.type === AuthActions.registrationLoginFailure.type
+          ? 'app.anmeldung.errorTitle'
+          : 'app.auth.loginErrorTitle',
+      messageKey: action.type === AuthActions.passwordChangeFailure.type
+        ? `app.passwordChange.errors.${action.errorCode}`
+        : action.type === AuthActions.registrationLoginFailure.type
+          ? 'app.anmeldung.registrationTokenError'
+          : `app.auth.errors.${action.errorCode}`,
+        ...(action.type === AuthActions.registrationLoginFailure.type
+          ? { preserveOnRoutes: ['/start'] }
+        : {}),
+    })),
+  ),
+  { functional: true },
+);
+
+export const authEffects = {
+  loginEffect,
+  persistLoginEffect,
+  persistRegistrationLoginEffect,
+  clearPersistedAuthEffect,
+  navigateOnLoginSuccessEffect,
+  passwordChangeEffect,
+  navigateOnPasswordChangeSuccessEffect,
+  logoutEffect,
+  authNotificationEffect,
+};

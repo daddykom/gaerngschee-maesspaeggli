@@ -1,0 +1,9 @@
+<aside class="info-box" [class]="'info-box--' + variant()">
+  <mat-icon class="info-box__icon" aria-hidden="true">{{ iconToShow() }}</mat-icon>
+  <div class="info-box__content">
+    @if (title()) {
+      <strong class="info-box__title">{{ title() }}</strong>
+    }
+    <ng-content></ng-content>
+  </div>
+</aside>

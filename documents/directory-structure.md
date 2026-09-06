@@ -19,14 +19,12 @@ gaerngschee-maesspaeggli/
 frontend/
 ├── src/
 │   ├── app/
-│   │   ├── app.component.ts          # Root component
+│   │   ├── app.ts                    # Root component
 │   │   ├── app.config.ts             # App configuration
 │   │   ├── app.routes.ts             # Routing configuration
 │   │   ├── store/                   # NgRx store
 │   │   │   ├── app.state.ts
-│   │   │   ├── registrations/
-│   │   │   ├── donations/
-│   │   │   └── ...
+│   │   │   └── ...                   # Feature-specific NgRx state
 │   │   ├── features/
 │   │   │   ├── registrations/        # Registration feature
 │   │   │   ├── donations/           # Donation feature
@@ -49,16 +47,24 @@ backend/
 │   └── index.php              # Entry point
 ├── src/
 │   ├── Application.php        # App factory
-│   ├── Routes/                # API routes
-│   │   ├── RegistrationRoutes.php
-│   │   ├── DonationRoutes.php
-│   │   ├── WaitlistRoutes.php
-│   │   └── PickupRoutes.php
+│   ├── Auth/                  # Auth actions, services and data
+│   ├── Configuration/         # Configuration actions and data
+│   ├── Fairgate/              # Fairgate actions and services
+│   ├── Registration/          # Registration actions and services
+│   ├── Users/                 # User actions and data
+│   ├── Shared/                # Shared infrastructure
+│   ├── Middleware/            # PSR-15 middleware
+│   ├── PublicApi/             # Public API actions
+│   └── Routes/                # Thin API route registration
 │   └── ...
 ├── vendor/                    # Composer dependencies
 ├── composer.json
 └── composer.lock
 ```
+
+Backend-Tests liegen unter `backend/tests/` in derselben fachlichen Struktur.
+Gemeinsame Test-Infrastruktur liegt unter `backend/tests/Support/`; der
+Bootstrap wird in `backend/tests/bootstrap.php` geladen.
 
 ## Database
 

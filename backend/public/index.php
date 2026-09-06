@@ -4,9 +4,11 @@ declare(strict_types=1);
 
 require __DIR__ . '/../vendor/autoload.php';
 
+use App\Configuration\Environment;
 use App\Application;
 use Slim\Factory\ServerRequestCreatorFactory;
 
+Environment::load();
 $app = Application::create();
 $callableResolver = $app->getCallableResolver();
 $responseFactory = $app->getResponseFactory();

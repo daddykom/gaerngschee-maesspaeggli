@@ -1,0 +1,45 @@
+<!doctype html>
+<html lang="de">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Dein Benutzerkonto wurde erstellt</title>
+</head>
+<body style="margin:0; padding:0; background-color:#f4f7f5; font-family:Arial,Helvetica,sans-serif; color:#10213c;">
+  <table role="presentation" width="100%" cellspacing="0" cellpadding="0" border="0" style="width:100%; background-color:#f4f7f5;">
+    <tr>
+      <td align="center" style="padding:24px 12px;">
+        <table role="presentation" width="600" cellspacing="0" cellpadding="0" border="0" style="width:100%; max-width:600px; background-color:#ffffff; border:1px solid #b9e5c8; border-radius:20px;">
+          <tr>
+            <td style="padding:32px 32px 18px 32px; text-align:center;">
+              <table role="presentation" cellspacing="0" cellpadding="0" border="0" align="center" style="margin:0 auto 22px auto;">
+                <tr><td align="center"><img src="{{ LOGO_CID }}" width="210" alt="Gärngschee" style="display:block; width:210px; max-width:100%; height:auto;"></td></tr>
+              </table>
+              <h1 style="margin:0; font-size:28px; line-height:1.2; font-weight:700; color:#10213c;">Dein Benutzerkonto wurde erstellt</h1>
+            </td>
+          </tr>
+          <tr>
+            <td style="padding:0 32px 8px 32px; text-align:center;">
+              <p style="margin:0 0 14px 0; font-size:18px; line-height:1.5; color:#10213c;"><strong style="color:#0f6f36;">Dein Konto ist bereit.</strong></p>
+              <p style="margin:0; font-size:17px; line-height:1.55; color:#4d5b6f;">Du kannst dich mit deiner E-Mail-Adresse und dem folgenden temporären Passwort anmelden:</p>
+            </td>
+          </tr>
+          <tr>
+            <td style="padding:24px 32px 8px 32px;">
+              <table role="presentation" width="100%" cellspacing="0" cellpadding="0" border="0" style="width:100%; background-color:#eefaf2; border:1px solid #c9e9d3; border-radius:14px;">
+                <tr><td align="center" style="padding:20px 18px; font-size:22px; line-height:1.4; font-weight:700; letter-spacing:1px; color:#10213c;">{{ TEMPORARY_PASSWORD }}</td></tr>
+              </table>
+              <p style="margin:14px 0 0 0; text-align:center; font-size:15px; line-height:1.5; color:#4d5b6f;">Nach der Anmeldung musst du ein neues Passwort setzen.</p>
+            </td>
+          </tr>
+          <tr>
+            <td align="center" style="padding:22px 32px 34px 32px;">
+              <table role="presentation" cellspacing="0" cellpadding="0" border="0"><tr><td align="center" bgcolor="#159447" style="border-radius:999px;"><a href="{{ LOGIN_URL }}" style="display:inline-block; padding:14px 26px; font-size:17px; line-height:1; font-weight:700; color:#ffffff; text-decoration:none; border-radius:999px;">Zur Anmeldung</a></td></tr></table>
+            </td>
+          </tr>
+        </table>
+      </td>
+    </tr>
+  </table>
+</body>
+</html>

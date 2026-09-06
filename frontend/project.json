@@ -43,6 +43,17 @@
           "optimization": false,
           "extractLicenses": false,
           "sourceMap": true
+        },
+        "integration": {
+          "fileReplacements": [
+            {
+              "replace": "./src/environments/environment.ts",
+              "with": "./src/environments/environment.integration.ts"
+            }
+          ],
+          "optimization": false,
+          "extractLicenses": false,
+          "sourceMap": true
         }
       },
       "defaultConfiguration": "production"
@@ -56,6 +67,9 @@
         },
         "development": {
           "buildTarget": "frontend:build:development"
+        },
+        "integration": {
+          "buildTarget": "frontend:build:integration"
         }
       },
       "defaultConfiguration": "development"

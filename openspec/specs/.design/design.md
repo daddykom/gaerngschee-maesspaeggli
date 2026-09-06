@@ -17,12 +17,12 @@ This document captures key architectural and design decisions.
 - Clear separation of concerns
 
 **Implementation:**
-- Feature-based stores (offers, categories, ui)
+- Feature-based stores for capabilities that require shared client state
 - `createEffect` with `{ functional: true }` option
 - Effects exported as arrays for easy registration
 - Pure functions for business logic
 
-**Status:** Partially implemented (offers store done)
+**Status:** Implemented as the selected frontend state-management pattern
 
 ---
 
@@ -61,7 +61,7 @@ This document captures key architectural and design decisions.
 **Rationale:**
 - Recommended in README
 - Cyon supports MariaDB
-- Relational model fits offer/category relationship
+- Relational model fits the planned data relationships
 - JSON for initial development, migrate later
 
 **Status:** Planned (currently using JSON file)

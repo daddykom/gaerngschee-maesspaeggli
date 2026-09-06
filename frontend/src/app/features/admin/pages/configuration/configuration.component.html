@@ -1,0 +1,61 @@
+<section class="gl-stack gl-stack--section">
+  <form class="configuration-form gl-stack gl-stack--section" (submit)="$event.preventDefault(); onSubmit()">
+    @if (loading()) {
+      <p>{{ 'app.admin.configuration.loading' | translate }}</p>
+    } @else {
+      @for (config of configs(); track config.id) {
+        <fieldset
+          class="configuration-field gl-stack gl-stack--group"
+          [class.configuration-field--readonly]="!config.canUpdate"
+        >
+          <legend>{{ config.label || config.variableName }}</legend>
+          @if (config.description) {
+            <p class="configuration-description">{{ config.description }}</p>
+          }
+
+          @if (isArray(config)) {
+            <div class="configuration-values gl-stack">
+              @for (value of values(config); track $index) {
+                <mat-form-field appearance="outline">
+                  <mat-label>{{ config.variableName }} {{ $index + 1 }}</mat-label>
+                  @if (config.canUpdate) {
+                    <input matInput type="text" [formField]="arrayField(config, $index)" />
+                  } @else {
+                    <input matInput type="text" [value]="value" disabled />
+                  }
+                </mat-form-field>
+                @if (config.canUpdate) {
+                  <button mat-button type="button" (click)="removeValue(config, $index)">
+                    {{ 'app.admin.configuration.removeValue' | translate }}
+                  </button>
+                }
+              }
+            </div>
+            @if (config.canUpdate) {
+              <button mat-button type="button" (click)="addValue(config)">
+                {{ 'app.admin.configuration.addValue' | translate }}
+              </button>
+            }
+          } @else {
+            <mat-form-field appearance="outline">
+              <mat-label>{{ config.variableName }}</mat-label>
+              @if (config.canUpdate) {
+                <input matInput type="text" [formField]="field(config)" />
+              } @else {
+                <input matInput type="text" [value]="model()[config.id]" disabled />
+              }
+            </mat-form-field>
+          }
+        </fieldset>
+      } @empty {
+        <p>{{ 'app.admin.configuration.empty' | translate }}</p>
+      }
+
+      <div class="gl-cluster">
+        <button mat-flat-button color="primary" type="submit" [disabled]="saving() || loading()" (click)="$event.preventDefault(); onSubmit()">
+          {{ 'app.admin.configuration.save' | translate }}
+        </button>
+      </div>
+    }
+  </form>
+</section>

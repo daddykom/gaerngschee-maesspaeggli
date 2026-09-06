@@ -1,0 +1,15 @@
+<section class="gl-stack gl-stack--group">
+    <p>{{ 'app.admin.fairgateTest.description' | translate }}</p>
+
+    <button mat-flat-button color="primary" type="button" (click)="runTest()" [disabled]="loading()">
+      {{ 'app.admin.fairgateTest.run' | translate }}
+    </button>
+
+    @if (loading()) {
+      <p>{{ 'app.admin.fairgateTest.loading' | translate }}</p>
+    }
+
+    @if (result(); as response) {
+      <pre class="fairgate-test-result">{{ response | json }}</pre>
+    }
+</section>

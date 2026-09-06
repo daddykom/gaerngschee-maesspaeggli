@@ -12,14 +12,31 @@ backend/
 │   └── index.php          # Entry point
 ├── src/
 │   ├── Application.php    # App factory and middleware
-│   └── Routes/           # API routes
-│       ├── RegistrationRoutes.php
-│       ├── DonationRoutes.php
-│       ├── WaitlistRoutes.php
-│       └── PickupRoutes.php
+│   ├── Auth/              # Auth actions, services and data access
+│   ├── Configuration/     # Configuration actions and data access
+│   ├── Fairgate/          # Fairgate actions and integration services
+│   ├── Registration/      # Registration actions and services
+│   ├── Users/             # User actions and data access
+│   ├── Shared/            # Shared database, HTTP and mail code
+│   ├── Middleware/        # PSR-15 middleware
+│   ├── PublicApi/         # Public API actions
+│   └── Routes/            # Thin route registration
 ├── vendor/                # Composer dependencies
 └── composer.json
 ```
+
+### Fachliche Module und Actions
+
+Routes registrieren ausschliesslich HTTP-Methode, Pfad, Middleware und die zuständige Action. Fachlogik gehört in Actions und Services. Die Verzeichnisstruktur muss den Namespaces entsprechen:
+
+```text
+App\Auth\Actions\LoginAction       -> src/Auth/Actions/LoginAction.php
+App\Users\Data\UserRepository     -> src/Users/Data/UserRepository.php
+App\Fairgate\Services\FairgateClient -> src/Fairgate/Services/FairgateClient.php
+App\Shared\Http\JsonResponse       -> src/Shared/Http/JsonResponse.php
+```
+
+Die Admin-Routen werden in `Routes/AdminRoutes.php` registriert. Dazu gehört auch `GET /admin/fairgate/test`; die Verarbeitung erfolgt in `Fairgate/Actions/FairgateTestAction`.
 
 ## Entry Point (public/index.php)
 
@@ -63,8 +80,10 @@ declare(strict_types=1);
 
 namespace App;
 
-use App\Routes\RegistrationRoutes;
-use App\Routes\DonationRoutes;
+use App\Routes\AdminRoutes;
+use App\Routes\AuthRoutes;
+use App\Routes\ConfigurationRoutes;
+use App\Routes\PublicRoutes;
 use Psr\Http\Message\ResponseInterface;
 use Slim\App;
 use Slim\Factory\AppFactory;
@@ -83,20 +102,53 @@ final class Application
                 ->withHeader('Access-Control-Allow-Origin', '*');
         });
 
-        $app->get('/', function ($request, ResponseInterface $response) {
-            $response->getBody()->write(json_encode(['message' => 'Gärngschee Mässpäggli API']));
-            return $response->withHeader('Content-Type', 'application/json');
-        });
-
-        RegistrationRoutes::register($app);
-        DonationRoutes::register($app);
-        WaitlistRoutes::register($app);
-        PickupRoutes::register($app);
+        PublicRoutes::register($app);
+        AuthRoutes::register($app);
+        AdminRoutes::register($app);
+        ConfigurationRoutes::register($app);
 
         return $app;
     }
 }
 ```
+
+## Testumgebung und Fairgate-Fake
+
+Die lokale Docker-Umgebung verwendet:
+
+```env
+APP_ENV=test
+```
+
+In der Testumgebung wird kein echter Fairgate-Service aufgerufen. Stattdessen
+entscheidet `FakeFairgateClient` anhand der E-Mail-Adresse:
+
+| E-Mail-Adresse | Fairgate-Ergebnis |
+|---|---|
+| `person+fair1@example.com` | Kontakt gefunden, 2 Erwachsene, 3 Kinder |
+| `person+test-fair2@example.com` | Kontakt gefunden, 1 Erwachsener, 2 Kinder |
+| `person+FAIR3-test@example.com` | Kontakt gefunden, 2 Erwachsene, 0 Kinder |
+| `person+fair4-extra@example.com` | Kontakt gefunden, 2 Erwachsene, 7 Kinder |
+| `person+test@example.com` | `false` |
+| `person@example.com` | `false` |
+
+Eine der Zeichenfolgen `fair1`, `fair2`, `fair3` oder `fair4` muss im lokalen
+Teil der E-Mail-Adresse nach dem `+` vorkommen. Die Prüfung ist unabhängig von
+Gross-/Kleinschreibung. Ohne eine dieser Zeichenfolgen wird kein Kontakt
+gefunden.
+
+Für die Produktionsumgebung muss gesetzt werden:
+
+```env
+APP_ENV=prod
+```
+
+Dann wird der echte `FairgateClient` verwendet. Ein fehlender oder unbekannter
+Wert von `APP_ENV` führt zu einem Konfigurationsfehler.
+
+Backend-Tests liegen fachlich organisiert unter `tests/Auth`, `tests/Fairgate`,
+`tests/Registration`, `tests/Shared` und `tests/Users`. Gemeinsames SQLite-Setup
+und Test-Doubles liegen unter `tests/Support`.
 
 ## API Endpoints
 

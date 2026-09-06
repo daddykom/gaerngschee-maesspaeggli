@@ -1,0 +1,32 @@
+.users-toolbar,
+.user-row {
+  justify-content: space-between;
+}
+
+.users-toolbar {
+  width: 100%;
+}
+
+.users-toolbar h2 {
+  margin: 0;
+}
+
+.user-list {
+  width: 100%;
+}
+
+.user-row {
+  align-items: flex-start;
+  padding: var(--gl-space-md) 0;
+  border-bottom: 1px solid var(--mat-sys-outline-variant);
+}
+
+.user-row__details {
+  min-width: 0;
+  flex: 1 1 16rem;
+}
+
+.user-actions {
+  justify-content: flex-end;
+  flex: 0 1 auto;
+  }

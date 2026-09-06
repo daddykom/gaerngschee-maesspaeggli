@@ -1,9 +1,12 @@
-import playwright from 'eslint-plugin-playwright';
 import nx from '@nx/eslint-plugin';
 import prettier from 'eslint-config-prettier';
+import playwright from 'eslint-plugin-playwright';
 
 export default [
-  playwright.configs['flat/recommended'],
+  {
+    ...playwright.configs['flat/recommended'],
+    files: ['e2e/**/*.ts', 'integration/**/*.ts'],
+  },
   ...nx.configs['flat/base'],
   ...nx.configs['flat/typescript'],
   ...nx.configs['flat/javascript'],
