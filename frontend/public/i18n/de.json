@@ -120,11 +120,11 @@
         "newPassword": {
           "required": "Bitte gib ein neues Passwort ein."
         },
-          "passwordConfirmation": {
-            "required": "Bitte bestätige dein neues Passwort.",
-            "passwordsDoNotMatch": "Die Passwörter stimmen nicht überein."
-          },
-          "PASSWORD_CHANGE_FAILED": "Das Passwort konnte nicht geändert werden."
+        "passwordConfirmation": {
+          "required": "Bitte bestätige dein neues Passwort.",
+          "passwordsDoNotMatch": "Die Passwörter stimmen nicht überein."
+        },
+        "PASSWORD_CHANGE_FAILED": "Das Passwort konnte nicht geändert werden."
       }
     },
     "notFound": {
@@ -270,10 +270,10 @@
       "fairgateChildren": "Kinder aus Fairgate",
       "adults": "Erwachsene",
       "children": "Kinder",
-      "deliver": "Aufliefern",
+      "deliver": "Ausliefern",
       "undo": "Rückgängig machen",
       "cancel": "Abbrechen",
-      "deliverTitle": "Bestellung aufliefern",
+      "deliverTitle": "Bestellung ausliefern",
       "identityQuestion": "Hast du den Ausweis überprüft?",
       "undoTitle": "Auslieferung rückgängig machen",
       "undoQuestion": "Bist du sicher, dass du die Auslieferung rückgängig machen willst?"

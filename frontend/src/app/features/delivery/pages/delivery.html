@@ -38,7 +38,7 @@
       </ul>
     </section>
     @if (currentOrder.status === 'qrcode' || currentOrder.status === 'delivered') {
-      <button mat-flat-button color="primary" type="button" (click)="changeStatus()" [disabled]="changingStatus()">
+      <button class="delivery-action" mat-flat-button color="primary" type="button" (click)="changeStatus()" [disabled]="changingStatus()">
         {{ (currentOrder.status === 'qrcode' ? 'app.delivery.deliver' : 'app.delivery.undo') | translate }}
       </button>
     }

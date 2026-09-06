@@ -54,7 +54,20 @@ main {
 
 @media (min-width: layout.$gl-section-breakpoint) {
   .app-navigation__links {
+    display: none;
+  }
+}
+
+@media (min-width: 1500px) {
+  .app-navigation .gl-container {
+    max-width: none;
+  }
+
+  .app-navigation__links {
     display: flex;
+    flex-wrap: nowrap;
+    justify-content: center;
+    gap: var(--gl-space-sm);
   }
 }
 

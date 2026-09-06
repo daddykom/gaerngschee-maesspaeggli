@@ -1,3 +1,31 @@
 :host {
   display: block;
 }
+
+.confirm-dialog__actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: var(--gl-space-sm);
+}
+
+.confirm-dialog__actions button {
+  min-height: 48px;
+  padding-inline: 1.25rem;
+  font-size: 1rem;
+}
+
+.confirm-dialog__confirm {
+  background: var(--mat-sys-primary) !important;
+  color: var(--mat-sys-on-primary) !important;
+}
+
+@media (max-width: 599px) {
+  .confirm-dialog__actions {
+    flex-direction: column-reverse;
+    align-items: stretch;
+  }
+
+  .confirm-dialog__actions button {
+    width: 100%;
+  }
+}
