@@ -3,7 +3,7 @@
 set -Eeuo pipefail
 
 readonly project_directory="$(cd "$(dirname "$0")/.." && pwd)"
-readonly test_directory="$(mktemp -d "${TMPDIR:-/tmp}/gaerngschee-deploy-test.XXXXXX")"
+readonly test_directory="$(cd "$(mktemp -d "${TMPDIR:-/tmp}/gaerngschee-deploy-test.XXXXXX")" && pwd)"
 readonly fake_bin="$test_directory/bin"
 readonly target_base="$test_directory/maesspaeggli"
 readonly log_file="$test_directory/commands.log"
@@ -49,6 +49,8 @@ set -Eeuo pipefail
 destination="${@: -1}"
 printf 'git %s\n' "$*" >> "${DEPLOY_TEST_LOG}"
 mkdir -p "$destination/backend" "$destination/frontend" "$destination/db"
+mkdir -p "$destination/frontend/dist/frontend/browser"
+printf 'new-test-frontend\n' > "$destination/frontend/dist/frontend/browser/index.html"
 FAKE_GIT
 
 cat > "$fake_bin/composer" <<'FAKE_COMPOSER'
@@ -67,6 +69,7 @@ set -Eeuo pipefail
 printf 'phinx %s\n' "$*" >> "${DEPLOY_TEST_LOG}"
 FAKE_PHINX
 chmod +x "$working_directory/vendor/bin/phinx"
+printf 'composer-pwd %s\n' "$PWD" >> "${DEPLOY_TEST_LOG}"
 FAKE_COMPOSER
 
 cat > "$fake_bin/npm" <<'FAKE_NPM'
@@ -78,6 +81,13 @@ if [[ "$*" == *'build'* ]]; then
   printf 'new-test-frontend\n' > dist/frontend/browser/index.html
 fi
 FAKE_NPM
+
+cat > "$fake_bin/php84" <<'FAKE_PHP84'
+#!/usr/bin/env bash
+set -Eeuo pipefail
+printf 'php84 %s\n' "$*" >> "${DEPLOY_TEST_LOG}"
+"$@"
+FAKE_PHP84
 
 chmod +x "$fake_bin"/*
 
@@ -106,6 +116,9 @@ run_deploy test
 assert_file_contains 'APP_ENV=test' "$target_base/test/backend/.env"
 assert_file_contains 'new-test-frontend' "$target_base/test/frontend/index.html"
 assert_log_contains 'git clone --branch main --single-branch https://example.test/repository.git'
+assert_log_contains "composer-pwd $target_base/test"
+assert_log_contains 'php84 '
+assert_log_contains 'npm run build'
 assert_log_contains 'phinx migrate -e test'
 
 if run_deploy prod 'NO'; then
@@ -116,6 +129,7 @@ assert_file_contains 'old-prod-frontend' "$target_base/prod/frontend-placeholder
 
 run_deploy prod 'DEPLOY PROD'
 assert_file_contains 'APP_ENV=prod' "$target_base/prod/backend/.env"
+assert_log_contains "composer-pwd $target_base/prod"
 assert_log_contains 'phinx migrate -e production'
 
 printf 'Deployment script tests passed.\n'

@@ -81,7 +81,12 @@ Vor dem ersten Lauf muss in jeder Umgebung die Datei
 `<ziel>/backend/.env` vorhanden sein. Das Script überschreibt sie nicht. Das
 Basisverzeichnis kann über `DEPLOY_BASE_DIR` und die Repository-URL über
 `REPO_URL` geändert werden. Ein produktives Deployment verlangt zusätzlich
-die Eingabe `DEPLOY PROD`.
+die Eingabe `DEPLOY PROD`. Composer wird bewusst aus dem jeweiligen
+Zielverzeichnis gestartet, damit Hosting-Umgebungen die dort konfigurierte
+PHP-Version verwenden; die Abhängigkeiten werden trotzdem zunächst in einem
+temporären Release installiert. Die Composer-Installation wird dabei mit
+`php84 $(which composer) install` ausgeführt, wie es die Hosting-Umgebung
+vorgibt.
 
 Der lokale Test des Scripts benötigt keinen Server und keinen GitHub-Zugriff:
 

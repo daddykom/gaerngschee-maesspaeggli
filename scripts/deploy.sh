@@ -32,7 +32,7 @@ if [[ "$environment" == 'prod' ]]; then
   fi
 fi
 
-for command_name in git composer npm rsync; do
+for command_name in git php84 composer npm rsync; do
   require_command "$command_name"
 done
 
@@ -57,7 +57,9 @@ rsync -a "$temporary_directory/source/backend/" "$temporary_directory/release/ba
 rsync -a "$temporary_directory/source/db/" "$temporary_directory/release/db/"
 rsync -a "$environment_file" "$temporary_directory/release/backend/.env"
 
-composer install --working-dir="$temporary_directory/release/backend" --no-dev --optimize-autoloader --no-interaction
+pushd "$target_directory" >/dev/null
+php84 "$(command -v composer)" install --working-dir="$temporary_directory/release/backend" --no-dev --optimize-autoloader --no-interaction
+popd >/dev/null
 
 pushd "$temporary_directory/source/frontend" >/dev/null
 npm ci
