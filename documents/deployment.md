@@ -84,9 +84,11 @@ Basisverzeichnis kann über `DEPLOY_BASE_DIR` und die Repository-URL über
 die Eingabe `DEPLOY PROD`. Composer wird bewusst aus dem jeweiligen
 Zielverzeichnis gestartet, damit Hosting-Umgebungen die dort konfigurierte
 PHP-Version verwenden; die Abhängigkeiten werden trotzdem zunächst in einem
-temporären Release installiert. Die Composer-Installation wird dabei mit
-`php84 $(which composer) install` ausgeführt, wie es die Hosting-Umgebung
-vorgibt.
+temporären Release installiert. Das temporäre Verzeichnis liegt standardmässig
+unter `$HOME/tmp`, weil manche Hosting-Server `/tmp` mit `noexec` mounten. Die
+Composer-Installation wird aus dem Zielverzeichnis mit
+`php84 $HOME/bin/composer install` ausgeführt, wie es die Hosting-Umgebung
+vorgibt. Der Composer-Pfad kann über `COMPOSER_BIN` überschrieben werden.
 
 Der lokale Test des Scripts benötigt keinen Server und keinen GitHub-Zugriff:
 

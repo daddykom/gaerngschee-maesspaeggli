@@ -7,6 +7,7 @@ readonly test_directory="$(cd "$(mktemp -d "${TMPDIR:-/tmp}/gaerngschee-deploy-t
 readonly fake_bin="$test_directory/bin"
 readonly target_base="$test_directory/maesspaeggli"
 readonly log_file="$test_directory/commands.log"
+readonly temporary_parent="$test_directory/tmp"
 
 cleanup() {
   rm -rf "$test_directory"
@@ -98,14 +99,18 @@ run_deploy() {
     printf '%s\n' "$input" | env \
       PATH="$fake_bin:/usr/bin:/bin" \
       DEPLOY_BASE_DIR="$target_base" \
+      DEPLOY_TMP_DIR="$temporary_parent" \
       DEPLOY_TEST_LOG="$log_file" \
+      COMPOSER_BIN="$fake_bin/composer" \
       REPO_URL='https://example.test/repository.git' \
       "$project_directory/scripts/deploy.sh" "$environment"
   else
     env \
       PATH="$fake_bin:/usr/bin:/bin" \
       DEPLOY_BASE_DIR="$target_base" \
+      DEPLOY_TMP_DIR="$temporary_parent" \
       DEPLOY_TEST_LOG="$log_file" \
+      COMPOSER_BIN="$fake_bin/composer" \
       REPO_URL='https://example.test/repository.git' \
       "$project_directory/scripts/deploy.sh" "$environment"
   fi
