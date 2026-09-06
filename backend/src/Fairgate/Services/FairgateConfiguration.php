@@ -9,11 +9,7 @@ final class FairgateConfiguration
     /** @return array{mode: string, base_url: string, organization_id: string, access_key: string, public_key: string} */
     public static function load(): array
     {
-        $configuration = self::read();
-
-        if (!isset($configuration['mode']) || !in_array($configuration['mode'], ['fake', 'real'], true)) {
-            throw new FairgateException('Invalid local Fairgate mode.');
-        }
+        $configuration = self::fromEnvironment();
 
         self::validateCredentials($configuration, $configuration['mode'] === 'real');
 
@@ -23,26 +19,27 @@ final class FairgateConfiguration
     /** @return array{mode: string, base_url: string, organization_id: string, access_key: string, public_key: string} */
     public static function loadReal(): array
     {
-        $configuration = self::read();
+        $configuration = self::fromEnvironment();
         self::validateCredentials($configuration, true);
 
         return self::normalize([...$configuration, 'mode' => 'real']);
     }
 
     /** @return array<string, mixed> */
-    private static function read(): array
+    private static function fromEnvironment(): array
     {
-        $path = dirname(__DIR__, 3) . '/config/fairgate.local.php';
-        if (!is_file($path)) {
-            throw new FairgateException('Missing local Fairgate configuration.');
+        $environment = getenv('APP_ENV');
+        if (!is_string($environment) || !in_array($environment, ['test', 'prod'], true)) {
+            throw new FairgateException('Invalid APP_ENV. Expected test or prod.');
         }
 
-        $configuration = require $path;
-        if (!is_array($configuration)) {
-            throw new FairgateException('Invalid local Fairgate configuration.');
-        }
-
-        return $configuration;
+        return [
+            'mode' => getenv('FSA_MODE') ?: ($environment === 'test' ? 'fake' : 'real'),
+            'base_url' => getenv('FSA_BASE_URL') ?: '',
+            'organization_id' => getenv('FSA_ORGANIZATION_ID') ?: '',
+            'access_key' => getenv('FSA_ACCESS_KEY') ?: '',
+            'public_key' => getenv('FSA_PUBLIC_KEY') ?: '',
+        ];
     }
 
     /** @param array<string, mixed> $configuration */

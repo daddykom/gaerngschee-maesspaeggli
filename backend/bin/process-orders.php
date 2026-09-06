@@ -3,6 +3,7 @@
 declare(strict_types=1);
 
 use App\Configuration\Data\FrontendConfigRepository;
+use App\Configuration\Environment;
 use App\Fairgate\Services\FairgateContactProviderFactory;
 use App\Registration\Data\OrderEmailQueueRepository;
 use App\Registration\Data\OrderRepository;
@@ -12,6 +13,7 @@ use App\Shared\Database\Database;
 use App\Shared\Mail\EmailSender;
 
 require __DIR__ . '/../vendor/autoload.php';
+Environment::load();
 
 try {
     $pdo = Database::getConnection();

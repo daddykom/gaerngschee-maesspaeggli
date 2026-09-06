@@ -113,6 +113,11 @@ cd frontend && npm install
 cd backend && composer install
 ```
 
+Die Konfiguration wird aus `backend/.env` geladen. Eine vollständige Vorlage
+steht in [`backend/.env.example`](./backend/.env.example); produktive
+Installationen sind in der [Deployment-Dokumentation](./documents/deployment.md)
+beschrieben.
+
 ### Fairgate-Testdaten
 
 Die lokale Docker-Umgebung läuft mit `APP_ENV=test` und verwendet deshalb den

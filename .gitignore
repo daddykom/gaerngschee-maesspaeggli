@@ -1,5 +1,9 @@
 /frontend/node_modules
 /backend/vendor
+/backend/.env
+/backend/.env.*
+!/backend/.env.example
+!/backend/.env.integration
 /frontend/.nx
 /frontend/.angular
 /frontend/dist

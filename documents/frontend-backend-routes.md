@@ -51,7 +51,7 @@ Die Backend-Route erzeugt einen einmaligen Registrierungstoken und versendet den
 | --- | --- | --- | --- | --- |
 | `GET` | `http://localhost:8080/admin/fairgate/test` | `frontend/src/app/shared/services/fairgate-test.service.ts` | keiner | Admin |
 
-Die Testadresse wird im Backend aus dem Konfigurationswert `fairgate_test_email` gelesen. Der Fairgate-Zugriff verwendet den in `backend/config/fairgate.local.php` definierten Modus `fake` oder `real`.
+Die Testadresse wird im Backend aus dem Konfigurationswert `fairgate_test_email` gelesen. Der Fairgate-Zugriff verwendet `FSA_MODE` beziehungsweise den von `APP_ENV` abgeleiteten Modus `fake` oder `real`.
 
 ## Abdeckung
 

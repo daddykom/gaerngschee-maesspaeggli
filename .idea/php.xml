@@ -112,6 +112,9 @@
       <path value="$PROJECT_DIR$/backend/vendor/bacon/bacon-qr-code" />
       <path value="$PROJECT_DIR$/backend/vendor/dasprid/enum" />
       <path value="$PROJECT_DIR$/backend/vendor/endroid/qr-code" />
+      <path value="$PROJECT_DIR$/backend/vendor/graham-campbell/result-type" />
+      <path value="$PROJECT_DIR$/backend/vendor/vlucas/phpdotenv" />
+      <path value="$PROJECT_DIR$/backend/vendor/phpoption/phpoption" />
     </include_path>
   </component>
   <component name="PhpUnit">

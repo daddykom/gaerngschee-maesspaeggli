@@ -1,6 +1,9 @@
 <?php
 declare(strict_types=1);
 
+require_once __DIR__ . '/../backend/vendor/autoload.php';
+\App\Configuration\Environment::load();
+
 return [
     'paths' => [
         'migrations' => __DIR__ . '/migrations',

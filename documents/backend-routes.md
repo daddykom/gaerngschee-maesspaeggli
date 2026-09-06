@@ -45,7 +45,7 @@ Moegliche Gruppen werden durch das Backend validiert und umfassen `admin`, `user
 | --- | --- | --- | --- | --- |
 | `GET` | `/admin/fairgate/test` | `FairgateTestAction` | `AuthMiddleware`, Gruppe `admin` | keiner |
 
-Die Testadresse wird aus `frontend_config` mit dem Schluessel `fairgate_test_email` geladen. Der externe Fairgate-Zugriff verwendet den Modus `fake` oder `real` aus `backend/config/fairgate.local.php`.
+Die Testadresse wird aus `frontend_config` mit dem Schluessel `fairgate_test_email` geladen. Der externe Fairgate-Zugriff verwendet `FSA_MODE` beziehungsweise den von `APP_ENV` abgeleiteten Modus `fake` oder `real`.
 
 ## Frontend-Konfiguration
 
