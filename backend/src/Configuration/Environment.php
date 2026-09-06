@@ -27,7 +27,7 @@ final class Environment
             $filename = basename($path);
         }
 
-        Dotenv::createImmutable($directory, $filename)->safeLoad();
+        Dotenv::createUnsafeImmutable($directory, $filename)->safeLoad();
         self::$loaded = true;
     }
 }
