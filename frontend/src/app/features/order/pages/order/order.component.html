@@ -40,15 +40,14 @@
       <h2 id="categories-heading">{{ 'app.order.categories.title' | translate }}</h2>
       <p>{{ 'app.order.categories.description' | translate }}</p>
 
-      <section class="person-group" aria-labelledby="adults-heading">
+       <section class="person-group gl-stack" aria-labelledby="adults-heading">
         <h3 id="adults-heading">{{ 'app.order.categories.adults' | translate }}</h3>
         <ul class="person-list list-as-form">
           @for (category of model().adults; track $index) {
             <li class="person-list__item">
               <mat-form-field appearance="outline" class="category-field">
                 <mat-label>
-                  {{ 'app.order.categories.adult' | translate }} {{ $index + 1 }}:
-                  {{ 'app.order.categories.category' | translate }}
+                   {{ 'app.order.categories.adult' | translate }} {{ $index + 1 }}
                 </mat-label>
                  <mat-select
                    [id]="personId('adult', $index)"
@@ -87,15 +86,14 @@
       <mat-divider></mat-divider>
 
         @if(model().children.length > 0){
-      <section class="person-group" aria-labelledby="children-heading">
+       <section class="person-group gl-stack" aria-labelledby="children-heading">
         <h3 id="children-heading">{{ 'app.order.categories.children' | translate }}</h3>
         <ul class="person-list list-as-form">
           @for (category of model().children; track $index) {
             <li class="person-list__item">
               <mat-form-field appearance="outline" class="category-field">
                 <mat-label>
-                  {{ 'app.order.categories.child' | translate }} {{ $index + 1 }}:
-                  {{ 'app.order.categories.category' | translate }}
+                   {{ 'app.order.categories.child' | translate }} {{ $index + 1 }}
                 </mat-label>
                  <mat-select
                    [id]="personId('child', $index)"
