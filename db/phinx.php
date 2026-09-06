@@ -1,7 +1,20 @@
 <?php
 declare(strict_types=1);
 
-require_once __DIR__ . '/../backend/vendor/autoload.php';
+foreach ([
+    __DIR__ . '/../backend/vendor/autoload.php',
+    '/var/www/html/vendor/autoload.php',
+] as $autoload) {
+    if (is_file($autoload)) {
+        require_once $autoload;
+        break;
+    }
+}
+
+if (!class_exists(\App\Configuration\Environment::class)) {
+    throw new RuntimeException('Backend autoloader could not be found.');
+}
+
 \App\Configuration\Environment::load();
 
 return [
