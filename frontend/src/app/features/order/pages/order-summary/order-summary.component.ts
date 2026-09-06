@@ -28,6 +28,7 @@ export class OrderSummaryComponent {
 
   readonly form = this.store.selectSignal(selectOrderForm);
   readonly savedOrder = this.store.selectSignal(selectCurrentOrder);
+  readonly orderYear = computed(() => this.savedOrder()?.year ?? new Date().getFullYear());
   readonly adults = computed(() => this.countCategories(this.form()?.adults ?? []));
   readonly children = computed(() => this.countCategories(this.form()?.children ?? []));
   readonly status = computed(() => this.savedOrder()?.status ?? 'provisional');
