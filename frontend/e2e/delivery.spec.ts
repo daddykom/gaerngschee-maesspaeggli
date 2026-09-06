@@ -47,8 +47,8 @@ test.describe('Delivery route', () => {
     await expect(page.getByText('Kinder: 1')).toBeVisible();
     await expect(page.getByText('Bezüger/in: Jane Doe')).toBeVisible();
     await expect(page.getByText('Baby Doe')).toBeVisible();
-    await page.getByRole('button', { name: 'Aufliefern' }).click();
+    await page.getByRole('button', { name: 'Ausliefern' }).click();
     await expect(page.getByText('Hast du den Ausweis überprüft?')).toBeVisible();
-    await page.getByRole('button', { name: 'Aufliefern' }).last().click();
+    await page.getByRole('button', { name: 'Ausliefern' }).last().click();
   });
 });
