@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
+import { Component, inject } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
 import { MatDialog } from '@angular/material/dialog';
 import { RouterLink } from '@angular/router';
@@ -16,7 +16,6 @@ import { AdminUsersActions } from '../../../../store/admin-users/admin-users.act
   imports: [MatButtonModule, RouterLink, TranslatePipe],
   templateUrl: './users.component.html',
   styleUrl: './users.component.scss',
-  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class UsersComponent {
   private readonly store = inject(Store);

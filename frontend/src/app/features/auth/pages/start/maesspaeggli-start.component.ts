@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, inject, signal } from '@angular/core';
+import { Component, inject, signal } from '@angular/core';
 import { email, form, FormField, required } from '@angular/forms/signals';
 import { MatButtonModule } from '@angular/material/button';
 import { MatFormFieldModule } from '@angular/material/form-field';
@@ -25,7 +25,6 @@ import { StartActions } from '../../../../store/start/start.actions';
   ],
   templateUrl: './maesspaeggli-start.component.html',
   styleUrl: './maesspaeggli-start.component.scss',
-  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class MaesspaeggliStartComponent {
   private readonly store = inject(Store);

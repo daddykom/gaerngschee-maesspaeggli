@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, computed, inject } from '@angular/core';
+import { Component, computed, inject } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { MatButtonModule } from '@angular/material/button';
 import { MatDialog } from '@angular/material/dialog';
@@ -24,7 +24,6 @@ import {
   imports: [MatButtonModule, MatFormFieldModule, MatInputModule, TranslatePipe],
   templateUrl: './delivery.html',
   styleUrl: './delivery.scss',
-  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class Delivery {
   private readonly store = inject(Store);

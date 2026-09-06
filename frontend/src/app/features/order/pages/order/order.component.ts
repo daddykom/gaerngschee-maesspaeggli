@@ -1,5 +1,4 @@
 import {
-  ChangeDetectionStrategy,
   Component,
   computed,
   effect,
@@ -49,7 +48,6 @@ export const categories: Categorie[] = ['catA', 'catB', 'catC', 'catD', 'catE', 
     TranslatePipe,
   ],
   templateUrl: './order.component.html',
-  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class OrderComponent {
   private readonly store = inject(Store);
