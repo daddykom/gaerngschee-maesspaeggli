@@ -1,5 +1,4 @@
 import {
-  ChangeDetectionStrategy,
   Component,
   effect,
   inject,
@@ -25,7 +24,6 @@ import {
   imports: [MatButtonModule, MatFormFieldModule, MatInputModule, FormField, TranslatePipe],
   templateUrl: './configuration.component.html',
   styleUrl: './configuration.component.scss',
-  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class ConfigurationComponent {
   private readonly store = inject(Store);

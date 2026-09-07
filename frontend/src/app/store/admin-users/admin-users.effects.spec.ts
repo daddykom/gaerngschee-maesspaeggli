@@ -1,4 +1,5 @@
 import { HttpErrorResponse } from '@angular/common/http';
+import { type Mock } from 'vitest';
 import { TestBed } from '@angular/core/testing';
 import { provideMockActions } from '@ngrx/effects/testing';
 import { Action } from '@ngrx/store';
@@ -20,11 +21,11 @@ const user = { id: 'user-1', email: 'user@example.com', group: 'user' as const, 
 
 describe('admin users effects', () => {
   let actions$: Subject<Action>;
-  let service: { list: jest.Mock; create: jest.Mock; update: jest.Mock; delete: jest.Mock };
+  let service: { list: Mock; create: Mock; update: Mock; delete: Mock };
 
   beforeEach(() => {
     actions$ = new Subject<Action>();
-    service = { list: jest.fn(), create: jest.fn(), update: jest.fn(), delete: jest.fn() };
+    service = { list: vi.fn(), create: vi.fn(), update: vi.fn(), delete: vi.fn() };
     TestBed.configureTestingModule({ providers: [provideMockActions(() => actions$), { provide: AdminUsersService, useValue: service }] });
   });
 

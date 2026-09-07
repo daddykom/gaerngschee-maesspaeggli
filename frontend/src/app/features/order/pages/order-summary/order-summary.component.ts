@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, computed, inject } from '@angular/core';
+import { Component, computed, inject } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
 import { Store } from '@ngrx/store';
 import { TranslatePipe } from '@ngx-translate/core';
@@ -21,7 +21,6 @@ interface CategoryQuantity {
   imports: [MatButtonModule, TranslatePipe],
   templateUrl: './order-summary.component.html',
   styleUrl: './order-summary.component.scss',
-  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class OrderSummaryComponent {
   private readonly store = inject(Store);

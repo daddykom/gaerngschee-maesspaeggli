@@ -31,7 +31,7 @@ describe('Login', () => {
     fixture = TestBed.createComponent(Login);
     component = fixture.componentInstance;
     store = TestBed.inject(MockStore);
-    jest.spyOn(store, 'dispatch');
+    vi.spyOn(store, 'dispatch');
     fixture.detectChanges();
   });
 

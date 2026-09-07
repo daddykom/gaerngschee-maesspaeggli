@@ -1,17 +1,17 @@
 import { TestBed } from '@angular/core/testing';
-import { Router, UrlTree } from '@angular/router';
+import { ActivatedRouteSnapshot, Router, RouterStateSnapshot, UrlTree } from '@angular/router';
 import { Store } from '@ngrx/store';
 import { UserGroup } from '../models/frontend-config.model';
 import { groupGuard } from './group.guard';
 
 describe('groupGuard', () => {
   const router = {
-    parseUrl: jest.fn(() => ({ url: '/not-found' } as unknown as UrlTree)),
+    parseUrl: vi.fn(() => ({ url: '/not-found' } as unknown as UrlTree)),
   };
 
   const createGuardResult = (group: UserGroup | null, allowedGroups: UserGroup[]) => {
     const store = {
-      selectSignal: jest.fn(() => () => group),
+      selectSignal: vi.fn(() => () => group),
     };
 
     TestBed.configureTestingModule({
@@ -21,7 +21,10 @@ describe('groupGuard', () => {
       ],
     });
 
-    return TestBed.runInInjectionContext(() => groupGuard(allowedGroups)());
+    return TestBed.runInInjectionContext(() => groupGuard(allowedGroups)(
+      {} as ActivatedRouteSnapshot,
+      {} as RouterStateSnapshot,
+    ));
   };
 
   beforeEach(() => {

@@ -1,4 +1,5 @@
 import { HttpErrorResponse } from '@angular/common/http';
+import { type Mock } from 'vitest';
 import { TestBed } from '@angular/core/testing';
 import { provideMockActions } from '@ngrx/effects/testing';
 import { Action } from '@ngrx/store';
@@ -9,11 +10,11 @@ import { fairgateTestEffect } from './fairgate-test.effects';
 
 describe('fairgateTestEffect', () => {
   let actions$: Subject<Action>;
-  let service: { test: jest.Mock };
+  let service: { test: Mock };
 
   beforeEach(() => {
     actions$ = new Subject<Action>();
-    service = { test: jest.fn() };
+    service = { test: vi.fn() };
     TestBed.configureTestingModule({ providers: [provideMockActions(() => actions$), { provide: FairgateTestService, useValue: service }] });
   });
 

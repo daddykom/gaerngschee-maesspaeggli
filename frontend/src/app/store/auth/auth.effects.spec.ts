@@ -1,4 +1,5 @@
 import { HttpErrorResponse } from '@angular/common/http';
+import { type Mock } from 'vitest';
 import { TestBed } from '@angular/core/testing';
 import { provideMockActions } from '@ngrx/effects/testing';
 import { Action } from '@ngrx/store';
@@ -7,7 +8,6 @@ import { AuthService } from '../../shared/services/auth.service';
 import { AuthActions } from './auth.actions';
 import { NavigationActions } from '../navigation/navigation.actions';
 import { NotificationActions } from '../notification/notification.actions';
-import * as authStorage from '../../shared/services/auth-storage';
 import {
   authNotificationEffect,
   clearPersistedAuthEffect,
@@ -22,11 +22,11 @@ import {
 
 describe('loginEffect', () => {
   let actions$: Subject<Action>;
-  let authService: { login: jest.Mock; registrationLogin: jest.Mock; logout: jest.Mock; changePassword: jest.Mock };
+  let authService: { login: Mock; registrationLogin: Mock; logout: Mock; changePassword: Mock };
 
   beforeEach(() => {
     actions$ = new Subject<Action>();
-    authService = { login: jest.fn(), registrationLogin: jest.fn(), logout: jest.fn(), changePassword: jest.fn() };
+    authService = { login: vi.fn(), registrationLogin: vi.fn(), logout: vi.fn(), changePassword: vi.fn() };
 
     TestBed.configureTestingModule({
       providers: [
@@ -153,24 +153,31 @@ describe('loginEffect', () => {
   });
 
   it('persists login state and clears it on logout', () => {
-    const persist = jest.spyOn(authStorage, 'persistAuthState');
-    const clear = jest.spyOn(authStorage, 'clearPersistedAuthState');
+    localStorage.removeItem('gaerngschee.auth');
     const persistResult = TestBed.runInInjectionContext(() => persistLoginEffect());
     const clearResult = TestBed.runInInjectionContext(() => clearPersistedAuthEffect());
 
     const loginSubscription = persistResult.subscribe();
     actions$.next(AuthActions.loginSuccess({ token: 'token', userId: 'user-1', group: 'admin', requiredPasswordReset: false }));
+    expect(JSON.parse(localStorage.getItem('gaerngschee.auth') ?? '{}')).toEqual({
+      token: 'token',
+      userId: 'user-1',
+      group: 'admin',
+      fairgateUserExists: null,
+      childrenCount: null,
+      adultsCount: null,
+      salutation: null,
+    });
     const logoutSubscription = clearResult.subscribe();
     actions$.next(AuthActions.logoutRequested({ redirectTo: '/login' }));
 
-    expect(persist).toHaveBeenCalledWith({ token: 'token', userId: 'user-1', group: 'admin', fairgateUserExists: null, childrenCount: null, adultsCount: null, salutation: null });
-    expect(clear).toHaveBeenCalledTimes(1);
+    expect(localStorage.getItem('gaerngschee.auth')).toBeNull();
     loginSubscription.unsubscribe();
     logoutSubscription.unsubscribe();
   });
 
   it('persists registration data', () => {
-    const persist = jest.spyOn(authStorage, 'persistAuthState');
+    localStorage.removeItem('gaerngschee.auth');
     const effect$ = TestBed.runInInjectionContext(() => persistRegistrationLoginEffect());
     const subscription = effect$.subscribe();
 
@@ -179,7 +186,7 @@ describe('loginEffect', () => {
       childrenCount: 1, adultsCount: 2, salutation: 'Hallo',
     }));
 
-    expect(persist).toHaveBeenCalledWith({ token: 'token', userId: 'client-1', group: 'client', fairgateUserExists: true, childrenCount: 1, adultsCount: 2, salutation: 'Hallo' });
+    expect(JSON.parse(localStorage.getItem('gaerngschee.auth') ?? '{}')).toEqual({ token: 'token', userId: 'client-1', group: 'client', fairgateUserExists: true, childrenCount: 1, adultsCount: 2, salutation: 'Hallo' });
     subscription.unsubscribe();
   });
 

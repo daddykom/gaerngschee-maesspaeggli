@@ -81,11 +81,18 @@
       }
     },
     "test": {
-      "executor": "@nx/jest:jest",
+      "executor": "@angular/build:unit-test",
       "outputs": ["{workspaceRoot}/coverage/{projectName}"],
       "options": {
-        "jestConfig": "jest.config.cts",
-        "tsConfig": "tsconfig.spec.json"
+        "buildTarget": "frontend:build:development",
+        "runner": "vitest",
+        "tsConfig": "tsconfig.spec.json",
+        "watch": false
+      },
+      "configurations": {
+        "ci": {
+          "coverage": true
+        }
       }
     },
     "serve-static": {

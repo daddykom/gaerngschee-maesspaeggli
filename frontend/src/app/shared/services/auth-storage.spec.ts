@@ -10,7 +10,7 @@ describe('auth storage', () => {
   });
 
   afterEach(() => {
-    jest.restoreAllMocks();
+    vi.restoreAllMocks();
   });
 
   it('restores a valid persisted client session', () => {
@@ -91,7 +91,7 @@ describe('auth storage', () => {
   });
 
   it('returns an empty state when reading storage fails', () => {
-    jest.spyOn(Storage.prototype, 'getItem').mockImplementation(() => {
+    vi.spyOn(Storage.prototype, 'getItem').mockImplementation(() => {
       throw new Error('storage unavailable');
     });
 
@@ -99,7 +99,7 @@ describe('auth storage', () => {
   });
 
   it('ignores errors while persisting state', () => {
-    jest.spyOn(Storage.prototype, 'setItem').mockImplementation(() => {
+    vi.spyOn(Storage.prototype, 'setItem').mockImplementation(() => {
       throw new Error('storage unavailable');
     });
 
@@ -115,7 +115,7 @@ describe('auth storage', () => {
   });
 
   it('ignores errors while clearing state', () => {
-    jest.spyOn(Storage.prototype, 'removeItem').mockImplementation(() => {
+    vi.spyOn(Storage.prototype, 'removeItem').mockImplementation(() => {
       throw new Error('storage unavailable');
     });
 

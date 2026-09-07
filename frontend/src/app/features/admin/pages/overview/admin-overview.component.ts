@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
+import { Component, inject } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
 import { MatDialog } from '@angular/material/dialog';
 import { Store } from '@ngrx/store';
@@ -13,7 +13,6 @@ import { selectAdminOverview } from '../../../../store/admin-overview/admin-over
   imports: [MatButtonModule, TranslatePipe],
   templateUrl: './admin-overview.component.html',
   styleUrl: './admin-overview.component.scss',
-  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class AdminOverviewComponent {
   private readonly store = inject(Store);

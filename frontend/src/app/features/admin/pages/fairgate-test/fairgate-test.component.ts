@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
+import { Component, inject } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
 import { JsonPipe } from '@angular/common';
 import { Store } from '@ngrx/store';
@@ -14,7 +14,6 @@ import { FairgateTestActions } from '../../../../store/fairgate-test/fairgate-te
   imports: [JsonPipe, MatButtonModule, TranslatePipe],
   templateUrl: './fairgate-test.component.html',
   styleUrl: './fairgate-test.component.scss',
-  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class FairgateTestComponent {
   private readonly store = inject(Store);

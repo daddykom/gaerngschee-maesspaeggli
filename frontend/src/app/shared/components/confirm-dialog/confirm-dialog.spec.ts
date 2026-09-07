@@ -1,11 +1,12 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
+import { type Mock } from 'vitest';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { provideTranslateService } from '@ngx-translate/core';
 import { ConfirmDialogComponent, ConfirmDialogData } from './confirm-dialog';
 
 describe('ConfirmDialogComponent', () => {
   let fixture: ComponentFixture<ConfirmDialogComponent>;
-  let dialogRef: { close: jest.Mock };
+  let dialogRef: { close: Mock };
   const data: ConfirmDialogData = {
     title: 'dialog.title',
     message: 'dialog.message',
@@ -14,7 +15,7 @@ describe('ConfirmDialogComponent', () => {
   };
 
   beforeEach(async () => {
-    dialogRef = { close: jest.fn() };
+    dialogRef = { close: vi.fn() };
     await TestBed.configureTestingModule({
       imports: [ConfirmDialogComponent],
       providers: [

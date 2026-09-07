@@ -26,7 +26,7 @@ describe('notificationRouteEffect', () => {
 
   it('ignores router events that are not NavigationEnd', () => {
     const effect$ = TestBed.runInInjectionContext(() => notificationRouteEffect());
-    const next = jest.fn();
+    const next = vi.fn();
     const subscription = effect$.subscribe(next);
 
     routerEvents$.next(new NavigationStart(1, '/login'));

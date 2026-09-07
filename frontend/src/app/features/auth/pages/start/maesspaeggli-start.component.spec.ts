@@ -7,12 +7,12 @@ import { MaesspaeggliStartComponent } from './maesspaeggli-start.component';
 
 describe('MaesspaeggliStartComponent', () => {
   const store = {
-    dispatch: jest.fn(),
-    selectSignal: jest.fn().mockReturnValue(signal(false)),
+    dispatch: vi.fn(),
+    selectSignal: vi.fn().mockReturnValue(signal(false)),
   };
 
   beforeEach(async () => {
-    jest.clearAllMocks();
+    vi.clearAllMocks();
     store.selectSignal.mockReturnValue(signal(false));
 
     await TestBed.configureTestingModule({

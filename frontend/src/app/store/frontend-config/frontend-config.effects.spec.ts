@@ -1,4 +1,5 @@
 import { HttpErrorResponse } from '@angular/common/http';
+import { type Mock } from 'vitest';
 import { TestBed } from '@angular/core/testing';
 import { provideMockActions } from '@ngrx/effects/testing';
 import { Action } from '@ngrx/store';
@@ -10,11 +11,11 @@ import { frontendConfigNotificationEffect, loadFrontendConfigEffect, loadPublicF
 
 describe('frontend config effects', () => {
   let actions$: Subject<Action>;
-  let service: { list: jest.Mock; listPublic: jest.Mock; update: jest.Mock };
+  let service: { list: Mock; listPublic: Mock; update: Mock };
 
   beforeEach(() => {
     actions$ = new Subject<Action>();
-    service = { list: jest.fn(), listPublic: jest.fn(), update: jest.fn() };
+    service = { list: vi.fn(), listPublic: vi.fn(), update: vi.fn() };
     TestBed.configureTestingModule({ providers: [provideMockActions(() => actions$), { provide: FrontendConfigService, useValue: service }] });
   });
 

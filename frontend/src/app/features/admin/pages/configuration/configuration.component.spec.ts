@@ -67,7 +67,7 @@ describe('ConfigurationComponent', () => {
     }).compileComponents();
 
     store = TestBed.inject(MockStore);
-    jest.spyOn(store, 'dispatch');
+    vi.spyOn(store, 'dispatch');
     fixture = TestBed.createComponent(ConfigurationComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
@@ -99,7 +99,7 @@ describe('ConfigurationComponent', () => {
   });
 
   it('dispatches editable scalar and array values when saving', () => {
-    const dispatch = jest.spyOn(store, 'dispatch');
+    const dispatch = vi.spyOn(store, 'dispatch');
     component.model.update((model) => ({
       ...model,
       [configs[0].id]: '240',
@@ -120,7 +120,7 @@ describe('ConfigurationComponent', () => {
 
   it('does not save while a save is already in progress', () => {
     store.setState({ frontendConfig: { configs, loading: false, saving: true } });
-    const dispatch = jest.spyOn(store, 'dispatch');
+    const dispatch = vi.spyOn(store, 'dispatch');
 
     component.onSubmit();
 

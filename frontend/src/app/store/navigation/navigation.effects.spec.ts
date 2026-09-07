@@ -1,4 +1,5 @@
 import { Location } from '@angular/common';
+import { type Mock } from 'vitest';
 import { TestBed } from '@angular/core/testing';
 import { provideMockActions } from '@ngrx/effects/testing';
 import { Action } from '@ngrx/store';
@@ -9,13 +10,13 @@ import { Router } from '@angular/router';
 
 describe('navigationEffect', () => {
   let actions$: Subject<Action>;
-  let router: { navigateByUrl: jest.Mock };
-  let location: { back: jest.Mock };
+  let router: { navigateByUrl: Mock };
+  let location: { back: Mock };
 
   beforeEach(() => {
     actions$ = new Subject<Action>();
-    router = { navigateByUrl: jest.fn() };
-    location = { back: jest.fn() };
+    router = { navigateByUrl: vi.fn() };
+    location = { back: vi.fn() };
     TestBed.configureTestingModule({
       providers: [
         provideMockActions(() => actions$),

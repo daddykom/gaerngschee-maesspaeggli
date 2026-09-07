@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, computed, inject, signal } from '@angular/core';
+import { Component, computed, inject, signal } from '@angular/core';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { email, form, FormField, required } from '@angular/forms/signals';
 import { MatButtonModule } from '@angular/material/button';
@@ -29,7 +29,6 @@ import { NavigationActions } from '../../../../store/navigation/navigation.actio
   ],
   templateUrl: './user-edit.component.html',
   styleUrl: './user-edit.component.scss',
-  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class UserEditComponent {
   private readonly route = inject(ActivatedRoute);
