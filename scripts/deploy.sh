@@ -6,6 +6,7 @@ readonly repository_url="${REPO_URL:-https://github.com/daddykom/gaerngschee-mae
 readonly branch="${DEPLOY_BRANCH:-main}"
 readonly base_directory="${DEPLOY_BASE_DIR:-$HOME/public_html/gaerngschee/maesspaeggli}"
 readonly composer_binary="${COMPOSER_BIN:-$HOME/bin/composer}"
+readonly build_cpu="${DEPLOY_BUILD_CPU:-0}"
 
 usage() {
   printf 'Usage: %s <prod|test>\n' "$0" >&2
@@ -33,7 +34,7 @@ if [[ "$environment" == 'prod' ]]; then
   fi
 fi
 
-for command_name in git php84 npm rsync; do
+for command_name in git php84 npm rsync taskset; do
   require_command "$command_name"
 done
 
@@ -71,10 +72,11 @@ popd >/dev/null
 
 pushd "$temporary_directory/source/frontend" >/dev/null
 npm ci
-npm run build
+taskset -c "$build_cpu" env NX_DAEMON=false NX_SKIP_NATIVE_FILE_CACHE=true npm run build
 popd >/dev/null
 
 rsync -a "$temporary_directory/source/frontend/dist/frontend/browser/" "$temporary_directory/release/frontend/"
+rsync -a "$temporary_directory/source/frontend/public/.htaccess" "$temporary_directory/release/frontend/.htaccess"
 
 phinx_environment='production'
 if [[ "$environment" == 'test' ]]; then
@@ -83,7 +85,9 @@ fi
 
 (
   cd "$temporary_directory/release/backend"
-  vendor/bin/phinx migrate -e "$phinx_environment" -c "$temporary_directory/release/db/phinx.php"
+  unset DB_HOST DB_PORT DB_NAME DB_TEST_NAME DB_USER DB_PASS
+  export GAERNGSCHEE_ENV_FILE="$environment_file"
+  php84 vendor/bin/phinx migrate -e "$phinx_environment" -c "$temporary_directory/release/db/phinx.php"
 )
 
 mkdir -p "$target_directory/backend" "$target_directory/frontend"

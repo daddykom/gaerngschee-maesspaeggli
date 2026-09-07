@@ -11,8 +11,8 @@ setup_deploy_fixture() {
   export project_directory fake_bin target_base log_file temporary_parent
 
   mkdir -p "$fake_bin" "$target_base/test/backend" "$target_base/test/frontend" "$target_base/prod/backend"
-  printf 'APP_ENV=test\n' > "$target_base/test/backend/.env"
-  printf 'APP_ENV=prod\n' > "$target_base/prod/backend/.env"
+  printf 'APP_ENV=test\nDB_HOST=127.0.0.1\nDB_PORT=3306\nDB_NAME=gaerngschee\nDB_TEST_NAME=gaerngschee_test\nDB_USER=test-user\nDB_PASS=test-pass\n' > "$target_base/test/backend/.env"
+  printf 'APP_ENV=prod\nDB_HOST=127.0.0.1\nDB_PORT=3306\nDB_NAME=gaerngschee\nDB_USER=prod-user\nDB_PASS=prod-pass\n' > "$target_base/prod/backend/.env"
   printf 'old-test-frontend\n' > "$target_base/test/frontend/index.html"
   printf 'old-prod-frontend\n' > "$target_base/prod/frontend-placeholder"
 
@@ -21,9 +21,11 @@ setup_deploy_fixture() {
 set -Eeuo pipefail
 destination="${@: -1}"
 printf 'git %s\n' "$*" >> "${DEPLOY_TEST_LOG}"
-mkdir -p "$destination/backend" "$destination/frontend" "$destination/db"
-mkdir -p "$destination/frontend/dist/frontend/browser"
-printf 'new-test-frontend\n' > "$destination/frontend/dist/frontend/browser/index.html"
+  mkdir -p "$destination/backend" "$destination/frontend" "$destination/db"
+  mkdir -p "$destination/frontend/dist/frontend/browser"
+  mkdir -p "$destination/frontend/public"
+  printf 'RewriteEngine On\n' > "$destination/frontend/public/.htaccess"
+  printf 'new-test-frontend\n' > "$destination/frontend/dist/frontend/browser/index.html"
 FAKE_GIT
 
   cat > "$fake_bin/composer" <<'FAKE_COMPOSER'
@@ -39,6 +41,14 @@ mkdir -p "$working_directory/vendor/bin"
 cat > "$working_directory/vendor/bin/phinx" <<'FAKE_PHINX'
 #!/usr/bin/env bash
 set -Eeuo pipefail
+if [[ "${DB_HOST:-}" == 'database' ]]; then
+  printf 'unexpected inherited DB_HOST\n' >&2
+  exit 1
+fi
+if [[ "${GAERNGSCHEE_ENV_FILE:-}" != "${DEPLOY_EXPECTED_ENV_FILE}" ]]; then
+  printf 'unexpected environment file: %s\n' "${GAERNGSCHEE_ENV_FILE:-}" >&2
+  exit 1
+fi
 printf 'phinx %s\n' "$*" >> "${DEPLOY_TEST_LOG}"
 FAKE_PHINX
 chmod +x "$working_directory/vendor/bin/phinx"
@@ -48,12 +58,20 @@ FAKE_COMPOSER
   cat > "$fake_bin/npm" <<'FAKE_NPM'
 #!/usr/bin/env bash
 set -Eeuo pipefail
-printf 'npm %s\n' "$*" >> "${DEPLOY_TEST_LOG}"
+printf 'npm %s NX_DAEMON=%s NX_SKIP_NATIVE_FILE_CACHE=%s\n' "$*" "${NX_DAEMON:-}" "${NX_SKIP_NATIVE_FILE_CACHE:-}" >> "${DEPLOY_TEST_LOG}"
 if [[ "$*" == *'build'* ]]; then
   mkdir -p dist/frontend/browser
   printf 'new-test-frontend\n' > dist/frontend/browser/index.html
 fi
 FAKE_NPM
+
+  cat > "$fake_bin/taskset" <<'FAKE_TASKSET'
+#!/usr/bin/env bash
+set -Eeuo pipefail
+printf 'taskset %s\n' "$*" >> "${DEPLOY_TEST_LOG}"
+shift 2
+"$@"
+FAKE_TASKSET
 
   cat > "$fake_bin/php84" <<'FAKE_PHP84'
 #!/usr/bin/env bash
@@ -75,6 +93,7 @@ run_deploy() {
     "DEPLOY_TMP_DIR=$temporary_parent"
     "DEPLOY_TEST_LOG=$log_file"
     "COMPOSER_BIN=$fake_bin/composer"
+    "DEPLOY_EXPECTED_ENV_FILE=$target_base/$environment/backend/.env"
     'REPO_URL=https://example.test/repository.git'
     "$project_directory/scripts/deploy.sh"
     "$environment"

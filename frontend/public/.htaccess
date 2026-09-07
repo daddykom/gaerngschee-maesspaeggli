@@ -1,0 +1,10 @@
+RewriteEngine On
+
+# Send API requests to the private backend entry point.
+RewriteRule ^api(?:/.*)?$ ../backend/public/index.php [END,QSA]
+
+# Keep existing files available and route client-side paths to Angular.
+RewriteCond %{REQUEST_FILENAME} -f [OR]
+RewriteCond %{REQUEST_FILENAME} -d
+RewriteRule ^ - [END]
+RewriteRule ^ index.html [END]
