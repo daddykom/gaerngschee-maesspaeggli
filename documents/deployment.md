@@ -90,10 +90,11 @@ Composer-Installation wird aus dem Zielverzeichnis mit
 `php84 $HOME/bin/composer install` ausgeführt, wie es die Hosting-Umgebung
 vorgibt. Der Composer-Pfad kann über `COMPOSER_BIN` überschrieben werden.
 
-Der lokale Test des Scripts benötigt keinen Server und keinen GitHub-Zugriff:
+Der lokale Bats-Test des Scripts benötigt keinen Server und keinen GitHub-Zugriff.
+Bats Core muss lokal installiert sein:
 
 ```bash
-bash scripts/test-deploy.sh
+bats tests/deployment/deploy.bats
 ```
 
 ## Testumgebung
