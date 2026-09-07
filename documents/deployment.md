@@ -14,6 +14,9 @@ $HOME/public_html/gaerngschee/maesspaeggli/<umgebung>/
 Der Webserver verwendet `<deployment>/frontend` als Document-Root. Requests
 unter `/api/` werden an `<deployment>/backend/public/index.php` weitergeleitet.
 Der Backend-Document-Root wird nicht direkt öffentlich ausgeliefert.
+Bei Apache übernimmt `<deployment>/frontend/.htaccess` diese Weiterleitung und
+den SPA-Fallback. Der externe `/api`-Prefix wird im PHP-Entry-Point entfernt,
+bevor Slim die interne Route verarbeitet.
 
 ## Environment
 
@@ -89,6 +92,10 @@ unter `$HOME/tmp`, weil manche Hosting-Server `/tmp` mit `noexec` mounten. Die
 Composer-Installation wird aus dem Zielverzeichnis mit
 `php84 $HOME/bin/composer install` ausgeführt, wie es die Hosting-Umgebung
 vorgibt. Der Composer-Pfad kann über `COMPOSER_BIN` überschrieben werden.
+Der Frontend-Production-Build wird auf einem CPU-Kern mit deaktiviertem
+Nx-Daemon und deaktiviertem Nx-Native-File-Cache ausgeführt, um die
+Hosting-Limits zu berücksichtigen. Die Apache-`.htaccess` wird unabhängig vom
+Angular-Asset-Build in das Frontend-Ziel kopiert.
 
 Der lokale Bats-Test des Scripts benötigt keinen Server und keinen GitHub-Zugriff.
 Bats Core muss lokal installiert sein:

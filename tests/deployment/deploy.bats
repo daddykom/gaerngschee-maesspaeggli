@@ -33,6 +33,7 @@ setup() {
 
   [ "$status" -eq 0 ]
   [ -f "$target_base/test/frontend/index.html" ]
+  [ -f "$target_base/test/frontend/.htaccess" ]
   [ ! -f "$target_base/test/frontend/stale.html" ]
   [[ "$(< "$target_base/test/backend/.env")" == 'APP_ENV=test' ]]
   [[ "$(< "$log_file")" == *'git clone --branch main --single-branch https://example.test/repository.git'* ]]

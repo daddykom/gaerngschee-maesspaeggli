@@ -21,9 +21,11 @@ setup_deploy_fixture() {
 set -Eeuo pipefail
 destination="${@: -1}"
 printf 'git %s\n' "$*" >> "${DEPLOY_TEST_LOG}"
-mkdir -p "$destination/backend" "$destination/frontend" "$destination/db"
-mkdir -p "$destination/frontend/dist/frontend/browser"
-printf 'new-test-frontend\n' > "$destination/frontend/dist/frontend/browser/index.html"
+  mkdir -p "$destination/backend" "$destination/frontend" "$destination/db"
+  mkdir -p "$destination/frontend/dist/frontend/browser"
+  mkdir -p "$destination/frontend/public"
+  printf 'RewriteEngine On\n' > "$destination/frontend/public/.htaccess"
+  printf 'new-test-frontend\n' > "$destination/frontend/dist/frontend/browser/index.html"
 FAKE_GIT
 
   cat > "$fake_bin/composer" <<'FAKE_COMPOSER'

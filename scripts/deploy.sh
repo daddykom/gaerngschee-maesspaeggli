@@ -76,6 +76,7 @@ taskset -c "$build_cpu" env NX_DAEMON=false NX_SKIP_NATIVE_FILE_CACHE=true npm r
 popd >/dev/null
 
 rsync -a "$temporary_directory/source/frontend/dist/frontend/browser/" "$temporary_directory/release/frontend/"
+rsync -a "$temporary_directory/source/frontend/public/.htaccess" "$temporary_directory/release/frontend/.htaccess"
 
 phinx_environment='production'
 if [[ "$environment" == 'test' ]]; then
