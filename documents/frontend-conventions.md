@@ -225,7 +225,7 @@ export const filterActiveRegistrations = (registrations: Registration[]): Regist
 
 ## Testing
 
-- Jest for unit tests
+- Vitest with Angular's `@angular/build:unit-test` builder for unit tests
 - Components: test rendering with `@Input()` values
 - Services: mock dependencies
 - NgRx: test actions, reducers, selectors independently

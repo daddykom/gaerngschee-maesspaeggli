@@ -4,7 +4,7 @@ Diese Checks sollen vor einem Merge in `main` erfolgreich abgeschlossen sein.
 
 | Check-Name | Zweck | Ausfuehrung |
 | --- | --- | --- |
-| `frontend-tests` | Frontend-Jest-Tests | `cd frontend && npm test -- --runInBand` |
+| `frontend-tests` | Frontend-Vitest-Unit-Tests | `cd frontend && npm run test:unit -- --configuration=ci` |
 | `frontend-build` | Frontend-Production-Build | `cd frontend && npm run build` |
 | `backend-tests` | Backend-PHPUnit-Tests | `cd backend && vendor/bin/phpunit` |
 | `e2e-tests` | Playwright-End-to-End-Tests | `cd frontend && npm run test:e2e:cli` |

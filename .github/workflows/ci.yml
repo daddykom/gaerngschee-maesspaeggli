@@ -29,8 +29,8 @@ jobs:
           cache-dependency-path: frontend/package-lock.json
       - name: Install dependencies
         run: npm ci
-      - name: Run Jest tests
-        run: npm test -- --runInBand
+      - name: Run Vitest unit tests
+        run: npm run test:unit -- --configuration=ci
 
   frontend-build:
     name: frontend-build

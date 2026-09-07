@@ -104,7 +104,7 @@ From AGENTS.md:
 
 | Type | Tool | Status |
 |------|------|--------|
-| Unit (Angular) | Jest | Planned |
+| Unit (Angular) | Vitest via `@angular/build:unit-test` | Implemented |
 | Unit (PHP) | PHPUnit | Planned |
 | E2E | Playwright | Planned |
 | Accessibility | axe-core | Planned |
