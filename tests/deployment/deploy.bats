@@ -25,8 +25,11 @@ setup() {
 
 @test 'deploys the test environment with the test migration environment' {
   printf 'stale-file\n' > "$target_base/test/frontend/stale.html"
+  export DB_HOST=database
+  export GAERNGSCHEE_ENV_FILE="$target_base/test/backend/.env.example"
 
   run run_deploy test
+  unset DB_HOST GAERNGSCHEE_ENV_FILE
 
   [ "$status" -eq 0 ]
   [ -f "$target_base/test/frontend/index.html" ]
@@ -36,7 +39,8 @@ setup() {
   [[ "$(< "$log_file")" == *"composer-pwd $target_base/test"* ]]
   [[ "$(< "$log_file")" == *'php84 '* ]]
   [[ "$(< "$log_file")" == *'npm ci'* ]]
-  [[ "$(< "$log_file")" == *'npm run build'* ]]
+  [[ "$(< "$log_file")" == *'taskset -c 0'* ]]
+  [[ "$(< "$log_file")" == *'npm run build NX_DAEMON=false NX_SKIP_NATIVE_FILE_CACHE=true'* ]]
   [[ "$(< "$log_file")" == *'phinx migrate -e test'* ]]
 }
 
