@@ -33,6 +33,7 @@ setup() {
 
   [ "$status" -eq 0 ]
   [ -f "$target_base/test/frontend/index.html" ]
+  [ -f "$target_base/test/frontend/api/index.php" ]
   [ -f "$target_base/test/frontend/.htaccess" ]
   [ ! -f "$target_base/test/frontend/stale.html" ]
   [[ "$(< "$target_base/test/backend/.env")" == APP_ENV=test* ]]

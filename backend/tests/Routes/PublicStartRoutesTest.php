@@ -18,6 +18,19 @@ use Slim\Psr7\Stream;
 
 final class PublicStartRoutesTest extends TestCase
 {
+    public function testPhpTestRouteReturnsPlainText(): void
+    {
+        $app = AppFactory::create();
+        $app->addRoutingMiddleware();
+        PublicRoutes::register($app);
+
+        $response = $app->handle((new ServerRequestFactory())->createServerRequest('GET', '/public/php-test'));
+
+        self::assertSame(200, $response->getStatusCode());
+        self::assertSame('text/plain; charset=utf-8', $response->getHeaderLine('Content-Type'));
+        self::assertSame('PHP backend is reachable.', (string) $response->getBody());
+    }
+
     public function testPublicConfigurationReturnsClientValuesOnly(): void
     {
         $pdo = TestDatabase::create();

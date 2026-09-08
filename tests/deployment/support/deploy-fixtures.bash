@@ -24,6 +24,8 @@ printf 'git %s\n' "$*" >> "${DEPLOY_TEST_LOG}"
   mkdir -p "$destination/backend" "$destination/frontend" "$destination/db"
   mkdir -p "$destination/frontend/dist/frontend/browser"
   mkdir -p "$destination/frontend/public"
+  mkdir -p "$destination/frontend/public/api"
+  printf '<?php\n' > "$destination/frontend/public/api/index.php"
   printf 'RewriteEngine On\n' > "$destination/frontend/public/.htaccess"
   printf 'new-test-frontend\n' > "$destination/frontend/dist/frontend/browser/index.html"
 FAKE_GIT

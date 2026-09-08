@@ -15,8 +15,10 @@ Der Webserver verwendet `<deployment>/frontend` als Document-Root. Requests
 unter `/api/` werden an `<deployment>/backend/public/index.php` weitergeleitet.
 Der Backend-Document-Root wird nicht direkt öffentlich ausgeliefert.
 Bei Apache übernimmt `<deployment>/frontend/.htaccess` diese Weiterleitung und
-den SPA-Fallback. Der externe `/api`-Prefix wird im PHP-Entry-Point entfernt,
-bevor Slim die interne Route verarbeitet.
+den SPA-Fallback. Die Weiterleitung geht zunächst an die öffentliche
+PHP-Bridge unter `<deployment>/frontend/api/index.php`, die den privaten
+Backend-Entry-Point lädt. Der externe `/api`-Prefix wird im PHP-Entry-Point
+entfernt, bevor Slim die interne Route verarbeitet.
 
 ## Environment
 

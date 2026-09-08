@@ -41,8 +41,11 @@ final class Application
             }
 
             $response = $handler->handle($request);
+            if (!$response->hasHeader('Content-Type')) {
+                $response = $response->withHeader('Content-Type', 'application/json');
+            }
+
             return $response
-                ->withHeader('Content-Type', 'application/json')
                 ->withHeader('Access-Control-Allow-Origin', $frontendOrigin)
                 ->withHeader('Access-Control-Allow-Credentials', 'true');
         });
