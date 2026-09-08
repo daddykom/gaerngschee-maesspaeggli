@@ -24,7 +24,7 @@ final class AdminAccountSeeder extends AbstractSeed
                 'id' => '00000000-0000-4000-8000-000000000001',
                 'email' => $email,
                 // Precomputed with password_hash(..., PASSWORD_DEFAULT).
-                'password' => '$2y$12$QRXc.mAz2RfJTBnOtZL9VOSddjwpe6OSOawq.6LbUmCjBcAk8bp.2',
+                'password' => '$2y$12$EXjOJ.51uXs1DyB8SR2sUO6SMCnh6RuwkR2M8XDMJhlHhKP.UCZ12',
                 'group' => 'admin',
             ],
         );
