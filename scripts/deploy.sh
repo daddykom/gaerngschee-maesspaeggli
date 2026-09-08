@@ -87,7 +87,7 @@ fi
 
 (
   cd "$temporary_directory/release/backend"
-  unset DB_HOST DB_PORT DB_NAME DB_TEST_NAME DB_USER DB_PASS
+  unset ADMIN_SEED_PASSWORD DB_HOST DB_PORT DB_NAME DB_TEST_NAME DB_USER DB_PASS
   export GAERNGSCHEE_ENV_FILE="$environment_file"
   php84 vendor/bin/phinx migrate -e "$phinx_environment" -c "$temporary_directory/release/db/phinx.php"
 )

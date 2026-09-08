@@ -6,6 +6,8 @@ use Phinx\Seed\AbstractSeed;
 
 final class AdminAccountSeeder extends AbstractSeed
 {
+    private const DEFAULT_ADMIN_PASSWORD_HASH = '$2y$12$EXjOJ.51uXs1DyB8SR2sUO6SMCnh6RuwkR2M8XDMJhlHhKP.UCZ12';
+
     public function run(): void
     {
         $email = 'admin@gaerngschee.ch';
@@ -24,12 +26,22 @@ final class AdminAccountSeeder extends AbstractSeed
             [
                 'id' => '00000000-0000-4000-8000-000000000001',
                 'email' => $email,
-                'password' => password_hash('secret', PASSWORD_DEFAULT),
+                'password' => $this->adminPasswordHash(),
                 'group' => 'admin',
             ],
         );
 
         $this->createRegularUser();
+    }
+
+    private function adminPasswordHash(): string
+    {
+        $password = getenv('ADMIN_SEED_PASSWORD');
+        if (is_string($password) && $password !== '') {
+            return password_hash($password, PASSWORD_DEFAULT);
+        }
+
+        return self::DEFAULT_ADMIN_PASSWORD_HASH;
     }
 
     private function createRegularUser(): void
