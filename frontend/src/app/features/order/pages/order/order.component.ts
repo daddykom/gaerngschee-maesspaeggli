@@ -16,7 +16,12 @@ import { Store } from '@ngrx/store';
 import { TranslatePipe } from '@ngx-translate/core';
 import { InfoBoxComponent } from '../../../../shared/components/info-box/info-box';
 import { ControlErrorComponent } from '../../../../shared/components/control-error/control-error';
-import { OrderCategory, OrderForm } from '../../../../shared/models/order.model';
+import {
+  adultCategories,
+  CategorySelection,
+  childCategories,
+  OrderForm,
+} from '../../../../shared/models/order.model';
 import { OrderActions } from '../../../../store/order/order.actions';
 import { selectOrderForm } from '../../../../store/order/order.feature';
 import { NavigationActions } from '../../../../store/navigation/navigation.actions';
@@ -28,11 +33,6 @@ import {
   selectAuthSalutation,
 } from '../../../../store/auth/auth.feature';
 import { selectCurrentOrder } from '../../../../store/order/order.feature';
-
-export type Categorie = OrderCategory | '';
-
-export const adultCategories: Categorie[] = ['catA', 'catB'];
-export const childCategories: Categorie[] = ['catC', 'catD', 'catE', 'catF', 'catG'];
 
 @Component({
   selector: 'app-order',
@@ -96,12 +96,12 @@ export class OrderComponent {
     effect(() => this.resizeCategories(this.displayAdultsCount(), this.displayChildrenCount()));
   }
 
-  adultField(index: number): FieldTree<Categorie> {
-    return (this.form.adults as unknown as FieldTree<Categorie[]>)[index] as FieldTree<Categorie>;
+  adultField(index: number): FieldTree<CategorySelection> {
+    return (this.form.adults as unknown as FieldTree<CategorySelection[]>)[index] as FieldTree<CategorySelection>;
   }
 
-  childField(index: number): FieldTree<Categorie> {
-    return (this.form.children as unknown as FieldTree<Categorie[]>)[index] as FieldTree<Categorie>;
+  childField(index: number): FieldTree<CategorySelection> {
+    return (this.form.children as unknown as FieldTree<CategorySelection[]>)[index] as FieldTree<CategorySelection>;
   }
 
   personId(group: 'adult' | 'child', index: number): string {
@@ -125,7 +125,7 @@ export class OrderComponent {
     this.store.dispatch(OrderActions.orderFormUpdated({ form: { [field]: count } }));
   }
 
-  onCategoryChange(field: 'adults' | 'children', index: number, value: Categorie): void {
+  onCategoryChange(field: 'adults' | 'children', index: number, value: CategorySelection): void {
     const values = [...this.model()[field]];
     values[index] = value;
     this.store.dispatch(OrderActions.orderFormUpdated({ form: { [field]: values } }));
@@ -147,7 +147,7 @@ export class OrderComponent {
     }
   }
 
-  private resize(values: Categorie[], count: number): Categorie[] {
+  private resize(values: CategorySelection[], count: number): CategorySelection[] {
     return Array.from({ length: Math.max(0, count) }, (_, index) => values[index] ?? '');
   }
 
