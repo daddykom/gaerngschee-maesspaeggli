@@ -8,6 +8,7 @@ use App\Configuration\Data\FrontendConfigRepository;
 use App\Fairgate\Services\FairgateContactProvider;
 use App\Fairgate\Services\FairgateBatchContactProvider;
 use App\Registration\Data\OrderEmailQueueRepository;
+use App\Registration\Data\OrderCategories;
 use App\Registration\Data\OrderRepository;
 use App\Registration\Data\RegistrationTokenRepository;
 use App\Registration\Services\QrCodeGenerator;
@@ -18,7 +19,6 @@ use Throwable;
 
 final class OrderBatchService
 {
-    private const CATEGORIES = ['catA', 'catB', 'catC', 'catD', 'catE', 'catF', 'catG'];
     private const INTERVAL_CONFIG = 'fairgate_email_interval_days';
     private const TOKEN_RETENTION_CONFIG = 'registration_token_retention_days';
 
@@ -241,7 +241,7 @@ final class OrderBatchService
                 $current++;
             }
             while ($current > $target) {
-                foreach (array_reverse(self::CATEGORIES) as $category) {
+                foreach (array_reverse(OrderCategories::ALL) as $category) {
                     if (($groups[$type][$category] ?? 0) > 0) {
                         $groups[$type][$category]--;
                         $current--;

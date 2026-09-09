@@ -6,6 +6,7 @@ namespace App\Registration\Actions;
 
 use App\Auth\Services\SessionService;
 use App\Registration\Data\OrderRepository;
+use App\Registration\Data\OrderCategories;
 use App\Registration\Data\OrderEmailQueueRepository;
 use App\Registration\Data\OrderNotEditableException;
 use App\Shared\Database\Database;
@@ -22,8 +23,6 @@ use Throwable;
 
 final class SaveClientOrderAction
 {
-    private const CATEGORIES = ['catA', 'catB', 'catC', 'catD', 'catE', 'catF', 'catG'];
-
     public function __construct(
         private readonly ?OrderRepository $orders = null,
         private readonly ?SessionService $session = null,
@@ -123,7 +122,7 @@ final class SaveClientOrderAction
     /** @return list<string>|null */
     private function categories(mixed $value): ?array
     {
-        if (!is_array($value) || array_filter($value, static fn (mixed $category): bool => !is_string($category) || !in_array($category, self::CATEGORIES, true)) !== []) {
+        if (!is_array($value) || array_filter($value, static fn (mixed $category): bool => !is_string($category) || !in_array($category, OrderCategories::ALL, true)) !== []) {
             return null;
         }
 

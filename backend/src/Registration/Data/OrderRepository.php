@@ -8,8 +8,6 @@ use PDO;
 
 final class OrderRepository
 {
-    private const CATEGORIES = ['catA', 'catB', 'catC', 'catD', 'catE', 'catF', 'catG'];
-
     public function __construct(private readonly PDO $pdo)
     {
     }
@@ -100,7 +98,7 @@ final class OrderRepository
                 'qrcode' => $aggregates[3]['categories'][$category] ?? 0,
                 'delivered' => $aggregates[4]['categories'][$category] ?? 0,
             ],
-            self::CATEGORIES,
+            OrderCategories::ALL,
         );
 
         return [
