@@ -234,10 +234,19 @@ final class OrderBatchService
         foreach ($items as $item) {
             $groups[$item['personType']][$item['category']] = $item['quantity'];
         }
-        foreach (['adult' => $adults, 'child' => $children] as $type => $target) {
+        $targets = [
+            'adult' => $children > 0 ? 0 : $adults,
+            'child' => $children,
+        ];
+        $fallbacks = [
+            'adult' => OrderCategories::ADULT_FALLBACK,
+            'child' => OrderCategories::CHILD_FALLBACK,
+        ];
+        foreach ($targets as $type => $target) {
             $current = array_sum($groups[$type]);
             while ($current < $target) {
-                $groups[$type]['catA'] = ($groups[$type]['catA'] ?? 0) + 1;
+                $fallback = $fallbacks[$type];
+                $groups[$type][$fallback] = ($groups[$type][$fallback] ?? 0) + 1;
                 $current++;
             }
             while ($current > $target) {

@@ -14,4 +14,7 @@ final class OrderCategories
 
     /** @var list<string> */
     public const ALL = [...self::ADULT, ...self::CHILD];
+
+    public const ADULT_FALLBACK = 'catA';
+    public const CHILD_FALLBACK = 'catC';
 }
