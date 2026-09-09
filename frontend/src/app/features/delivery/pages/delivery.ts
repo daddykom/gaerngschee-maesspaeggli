@@ -6,7 +6,7 @@ import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { TranslatePipe } from '@ngx-translate/core';
 import { Store } from '@ngrx/store';
-import { OrderCategory } from '../../../shared/models/order.model';
+import { orderCategories } from '../../../shared/models/order.model';
 import { ConfirmDialogComponent, ConfirmDialogData } from '../../../shared/components/confirm-dialog/confirm-dialog';
 import { DeliveryActions } from '../../../store/delivery/delivery.actions';
 import {
@@ -42,7 +42,7 @@ export class Delivery {
   readonly changingStatus = computed(() => this.action().status === 'loading');
   readonly categories = computed(() => {
     const items = this.order()?.items ?? [];
-    return (['catA', 'catB', 'catC', 'catD', 'catE', 'catF', 'catG'] as OrderCategory[])
+    return orderCategories
       .map((category) => ({ category, quantity: items.filter((item) => item.category === category).reduce((sum, item) => sum + item.quantity, 0) }))
       .filter((item) => item.quantity > 0);
   });

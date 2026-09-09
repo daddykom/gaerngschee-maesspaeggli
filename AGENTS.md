@@ -526,6 +526,12 @@ private router = inject(Router);
 defaultIcon = computed(() => { ... });
 ```
 
+### 11a. English Source Code
+
+- Source-code identifiers, including types, variables, functions, classes and comments, are written in English.
+- User-facing text remains localized through the translation system.
+- External contract values, database fields and established domain values may retain their required spelling.
+
 ### 12. UI-Struktur
 
 Für Page-Struktur, responsive Layouts, Formulare, Abstände, Sections, Cards, Actions und die Verwendung gemeinsamer UI-Komponenten gilt ausschliesslich [documents/ui-design.md](./documents/ui-design.md).

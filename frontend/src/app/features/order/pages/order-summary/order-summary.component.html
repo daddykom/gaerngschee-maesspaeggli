@@ -2,18 +2,21 @@
   @if (form(); as order) {
     <section class="summary-section gl-stack gl-stack--group" aria-labelledby="summary-heading">
       <h2 id="summary-heading">{{ 'app.order.summary.title' | translate }}</h2>
-       <p>{{ 'app.order.summary.description' | translate: { year: orderYear() } }}</p>
+      <p>{{ 'app.order.summary.description' | translate: { year: orderYear() } }}</p>
+      <p>{{ 'app.order.intro' | translate: { adults: order.adultsCount, children: order.childrenCount } }}</p>
 
-      <section class="summary-group gl-stack gl-stack--group" aria-labelledby="summary-adults-heading">
-        <h3 id="summary-adults-heading">{{ 'app.order.categories.adults' | translate }}</h3>
-        <ul>
-          @for (item of adults(); track item.category) {
-            <li>
-              {{ item.quantity }} x {{ 'app.order.categories.options.' + item.category | translate }}
-            </li>
-          }
-        </ul>
-      </section>
+      @if (adults().length > 0) {
+        <section class="summary-group gl-stack gl-stack--group" aria-labelledby="summary-adults-heading">
+          <h3 id="summary-adults-heading">{{ 'app.order.categories.adults' | translate }}</h3>
+          <ul>
+            @for (item of adults(); track item.category) {
+              <li>
+                {{ item.quantity }} x {{ 'app.order.categories.options.' + item.category | translate }}
+              </li>
+            }
+          </ul>
+        </section>
+      }
 
       @if (children().length > 0) {
         <section class="summary-group gl-stack gl-stack--group" aria-labelledby="summary-children-heading">

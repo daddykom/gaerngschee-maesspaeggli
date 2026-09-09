@@ -1,11 +1,19 @@
-export type OrderCategory = 'catA' | 'catB' | 'catC' | 'catD' | 'catE' | 'catF' | 'catG';
+export const adultCategories = ['catA', 'catB'] as const;
+export type AdultCategory = (typeof adultCategories)[number];
+
+export const childCategories = ['catC', 'catD', 'catE', 'catF', 'catG'] as const;
+export type ChildCategory = (typeof childCategories)[number];
+
+export type OrderCategory = AdultCategory | ChildCategory;
+export const orderCategories = [...adultCategories, ...childCategories] as const;
+export type CategorySelection = OrderCategory | '';
 export type OrderPersonType = 'adult' | 'child';
 
 export interface OrderForm {
   adultsCount: number;
   childrenCount: number;
-  adults: (OrderCategory | '')[];
-  children: (OrderCategory | '')[];
+  adults: CategorySelection[];
+  children: CategorySelection[];
 }
 
 export interface OrderItem {

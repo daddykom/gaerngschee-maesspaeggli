@@ -32,8 +32,6 @@ test.describe('Order summary route', () => {
             id: 'order-1', userId: 'client-1', year: 2026, status: 'definitive',
             adultsCount: 2, childrenCount: 1,
             items: [
-              { personType: 'adult', category: 'catA', quantity: 1 },
-              { personType: 'adult', category: 'catB', quantity: 1 },
               { personType: 'child', category: 'catC', quantity: 1 },
             ],
             createdAt: null, updatedAt: null,
@@ -46,7 +44,7 @@ test.describe('Order summary route', () => {
      await page.waitForURL('**/order/edit');
 
     const selects = page.getByRole('combobox');
-    for (const [index, option] of ['Erwachsene ruhig', 'Erwachsene Action', 'Kinder 1-3 Jahre'].entries()) {
+    for (const [index, option] of ['Kinder 1-3 Jahre'].entries()) {
       await selects.nth(index).click();
       await page.getByRole('option', { name: option, exact: true }).click();
     }
@@ -55,13 +53,12 @@ test.describe('Order summary route', () => {
 
     await expect(page.locator('h2', { hasText: 'Bestellübersicht' })).toBeVisible();
     await expect(page.getByText(`Deine Bestellung für das Jahr ${new Date().getFullYear()}`)).toBeVisible();
-    await expect(page.getByText('1 x Erwachsene ruhig')).toBeVisible();
-    await expect(page.getByText('1 x Erwachsene Action')).toBeVisible();
     await expect(page.getByText('1 x Kinder 1-3 Jahre')).toBeVisible();
+    await expect(page.getByRole('heading', { name: 'Erwachsene', exact: true })).toHaveCount(0);
 
     await page.getByRole('button', { name: 'Zurück' }).click();
      await page.waitForURL('**/order/edit');
-    await expect(selects.nth(0)).toHaveText('Erwachsene ruhig');
+    await expect(selects.nth(0)).toHaveText('Kinder 1-3 Jahre');
 
     await page.getByRole('button', { name: 'Weiter' }).click();
     await page.waitForURL('**/order/summary');
