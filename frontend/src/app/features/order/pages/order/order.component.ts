@@ -31,7 +31,8 @@ import { selectCurrentOrder } from '../../../../store/order/order.feature';
 
 export type Categorie = OrderCategory | '';
 
-export const categories: Categorie[] = ['catA', 'catB', 'catC', 'catD', 'catE', 'catF', 'catG'];
+export const adultCategories: Categorie[] = ['catA', 'catB'];
+export const childCategories: Categorie[] = ['catC', 'catD', 'catE', 'catF', 'catG'];
 
 @Component({
   selector: 'app-order',
@@ -59,7 +60,8 @@ export class OrderComponent {
   readonly publicConfigs = this.store.selectSignal(selectFrontendPublicConfigs);
   readonly orderForm = this.store.selectSignal(selectOrderForm);
   readonly currentOrder = this.store.selectSignal(selectCurrentOrder);
-  readonly categories = categories;
+  readonly adultCategories = adultCategories;
+  readonly childCategories = childCategories;
   readonly model = signal<OrderForm>({
     adultsCount: this.adultsCount() ?? 0,
     childrenCount: this.childrenCount() ?? 0,
@@ -131,7 +133,7 @@ export class OrderComponent {
 
   private resizeCategories(adultCount: number, childCount: number): void {
     const current = untracked(this.model);
-    const adults = this.resize(current.adults, adultCount);
+    const adults = this.resize(current.adults, childCount > 0 ? 0 : adultCount);
     const children = this.resize(current.children, childCount);
     if (adults.length === current.adults.length && children.length === current.children.length) {
       return;

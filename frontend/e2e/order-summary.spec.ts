@@ -12,7 +12,7 @@ test.describe('Order summary route', () => {
           group: 'client',
           requiredPasswordReset: false,
           fairgateUserExists: true,
-          childrenCount: 1,
+          childrenCount: 0,
           adultsCount: 2,
           salutation: 'Hallo',
         }),
@@ -30,11 +30,10 @@ test.describe('Order summary route', () => {
         body: JSON.stringify({
           order: {
             id: 'order-1', userId: 'client-1', year: 2026, status: 'definitive',
-            adultsCount: 2, childrenCount: 1,
+            adultsCount: 2, childrenCount: 0,
             items: [
               { personType: 'adult', category: 'catA', quantity: 1 },
               { personType: 'adult', category: 'catB', quantity: 1 },
-              { personType: 'child', category: 'catC', quantity: 1 },
             ],
             createdAt: null, updatedAt: null,
           },
@@ -46,7 +45,7 @@ test.describe('Order summary route', () => {
      await page.waitForURL('**/order/edit');
 
     const selects = page.getByRole('combobox');
-    for (const [index, option] of ['Erwachsene ruhig', 'Erwachsene Action', 'Kinder 1-3 Jahre'].entries()) {
+    for (const [index, option] of ['Erwachsene ruhig', 'Erwachsene Action'].entries()) {
       await selects.nth(index).click();
       await page.getByRole('option', { name: option, exact: true }).click();
     }
@@ -57,7 +56,6 @@ test.describe('Order summary route', () => {
     await expect(page.getByText(`Deine Bestellung für das Jahr ${new Date().getFullYear()}`)).toBeVisible();
     await expect(page.getByText('1 x Erwachsene ruhig')).toBeVisible();
     await expect(page.getByText('1 x Erwachsene Action')).toBeVisible();
-    await expect(page.getByText('1 x Kinder 1-3 Jahre')).toBeVisible();
 
     await page.getByRole('button', { name: 'Zurück' }).click();
      await page.waitForURL('**/order/edit');

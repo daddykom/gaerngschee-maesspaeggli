@@ -50,17 +50,33 @@ describe('OrderComponent', () => {
 
     component.onSubmit();
 
-    expect(component.adultField(0)().touched()).toBe(true);
+    expect(component.childField(0)().touched()).toBe(true);
   });
 
-  it('separates person headings from their fields and keeps labels concise', () => {
+  it('shows only children when the household has children', () => {
     const personGroups = fixture.nativeElement.querySelectorAll('.person-group');
     const labels = fixture.nativeElement.querySelectorAll('mat-label');
 
-    expect(personGroups).toHaveLength(2);
+    expect(personGroups).toHaveLength(1);
     expect(personGroups[0].classList).toContain('gl-stack');
-    expect(personGroups[1].classList).toContain('gl-stack');
-    expect(labels[0].textContent).toContain('app.order.categories.adult 1');
+    expect(labels[0].textContent).toContain('app.order.categories.child 1');
     expect(labels[0].textContent).not.toContain('app.order.categories.category');
+    expect(componentModel(fixture).adults).toEqual([]);
+  });
+
+  it('shows adults and only adult categories when there are no children', () => {
+    const component = fixture.componentInstance;
+    component.model.set({ adultsCount: 2, childrenCount: 0, adults: ['', ''], children: [] });
+    fixture.detectChanges();
+
+    expect(fixture.nativeElement.querySelectorAll('.person-group')).toHaveLength(1);
+    expect(fixture.nativeElement.querySelectorAll('mat-label')[0].textContent)
+      .toContain('app.order.categories.adult 1');
+    expect(component.adultCategories).toEqual(['catA', 'catB']);
+    expect(component.childCategories).toEqual(['catC', 'catD', 'catE', 'catF', 'catG']);
   });
 });
+
+function componentModel(fixture: ComponentFixture<OrderComponent>) {
+  return fixture.componentInstance.model();
+}

@@ -27,7 +27,7 @@ test.describe('Order route', () => {
       page.getByText('Für deine Bestellung sind 2 Erwachsene und 1 Kinder erfasst.'),
     ).toBeVisible();
     await expect(page.getByText('Hallo')).toBeVisible();
-    await expect(page.getByRole('combobox')).toHaveCount(3);
+    await expect(page.getByRole('combobox')).toHaveCount(1);
   });
 
   test('allows manual person counts when Fairgate data is unavailable', async ({ page }) => {
@@ -68,10 +68,10 @@ test.describe('Order route', () => {
     await counts.nth(0).fill('2');
     await counts.nth(1).fill('3');
 
-    await expect(page.getByRole('combobox')).toHaveCount(5);
-    await expect(page.getByText('Bitte auswählen', { exact: true })).toHaveCount(5);
+    await expect(page.getByRole('combobox')).toHaveCount(3);
+    await expect(page.getByText('Bitte auswählen', { exact: true })).toHaveCount(3);
     await page.getByRole('button', { name: 'Weiter' }).click();
-    await expect(page.getByRole('alert')).toHaveCount(5);
+    await expect(page.getByRole('alert')).toHaveCount(3);
      await expect(page).toHaveURL('/order/edit');
     await expect(page.getByText('Anzahl Personen erfassen')).toBeVisible();
     await expect(page.getByText('Lieber Besteller', { exact: true })).toBeVisible();
