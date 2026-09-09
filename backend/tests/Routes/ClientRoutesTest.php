@@ -45,8 +45,8 @@ final class ClientRoutesTest extends TestCase
         $save = $app->handle($this->request('PUT', [
             'adultsCount' => 2,
             'childrenCount' => 1,
-            'adults' => ['catA', 'catA'],
-            'children' => ['catB'],
+            'adults' => [],
+            'children' => ['catC'],
         ]));
         $saved = json_decode((string) $save->getBody(), true, 512, JSON_THROW_ON_ERROR)['order'];
 
@@ -54,7 +54,11 @@ final class ClientRoutesTest extends TestCase
         self::assertSame('definitive', $saved['status']);
         self::assertSame(2, $saved['adultsCount']);
         self::assertSame(1, $saved['childrenCount']);
-        self::assertSame(2, $saved['items'][0]['quantity']);
+        self::assertSame([
+            'personType' => 'child',
+            'category' => 'catC',
+            'quantity' => 1,
+        ], $saved['items'][0]);
         self::assertTrue($this->emails->orderConfirmations !== []);
         self::assertSame('client@example.com', $this->emails->orderConfirmations[0]['recipient']);
         self::assertNotNull($saved['confirmationEmailSentAt']);
@@ -84,14 +88,14 @@ final class ClientRoutesTest extends TestCase
         $second = $app->handle($this->request('PUT', [
             'adultsCount' => 1,
             'childrenCount' => 0,
-            'adults' => ['catG'],
+            'adults' => ['catB'],
             'children' => [],
         ]));
         $secondOrder = json_decode((string) $second->getBody(), true, 512, JSON_THROW_ON_ERROR)['order'];
 
         self::assertSame($firstOrder['id'], $secondOrder['id']);
         self::assertSame('provisional', $secondOrder['status']);
-        self::assertSame('catG', $secondOrder['items'][0]['category']);
+        self::assertSame('catB', $secondOrder['items'][0]['category']);
         self::assertSame(1, (int) $this->pdo->query('SELECT COUNT(*) FROM orders')->fetchColumn());
         self::assertSame(1, (int) $this->pdo->query('SELECT COUNT(*) FROM order_items')->fetchColumn());
     }
@@ -134,6 +138,38 @@ final class ClientRoutesTest extends TestCase
             'adults' => ['catA'],
             'children' => [],
             'userId' => 'another-user',
+        ]));
+
+        self::assertSame(422, $response->getStatusCode());
+        self::assertSame('INVALID_ORDER_DATA', json_decode((string) $response->getBody(), true)['error']['code']);
+    }
+
+    public function testAdultCategoryIsRejectedWhenChildrenArePresent(): void
+    {
+        $client = $this->users->createUser('family@example.com', 'secret', 'client');
+        (new SessionService())->setUser($client['id'], 'client', true);
+
+        $response = $this->createApp()->handle($this->request('PUT', [
+            'adultsCount' => 2,
+            'childrenCount' => 1,
+            'adults' => ['catA'],
+            'children' => ['catC'],
+        ]));
+
+        self::assertSame(422, $response->getStatusCode());
+        self::assertSame('INVALID_ORDER_DATA', json_decode((string) $response->getBody(), true)['error']['code']);
+    }
+
+    public function testChildCategoryIsRejectedForAnAdultOnlyOrder(): void
+    {
+        $client = $this->users->createUser('adult@example.com', 'secret', 'client');
+        (new SessionService())->setUser($client['id'], 'client', true);
+
+        $response = $this->createApp()->handle($this->request('PUT', [
+            'adultsCount' => 1,
+            'childrenCount' => 0,
+            'adults' => ['catC'],
+            'children' => [],
         ]));
 
         self::assertSame(422, $response->getStatusCode());

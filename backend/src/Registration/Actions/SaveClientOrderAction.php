@@ -42,10 +42,12 @@ final class SaveClientOrderAction
         $data = JsonRequest::body($request);
         $adultsCount = $this->count($data['adultsCount'] ?? null);
         $childrenCount = $this->count($data['childrenCount'] ?? null);
-        $adults = $this->categories($data['adults'] ?? null);
-        $children = $this->categories($data['children'] ?? null);
+        $adults = $this->categories($data['adults'] ?? null, OrderCategories::ADULT);
+        $children = $this->categories($data['children'] ?? null, OrderCategories::CHILD);
         if ($adultsCount === null || $childrenCount === null || $adults === null || $children === null
-            || $adultsCount < 1 || count($adults) !== $adultsCount || count($children) !== $childrenCount) {
+            || $adultsCount < 1 || $childrenCount < 0
+            || ($childrenCount === 0 && (count($adults) !== $adultsCount || $children !== []))
+            || ($childrenCount > 0 && ($adults !== [] || count($children) !== $childrenCount))) {
             return JsonResponse::error($response, 'INVALID_ORDER_DATA', 422);
         }
 
@@ -120,9 +122,9 @@ final class SaveClientOrderAction
     }
 
     /** @return list<string>|null */
-    private function categories(mixed $value): ?array
+    private function categories(mixed $value, array $allowedCategories): ?array
     {
-        if (!is_array($value) || array_filter($value, static fn (mixed $category): bool => !is_string($category) || !in_array($category, OrderCategories::ALL, true)) !== []) {
+        if (!is_array($value) || array_filter($value, static fn (mixed $category): bool => !is_string($category) || !in_array($category, $allowedCategories, true)) !== []) {
             return null;
         }
 
