@@ -92,7 +92,7 @@ final class EmailSenderTest extends TestCase
                 self::assertSame('Deine Mässpäggli-Bestellung ist definitiv bestätigt', $email->getSubject());
                 self::assertStringContainsString('definitiv bestätigt', $email->getHtmlBody());
                 self::assertStringContainsString('Erwachsene ruhig: 2', $email->getHtmlBody());
-                self::assertStringContainsString('Barcode', $email->getHtmlBody());
+                self::assertStringContainsString('QR-Code', $email->getHtmlBody());
 
                 return true;
             }));

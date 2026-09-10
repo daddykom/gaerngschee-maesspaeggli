@@ -91,7 +91,7 @@ final class OrderBatchService
                     $order['correctionNotice'] = true;
                     $order['startUrl'] = rtrim(getenv('FRONTEND_BASE_URL') ?: 'http://localhost:4200', '/') . '/start';
                 }
-                $this->sendOrQueueConfirmation($order, $entry['email'], $result);
+                $this->sendConfirmation($order, $entry['email'], $result);
             } catch (Throwable $exception) {
                 $this->log('Order batch failed', $order['id'], $exception);
                 $result['failed']++;
@@ -170,18 +170,12 @@ final class OrderBatchService
     }
 
     /** @param array<string, mixed> $order */
-    private function sendOrQueueConfirmation(array $order, string $email, array &$result): void
+    private function sendConfirmation(array $order, string $email, array &$result): void
     {
-        $message = $this->emails->renderOrderConfirmation($order);
-        try {
-            $this->emails->sendStoredEmail($email, $message['subject'], $message['html'], $message['text']);
-            $this->orders->markBatchEmailSent($order['id']);
-            $result['sent']++;
-        } catch (Throwable $exception) {
-            $this->queue->enqueue($order['id'], 'order_confirmation', $email, $message, $exception->getMessage());
-            $this->log('Order confirmation failed and queued', $order['id'], $exception);
-            $result['queued']++;
-        }
+        $message = $this->emails->renderOrderConfirmation($order, 'definitive');
+        $this->emails->sendStoredEmail($email, $message['subject'], $message['html'], $message['text']);
+        $this->orders->markBatchEmailSent($order['id']);
+        $result['sent']++;
     }
 
     /** @param array<string, mixed> $order */
@@ -197,12 +191,12 @@ final class OrderBatchService
             return;
         }
         $message = [
-            'subject' => 'Bitte melde dich bei Fairgate an',
+            'subject' => 'Bitte vervollständige deine Mässpäggli-Bestellung',
             'html' => sprintf(
-                '<p>Bitte melde dich bei Fairgate an, damit wir deine Bestellung prüfen können.</p><p><a href="%s">Jetzt bei Fairgate anmelden</a></p>',
+                '<p>Wir konnten deine Bestellung noch nicht definitiv bestätigen, weil wir dich unter dieser E-Mail-Adresse noch nicht bei Fairgate gefunden haben.</p><p>Bitte melde dich bei Fairgate mit derselben E-Mail-Adresse an, die du für deine Bestellung verwendet hast. Sobald wir dich dort finden, prüfen wir deine Bestellung automatisch.</p><p><a href="%s">Bei Fairgate anmelden</a></p>',
                 htmlspecialchars($this->fairgateUrl(), ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8'),
             ),
-            'text' => 'Bitte melde dich bei Fairgate an, damit wir deine Bestellung prüfen können: ' . $this->fairgateUrl(),
+            'text' => 'Wir konnten deine Bestellung noch nicht definitiv bestätigen, weil wir dich unter dieser E-Mail-Adresse noch nicht bei Fairgate gefunden haben. Bitte melde dich bei Fairgate mit derselben E-Mail-Adresse an, die du für deine Bestellung verwendet hast. Sobald wir dich dort finden, prüfen wir deine Bestellung automatisch: ' . $this->fairgateUrl(),
         ];
         try {
             $this->emails->sendStoredEmail($email, $message['subject'], $message['html'], $message['text']);

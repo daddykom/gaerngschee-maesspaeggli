@@ -119,14 +119,16 @@ final class EmailSender implements EmailSenderInterface
     /** @param array<string, mixed> $order */
     public function sendOrderConfirmation(string $recipient, array $order): void
     {
-        $message = $this->renderOrderConfirmation($order);
+        $message = $this->renderOrderConfirmation($order, (string) $order['status']);
         $this->sendStoredEmail($recipient, $message['subject'], $message['html'], $message['text']);
     }
 
     /** @return array{subject: string, html: string, text: string} */
-    public function renderOrderConfirmation(array $order): array
+    public function renderOrderConfirmation(array $order, string $mailStatus): array
     {
-        $status = $order['status'] === 'definitive' ? 'definitive' : 'provisional';
+        if (!in_array($mailStatus, ['definitive', 'provisional'], true)) {
+            throw new \InvalidArgumentException('Invalid order confirmation mail status.');
+        }
         $order['items'] = array_map(function (array $item): array {
             $item['categoryLabel'] = $this->translator->trans(
                 'order.category.' . $item['category'],
@@ -137,11 +139,11 @@ final class EmailSender implements EmailSenderInterface
             $item['personTypeLabel'] = $item['personType'] === 'adult' ? 'Erwachsene' : 'Kinder';
             return $item;
         }, $order['items'] ?? []);
-        $html = $this->twig->render('order-confirmation-' . $status . '.html.twig', [
+        $html = $this->twig->render('order-confirmation-' . $mailStatus . '.html.twig', [
             'LOGO_CID' => 'cid:' . self::LOGO_CID,
             'ORDER' => $order,
         ]);
-        $subject = $this->translator->trans('order.confirmation.' . $status . '.subject', [], null, 'de');
+        $subject = $this->translator->trans('order.confirmation.' . $mailStatus . '.subject', [], null, 'de');
 
         return ['subject' => $subject, 'html' => $html, 'text' => $this->plainText($html)];
     }

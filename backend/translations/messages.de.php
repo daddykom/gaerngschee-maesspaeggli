@@ -2,7 +2,7 @@
 
 return [
     'order.confirmation.definitive.subject' => 'Deine Mässpäggli-Bestellung ist definitiv bestätigt',
-    'order.confirmation.provisional.subject' => 'Deine Mässpäggli-Bestellung ist provisorisch bestätigt',
+    'order.confirmation.provisional.subject' => 'Deine Mässpäggli-Bestellung wurde vorläufig gespeichert',
     'order.category.catA' => 'Erwachsene ruhig',
     'order.category.catB' => 'Erwachsene Action',
     'order.category.catC' => 'Kinder 1-3 Jahre',
