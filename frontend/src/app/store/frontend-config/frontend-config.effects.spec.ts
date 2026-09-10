@@ -54,4 +54,15 @@ describe('frontend config effects', () => {
     actions$.next(FrontendConfigActions.saveFailure({ errorCode: 'INVALID' }));
     await expect(notification).resolves.toEqual(NotificationActions.show({ variant: 'error', titleKey: 'app.admin.configuration.errorTitle', messageKey: 'app.admin.configuration.errors.INVALID', preserveOnRoutes: ['/admin/configuration'] }));
   });
+
+  it('emits a global notification when public configuration loading fails', async () => {
+    const notification = firstValueFrom(TestBed.runInInjectionContext(() => frontendConfigNotificationEffect()));
+    actions$.next(FrontendConfigActions.loadPublicFailure({ errorCode: 'REQUEST_FAILED' }));
+
+    await expect(notification).resolves.toEqual(NotificationActions.show({
+      variant: 'error',
+      titleKey: 'app.publicConfiguration.errorTitle',
+      messageKey: 'app.publicConfiguration.error',
+    }));
+  });
 });

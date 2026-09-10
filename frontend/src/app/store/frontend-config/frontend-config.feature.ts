@@ -12,7 +12,9 @@ export const frontendConfigFeature = createFeature({
     on(FrontendConfigActions.save, (state) => ({ ...state, saving: true })),
     on(FrontendConfigActions.saveSuccess, (state, { configs }) => ({ ...state, configs, saving: false })),
     on(FrontendConfigActions.saveFailure, (state) => ({ ...state, saving: false })),
-    on(FrontendConfigActions.loadPublicSuccess, (state, { configs }) => ({ ...state, publicConfigs: configs })),
+    on(FrontendConfigActions.loadPublic, (state) => ({ ...state, publicStatus: 'loading', publicErrorCode: null })),
+    on(FrontendConfigActions.loadPublicSuccess, (state, { configs }) => ({ ...state, publicConfigs: configs, publicStatus: 'loaded', publicErrorCode: null })),
+    on(FrontendConfigActions.loadPublicFailure, (state, { errorCode }) => ({ ...state, publicStatus: 'error', publicErrorCode: errorCode })),
   ),
 });
 
@@ -23,4 +25,6 @@ export const {
   selectPublicConfigs: selectFrontendPublicConfigs,
   selectLoading: selectFrontendConfigLoading,
   selectSaving: selectFrontendConfigSaving,
+  selectPublicStatus: selectFrontendPublicConfigStatus,
+  selectPublicErrorCode: selectFrontendPublicConfigErrorCode,
 } = frontendConfigFeature;

@@ -1,6 +1,19 @@
 import { expect, test } from '@playwright/test';
 
 test.describe('Client login route', () => {
+  test.beforeEach(async ({ page }) => {
+    await page.route('http://localhost:8080/public/configuration', async (route) => {
+      await route.fulfill({
+        status: 200,
+        contentType: 'application/json',
+        body: JSON.stringify([
+          { variableName: 'campaign_year', value: '2026' },
+          { variableName: 'donation_url', value: 'https://donate.example/maesspaeggli' },
+        ]),
+      });
+    });
+  });
+
   test('exchanges the registration token and navigates to the order page', async ({ page }) => {
     await page.route('http://localhost:8080/auth/registration-login', async (route) => {
       await route.fulfill({

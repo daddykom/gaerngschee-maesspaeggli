@@ -106,7 +106,13 @@
         </div>
       }
 
-      <router-outlet></router-outlet>
+      @if (publicConfigStatus() === 'loading' || publicConfigStatus() === 'initial') {
+        <p role="status" aria-live="polite">{{ 'app.publicConfiguration.loading' | translate }}</p>
+      } @else if (publicConfigStatus() === 'error') {
+        <router-outlet></router-outlet>
+      } @else {
+        <router-outlet></router-outlet>
+      }
     </div>
   </div>
 </main>

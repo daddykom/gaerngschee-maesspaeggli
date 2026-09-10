@@ -44,7 +44,7 @@ export const saveFrontendConfigEffect = createEffect(
 
 export const frontendConfigNotificationEffect = createEffect(
   (actions$ = inject(Actions)) => actions$.pipe(
-    ofType(FrontendConfigActions.saveSuccess, FrontendConfigActions.saveFailure),
+    ofType(FrontendConfigActions.saveSuccess, FrontendConfigActions.saveFailure, FrontendConfigActions.loadPublicFailure),
     map((action) => action.type === FrontendConfigActions.saveSuccess.type
       ? NotificationActions.show({
         variant: 'success',
@@ -52,6 +52,12 @@ export const frontendConfigNotificationEffect = createEffect(
         messageKey: 'app.admin.configuration.saved',
         preserveOnRoutes: ['/admin/configuration'],
       })
+      : action.type === FrontendConfigActions.loadPublicFailure.type
+        ? NotificationActions.show({
+          variant: 'error',
+          titleKey: 'app.publicConfiguration.errorTitle',
+          messageKey: 'app.publicConfiguration.error',
+        })
       : NotificationActions.show({
         variant: 'error',
         titleKey: 'app.admin.configuration.errorTitle',

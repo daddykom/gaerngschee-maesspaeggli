@@ -7,7 +7,7 @@ import { MockStore, provideMockStore } from '@ngrx/store/testing';
 import { App } from './app';
 import { initialState as authInitialState } from './store/auth/auth.state';
 import { AuthActions } from './store/auth/auth.actions';
-import { FrontendConfigActions } from './store/frontend-config/frontend-config.actions';
+import { initialState as frontendConfigInitialState } from './store/frontend-config/frontend-config.state';
 
 @Component({ changeDetection: ChangeDetectionStrategy.Eager,
  template: '' })
@@ -20,6 +20,7 @@ describe('App', () => {
       providers: [provideTranslateService(), provideMockStore({
         initialState: {
           auth: authInitialState,
+          frontendConfig: { ...frontendConfigInitialState, publicStatus: 'loaded' },
           notification: { current: null },
         },
       })],
@@ -31,15 +32,6 @@ describe('App', () => {
     await fixture.whenStable();
     const compiled = fixture.nativeElement as HTMLElement;
     expect(compiled.querySelector('router-outlet')).toBeTruthy();
-  });
-
-  it('loads public frontend configuration when the app starts', () => {
-    const store = TestBed.inject(MockStore);
-    const dispatch = vi.spyOn(store, 'dispatch');
-
-    TestBed.createComponent(App);
-
-    expect(dispatch).toHaveBeenCalledWith(FrontendConfigActions.loadPublic());
   });
 
   it('shows the global notification in the info box', async () => {
