@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Tests\Routes;
 
 use App\Auth\Services\SessionService;
+use App\Configuration\Data\FrontendConfigRepository;
 use App\Registration\Data\OrderRepository;
 use App\Routes\ClientRoutes;
 use App\Users\Data\UserRepository;
@@ -21,6 +22,7 @@ final class ClientRoutesTest extends TestCase
     private UserRepository $users;
     private OrderRepository $orders;
     private RecordingEmailSender $emails;
+    private FrontendConfigRepository $configs;
 
     protected function setUp(): void
     {
@@ -29,6 +31,13 @@ final class ClientRoutesTest extends TestCase
         $this->users = new UserRepository($this->pdo);
         $this->orders = new OrderRepository($this->pdo);
         $this->emails = new RecordingEmailSender();
+        $this->configs = new FrontendConfigRepository($this->pdo);
+        $this->pdo->prepare(
+            'INSERT INTO frontend_config (id, variable_name, value, access_group, update_group, label)
+             VALUES (?, ?, ?, ?, ?, ?)',
+        )->execute([
+            'config-campaign-year', 'campaign_year', '"2026"', '["client"]', '["admin"]', 'Campaign year',
+        ]);
     }
 
     protected function tearDown(): void
@@ -202,7 +211,7 @@ final class ClientRoutesTest extends TestCase
     {
         $app = AppFactory::create();
         $app->addRoutingMiddleware();
-        ClientRoutes::register($app, $this->orders, $this->users, $this->emails);
+        ClientRoutes::register($app, $this->orders, $this->users, $this->emails, null, $this->configs);
 
         return $app;
     }

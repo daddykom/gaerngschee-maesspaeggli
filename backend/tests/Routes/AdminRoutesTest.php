@@ -128,6 +128,7 @@ final class AdminRoutesTest extends TestCase
         )->execute([
             'config-recent-days', 'provisional_order_recent_days', '14', 'Recent days', '["admin", "user"]', '["admin"]', 'Recent days',
         ]);
+        $this->insertCampaignYear();
         $definitiveUser = $this->repository->createUser('definitive@example.com', 'secret', 'user');
         $oldUser = $this->repository->createUser('old@example.com', 'secret', 'user');
         $recentUser = $this->repository->createUser('recent@example.com', 'secret', 'user');
@@ -162,11 +163,14 @@ final class AdminRoutesTest extends TestCase
         $year = (int) date('Y');
         $this->insertOrder('definitive-order', $customer['id'], $year, 'definitive', date('Y-m-d H:i:s'), 1, 0);
         $this->insertOrder('provisional-order', $admin['id'], $year, 'provisional', date('Y-m-d H:i:s'), 1, 0);
+        $this->insertCampaignYear();
+        $configRepository = new FrontendConfigRepository($this->pdo);
 
         $response = $this->createApp(
             null,
             null,
             new OrderRepository($this->pdo),
+            $configRepository,
         )->handle((new ServerRequestFactory())->createServerRequest('POST', '/admin/overview/deliver'));
         $data = json_decode((string) $response->getBody(), true, 512, JSON_THROW_ON_ERROR);
 
@@ -289,6 +293,16 @@ final class AdminRoutesTest extends TestCase
                 'INSERT INTO order_items (id, order_id, person_type, category, quantity) VALUES (?, ?, ?, ?, ?)',
             )->execute([$id . '-b', $id, 'child', 'catB', $catB]);
         }
+    }
+
+    private function insertCampaignYear(): void
+    {
+        $this->pdo->prepare(
+            'INSERT INTO frontend_config (id, variable_name, value, description, access_group, update_group, label)
+             VALUES (?, ?, ?, ?, ?, ?, ?)',
+        )->execute([
+            'config-campaign-year-' . bin2hex(random_bytes(2)), 'campaign_year', '"' . date('Y') . '"', 'Campaign year', '["admin", "client"]', '["admin"]', 'Campaign year',
+        ]);
     }
 
     private function request(string $method, string $path, array $body = []): \Psr\Http\Message\ServerRequestInterface

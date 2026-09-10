@@ -1,6 +1,24 @@
 {
   "app": {
     "title": "Gärngschee-Mässpäggli",
+    "home": {
+      "title": "Mässpäggli",
+      "lead": "Mit deiner Unterstützung ermöglichen wir Familien mit knappem Budget einen Besuch der Messe {{year}}.",
+      "externalLink": "(öffnet in einem neuen Fenster)",
+      "loading": "Die Aktionsseite wird geladen ...",
+      "login": "Login",
+      "donate": {
+        "title": "Mässpäggli spenden",
+        "text": "Erfülle den Wunsch einer Familie und ermögliche ihr den Besuch der Messe {{year}}.",
+        "action": "Jetzt spenden",
+        "unavailable": "Der Spendenlink ist momentan nicht verfügbar."
+      },
+      "receive": {
+        "title": "Mässpäggli erhalten",
+        "text": "Du benötigst Mässpäggli für deine Familie? Starte hier deine Anfrage für {{year}}.",
+        "action": "Mässpäggli anfragen"
+      }
+    },
     "anmeldung": {
       "title": "Mässpäggli bekommen",
       "lead": "Schreib deine E-Mail-Adresse hier hinein. Wir schicken dir dann einen direkten Link zum Bestellformular.",

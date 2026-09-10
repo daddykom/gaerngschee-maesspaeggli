@@ -2,6 +2,13 @@ import { expect, test } from '@playwright/test';
 
 test.describe('Order summary route', () => {
   test('shows the grouped order, supports back navigation and saves the order', async ({ page }) => {
+    await page.route('http://localhost:8080/public/configuration', async (route) => {
+      await route.fulfill({
+        status: 200,
+        contentType: 'application/json',
+        body: JSON.stringify([{ variableName: 'campaign_year', value: '2026' }]),
+      });
+    });
     await page.route('http://localhost:8080/auth/registration-login', async (route) => {
       await route.fulfill({
         status: 200,

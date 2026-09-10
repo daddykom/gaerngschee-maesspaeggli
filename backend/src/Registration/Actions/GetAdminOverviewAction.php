@@ -32,11 +32,12 @@ final class GetAdminOverviewAction
         }
 
         $now = new DateTimeImmutable('now', new DateTimeZone('UTC'));
+        $year = $configs->findCampaignYear();
         $overview = ($this->orders ?? new OrderRepository(Database::getConnection()))
-            ->findAdminOverview((int) $now->format('Y'), $now->modify('-' . $recentDays . ' days')->format('Y-m-d H:i:s'));
+            ->findAdminOverview($year, $now->modify('-' . $recentDays . ' days')->format('Y-m-d H:i:s'));
 
         return JsonResponse::success($response, [
-            'year' => (int) $now->format('Y'),
+            'year' => $year,
             'recentDays' => (int) $recentDays,
             ...$overview,
         ]);

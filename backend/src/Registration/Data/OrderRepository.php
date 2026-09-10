@@ -201,7 +201,7 @@ final class OrderRepository
     }
 
     /** @return array<string, mixed>|null */
-    public function findDeliveryOrderByToken(string $token): ?array
+    public function findDeliveryOrderByToken(string $token, int $year): ?array
     {
         $statement = $this->pdo->prepare(
             "SELECT user_id FROM orders WHERE delivery_token = :token AND status IN ('qrcode', 'delivered') LIMIT 1",
@@ -212,27 +212,27 @@ final class OrderRepository
             return null;
         }
 
-        return $this->findForYear($userId, $this->currentYear());
+        return $this->findForYear($userId, $year);
     }
 
     /** @return array<string, mixed>|null */
-    public function findDeliveryOrderByEmail(string $email): ?array
+    public function findDeliveryOrderByEmail(string $email, int $year): ?array
     {
         $statement = $this->pdo->prepare(
             "SELECT orders.user_id FROM orders
              INNER JOIN users ON users.id = orders.user_id
-             WHERE LOWER(users.email) = LOWER(:email)
-               AND orders.year = :year
+              WHERE LOWER(users.email) = LOWER(:email)
+                AND orders.year = :year
                AND orders.status IN ('qrcode', 'delivered')
              LIMIT 1",
         );
-        $statement->execute(['email' => trim($email), 'year' => $this->currentYear()]);
+        $statement->execute(['email' => trim($email), 'year' => $year]);
         $userId = $statement->fetchColumn();
         if (!is_string($userId)) {
             return null;
         }
 
-        return $this->findForYear($userId, $this->currentYear());
+        return $this->findForYear($userId, $year);
     }
 
     public function markDelivered(string $orderId): bool
@@ -255,11 +255,6 @@ final class OrderRepository
         $statement->execute(['id' => $orderId]);
 
         return $statement->rowCount() === 1;
-    }
-
-    private function currentYear(): int
-    {
-        return (int) (new \DateTimeImmutable('now', new \DateTimeZone('UTC')))->format('Y');
     }
 
     /** @param list<array{personType: string, category: string, quantity: int}> $items */

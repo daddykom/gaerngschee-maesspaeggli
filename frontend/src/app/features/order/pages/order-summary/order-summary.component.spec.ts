@@ -2,6 +2,7 @@ import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { provideTranslateService } from '@ngx-translate/core';
 import { provideMockStore } from '@ngrx/store/testing';
 import { initialState as authInitialState } from '../../../../store/auth/auth.state';
+import { initialState as frontendConfigInitialState } from '../../../../store/frontend-config/frontend-config.state';
 import { OrderSummaryComponent } from './order-summary.component';
 
 describe('OrderSummaryComponent', () => {
@@ -15,6 +16,7 @@ describe('OrderSummaryComponent', () => {
         provideMockStore({
           initialState: {
             auth: { ...authInitialState, fairgateUserExists },
+            frontendConfig: { ...frontendConfigInitialState, publicConfigs: [{ variableName: 'campaign_year', value: '2026' }] },
             order: {
               status: 'loaded',
               order: null,
