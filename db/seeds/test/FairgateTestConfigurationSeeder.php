@@ -8,6 +8,43 @@ final class FairgateTestConfigurationSeeder extends AbstractSeed
 {
     public function run(): void
     {
+        foreach ([
+            [
+                'id' => '00000000-0000-4000-8000-000000000015',
+                'variable_name' => 'campaign_year',
+                'value' => '2026',
+                'description' => 'Jahr der aktuellen Mässpäggli-Aktion und Bestellungen.',
+                'access_group' => ['admin', 'client'],
+                'update_group' => ['admin'],
+                'label' => 'Aktionsjahr',
+            ],
+            [
+                'id' => '00000000-0000-4000-8000-000000000016',
+                'variable_name' => 'donation_url',
+                'value' => 'https://aktionen.gaerngschee.ch/maesspaeggli/spenden',
+                'description' => 'Link zur Spenden-Seite der Mässpäggli-Aktion.',
+                'access_group' => ['admin', 'client'],
+                'update_group' => ['admin'],
+                'label' => 'Spenden-Link',
+            ],
+        ] as $config) {
+            if ($this->query('SELECT id FROM frontend_config WHERE variable_name = :variable_name', ['variable_name' => $config['variable_name']])->fetch() === false) {
+                $this->query(
+                    'INSERT INTO frontend_config (id, variable_name, value, description, access_group, update_group, label)
+                     VALUES (:id, :variable_name, :value, :description, :access_group, :update_group, :label)',
+                    [
+                        'id' => $config['id'],
+                        'variable_name' => $config['variable_name'],
+                        'value' => json_encode($config['value'], JSON_THROW_ON_ERROR),
+                        'description' => $config['description'],
+                        'access_group' => json_encode($config['access_group'], JSON_THROW_ON_ERROR),
+                        'update_group' => json_encode($config['update_group'], JSON_THROW_ON_ERROR),
+                        'label' => $config['label'],
+                    ],
+                );
+            }
+        }
+
         $variableName = 'fairgate_test_email';
         if ($this->query(
             'SELECT id FROM frontend_config WHERE variable_name = :variable_name',

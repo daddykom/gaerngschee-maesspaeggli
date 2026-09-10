@@ -10,6 +10,24 @@ final class FairgateTestConfigurationSeeder extends AbstractSeed
     {
         foreach ([
             [
+                'id' => '00000000-0000-4000-8000-000000000015',
+                'variable_name' => 'campaign_year',
+                'value' => '2026',
+                'description' => 'Jahr der aktuellen Mässpäggli-Aktion und Bestellungen.',
+                'access_group' => ['admin', 'client'],
+                'update_group' => ['admin'],
+                'label' => 'Aktionsjahr',
+            ],
+            [
+                'id' => '00000000-0000-4000-8000-000000000016',
+                'variable_name' => 'donation_url',
+                'value' => 'https://aktionen.gaerngschee.ch/maesspaeggli/spenden',
+                'description' => 'Link zur Spenden-Seite der Mässpäggli-Aktion.',
+                'access_group' => ['admin', 'client'],
+                'update_group' => ['admin'],
+                'label' => 'Spenden-Link',
+            ],
+            [
                 'id' => '00000000-0000-4000-8000-000000000010',
                 'variable_name' => 'fairgate_test_email',
                 'value' => 'isabelle.joss@gaerngschee.ch',

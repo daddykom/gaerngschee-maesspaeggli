@@ -1,0 +1,46 @@
+<section class="home gl-stack gl-stack--section">
+  @if (campaignYear(); as year) {
+    <p class="home__lead">
+      {{ 'app.home.lead' | translate: { year } }}
+    </p>
+
+    <div class="home__choices gl-section-layout">
+      <section class="home-choice home-choice--donate gl-stack gl-stack--group" aria-labelledby="donate-heading">
+        <div class="home-choice__content gl-stack gl-stack--group">
+          <h2 id="donate-heading">{{ 'app.home.donate.title' | translate }}</h2>
+          <p>{{ 'app.home.donate.text' | translate: { year } }}</p>
+        </div>
+        @if (donationUrl(); as url) {
+          <a
+            mat-flat-button
+            color="primary"
+            [href]="url"
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            {{ 'app.home.donate.action' | translate }}
+            <span class="visually-hidden">{{ 'app.home.externalLink' | translate }}</span>
+          </a>
+        } @else {
+          <p role="status">{{ 'app.home.donate.unavailable' | translate }}</p>
+        }
+      </section>
+
+      <section class="home-choice home-choice--receive gl-stack gl-stack--group" aria-labelledby="receive-heading">
+        <div class="home-choice__content gl-stack gl-stack--group">
+          <h2 id="receive-heading">{{ 'app.home.receive.title' | translate }}</h2>
+          <p>{{ 'app.home.receive.text' | translate: { year } }}</p>
+        </div>
+        <a mat-flat-button color="primary" routerLink="/start">
+          {{ 'app.home.receive.action' | translate }}
+        </a>
+      </section>
+    </div>
+
+    <p class="home__login">
+      <a routerLink="/login">{{ 'app.home.login' | translate }}</a>
+    </p>
+  } @else {
+    <p role="status" aria-live="polite">{{ 'app.home.loading' | translate }}</p>
+  }
+</section>

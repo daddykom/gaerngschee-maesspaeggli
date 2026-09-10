@@ -1,0 +1,58 @@
+:host {
+  display: block;
+}
+
+.home__lead {
+  max-width: 48rem;
+  font-size: clamp(1.125rem, 2.1vw, 1.625rem);
+  line-height: 1.45;
+}
+
+.home__choices {
+  align-items: stretch;
+}
+
+.home-choice {
+  min-width: 0;
+  padding: var(--gl-space-xl);
+  border: 1px solid var(--mat-sys-outline-variant);
+  border-radius: 18px;
+}
+
+.home-choice h2 {
+  margin: 0;
+}
+
+.home-choice p {
+  margin: 0;
+  line-height: 1.55;
+}
+
+.home-choice a {
+  align-self: flex-start;
+}
+
+.home-choice--donate {
+  background: color-mix(in srgb, var(--mat-sys-primary-container) 35%, transparent);
+}
+
+.home-choice--receive {
+  background: color-mix(in srgb, var(--mat-sys-tertiary-container) 35%, transparent);
+}
+
+.home__login {
+  margin: 0;
+  text-align: center;
+}
+
+.visually-hidden {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}

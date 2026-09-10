@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Registration\Actions;
 
 use App\Auth\Services\SessionService;
+use App\Configuration\Data\FrontendConfigRepository;
 use App\Registration\Data\OrderRepository;
 use App\Registration\Data\OrderCategories;
 use App\Registration\Data\OrderEmailQueueRepository;
@@ -15,8 +16,6 @@ use App\Shared\Http\JsonResponse;
 use App\Shared\Mail\EmailSender;
 use App\Shared\Mail\EmailSenderInterface;
 use App\Users\Data\UserRepository;
-use DateTimeImmutable;
-use DateTimeZone;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Throwable;
@@ -29,6 +28,7 @@ final class SaveClientOrderAction
         private readonly ?UserRepository $users = null,
         private readonly ?EmailSenderInterface $emails = null,
         private readonly ?OrderEmailQueueRepository $emailQueue = null,
+        private readonly ?FrontendConfigRepository $configs = null,
     ) {
     }
 
@@ -72,7 +72,7 @@ final class SaveClientOrderAction
         try {
             $order = ($this->orders ?? new OrderRepository(Database::getConnection()))->saveForYear(
                 $userId,
-                $this->currentYear(),
+                $this->campaignYear(),
                 $status,
                 $adultsCount,
                 $childrenCount,
@@ -93,7 +93,7 @@ final class SaveClientOrderAction
                 ($this->orders ?? new OrderRepository(Database::getConnection()))
                     ->markConfirmationEmailSent((string) $order['id']);
                 $order = ($this->orders ?? new OrderRepository(Database::getConnection()))
-                    ->findForYear($userId, $this->currentYear()) ?? $order;
+                    ->findForYear($userId, $this->campaignYear()) ?? $order;
                 $emailSent = true;
             } catch (Throwable $exception) {
                 try {
@@ -131,8 +131,8 @@ final class SaveClientOrderAction
         return array_values($value);
     }
 
-    private function currentYear(): int
+    private function campaignYear(): int
     {
-        return (int) (new DateTimeImmutable('now', new DateTimeZone('UTC')))->format('Y');
+        return ($this->configs ?? new FrontendConfigRepository(Database::getConnection()))->findCampaignYear();
     }
 }

@@ -5,6 +5,7 @@ import { TranslatePipe } from '@ngx-translate/core';
 import { CategorySelection, orderCategories, OrderCategory } from '../../../../shared/models/order.model';
 import { NavigationActions } from '../../../../store/navigation/navigation.actions';
 import { selectAuthFairgateUserExists } from '../../../../store/auth/auth.feature';
+import { selectFrontendPublicConfigs } from '../../../../store/frontend-config/frontend-config.feature';
 import { OrderActions } from '../../../../store/order/order.actions';
 import {
   selectCurrentOrder,
@@ -29,7 +30,9 @@ export class OrderSummaryComponent {
   readonly form = this.store.selectSignal(selectOrderForm);
   readonly savedOrder = this.store.selectSignal(selectCurrentOrder);
   readonly fairgateUserExists = this.store.selectSignal(selectAuthFairgateUserExists);
-  readonly orderYear = computed(() => this.savedOrder()?.year ?? new Date().getFullYear());
+  readonly publicConfigs = this.store.selectSignal(selectFrontendPublicConfigs);
+  readonly campaignYear = computed(() => this.configValue('campaign_year'));
+  readonly orderYear = computed(() => this.savedOrder()?.year ?? this.campaignYear() ?? '');
   readonly adults = computed(() => this.countCategories(this.form()?.adults ?? []));
   readonly children = computed(() => this.countCategories(this.form()?.children ?? []));
   readonly status = computed(() => this.fairgateUserExists() === true ? 'definitive' : 'provisional');
@@ -50,5 +53,10 @@ export class OrderSummaryComponent {
         quantity: categories.filter((value) => value === category).length,
       }))
       .filter(({ quantity }) => quantity > 0);
+  }
+
+  private configValue(variableName: string): string | null {
+    const value = this.publicConfigs().find((config) => config.variableName === variableName)?.value;
+    return typeof value === 'string' && value.trim() !== '' ? value.trim() : null;
   }
 }

@@ -100,6 +100,16 @@ final class FrontendConfigRepository
         return $value === false ? null : $this->decodeValue($value);
     }
 
+    public function findCampaignYear(): int
+    {
+        $value = $this->findValueByVariableName('campaign_year');
+        if (!is_string($value) || !ctype_digit($value) || (int) $value < 1) {
+            throw new \RuntimeException('Invalid campaign year configuration.');
+        }
+
+        return (int) $value;
+    }
+
     private function findById(string $id, string $group): ?array
     {
         foreach ($this->findVisibleForGroup($group) as $config) {

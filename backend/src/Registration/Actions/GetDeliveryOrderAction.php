@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Registration\Actions;
 
 use App\Registration\Data\OrderRepository;
+use App\Configuration\Data\FrontendConfigRepository;
 use App\Fairgate\Services\FairgateContactProvider;
 use App\Fairgate\Services\FairgateContactProviderFactory;
 use App\Shared\Database\Database;
@@ -17,6 +18,7 @@ final class GetDeliveryOrderAction
     public function __construct(
         private readonly ?OrderRepository $orders = null,
         private readonly ?FairgateContactProvider $fairgate = null,
+        private readonly ?FrontendConfigRepository $configs = null,
     )
     {
     }
@@ -27,12 +29,13 @@ final class GetDeliveryOrderAction
         $token = is_string($query['token'] ?? null) ? trim($query['token']) : '';
         $email = is_string($query['email'] ?? null) ? trim($query['email']) : '';
         $orders = $this->orders ?? new OrderRepository(Database::getConnection());
+        $year = ($this->configs ?? new FrontendConfigRepository(Database::getConnection()))->findCampaignYear();
 
         if ($token !== '') {
-            $order = $orders->findDeliveryOrderByToken($token);
+            $order = $orders->findDeliveryOrderByToken($token, $year);
             $viaToken = true;
         } elseif ($email !== '') {
-            $order = $orders->findDeliveryOrderByEmail($email);
+            $order = $orders->findDeliveryOrderByEmail($email, $year);
             $viaToken = false;
         } else {
             return JsonResponse::error($response, 'DELIVERY_SEARCH_REQUIRED', 422);

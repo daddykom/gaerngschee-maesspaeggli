@@ -7,8 +7,9 @@ import { adminOverviewResolver } from './features/admin/pages/overview/admin-ove
 export const appRoutes: Routes = [
   {
     path: '',
-    redirectTo: 'start',
     pathMatch: 'full',
+    data: { pageTitle: 'app.home.title' },
+    loadComponent: () => import('./features/home/pages/home/home.component').then((m) => m.HomeComponent),
   },
   {
     path: 'start',
