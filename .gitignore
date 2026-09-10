@@ -13,3 +13,4 @@
 /frontend/coverage
 /frontend/dist
 /frontend/node_modules
+/.codanna/index/serve.lock
