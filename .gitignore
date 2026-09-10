@@ -13,4 +13,5 @@
 /frontend/coverage
 /frontend/dist
 /frontend/node_modules
+/backend/.php-cs-fixer.cache
 /.codanna/index/serve.lock

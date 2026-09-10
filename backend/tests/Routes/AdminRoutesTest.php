@@ -50,6 +50,7 @@ final class AdminRoutesTest extends TestCase
     {
         $admin = $this->repository->createUser('admin@example.com', 'secret', 'admin');
         $this->repository->createUser('user@example.com', 'secret', 'user');
+        $this->repository->createUser('client@example.com', 'secret', 'client');
         (new SessionService())->setUser($admin['id'], 'admin');
         $app = AppFactory::create();
         $app->addRoutingMiddleware();
@@ -58,7 +59,10 @@ final class AdminRoutesTest extends TestCase
         $response = $app->handle((new ServerRequestFactory())->createServerRequest('GET', '/admin/users'));
 
         self::assertSame(200, $response->getStatusCode());
-        self::assertCount(2, json_decode((string) $response->getBody(), true, 512, JSON_THROW_ON_ERROR));
+        $users = json_decode((string) $response->getBody(), true, 512, JSON_THROW_ON_ERROR);
+        self::assertCount(2, $users);
+        self::assertNotSame('client@example.com', $users[0]['email']);
+        self::assertNotSame('client@example.com', $users[1]['email']);
     }
 
     public function testUserCannotListAdminUsers(): void

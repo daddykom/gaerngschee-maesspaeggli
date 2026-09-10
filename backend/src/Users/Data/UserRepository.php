@@ -18,10 +18,13 @@ final class UserRepository
         $this->pdo = $pdo ?? Database::getConnection();
     }
 
-    public function findAll(): array
+    public function findAllForAdministration(): array
     {
         $stmt = $this->pdo->query(
-            'SELECT id, email, `group`, required_password_reset, created_at, updated_at FROM users ORDER BY created_at DESC',
+            "SELECT id, email, `group`, required_password_reset, created_at, updated_at
+             FROM users
+             WHERE `group` IN ('admin', 'user')
+             ORDER BY created_at DESC",
         );
         return $stmt->fetchAll();
     }

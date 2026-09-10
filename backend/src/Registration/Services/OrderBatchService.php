@@ -8,6 +8,7 @@ use App\Configuration\Data\FrontendConfigRepository;
 use App\Fairgate\Services\FairgateContactProvider;
 use App\Fairgate\Services\FairgateBatchContactProvider;
 use App\Registration\Data\OrderEmailQueueRepository;
+use App\Registration\Data\OrderCategories;
 use App\Registration\Data\OrderRepository;
 use App\Registration\Data\RegistrationTokenRepository;
 use App\Registration\Services\QrCodeGenerator;
@@ -18,7 +19,6 @@ use Throwable;
 
 final class OrderBatchService
 {
-    private const CATEGORIES = ['catA', 'catB', 'catC', 'catD', 'catE', 'catF', 'catG'];
     private const INTERVAL_CONFIG = 'fairgate_email_interval_days';
     private const TOKEN_RETENTION_CONFIG = 'registration_token_retention_days';
 
@@ -228,14 +228,23 @@ final class OrderBatchService
         foreach ($items as $item) {
             $groups[$item['personType']][$item['category']] = $item['quantity'];
         }
-        foreach (['adult' => $adults, 'child' => $children] as $type => $target) {
+        $targets = [
+            'adult' => $children > 0 ? 0 : $adults,
+            'child' => $children,
+        ];
+        $fallbacks = [
+            'adult' => OrderCategories::ADULT_FALLBACK,
+            'child' => OrderCategories::CHILD_FALLBACK,
+        ];
+        foreach ($targets as $type => $target) {
             $current = array_sum($groups[$type]);
             while ($current < $target) {
-                $groups[$type]['catA'] = ($groups[$type]['catA'] ?? 0) + 1;
+                $fallback = $fallbacks[$type];
+                $groups[$type][$fallback] = ($groups[$type][$fallback] ?? 0) + 1;
                 $current++;
             }
             while ($current > $target) {
-                foreach (array_reverse(self::CATEGORIES) as $category) {
+                foreach (array_reverse(OrderCategories::ALL) as $category) {
                     if (($groups[$type][$category] ?? 0) > 0) {
                         $groups[$type][$category]--;
                         $current--;

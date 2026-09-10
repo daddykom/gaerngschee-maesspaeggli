@@ -17,6 +17,6 @@ final class ListUsersAction
 
     public function __invoke(ServerRequestInterface $request, ResponseInterface $response): ResponseInterface
     {
-        return JsonResponse::success($response, ($this->users ?? new UserRepository())->findAll());
+        return JsonResponse::success($response, ($this->users ?? new UserRepository())->findAllForAdministration());
     }
 }

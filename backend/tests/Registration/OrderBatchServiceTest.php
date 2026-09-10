@@ -37,11 +37,24 @@ final class OrderBatchServiceTest extends TestCase
         self::assertSame(2, $updated['adultsCount']);
         self::assertSame(1, $updated['childrenCount']);
         self::assertSame([
-            ['personType' => 'adult', 'category' => 'catA', 'quantity' => 1],
-            ['personType' => 'adult', 'category' => 'catB', 'quantity' => 1],
-            ['personType' => 'child', 'category' => 'catA', 'quantity' => 1],
+            ['personType' => 'child', 'category' => 'catC', 'quantity' => 1],
         ], $updated['items']);
         self::assertStringContainsString('"renderedMailStatus":"definitive"', $emails->orderConfirmations[0]['order']['html']);
+    }
+
+    public function testUsesAdultFallbackForAnAdultOnlyOrder(): void
+    {
+        $pdo = TestDatabase::create();
+        $user = (new UserRepository($pdo))->createUser('person+adult@example.com', 'secret', 'client');
+        $orders = new OrderRepository($pdo);
+        $orders->saveForYear($user['id'], 2026, 'provisional', 0, 0, []);
+        $this->addInterval($pdo);
+
+        $this->service($pdo, new RecordingEmailSender(), new FixedFairgateProvider(1, 0))->run();
+
+        self::assertSame([
+            ['personType' => 'adult', 'category' => 'catA', 'quantity' => 1],
+        ], $orders->findForYear($user['id'], 2026)['items']);
     }
 
     public function testFailedEmailLeavesOrderProvisionalForTheNextBatchRun(): void

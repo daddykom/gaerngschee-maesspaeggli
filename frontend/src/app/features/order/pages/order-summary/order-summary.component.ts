@@ -2,7 +2,7 @@ import { Component, computed, inject } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
 import { Store } from '@ngrx/store';
 import { TranslatePipe } from '@ngx-translate/core';
-import { OrderCategory } from '../../../../shared/models/order.model';
+import { CategorySelection, orderCategories, OrderCategory } from '../../../../shared/models/order.model';
 import { NavigationActions } from '../../../../store/navigation/navigation.actions';
 import { OrderActions } from '../../../../store/order/order.actions';
 import {
@@ -41,8 +41,8 @@ export class OrderSummaryComponent {
     }
   }
 
-  private countCategories(categories: (OrderCategory | '')[]): CategoryQuantity[] {
-    return (['catA', 'catB', 'catC', 'catD', 'catE', 'catF', 'catG'] as OrderCategory[])
+  private countCategories(categories: CategorySelection[]): CategoryQuantity[] {
+    return orderCategories
       .map((category) => ({
         category,
         quantity: categories.filter((value) => value === category).length,
