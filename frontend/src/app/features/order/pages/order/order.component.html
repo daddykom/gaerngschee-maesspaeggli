@@ -50,9 +50,10 @@
                    <mat-label>
                      {{ 'app.order.categories.adult' | translate }} {{ $index + 1 }}
                    </mat-label>
-                   <mat-select
-                     [id]="personId('adult', $index)"
-                     [formField]="adultField($index)"
+                    <mat-select
+                      [id]="personId('adult', $index)"
+                      panelClass="category-select-panel"
+                      [formField]="adultField($index)"
                      (selectionChange)="onCategoryChange('adults', $index, $event.value)"
                    >
                      <mat-select-trigger>
@@ -97,9 +98,10 @@
                 <mat-label>
                    {{ 'app.order.categories.child' | translate }} {{ $index + 1 }}
                 </mat-label>
-                 <mat-select
-                   [id]="personId('child', $index)"
-                     [formField]="childField($index)"
+                  <mat-select
+                    [id]="personId('child', $index)"
+                    panelClass="category-select-panel"
+                    [formField]="childField($index)"
                     (selectionChange)="onCategoryChange('children', $index, $event.value)"
                  >
                    <mat-select-trigger>
