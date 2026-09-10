@@ -4,6 +4,7 @@ import { Store } from '@ngrx/store';
 import { TranslatePipe } from '@ngx-translate/core';
 import { CategorySelection, orderCategories, OrderCategory } from '../../../../shared/models/order.model';
 import { NavigationActions } from '../../../../store/navigation/navigation.actions';
+import { selectAuthFairgateUserExists } from '../../../../store/auth/auth.feature';
 import { OrderActions } from '../../../../store/order/order.actions';
 import {
   selectCurrentOrder,
@@ -27,10 +28,11 @@ export class OrderSummaryComponent {
 
   readonly form = this.store.selectSignal(selectOrderForm);
   readonly savedOrder = this.store.selectSignal(selectCurrentOrder);
+  readonly fairgateUserExists = this.store.selectSignal(selectAuthFairgateUserExists);
   readonly orderYear = computed(() => this.savedOrder()?.year ?? new Date().getFullYear());
   readonly adults = computed(() => this.countCategories(this.form()?.adults ?? []));
   readonly children = computed(() => this.countCategories(this.form()?.children ?? []));
-  readonly status = computed(() => this.savedOrder()?.status ?? 'provisional');
+  readonly status = computed(() => this.fairgateUserExists() === true ? 'definitive' : 'provisional');
   onBack(): void {
     this.store.dispatch(NavigationActions.navigate({ target: 'back' }));
   }

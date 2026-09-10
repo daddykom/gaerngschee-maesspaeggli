@@ -52,7 +52,8 @@ test.describe('Order summary route', () => {
     await page.waitForURL('**/order/summary');
 
     await expect(page.locator('h2', { hasText: 'Bestellübersicht' })).toBeVisible();
-    await expect(page.getByText(`Deine Bestellung für das Jahr ${new Date().getFullYear()}`)).toBeVisible();
+     await expect(page.getByText(`Deine Bestellung für das Jahr ${new Date().getFullYear()}`)).toBeVisible();
+     await expect(page.getByText('Definitiv')).toBeVisible();
     await expect(page.getByText('1 x Kinder 1-3 Jahre')).toBeVisible();
     await expect(page.getByRole('heading', { name: 'Erwachsene', exact: true })).toHaveCount(0);
 
