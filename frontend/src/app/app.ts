@@ -13,7 +13,7 @@ import { InfoBoxComponent } from './shared/components/info-box/info-box';
 import { AuthActions } from './store/auth/auth.actions';
 import { selectAuthGroup, selectAuthUserId } from './store/auth/auth.feature';
 import { selectNotification } from './store/notification/notification.feature';
-import { FrontendConfigActions } from './store/frontend-config/frontend-config.actions';
+import { selectFrontendPublicConfigStatus } from './store/frontend-config/frontend-config.feature';
 
 @Component({
   imports: [
@@ -39,10 +39,6 @@ export class App {
   private readonly router = inject(Router);
   private readonly activatedRoute = inject(ActivatedRoute);
 
-  constructor() {
-    this.store.dispatch(FrontendConfigActions.loadPublic());
-  }
-
   private readonly navigation = toSignal(
     this.router.events.pipe(
       filter((event) => event instanceof NavigationEnd),
@@ -52,6 +48,7 @@ export class App {
   );
 
   readonly notification = this.store.selectSignal(selectNotification);
+  readonly publicConfigStatus = this.store.selectSignal(selectFrontendPublicConfigStatus);
   readonly authGroup = this.store.selectSignal(selectAuthGroup);
   readonly authUserId = this.store.selectSignal(selectAuthUserId);
   readonly isAdmin = computed(() => this.authGroup() === 'admin');

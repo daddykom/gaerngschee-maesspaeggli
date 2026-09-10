@@ -19,6 +19,11 @@
         "action": "Mässpäggli anfragen"
       }
     },
+    "publicConfiguration": {
+      "loading": "Die Anwendung wird geladen ...",
+      "errorTitle": "Anwendung konnte nicht geladen werden",
+      "error": "Die erforderlichen Einstellungen konnten nicht geladen werden. Bitte versuche es später erneut."
+    },
     "anmeldung": {
       "title": "Mässpäggli bekommen",
       "lead": "Schreib deine E-Mail-Adresse hier hinein. Wir schicken dir dann einen direkten Link zum Bestellformular.",
