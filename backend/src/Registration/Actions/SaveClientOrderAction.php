@@ -88,7 +88,7 @@ final class SaveClientOrderAction
         if (is_array($user) && is_string($user['email'] ?? null)) {
             try {
                 $emails = $this->emails ?? new EmailSender();
-                $message = $emails->renderOrderConfirmation($order);
+                $message = $emails->renderOrderConfirmation($order, (string) $order['status']);
                 $emails->sendStoredEmail($user['email'], $message['subject'], $message['html'], $message['text']);
                 ($this->orders ?? new OrderRepository(Database::getConnection()))
                     ->markConfirmationEmailSent((string) $order['id']);
@@ -98,7 +98,7 @@ final class SaveClientOrderAction
             } catch (Throwable $exception) {
                 try {
                     $emails ??= $this->emails ?? new EmailSender();
-                    $message ??= $emails->renderOrderConfirmation($order);
+                    $message ??= $emails->renderOrderConfirmation($order, (string) $order['status']);
                     ($this->emailQueue ?? new OrderEmailQueueRepository(Database::getConnection()))->enqueue(
                         (string) $order['id'],
                         'order_confirmation',

@@ -39,6 +39,7 @@ final class OrderBatchServiceTest extends TestCase
         self::assertSame([
             ['personType' => 'child', 'category' => 'catC', 'quantity' => 1],
         ], $updated['items']);
+        self::assertStringContainsString('"renderedMailStatus":"definitive"', $emails->orderConfirmations[0]['order']['html']);
     }
 
     public function testUsesAdultFallbackForAnAdultOnlyOrder(): void
@@ -56,7 +57,7 @@ final class OrderBatchServiceTest extends TestCase
         ], $orders->findForYear($user['id'], 2026)['items']);
     }
 
-    public function testQueuesFailedEmailAndLeavesOrderProvisional(): void
+    public function testFailedEmailLeavesOrderProvisionalForTheNextBatchRun(): void
     {
         $pdo = TestDatabase::create();
         $user = (new UserRepository($pdo))->createUser('person+fair1@example.com', 'secret', 'client');
@@ -70,12 +71,13 @@ final class OrderBatchServiceTest extends TestCase
 
         $result = $this->service($pdo, $emails, new FixedFairgateProvider(1, 0))->run();
 
-        self::assertSame(1, $result['queued']);
+        self::assertSame(1, $result['failed']);
+        self::assertSame(0, $result['queued']);
         self::assertSame('provisional', $orders->findForYear($user['id'], 2026)['status']);
-        self::assertCount(1, (new OrderEmailQueueRepository($pdo))->pending());
+        self::assertCount(0, (new OrderEmailQueueRepository($pdo))->pending());
     }
 
-    public function testRetriesQueuedEmailAndDoesNotLoadTheOrderAgain(): void
+    public function testNextBatchRunRetriesFailedEmail(): void
     {
         $pdo = TestDatabase::create();
         $user = (new UserRepository($pdo))->createUser('person+fair1@example.com', 'secret', 'client');
@@ -93,7 +95,7 @@ final class OrderBatchServiceTest extends TestCase
         $result = $service->run();
 
         self::assertSame(1, $result['sent']);
-        self::assertSame(0, $result['loaded']);
+        self::assertSame(1, $result['loaded']);
         self::assertSame('definitive', $orders->findForYear($user['id'], 2026)['status']);
         self::assertCount(0, (new OrderEmailQueueRepository($pdo))->pending());
     }

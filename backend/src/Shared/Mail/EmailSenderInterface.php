@@ -22,7 +22,7 @@ interface EmailSenderInterface
     public function sendOrderConfirmation(string $recipient, array $order): void;
 
     /** @param array<string, mixed> $order */
-    public function renderOrderConfirmation(array $order): array;
+    public function renderOrderConfirmation(array $order, string $mailStatus): array;
 
     /** @param array<string, mixed> $order */
     public function renderDeliveryNotification(array $order, string $deliveryUrl, string $qrDataUri): array;

@@ -45,8 +45,9 @@ final class RecordingEmailSender implements EmailSenderInterface
         $this->orderConfirmations[] = ['recipient' => $recipient, 'order' => $order];
     }
 
-    public function renderOrderConfirmation(array $order): array
+    public function renderOrderConfirmation(array $order, string $mailStatus): array
     {
+        $order['renderedMailStatus'] = $mailStatus;
         return ['subject' => 'subject', 'html' => json_encode($order, JSON_THROW_ON_ERROR), 'text' => 'text'];
     }
 

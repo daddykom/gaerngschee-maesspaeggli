@@ -149,7 +149,7 @@ final class PublicStartRoutesTest extends TestCase
                       {
                       }
 
-                       public function renderOrderConfirmation(array $order): array { return []; }
+                        public function renderOrderConfirmation(array $order, string $mailStatus): array { return []; }
                        public function renderDeliveryNotification(array $order, string $deliveryUrl, string $qrDataUri): array { return []; }
                        public function sendStoredEmail(string $recipient, string $subject, string $html, string $text): void {}
                  }
@@ -170,7 +170,7 @@ final class PublicStartRoutesTest extends TestCase
                   {
                   }
 
-                   public function renderOrderConfirmation(array $order): array { return []; }
+                    public function renderOrderConfirmation(array $order, string $mailStatus): array { return []; }
                    public function renderDeliveryNotification(array $order, string $deliveryUrl, string $qrDataUri): array { return []; }
                    public function sendStoredEmail(string $recipient, string $subject, string $html, string $text): void {}
               },
