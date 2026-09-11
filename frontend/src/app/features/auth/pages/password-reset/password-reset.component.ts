@@ -1,5 +1,5 @@
 import { ChangeDetectionStrategy, Component, inject, signal } from '@angular/core';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { form, FormField, required, validate } from '@angular/forms/signals';
 import { MatButtonModule } from '@angular/material/button';
 import { MatInputModule } from '@angular/material/input';
@@ -18,6 +18,7 @@ import { selectPasswordResetLoading } from '../../../../store/password-reset/pas
 })
 export class PasswordResetComponent {
   private readonly route = inject(ActivatedRoute);
+  private readonly router = inject(Router);
   private readonly store = inject(Store);
   readonly token = this.route.snapshot.queryParamMap.get('token') ?? '';
   readonly loading = this.store.selectSignal(selectPasswordResetLoading);
@@ -32,6 +33,17 @@ export class PasswordResetComponent {
         : { kind: 'passwordsDoNotMatch' },
     );
   });
+
+  constructor() {
+    if (this.token) {
+      void this.router.navigate([], {
+        relativeTo: this.route,
+        queryParams: { token: null },
+        queryParamsHandling: 'merge',
+        replaceUrl: true,
+      });
+    }
+  }
 
   onSubmit(): void {
     if (!this.token || !this.passwordResetForm().valid()) {

@@ -13,6 +13,7 @@ test.describe('Password reset route', () => {
     });
 
     await page.goto('/password-reset?token=reset-token');
+    await expect(page).toHaveURL(/\/password-reset$/);
     await page.locator('input[autocomplete="username"]').fill('user@example.com');
     await page.locator('input[autocomplete="new-password"]').nth(0).fill('new-secret');
     await page.locator('input[autocomplete="new-password"]').nth(1).fill('new-secret');
