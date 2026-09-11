@@ -43,6 +43,30 @@ test.describe('User administration route', () => {
     await expect(page.getByText('user@example.com')).toBeVisible();
   });
 
+  test('sends a password reset link to the selected user', async ({ page }) => {
+    await loginAsAdmin(page);
+    await page.route('http://localhost:8080/admin/users', async (route) => {
+      await route.fulfill({ status: 200, contentType: 'application/json', body: JSON.stringify([
+        { id: '2', email: 'user@example.com', group: 'user', required_password_reset: false },
+      ]) });
+    });
+    let requestBody: unknown;
+    await page.route('**/admin/users/2/password-reset', async (route) => {
+      requestBody = route.request().postDataJSON();
+      await route.fulfill({
+        status: 200,
+        contentType: 'application/json',
+        body: JSON.stringify({ emailSentTo: 'user@example.com' }),
+      });
+    });
+
+    await openUserManagement(page);
+    await page.getByRole('button', { name: 'Passwort senden' }).click();
+
+    await expect(page.getByText('Der Link zum Zurücksetzen des Passworts wurde an user@example.com gesendet.')).toBeVisible();
+    expect(requestBody).toEqual({});
+  });
+
   test('confirms deletion and shows the global success notification', async ({ page }) => {
     await loginAsAdmin(page);
     await page.route('http://localhost:8080/admin/users', async (route) => {

@@ -45,4 +45,8 @@ export class AdminUsersService {
   delete(userId: string): Observable<{ deleted: boolean; userId: string }> {
     return this.http.delete<{ deleted: boolean; userId: string }>(`${this.baseUrl}/${userId}`);
   }
+
+  sendPasswordReset(userId: string): Observable<{ emailSentTo: string }> {
+    return this.http.post<{ emailSentTo: string }>(`${this.baseUrl}/${userId}/password-reset`, {});
+  }
 }

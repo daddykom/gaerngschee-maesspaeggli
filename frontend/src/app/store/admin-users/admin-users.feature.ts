@@ -19,7 +19,7 @@ export const adminUsersFeature = createFeature({
       ...state,
       loading: false,
     })),
-    on(AdminUsersActions.create, AdminUsersActions.update, AdminUsersActions.delete, (state) => ({
+    on(AdminUsersActions.create, AdminUsersActions.update, AdminUsersActions.delete, AdminUsersActions.sendPasswordReset, (state) => ({
       ...state,
       saving: true,
     })),
@@ -38,7 +38,7 @@ export const adminUsersFeature = createFeature({
       users: state.users.filter((user) => user.id !== userId),
       saving: false,
     })),
-    on(AdminUsersActions.createFailure, AdminUsersActions.updateFailure, AdminUsersActions.deleteFailure, (state) => ({
+    on(AdminUsersActions.createFailure, AdminUsersActions.updateFailure, AdminUsersActions.deleteFailure, AdminUsersActions.sendPasswordResetFailure, (state) => ({
       ...state,
       saving: false,
     })),
