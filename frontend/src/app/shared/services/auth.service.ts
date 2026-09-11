@@ -12,7 +12,6 @@ export interface AuthUser {
 
 export interface LoginResponse {
   user: AuthUser;
-  token: string;
   group: UserGroup;
   requiredPasswordReset: boolean;
 }
@@ -30,7 +29,6 @@ export interface SessionStatusResponse {
 }
 
 export interface SessionRefreshResponse extends SessionStatusResponse {
-  token: string;
 }
 
 export interface ApiErrorResponse {

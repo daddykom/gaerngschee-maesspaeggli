@@ -9,7 +9,7 @@ export const SessionActions = createActionGroup({
     'Status Loaded': props<{ expiresAt: string; secondsRemaining: number }>(),
     'Session Expired': emptyProps(),
     'Refresh Requested': emptyProps(),
-    'Refresh Succeeded': props<{ token: string; expiresAt: string; secondsRemaining: number }>(),
+    'Refresh Succeeded': props<{ expiresAt: string; secondsRemaining: number }>(),
     'Refresh Failed': emptyProps(),
     'Countdown Started': props<{ expiresAt: string }>(),
     'Countdown Tick': props<{ secondsRemaining: number }>(),

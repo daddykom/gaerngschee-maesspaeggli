@@ -8,7 +8,6 @@ test.describe('Fairgate test route', () => {
         contentType: 'application/json',
         body: JSON.stringify({
           user: { id: 'user-1', email: 'user@example.com', group: 'user' },
-          token: 'user-token',
           group: 'user',
           requiredPasswordReset: false,
         }),

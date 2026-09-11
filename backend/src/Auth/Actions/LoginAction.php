@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace App\Auth\Actions;
 
 use App\Users\Data\UserRepository;
-use App\Auth\Services\JwtService;
 use App\Auth\Services\SessionService;
 use App\Shared\Http\JsonRequest;
 use App\Shared\Http\JsonResponse;
@@ -16,7 +15,6 @@ final class LoginAction
 {
     public function __construct(
         private readonly ?UserRepository $users = null,
-        private readonly ?JwtService $jwt = null,
         private readonly ?SessionService $session = null,
     ) {
     }
@@ -35,12 +33,10 @@ final class LoginAction
             return JsonResponse::error($response, 'INVALID_CREDENTIALS', 401);
         }
 
-        $token = ($this->jwt ?? new JwtService())->createToken($user['id']);
         ($this->session ?? new SessionService())->setUser($user['id'], $user['group']);
 
         return JsonResponse::success($response, [
             'user' => $user,
-            'token' => $token,
             'group' => $user['group'],
             'requiredPasswordReset' => (bool) ($user['required_password_reset'] ?? false),
         ]);

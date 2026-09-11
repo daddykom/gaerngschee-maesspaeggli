@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace App\Auth\Actions;
 
-use App\Auth\Services\JwtService;
 use App\Auth\Services\SessionService;
 use App\Shared\Http\JsonResponse;
 use Psr\Http\Message\ResponseInterface;
@@ -14,7 +13,6 @@ final class RefreshSessionAction
 {
     public function __construct(
         private readonly ?SessionService $session = null,
-        private readonly ?JwtService $jwt = null,
     ) {
     }
 
@@ -33,7 +31,6 @@ final class RefreshSessionAction
         }
 
         return JsonResponse::success($response, [
-            'token' => ($this->jwt ?? new JwtService())->createToken($userId),
             ...$status,
         ]);
     }

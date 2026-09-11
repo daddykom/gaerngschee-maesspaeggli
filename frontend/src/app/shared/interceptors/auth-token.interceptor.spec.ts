@@ -1,41 +1,27 @@
 import { HttpRequest, HttpResponse } from '@angular/common/http';
-import { TestBed } from '@angular/core/testing';
-import { provideMockStore, MockStore } from '@ngrx/store/testing';
 import { of } from 'rxjs';
 import { authTokenInterceptor } from './auth-token.interceptor';
-import { selectAuthToken } from '../../store/auth/auth.feature';
 
-describe('authTokenInterceptor', () => {
-  let store: MockStore;
+describe('csrf interceptor', () => {
   const response = new HttpResponse({ status: 200 });
 
-  beforeEach(() => {
-    TestBed.configureTestingModule({ providers: [provideMockStore()] });
-    store = TestBed.inject(MockStore);
-  });
-
-  it('adds the bearer token when one is available', () => {
-    store.overrideSelector(selectAuthToken, 'jwt-token');
-    store.refreshState();
+  it('passes a request through without a csrf cookie', () => {
     const request = new HttpRequest('GET', '/protected');
     const next = vi.fn().mockReturnValue(of(response));
 
-    TestBed.runInInjectionContext(() => authTokenInterceptor(request, next));
-
-    expect(next).toHaveBeenCalledWith(expect.objectContaining({
-      headers: expect.objectContaining({ get: expect.any(Function) }),
-    }));
-    expect(next.mock.calls[0][0].headers.get('Authorization')).toBe('Bearer jwt-token');
-  });
-
-  it('passes the original request through without a token', () => {
-    store.overrideSelector(selectAuthToken, null);
-    store.refreshState();
-    const request = new HttpRequest('GET', '/public');
-    const next = vi.fn().mockReturnValue(of(response));
-
-    TestBed.runInInjectionContext(() => authTokenInterceptor(request, next));
+    authTokenInterceptor(request, next);
 
     expect(next).toHaveBeenCalledWith(request);
+  });
+
+  it('adds the csrf header when a cookie is available', () => {
+    document.cookie = 'XSRF-TOKEN=test-token';
+    const request = new HttpRequest('POST', '/protected', null);
+    const next = vi.fn().mockReturnValue(of(response));
+
+    authTokenInterceptor(request, next);
+
+    expect(next.mock.calls[0][0].headers.get('X-CSRF-Token')).toBe('test-token');
+    document.cookie = 'XSRF-TOKEN=; Max-Age=0';
   });
 });

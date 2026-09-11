@@ -10,7 +10,7 @@ export class FrontendConfigService {
   private readonly baseUrl = `${environment.apiUrl}/admin/configuration`;
 
   list(): Observable<FrontendConfig[]> {
-    return this.http.get<FrontendConfig[]>(this.baseUrl);
+    return this.http.get<FrontendConfig[]>(this.baseUrl, { withCredentials: true });
   }
 
   listPublic(): Observable<PublicFrontendConfig[]> {
@@ -18,6 +18,6 @@ export class FrontendConfigService {
   }
 
   update(id: string, value: string | string[]): Observable<FrontendConfig> {
-    return this.http.patch<FrontendConfig>(`${this.baseUrl}/${id}`, { value });
+    return this.http.patch<FrontendConfig>(`${this.baseUrl}/${id}`, { value }, { withCredentials: true });
   }
 }

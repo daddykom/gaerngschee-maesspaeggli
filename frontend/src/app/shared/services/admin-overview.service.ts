@@ -9,10 +9,10 @@ export class AdminOverviewService {
   private readonly http = inject(HttpClient);
 
   get(): Observable<AdminOverview> {
-    return this.http.get<AdminOverview>(`${environment.apiUrl}/admin/overview`);
+    return this.http.get<AdminOverview>(`${environment.apiUrl}/admin/overview`, { withCredentials: true });
   }
 
   deliver(): Observable<{ updated: number }> {
-    return this.http.post<{ updated: number }>(`${environment.apiUrl}/admin/overview/deliver`, {});
+    return this.http.post<{ updated: number }>(`${environment.apiUrl}/admin/overview/deliver`, {}, { withCredentials: true });
   }
 }

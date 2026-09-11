@@ -15,8 +15,8 @@ use App\Registration\Actions\ClientRegistrationLoginAction;
 use App\Registration\Services\ClientRegistrationLoginService;
 use App\Users\Data\UserRepository;
 use App\Middleware\AuthMiddleware;
-use App\Auth\Services\JwtService;
 use App\Auth\Services\SessionService;
+use App\Auth\Services\JwtService;
 use Slim\App;
 use Slim\Routing\RouteCollectorProxy;
 
@@ -46,13 +46,12 @@ final class AuthRoutes
 
             $group->post('/registration-login', new ClientRegistrationLoginAction(
                 $registrationLoginService,
-                $jwtService,
                 $sessionService,
             ));
-            $group->post('/login', new LoginAction($userRepository, $jwtService, $sessionService));
+            $group->post('/login', new LoginAction($userRepository, $sessionService));
             $group->post('/logout', new LogoutAction());
             $group->get('/session-status', new SessionStatusAction($sessionService));
-            $group->post('/session-refresh', new RefreshSessionAction($sessionService, $jwtService));
+            $group->post('/session-refresh', new RefreshSessionAction($sessionService));
         });
     }
 }

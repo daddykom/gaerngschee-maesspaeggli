@@ -45,7 +45,6 @@ async function loginAsAdmin(page: Page): Promise<void> {
       contentType: 'application/json',
       body: JSON.stringify({
         user: { id: '1', email: 'admin@example.com', group: 'admin' },
-          token: 'test-token',
           group: 'admin',
           requiredPasswordReset: false,
       }),

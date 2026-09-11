@@ -10,7 +10,6 @@ describe('authReducer', () => {
     );
 
     expect(state).toEqual({
-      token: null,
       userId: null,
       group: null,
       requiredPasswordReset: false,
@@ -32,11 +31,10 @@ describe('authReducer', () => {
     });
   });
 
-  it('stores the token and group after a successful login', () => {
+  it('stores the user and group after a successful login', () => {
     const state = authReducer(
       { ...initialState, loading: true },
       AuthActions.loginSuccess({
-        token: 'jwt-token',
         userId: 'user-123',
         group: 'admin',
         requiredPasswordReset: false,
@@ -44,7 +42,6 @@ describe('authReducer', () => {
     );
 
     expect(state).toEqual({
-      token: 'jwt-token',
       userId: 'user-123',
       group: 'admin',
       requiredPasswordReset: false,
@@ -73,7 +70,6 @@ describe('authReducer', () => {
     );
 
     expect(state).toEqual({
-      token: null,
       userId: null,
       group: null,
       requiredPasswordReset: false,
@@ -98,7 +94,6 @@ describe('authReducer', () => {
   it('clears authentication data on logout', () => {
     const state = authReducer(
       {
-        token: 'jwt-token',
         userId: 'user-123',
         group: 'admin',
         requiredPasswordReset: false,
@@ -130,15 +125,15 @@ describe('authReducer', () => {
     expect(loading.registrationLoginErrorCode).toBeNull();
 
     const state = authReducer(loading, AuthActions.registrationLoginSuccess({
-      token: 'client-token', userId: 'client-1', group: 'client', fairgateUserExists: true,
+       userId: 'client-1', group: 'client', fairgateUserExists: true,
       childrenCount: 2, adultsCount: 2, salutation: 'Hallo',
     }));
-    expect(state).toMatchObject({ token: 'client-token', userId: 'client-1', group: 'client', registrationLoginLoading: false, registrationLoginErrorCode: null, fairgateUserExists: true, childrenCount: 2, adultsCount: 2, salutation: 'Hallo' });
+    expect(state).toMatchObject({ userId: 'client-1', group: 'client', registrationLoginLoading: false, registrationLoginErrorCode: null, fairgateUserExists: true, childrenCount: 2, adultsCount: 2, salutation: 'Hallo' });
   });
 
   it('stores registration and password change errors', () => {
     const registration = authReducer({ ...initialState, registrationLoginLoading: true }, AuthActions.registrationLoginFailure({ errorCode: 'TOKEN_EXPIRED' }));
-    expect(registration).toMatchObject({ token: null, userId: null, group: null, registrationLoginLoading: false, registrationLoginErrorCode: 'TOKEN_EXPIRED' });
+    expect(registration).toMatchObject({ userId: null, group: null, registrationLoginLoading: false, registrationLoginErrorCode: 'TOKEN_EXPIRED' });
 
     const changing = authReducer(initialState, AuthActions.passwordChange({ password: 'secret' }));
     expect(changing).toMatchObject({ passwordChangeLoading: true, passwordChangeErrorCode: null });

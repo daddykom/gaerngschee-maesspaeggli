@@ -93,7 +93,7 @@ async function loginAsUser(page: Page): Promise<void> {
 async function login(page: Page, email: string, group: 'admin' | 'user', id: string): Promise<void> {
   await page.route('http://localhost:8080/auth/login', async (route) => {
     await route.fulfill({ status: 200, contentType: 'application/json', body: JSON.stringify({
-      user: { id, email, group }, token: 'eyJhbGciOiJub25lIn0.eyJleHAiOjQwNzA5MDg4MDAwLCJzdWIiOiIxIn0.signature', group, requiredPasswordReset: false,
+      user: { id, email, group }, group, requiredPasswordReset: false,
     }) });
   });
   await page.route('http://localhost:8080/auth/session-status', async (route) => {

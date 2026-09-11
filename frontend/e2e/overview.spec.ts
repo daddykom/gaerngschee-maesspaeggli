@@ -8,7 +8,6 @@ test.describe('Admin overview route', () => {
         contentType: 'application/json',
         body: JSON.stringify({
           user: { id: '1', email: 'admin@example.com', group: 'admin' },
-          token: 'test-token',
           group: 'admin',
           requiredPasswordReset: false,
         }),
@@ -48,7 +47,6 @@ test.describe('Admin overview route', () => {
         contentType: 'application/json',
         body: JSON.stringify({
           user: { id: 'user-1', email: 'user@example.com', group: 'user' },
-          token: 'user-token',
           group: 'user',
           requiredPasswordReset: false,
         }),

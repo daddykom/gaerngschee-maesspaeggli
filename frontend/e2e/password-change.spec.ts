@@ -63,7 +63,6 @@ async function loginAsUser(page: import('@playwright/test').Page): Promise<void>
       contentType: 'application/json',
       body: JSON.stringify({
         user: { id: '2', email: 'user@example.com', group: 'user' },
-        token: 'test-token',
         group: 'user',
         requiredPasswordReset: true,
       }),

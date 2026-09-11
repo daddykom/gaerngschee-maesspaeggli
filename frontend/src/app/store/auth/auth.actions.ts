@@ -5,12 +5,10 @@ export const AuthActions = createActionGroup({
   source: 'Auth',
   events: {
     Login: props<{ email: string; password: string }>(),
-    'Login Success': props<{ token: string; userId: string; group: UserGroup; requiredPasswordReset: boolean; email?: string }>(),
+    'Login Success': props<{ userId: string; group: UserGroup; requiredPasswordReset: boolean; email?: string }>(),
     'Login Failure': props<{ errorCode: string }>(),
-    'Token Refreshed': props<{ token: string }>(),
     'Registration Login': props<{ token: string }>(),
     'Registration Login Success': props<{
-      token: string;
       userId: string;
       group: UserGroup;
       fairgateUserExists: boolean;

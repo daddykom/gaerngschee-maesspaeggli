@@ -3,7 +3,6 @@ import { UserGroup } from '../models/frontend-config.model';
 const STORAGE_KEY = 'gaerngschee.auth';
 
 export interface PersistedAuthState {
-  token: string;
   userId: string;
   group: UserGroup;
   fairgateUserExists: boolean | null;
@@ -20,7 +19,7 @@ export function loadPersistedAuthState(): Partial<PersistedAuthState> {
     }
 
     const state = JSON.parse(raw) as Partial<PersistedAuthState>;
-    if (!isValidPersistedState(state) || isExpired(state.token)) {
+    if (!isValidPersistedState(state) || 'token' in state) {
       clearPersistedAuthState();
       return {};
     }
@@ -49,25 +48,10 @@ export function clearPersistedAuthState(): void {
 }
 
 function isValidPersistedState(state: Partial<PersistedAuthState>): state is PersistedAuthState {
-  return typeof state.token === 'string'
-    && typeof state.userId === 'string'
+  return typeof state.userId === 'string'
     && ['admin', 'user', 'client'].includes(state.group ?? '')
     && (state.fairgateUserExists === null || typeof state.fairgateUserExists === 'boolean')
     && (state.childrenCount === null || typeof state.childrenCount === 'number')
     && (state.adultsCount === null || typeof state.adultsCount === 'number')
     && (state.salutation === null || typeof state.salutation === 'string');
-}
-
-function isExpired(token: string): boolean {
-  const payload = token.split('.')[1];
-  if (!payload) {
-    return true;
-  }
-
-  try {
-    const decoded = JSON.parse(atob(payload.replace(/-/g, '+').replace(/_/g, '/'))) as { exp?: number };
-    return typeof decoded.exp !== 'number' || decoded.exp <= Math.floor(Date.now() / 1000);
-  } catch {
-    return true;
-  }
 }

@@ -17,9 +17,8 @@ export const authFeature = createFeature({
       adultsCount: null,
       salutation: null,
     })),
-    on(AuthActions.loginSuccess, (state, { token, userId, group, requiredPasswordReset, email }) => ({
+    on(AuthActions.loginSuccess, (state, { userId, group, requiredPasswordReset, email }) => ({
       ...state,
-      token,
       userId,
       group,
       requiredPasswordReset,
@@ -27,10 +26,8 @@ export const authFeature = createFeature({
       errorCode: null,
       email: email ?? state.email,
     })),
-    on(AuthActions.tokenRefreshed, (state, { token }) => ({ ...state, token })),
     on(AuthActions.loginFailure, (state, { errorCode }) => ({
       ...state,
-      token: null,
       userId: null,
       group: null,
       requiredPasswordReset: false,
@@ -49,7 +46,6 @@ export const authFeature = createFeature({
     })),
     on(AuthActions.registrationLoginSuccess, (state, result) => ({
       ...state,
-      token: result.token,
       userId: result.userId,
       group: result.group,
       registrationLoginLoading: false,
@@ -61,7 +57,6 @@ export const authFeature = createFeature({
     })),
     on(AuthActions.registrationLoginFailure, (state, { errorCode }) => ({
       ...state,
-      token: null,
       userId: null,
       group: null,
       registrationLoginLoading: false,
@@ -113,7 +108,6 @@ export const {
   name: authFeatureName,
   reducer: authReducer,
   selectAuthState,
-  selectToken: selectAuthToken,
   selectUserId: selectAuthUserId,
   selectGroup: selectAuthGroup,
   selectRequiredPasswordReset: selectAuthRequiredPasswordReset,

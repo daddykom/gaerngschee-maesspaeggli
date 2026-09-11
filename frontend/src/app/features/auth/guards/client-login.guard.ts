@@ -20,7 +20,6 @@ export const clientLoginGuard: CanMatchFn = () => {
   return inject(AuthService).registrationLogin(token).pipe(
     map((response) => {
       store.dispatch(AuthActions.registrationLoginSuccess({
-        token: response.token,
         userId: response.user.id,
         group: response.group,
         fairgateUserExists: response.fairgateUserExists,

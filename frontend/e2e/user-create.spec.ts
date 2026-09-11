@@ -44,7 +44,7 @@ async function loginAsAdmin(page: Page): Promise<void> {
   await page.route('http://localhost:8080/auth/login', async (route) => {
     await route.fulfill({ status: 200, contentType: 'application/json', body: JSON.stringify({
       user: { id: '1', email: 'admin@example.com', group: 'admin' },
-      token: 'test-token', group: 'admin', requiredPasswordReset: false,
+      group: 'admin', requiredPasswordReset: false,
     }) });
   });
   await page.goto('/login');

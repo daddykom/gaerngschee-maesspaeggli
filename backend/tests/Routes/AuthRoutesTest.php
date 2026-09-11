@@ -56,7 +56,7 @@ final class AuthRoutesTest extends TestCase
         );
     }
 
-    public function testAllowedUserCanLoginWithJwtAndSession(): void
+    public function testAllowedUserCanLoginWithSession(): void
     {
         $user = $this->repository->createUser('user@example.com', 'secret', 'user');
         $app = $this->createAuthApp();
@@ -70,7 +70,6 @@ final class AuthRoutesTest extends TestCase
         self::assertSame(200, $response->getStatusCode());
         self::assertSame($user['id'], $data['user']['id']);
         self::assertSame('user', $data['group']);
-        self::assertSame($user['id'], (new JwtService())->getUserIdFromToken($data['token']));
         self::assertSame($user['id'], (new SessionService())->getUserId());
         self::assertSame('user', (new SessionService())->getGroup());
         self::assertFalse($data['requiredPasswordReset']);

@@ -15,7 +15,6 @@ describe('auth storage', () => {
 
   it('restores a valid persisted client session', () => {
     const state = {
-      token: tokenWithExpiry(Math.floor(Date.now() / 1000) + 3600),
       userId: 'client-123',
       group: 'client' as const,
       fairgateUserExists: true,
@@ -29,24 +28,8 @@ describe('auth storage', () => {
     expect(loadPersistedAuthState()).toEqual(state);
   });
 
-  it('clears an expired session', () => {
-    persistAuthState({
-      token: tokenWithExpiry(Math.floor(Date.now() / 1000) - 1),
-      userId: 'client-123',
-      group: 'client',
-      fairgateUserExists: true,
-      childrenCount: 2,
-      adultsCount: 2,
-      salutation: 'Hallo',
-    });
-
-    expect(loadPersistedAuthState()).toEqual({});
-    expect(localStorage.getItem('gaerngschee.auth')).toBeNull();
-  });
-
   it('clears the persisted session on logout', () => {
     persistAuthState({
-      token: tokenWithExpiry(Math.floor(Date.now() / 1000) + 3600),
       userId: 'client-123',
       group: 'client',
       fairgateUserExists: null,
@@ -62,9 +45,8 @@ describe('auth storage', () => {
 
   it.each([
     'not-json',
-    JSON.stringify({ token: 'token' }),
-    JSON.stringify({ token: 'token', userId: 'user-1', group: 'owner' }),
-    JSON.stringify({ token: 'token', userId: 'user-1', group: 'client', childrenCount: '2' }),
+    JSON.stringify({ userId: 'user-1', group: 'owner' }),
+    JSON.stringify({ userId: 'user-1', group: 'client', childrenCount: '2' }),
   ])('clears invalid persisted state: %s', (raw) => {
     localStorage.setItem('gaerngschee.auth', raw);
 
@@ -72,13 +54,9 @@ describe('auth storage', () => {
     expect(localStorage.getItem('gaerngschee.auth')).toBeNull();
   });
 
-  it.each([
-    'token-without-payload',
-    'header.invalid-json.signature',
-    'header.' + btoa(JSON.stringify({})).replace(/=/g, '') + '.signature',
-  ])('clears a session with an invalid JWT: %s', (token) => {
+  it('clears legacy persisted state containing an application JWT', () => {
     localStorage.setItem('gaerngschee.auth', JSON.stringify({
-      token,
+      token: 'legacy-jwt',
       userId: 'client-123',
       group: 'client',
       fairgateUserExists: null,
@@ -88,6 +66,7 @@ describe('auth storage', () => {
     }));
 
     expect(loadPersistedAuthState()).toEqual({});
+    expect(localStorage.getItem('gaerngschee.auth')).toBeNull();
   });
 
   it('returns an empty state when reading storage fails', () => {
@@ -104,7 +83,6 @@ describe('auth storage', () => {
     });
 
     expect(() => persistAuthState({
-      token: tokenWithExpiry(Math.floor(Date.now() / 1000) + 3600),
       userId: 'client-123',
       group: 'client',
       fairgateUserExists: null,
@@ -122,12 +100,3 @@ describe('auth storage', () => {
     expect(() => clearPersistedAuthState()).not.toThrow();
   });
 });
-
-function tokenWithExpiry(exp: number): string {
-  const encode = (value: object) => btoa(JSON.stringify(value))
-    .replace(/=/g, '')
-    .replace(/\+/g, '-')
-    .replace(/\//g, '_');
-
-  return `${encode({ alg: 'none', typ: 'JWT' })}.${encode({ exp })}.signature`;
-}
