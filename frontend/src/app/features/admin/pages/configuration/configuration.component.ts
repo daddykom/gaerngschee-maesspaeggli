@@ -5,12 +5,13 @@ import {
   signal,
   untracked,
 } from '@angular/core';
-import { FieldTree, form, FormField } from '@angular/forms/signals';
+import { applyEach, FieldTree, form, FormField, SchemaPath, validate } from '@angular/forms/signals';
 import { MatButtonModule } from '@angular/material/button';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { Store } from '@ngrx/store';
 import { TranslatePipe } from '@ngx-translate/core';
+import { ControlErrorComponent } from '../../../../shared/components/control-error/control-error';
 import { FrontendConfig } from '../../../../shared/models/frontend-config.model';
 import { FrontendConfigActions } from '../../../../store/frontend-config/frontend-config.actions';
 import {
@@ -21,7 +22,7 @@ import {
 
 @Component({
   selector: 'app-admin-configuration',
-  imports: [MatButtonModule, MatFormFieldModule, MatInputModule, FormField, TranslatePipe],
+  imports: [MatButtonModule, MatFormFieldModule, MatInputModule, FormField, TranslatePipe, ControlErrorComponent],
   templateUrl: './configuration.component.html',
   styleUrl: './configuration.component.scss',
 })
@@ -32,7 +33,24 @@ export class ConfigurationComponent {
   readonly loading = this.store.selectSignal(selectFrontendConfigLoading);
   readonly saving = this.store.selectSignal(selectFrontendConfigSaving);
   readonly model = signal<Record<string, string | string[]>>({});
-  readonly form = form(this.model);
+  readonly form = form(this.model, (schema) => {
+    this.configs().forEach((config) => {
+      const regex = config.pattern ? createPattern(config.pattern) : null;
+      if (regex === null) {
+        return;
+      }
+
+      if (Array.isArray(config.value)) {
+        applyEach(schema[config.id] as unknown as SchemaPath<string[]>, (item) => {
+          validate(item, ({ value }) => regex.test(value()) ? undefined : { kind: 'pattern' });
+        });
+      } else {
+        validate(schema[config.id] as unknown as SchemaPath<string>, ({ value }) => (
+          regex.test(value()) ? undefined : { kind: 'pattern' }
+        ));
+      }
+    });
+  });
 
   constructor() {
     this.store.dispatch(FrontendConfigActions.load());
@@ -70,7 +88,8 @@ export class ConfigurationComponent {
   }
 
   onSubmit(): void {
-    if (this.saving()) {
+    if (this.saving() || !this.form().valid()) {
+      this.form().markAsTouched();
       return;
     }
 
@@ -96,5 +115,13 @@ export class ConfigurationComponent {
       {},
     );
     this.model.set(values);
+  }
+}
+
+function createPattern(source: string): RegExp | null {
+  try {
+    return new RegExp(`^(?:${source})$`, 'u');
+  } catch {
+    return null;
   }
 }

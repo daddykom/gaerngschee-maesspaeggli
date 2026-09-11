@@ -30,6 +30,8 @@ final class UpdateConfigurationAction
         $configs = $this->configs ?? new FrontendConfigRepository(Database::getConnection());
         try {
             $config = $configs->update((string) ($args['configId'] ?? ''), $user['group'], $value);
+        } catch (\InvalidArgumentException) {
+            return JsonResponse::error($response, 'INVALID_CONFIGURATION_DATA', 422);
         } catch (Throwable) {
             return JsonResponse::error($response, 'CONFIGURATION_UPDATE_FAILED', 500);
         }

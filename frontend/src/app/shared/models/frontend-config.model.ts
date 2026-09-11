@@ -8,6 +8,8 @@ export interface FrontendConfig {
   accessGroup: UserGroup[];
   updateGroup: UserGroup[];
   label: string;
+  pattern: string | null;
+  placeholder: string | null;
   canUpdate: boolean;
   createdAt: Date;
   updatedAt: Date;

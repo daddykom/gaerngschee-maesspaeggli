@@ -44,6 +44,8 @@ final class TestDatabase
                 access_group TEXT NOT NULL,
                 update_group TEXT NOT NULL,
                 label TEXT NOT NULL,
+                pattern TEXT NULL,
+                placeholder TEXT NULL,
                 created_at TEXT,
                 updated_at TEXT
             )',

@@ -19,6 +19,8 @@ describe('ConfigurationComponent', () => {
       accessGroup: ['admin'],
       updateGroup: ['admin'],
       label: 'Einzelwert',
+      pattern: '^\\d+$',
+      placeholder: 'z. B. 120',
       canUpdate: true,
       createdAt: new Date(),
       updatedAt: new Date(),
@@ -31,6 +33,8 @@ describe('ConfigurationComponent', () => {
       accessGroup: ['admin'],
       updateGroup: ['admin'],
       label: 'Mehrere Werte',
+      pattern: null,
+      placeholder: null,
       canUpdate: true,
       createdAt: new Date(),
       updatedAt: new Date(),
@@ -43,6 +47,8 @@ describe('ConfigurationComponent', () => {
       accessGroup: ['admin'],
       updateGroup: [],
       label: 'Nur lesen',
+      pattern: null,
+      placeholder: null,
       canUpdate: false,
       createdAt: new Date(),
       updatedAt: new Date(),
@@ -116,6 +122,14 @@ describe('ConfigurationComponent', () => {
         ],
       }),
     );
+  });
+
+  it('blocks values that do not match the configured pattern', () => {
+    component.model.update((model) => ({ ...model, [configs[0].id]: 'not-a-number' }));
+    component.form().markAsTouched();
+
+    expect(component.form().valid()).toBe(false);
+    expect(component.field(configs[0])().errors()[0]?.kind).toBe('pattern');
   });
 
   it('does not save while a save is already in progress', () => {
