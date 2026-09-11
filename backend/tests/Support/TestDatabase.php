@@ -91,6 +91,15 @@ final class TestDatabase
                 UNIQUE (order_id, email_type)
             )',
         );
+        $pdo->exec(
+            'CREATE TABLE rate_limits (
+                key_hash TEXT NOT NULL,
+                bucket_start TEXT NOT NULL,
+                request_count INTEGER NOT NULL DEFAULT 0,
+                expires_at TEXT NOT NULL,
+                PRIMARY KEY (key_hash, bucket_start)
+            )',
+        );
 
         return $pdo;
     }

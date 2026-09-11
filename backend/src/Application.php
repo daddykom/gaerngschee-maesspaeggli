@@ -12,6 +12,7 @@ use App\Routes\ClientRoutes;
 use App\Routes\DeliveryRoutes;
 use App\Routes\PublicRoutes;
 use App\Auth\Services\SessionService;
+use App\Shared\Http\RateLimitService;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Slim\App;
@@ -20,7 +21,7 @@ use Slim\Psr7\Response;
 
 final class Application
 {
-    public static function create(): App
+    public static function create(?RateLimitService $rateLimitService = null): App
     {
         if (session_status() === PHP_SESSION_NONE) {
             SessionService::configure();
@@ -28,6 +29,7 @@ final class Application
         }
 
         $app = AppFactory::create();
+        $rateLimitService ??= new RateLimitService();
 
         $app->addRoutingMiddleware();
         $app->add(new CsrfMiddleware());
@@ -54,11 +56,11 @@ final class Application
                 ->withHeader('Access-Control-Allow-Credentials', 'true');
         });
 
-        PublicRoutes::register($app);
-        AuthRoutes::register($app);
+        PublicRoutes::register($app, null, null, null, null, $rateLimitService);
+        AuthRoutes::register($app, null, null, null, null, $rateLimitService);
         ClientRoutes::register($app);
-        DeliveryRoutes::register($app);
-        AdminRoutes::register($app);
+        DeliveryRoutes::register($app, null, null, null, null, $rateLimitService);
+        AdminRoutes::register($app, null, null, null, null, null, $rateLimitService);
         ConfigurationRoutes::register($app);
 
         return $app;

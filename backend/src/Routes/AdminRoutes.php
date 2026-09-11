@@ -19,6 +19,8 @@ use App\Users\Actions\GetUserAction;
 use App\Users\Actions\ListUsersAction;
 use App\Users\Actions\UpdateUserAction;
 use App\Users\Actions\SendPasswordResetLinkAction;
+use App\Middleware\RateLimitMiddleware;
+use App\Shared\Http\RateLimitService;
 use Slim\App;
 use Slim\Routing\RouteCollectorProxy;
 
@@ -31,8 +33,9 @@ final class AdminRoutes
         ?FairgateTestAction $fairgateTestAction = null,
         ?OrderRepository $orderRepository = null,
         ?FrontendConfigRepository $configRepository = null,
+        ?RateLimitService $rateLimitService = null,
     ): void {
-        $app->group('/admin', function (RouteCollectorProxy $group) use ($userRepository, $emailSender, $fairgateTestAction, $orderRepository, $configRepository): void {
+        $app->group('/admin', function (RouteCollectorProxy $group) use ($userRepository, $emailSender, $fairgateTestAction, $orderRepository, $configRepository, $rateLimitService): void {
             $overview = $group->get('/overview', new GetAdminOverviewAction($orderRepository, $configRepository));
             $overview->add(new GroupMiddleware(['admin', 'user'], $userRepository))->add(new AuthMiddleware());
             $deliver = $group->post('/overview/deliver', new DeliverAdminOrdersAction($orderRepository, $configRepository));
@@ -51,6 +54,9 @@ final class AdminRoutes
             $update->add(new GroupMiddleware(['admin', 'user'], $userRepository))->add(new AuthMiddleware());
 
             $passwordReset = $group->post('/users/{userId}/password-reset', new SendPasswordResetLinkAction($userRepository, null, $emailSender));
+            if ($rateLimitService !== null) {
+                $passwordReset->add(new RateLimitMiddleware(10, 3600, static fn ($request): string => RateLimitMiddleware::session($request), $rateLimitService));
+            }
             $passwordReset->add(new GroupMiddleware(['admin'], $userRepository))->add(new AuthMiddleware());
 
             $delete = $group->delete('/users/{userId}', new DeleteUserAction($userRepository));

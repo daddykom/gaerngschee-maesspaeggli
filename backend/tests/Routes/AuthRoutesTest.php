@@ -12,6 +12,7 @@ use App\Auth\Services\SessionService;
 use App\Registration\Services\ClientRegistrationLoginService;
 use App\Registration\Services\RegistrationTokenService;
 use App\Fairgate\Services\FairgateContactProvider;
+use App\Shared\Http\RateLimitService;
 use PDO;
 use PHPUnit\Framework\TestCase;
 use Slim\Psr7\Factory\ServerRequestFactory;
@@ -47,7 +48,7 @@ final class AuthRoutesTest extends TestCase
             ->createServerRequest('POST', '/auth/login')
             ->withBody((new \Slim\Psr7\Stream(fopen('php://temp', 'r+'))));
 
-        $response = Application::create()->handle($request);
+        $response = Application::create(new RateLimitService($this->pdo))->handle($request);
 
         self::assertSame(401, $response->getStatusCode());
         self::assertSame(
