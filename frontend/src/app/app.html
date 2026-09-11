@@ -6,98 +6,12 @@
       </a>
       <span class="app-header__title">{{ 'app.title' | translate }}</span>
 
-      @if (isAdmin()) {
-        <button
-          mat-icon-button
-          type="button"
-          class="admin-menu-button"
-          [attr.aria-label]="'app.navigation.openMenu' | translate"
-          [matMenuTriggerFor]="adminMenu"
-        >
-          <mat-icon>menu</mat-icon>
-        </button>
-      }
+       @defer (when isAdmin()) {
+         <app-admin-navigation />
+       }
     </div>
   </div>
 </header>
-
-<nav class="app-navigation" aria-label="{{ 'app.navigation.menuLabel' | translate }}">
-  @if (isAdmin()) {
-    <div class="gl-container">
-      <div class="app-navigation__links gl-cluster">
-        <a mat-button routerLink="/" routerLinkActive="active" [routerLinkActiveOptions]="{ exact: true }">
-          {{ 'app.navigation.home' | translate }}
-        </a>
-        <a mat-button routerLink="/start" routerLinkActive="active">
-          {{ 'app.navigation.start' | translate }}
-        </a>
-        <a mat-button routerLink="/admin/overview" routerLinkActive="active">
-          {{ 'app.navigation.adminOverview' | translate }}
-        </a>
-        <a mat-button routerLink="/delivery" routerLinkActive="active">
-          {{ 'app.navigation.delivery' | translate }}
-        </a>
-        @if (isAdmin()) {
-          <a mat-button routerLink="/admin/fairgate-test" routerLinkActive="active">
-            {{ 'app.navigation.fairgateTest' | translate }}
-          </a>
-        }
-        <a mat-button routerLink="/admin/configuration" routerLinkActive="active">
-          {{ 'app.navigation.configuration' | translate }}
-        </a>
-        @if (isAdmin()) {
-          <a mat-button routerLink="/admin/users" routerLinkActive="active">
-            {{ 'app.navigation.userManagement' | translate }}
-          </a>
-        } @else if (authUserId(); as userId) {
-          <a mat-button [routerLink]="['/admin/users', userId]" routerLinkActive="active">
-            {{ 'app.navigation.myUser' | translate }}
-          </a>
-        }
-        <button mat-button type="button" (click)="logout()">
-          {{ 'app.navigation.logout' | translate }}
-        </button>
-      </div>
-    </div>
-  }
-</nav>
-
-<mat-menu #adminMenu="matMenu" xPosition="before">
-  @if (isAdmin()) {
-    <a mat-menu-item routerLink="/" routerLinkActive="active" [routerLinkActiveOptions]="{ exact: true }">
-      {{ 'app.navigation.home' | translate }}
-    </a>
-    <a mat-menu-item routerLink="/start" routerLinkActive="active">
-      {{ 'app.navigation.start' | translate }}
-    </a>
-    <a mat-menu-item routerLink="/admin/overview" routerLinkActive="active">
-      {{ 'app.navigation.adminOverview' | translate }}
-    </a>
-    <a mat-menu-item routerLink="/delivery" routerLinkActive="active">
-      {{ 'app.navigation.delivery' | translate }}
-    </a>
-    @if (isAdmin()) {
-      <a mat-menu-item routerLink="/admin/fairgate-test" routerLinkActive="active">
-        {{ 'app.navigation.fairgateTest' | translate }}
-      </a>
-    }
-    <a mat-menu-item routerLink="/admin/configuration" routerLinkActive="active">
-      {{ 'app.navigation.configuration' | translate }}
-    </a>
-    @if (isAdmin()) {
-      <a mat-menu-item routerLink="/admin/users" routerLinkActive="active">
-        {{ 'app.navigation.userManagement' | translate }}
-      </a>
-    } @else if (authUserId(); as userId) {
-      <a mat-menu-item [routerLink]="['/admin/users', userId]" routerLinkActive="active">
-        {{ 'app.navigation.myUser' | translate }}
-      </a>
-    }
-    <button mat-menu-item type="button" (click)="logout()">
-      {{ 'app.navigation.logout' | translate }}
-    </button>
-  }
-</mat-menu>
 
 <main>
   <div class="gl-container app-main-content">

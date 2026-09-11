@@ -1,5 +1,3 @@
-@use '../layout-variables' as layout;
-
 .app-header {
   border-bottom: 1px solid var(--mat-sys-outline-variant);
   background: var(--mat-sys-surface);
@@ -11,23 +9,6 @@
 
 .app-header__title {
   font-weight: 500;
-}
-
-.admin-menu-button {
-  margin-left: auto;
-}
-
-.app-navigation {
-  border-bottom: 1px solid var(--mat-sys-outline-variant);
-  background: var(--mat-sys-surface-container-low);
-}
-
-.app-navigation__links {
-  display: none;
-}
-
-.app-navigation a.active {
-  font-weight: 700;
 }
 
 main {
@@ -52,28 +33,8 @@ main {
   display: contents;
 }
 
-@media (min-width: layout.$gl-section-breakpoint) {
-  .app-navigation__links {
-    display: none;
-  }
-}
-
-@media (min-width: 1500px) {
-  .app-navigation .gl-container {
-    max-width: none;
-  }
-
-  .app-navigation__links {
-    display: flex;
-    flex-wrap: nowrap;
-    justify-content: center;
-    gap: var(--gl-space-sm);
-  }
-}
-
 @media print {
   .app-header,
-  .app-navigation,
   .app-main-content > .gl-stack > h1,
   .app-main-content > .gl-stack > [role='alert'] {
     display: none;

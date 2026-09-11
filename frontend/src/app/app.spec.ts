@@ -1,4 +1,5 @@
 import { Component, ChangeDetectionStrategy } from '@angular/core';
+import { DeferBlockState } from '@angular/core/testing';
 import { TestBed } from '@angular/core/testing';
 import { Router } from '@angular/router';
 import { RouterTestingModule } from '@angular/router/testing';
@@ -99,6 +100,9 @@ describe('App', () => {
     const router = TestBed.inject(Router);
     const fixture = TestBed.createComponent(App);
     await router.navigateByUrl('/admin/overview');
+    fixture.detectChanges();
+    const [adminNavigation] = await fixture.getDeferBlocks();
+    await adminNavigation.render(DeferBlockState.Complete);
     fixture.detectChanges();
 
     expect(fixture.componentInstance.isAdmin()).toBe(true);
