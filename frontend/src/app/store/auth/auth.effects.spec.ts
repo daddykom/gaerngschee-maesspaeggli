@@ -40,8 +40,9 @@ describe('loginEffect', () => {
     authService.login.mockReturnValue(of({
       user: { id: 'user-123', email: 'user@example.com', group: 'admin' },
       token: 'jwt-token',
-      group: 'admin',
-      requiredPasswordReset: false,
+         group: 'admin',
+         requiredPasswordReset: false,
+         email: 'user@example.com',
     }));
     const effect$ = TestBed.runInInjectionContext(() => loginEffect());
     const result = firstValueFrom(effect$);
@@ -54,6 +55,7 @@ describe('loginEffect', () => {
         userId: 'user-123',
         group: 'admin',
         requiredPasswordReset: false,
+        email: 'user@example.com',
       }),
     );
     expect(authService.login).toHaveBeenCalledWith('user@example.com', 'secret');

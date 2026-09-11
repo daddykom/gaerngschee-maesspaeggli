@@ -44,6 +44,11 @@ final class RecordingEmailSender implements EmailSenderInterface
         $this->changedRecipient = $recipient;
     }
 
+    public function sendPasswordReset(string $recipient, string $resetUrl): void
+    {
+        $this->recipients[] = $recipient;
+    }
+
     public function sendOrderConfirmation(string $recipient, array $order): void
     {
         if ($this->failOrderConfirmation) {

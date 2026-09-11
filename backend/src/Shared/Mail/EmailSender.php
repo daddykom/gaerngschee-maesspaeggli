@@ -148,6 +148,18 @@ final class EmailSender implements EmailSenderInterface
         $this->sendUserEmail($recipient, 'Deine E-Mail-Adresse wurde geändert', $html);
     }
 
+    public function sendPasswordReset(string $recipient, string $resetUrl): void
+    {
+        $frontendBaseUrl = rtrim(getenv('FRONTEND_BASE_URL') ?: 'http://localhost:4200', '/');
+        $html = $this->twig->render('password-reset.html.twig', [
+            'LOGIN_URL' => $frontendBaseUrl . '/login',
+            'RESET_URL' => $resetUrl,
+            'LOGO_CID' => 'cid:' . self::LOGO_CID,
+        ]);
+
+        $this->sendUserEmail($recipient, 'Passwort zurücksetzen', $html);
+    }
+
     /** @param array<string, mixed> $order */
     public function sendOrderConfirmation(string $recipient, array $order): void
     {

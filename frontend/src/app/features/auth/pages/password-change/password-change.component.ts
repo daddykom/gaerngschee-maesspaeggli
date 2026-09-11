@@ -7,6 +7,7 @@ import { TranslatePipe } from '@ngx-translate/core';
 import { ControlErrorComponent } from '../../../../shared/components/control-error/control-error';
 import { AuthActions } from '../../../../store/auth/auth.actions';
 import { selectAuthPasswordChangeLoading } from '../../../../store/auth/auth.feature';
+import { selectAuthEmail } from '../../../../store/auth/auth.feature';
 
 @Component({
   selector: 'app-password-change',
@@ -18,6 +19,7 @@ import { selectAuthPasswordChangeLoading } from '../../../../store/auth/auth.fea
 export class PasswordChange {
   private readonly store = inject(Store);
   readonly submitting = this.store.selectSignal(selectAuthPasswordChangeLoading);
+  readonly email = this.store.selectSignal(selectAuthEmail);
 
   readonly passwordChangeModel = signal({ newPassword: '', passwordConfirmation: '' });
   readonly passwordChangeForm = form(this.passwordChangeModel, (schema) => {

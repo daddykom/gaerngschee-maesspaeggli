@@ -16,11 +16,12 @@ export const loginEffect = createEffect(
       ofType(AuthActions.login),
       exhaustMap(({ email, password }) =>
         authService.login(email, password).pipe(
-          map(({ token, user, group, requiredPasswordReset }) => AuthActions.loginSuccess({
-            token,
-            userId: user.id,
-            group,
-            requiredPasswordReset,
+           map(({ token, user, group, requiredPasswordReset }) => AuthActions.loginSuccess({
+             token,
+             userId: user.id,
+             group,
+             requiredPasswordReset,
+             email: user.email,
           })),
           catchError((error: HttpErrorResponse) =>
             of(AuthActions.loginFailure({
@@ -126,6 +127,40 @@ export const passwordChangeEffect = createEffect(
   { functional: true },
 );
 
+export const passwordResetRequestEffect = createEffect(
+  (actions$ = inject(Actions), authService = inject(AuthService)) => actions$.pipe(
+    ofType(AuthActions.passwordResetRequest),
+    exhaustMap(({ email }) => authService.requestPasswordReset(email).pipe(
+      map(() => AuthActions.passwordResetRequestSuccess()),
+      catchError((error: HttpErrorResponse) => of(AuthActions.passwordResetRequestFailure({
+        errorCode: typeof error.error?.error?.code === 'string' ? error.error.error.code : 'PASSWORD_RESET_REQUEST_FAILED',
+      }))),
+    )),
+  ),
+  { functional: true },
+);
+
+export const passwordResetEffect = createEffect(
+  (actions$ = inject(Actions), authService = inject(AuthService)) => actions$.pipe(
+    ofType(AuthActions.passwordReset),
+    exhaustMap(({ token, password }) => authService.resetPassword(token, password).pipe(
+      map(() => AuthActions.passwordResetSuccess()),
+      catchError((error: HttpErrorResponse) => of(AuthActions.passwordResetFailure({
+        errorCode: typeof error.error?.error?.code === 'string' ? error.error.error.code : 'PASSWORD_RESET_FAILED',
+      }))),
+    )),
+  ),
+  { functional: true },
+);
+
+export const navigateOnPasswordResetSuccessEffect = createEffect(
+  (actions$ = inject(Actions)) => actions$.pipe(
+    ofType(AuthActions.passwordResetSuccess),
+    map(() => NavigationActions.navigate({ target: '/login' })),
+  ),
+  { functional: true },
+);
+
 export const navigateOnPasswordChangeSuccessEffect = createEffect(
   (actions$ = inject(Actions), store = inject(Store, { optional: true })) => actions$.pipe(
     ofType(AuthActions.passwordChangeSuccess),
@@ -153,20 +188,30 @@ export const authNotificationEffect = createEffect(
     ofType(
       AuthActions.loginFailure,
       AuthActions.passwordChangeFailure,
+      AuthActions.passwordResetRequestFailure,
+      AuthActions.passwordResetFailure,
       AuthActions.registrationLoginFailure,
     ),
     map((action) => NotificationActions.show({
       variant: 'error',
-      titleKey: action.type === AuthActions.passwordChangeFailure.type
-        ? 'app.passwordChange.heading'
-        : action.type === AuthActions.registrationLoginFailure.type
-          ? 'app.anmeldung.errorTitle'
-          : 'app.auth.loginErrorTitle',
-      messageKey: action.type === AuthActions.passwordChangeFailure.type
-        ? `app.passwordChange.errors.${action.errorCode}`
-        : action.type === AuthActions.registrationLoginFailure.type
-          ? 'app.anmeldung.registrationTokenError'
-          : `app.auth.errors.${action.errorCode}`,
+       titleKey: action.type === AuthActions.passwordChangeFailure.type
+         ? 'app.passwordChange.heading'
+         : action.type === AuthActions.registrationLoginFailure.type
+           ? 'app.anmeldung.errorTitle'
+           : action.type === AuthActions.passwordResetRequestFailure.type
+             ? 'app.passwordResetRequest.title'
+             : action.type === AuthActions.passwordResetFailure.type
+               ? 'app.passwordReset.title'
+               : 'app.auth.loginErrorTitle',
+       messageKey: action.type === AuthActions.passwordChangeFailure.type
+         ? `app.passwordChange.errors.${action.errorCode}`
+         : action.type === AuthActions.passwordResetRequestFailure.type
+           ? 'app.passwordResetRequest.error'
+           : action.type === AuthActions.passwordResetFailure.type
+             ? 'app.passwordReset.errors.invalid'
+             : action.type === AuthActions.registrationLoginFailure.type
+               ? 'app.anmeldung.registrationTokenError'
+               : `app.auth.errors.${action.errorCode}`,
         ...(action.type === AuthActions.registrationLoginFailure.type
           ? { preserveOnRoutes: ['/start'] }
         : {}),
@@ -183,6 +228,9 @@ export const authEffects = {
   clearPersistedAuthEffect,
   navigateOnLoginSuccessEffect,
   passwordChangeEffect,
+  passwordResetRequestEffect,
+  passwordResetEffect,
+  navigateOnPasswordResetSuccessEffect,
   navigateOnPasswordChangeSuccessEffect,
   logoutEffect,
   authNotificationEffect,
