@@ -1,6 +1,6 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { provideTranslateService } from '@ngx-translate/core';
-import { provideMockStore } from '@ngrx/store/testing';
+import { MockStore, provideMockStore } from '@ngrx/store/testing';
 import { initialState } from '../../../../store/auth/auth.state';
 import { initialState as frontendConfigInitialState } from '../../../../store/frontend-config/frontend-config.state';
 import { initialState as orderInitialState } from '../../../../store/order/order.state';
@@ -8,6 +8,7 @@ import { OrderComponent } from './order.component';
 
 describe('OrderComponent', () => {
   let fixture: ComponentFixture<OrderComponent>;
+  let store: MockStore;
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
@@ -31,6 +32,7 @@ describe('OrderComponent', () => {
     }).compileComponents();
 
     fixture = TestBed.createComponent(OrderComponent);
+    store = TestBed.inject(MockStore);
     fixture.detectChanges();
   });
 
@@ -52,6 +54,35 @@ describe('OrderComponent', () => {
 
     expect(component.childField(0)().touched()).toBe(true);
   });
+
+  it('accepts absolute HTTPS Fairgate URLs', () => {
+    store.setState({
+      auth: { ...initialState, fairgateUserExists: false },
+      frontendConfig: {
+        ...frontendConfigInitialState,
+        publicConfigs: [{ variableName: 'fairgate_url', value: 'https://fairgate.example/login' }],
+      },
+      order: orderInitialState,
+    });
+    fixture.detectChanges();
+
+    expect(fixture.componentInstance.fairgateUrl()).toBe('https://fairgate.example/login');
+  });
+
+  it.each(['http://fairgate.example', 'javascript:alert(1)', 'https://user:password@fairgate.example'])
+    ('rejects unsafe Fairgate URL: %s', (value) => {
+      store.setState({
+        auth: { ...initialState, fairgateUserExists: false },
+        frontendConfig: {
+          ...frontendConfigInitialState,
+          publicConfigs: [{ variableName: 'fairgate_url', value }],
+        },
+        order: orderInitialState,
+      });
+      fixture.detectChanges();
+
+      expect(fixture.componentInstance.fairgateUrl()).toBeNull();
+    });
 
   it('shows only children when the household has children', () => {
     const personGroups = fixture.nativeElement.querySelectorAll('.person-group');

@@ -82,7 +82,15 @@ export class OrderComponent {
   readonly displayChildrenCount = computed(() => this.model().childrenCount);
   readonly fairgateUrl = computed(() => {
     const config = this.publicConfigs().find(({ variableName }) => variableName === 'fairgate_url');
-    return typeof config?.value === 'string' ? config.value : null;
+    if (typeof config?.value !== 'string') {
+      return null;
+    }
+    try {
+      const url = new URL(config.value);
+      return url.protocol === 'https:' && !url.username && !url.password ? url.href : null;
+    } catch {
+      return null;
+    }
   });
   readonly orderLocked = computed(() => ['toDeliver', 'qrcode', 'delivered'].includes(this.currentOrder()?.status ?? ''));
 
