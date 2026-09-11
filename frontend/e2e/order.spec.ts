@@ -74,7 +74,7 @@ test.describe('Order route', () => {
     await expect(page.getByText('Anzahl Personen erfassen')).toBeVisible();
     await expect(page.getByText('Lieber Besteller', { exact: true })).toBeVisible();
     await expect(page.getByText('Wir können Dich leider nicht bei Fairgate finden.')).toBeVisible();
-    await expect(page.getByRole('link', { name: 'hier' })).toHaveAttribute('href', 'https://fairgate.example/');
+    await expect(page.getByRole('link', { name: 'hier' })).toHaveAttribute('href', 'https://fairgate.example');
   });
 
   test('redirects unauthenticated users to the not-found page', async ({ page }) => {

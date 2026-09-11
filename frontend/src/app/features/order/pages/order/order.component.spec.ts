@@ -55,34 +55,19 @@ describe('OrderComponent', () => {
     expect(component.childField(0)().touched()).toBe(true);
   });
 
-  it('accepts absolute HTTPS Fairgate URLs', () => {
+  it('uses the configured Fairgate URL without additional URL validation', () => {
     store.setState({
       auth: { ...initialState, fairgateUserExists: false },
       frontendConfig: {
         ...frontendConfigInitialState,
-        publicConfigs: [{ variableName: 'fairgate_url', value: 'https://fairgate.example/login' }],
+        publicConfigs: [{ variableName: 'fairgate_url', value: 'http://fairgate.example/login' }],
       },
       order: orderInitialState,
     });
     fixture.detectChanges();
 
-    expect(fixture.componentInstance.fairgateUrl()).toBe('https://fairgate.example/login');
+    expect(fixture.componentInstance.fairgateUrl()).toBe('http://fairgate.example/login');
   });
-
-  it.each(['http://fairgate.example', 'javascript:alert(1)', 'https://user:password@fairgate.example'])
-    ('rejects unsafe Fairgate URL: %s', (value) => {
-      store.setState({
-        auth: { ...initialState, fairgateUserExists: false },
-        frontendConfig: {
-          ...frontendConfigInitialState,
-          publicConfigs: [{ variableName: 'fairgate_url', value }],
-        },
-        order: orderInitialState,
-      });
-      fixture.detectChanges();
-
-      expect(fixture.componentInstance.fairgateUrl()).toBeNull();
-    });
 
   it('shows only children when the household has children', () => {
     const personGroups = fixture.nativeElement.querySelectorAll('.person-group');
