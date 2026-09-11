@@ -40,6 +40,17 @@ final class StartRegistrationActionTest extends TestCase
         self::assertSame('CAMPAIGN_NOT_STARTED', json_decode((string) $response->getBody(), true)['error']['code']);
     }
 
+    public function testRejectsEmailAfterCampaignEnd(): void
+    {
+        $pdo = TestDatabase::create();
+        $action = new StartRegistrationAction($this->service(), new RegistrationTokenService($pdo), $this->config($pdo, '2026-08-01', '2026-08-20'), new DateTimeImmutable('2026-08-25 12:00:00', new DateTimeZone('UTC')));
+
+        $response = ($action)($this->request('person@example.com', 'de'), new Response());
+
+        self::assertSame(403, $response->getStatusCode());
+        self::assertSame('CAMPAIGN_ENDED', json_decode((string) $response->getBody(), true)['error']['code']);
+    }
+
     public function testRejectsUnsupportedLanguageBeforeCallingService(): void
     {
         $action = new StartRegistrationAction($this->service(), new RegistrationTokenService(TestDatabase::create()));
@@ -65,7 +76,7 @@ final class StartRegistrationActionTest extends TestCase
         );
     }
 
-    private function config(\PDO $pdo, string $startDate): FrontendConfigRepository
+    private function config(\PDO $pdo, string $startDate, string $endDate = '2026-12-31'): FrontendConfigRepository
     {
         $pdo->prepare(
             'INSERT INTO frontend_config (id, variable_name, value, description, access_group, update_group, label)
@@ -74,6 +85,19 @@ final class StartRegistrationActionTest extends TestCase
             'id' => 'campaign-start-date',
             'variable_name' => 'campaign_start_date',
             'value' => json_encode($startDate, JSON_THROW_ON_ERROR),
+            'description' => '',
+            'access_group' => json_encode(['admin', 'client'], JSON_THROW_ON_ERROR),
+            'update_group' => json_encode(['admin'], JSON_THROW_ON_ERROR),
+            'label' => '',
+        ]);
+
+        $pdo->prepare(
+            'INSERT INTO frontend_config (id, variable_name, value, description, access_group, update_group, label)
+             VALUES (:id, :variable_name, :value, :description, :access_group, :update_group, :label)',
+        )->execute([
+            'id' => 'campaign-end-date',
+            'variable_name' => 'campaign_end_date',
+            'value' => json_encode($endDate, JSON_THROW_ON_ERROR),
             'description' => '',
             'access_group' => json_encode(['admin', 'client'], JSON_THROW_ON_ERROR),
             'update_group' => json_encode(['admin'], JSON_THROW_ON_ERROR),

@@ -206,6 +206,19 @@ final class PublicStartRoutesTest extends TestCase
             'label' => '',
         ]);
 
+        $pdo->prepare(
+            'INSERT INTO frontend_config (id, variable_name, value, description, access_group, update_group, label)
+             VALUES (:id, :variable_name, :value, :description, :access_group, :update_group, :label)',
+        )->execute([
+            'id' => 'campaign-end-date',
+            'variable_name' => 'campaign_end_date',
+            'value' => json_encode('2026-12-31', JSON_THROW_ON_ERROR),
+            'description' => '',
+            'access_group' => json_encode(['admin', 'client'], JSON_THROW_ON_ERROR),
+            'update_group' => json_encode(['admin'], JSON_THROW_ON_ERROR),
+            'label' => '',
+        ]);
+
         return new FrontendConfigRepository($pdo);
     }
 }

@@ -10,6 +10,7 @@ test.describe('Root route', () => {
           { variableName: 'campaign_year', value: '2026' },
           { variableName: 'donation_url', value: 'https://donate.example/maesspaeggli' },
           { variableName: 'campaign_start_date', value: '2000-01-01' },
+          { variableName: 'campaign_end_date', value: '2999-01-01' },
         ]),
       });
     });
@@ -31,12 +32,13 @@ test.describe('Root route', () => {
         body: JSON.stringify([
           { variableName: 'campaign_year', value: '2026' },
           { variableName: 'campaign_start_date', value: '2999-01-01' },
+          { variableName: 'campaign_end_date', value: '2999-12-31' },
         ]),
       });
     });
 
     await page.goto('/');
-    await expect(page.getByText('Die Mässpäggli-Aktion hat noch nicht gestartet.')).toBeVisible();
+    await expect(page.getByText('Die nächste Mässpäggli-Aktion beginnt am 01.01.2999.')).toBeVisible();
     await expect(page.getByRole('link', { name: 'Mässpäggli anfragen' })).toHaveCount(0);
   });
 });

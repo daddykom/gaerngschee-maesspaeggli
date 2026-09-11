@@ -40,8 +40,13 @@ final class StartRegistrationAction
         if (!in_array($locale, self::SUPPORTED_LOCALES, true)) {
             return JsonResponse::error($response, 'UNSUPPORTED_LANGUAGE', 422);
         }
-        if (!(($this->configs ?? new FrontendConfigRepository(Database::getConnection()))->hasCampaignStarted($this->now))) {
-            return JsonResponse::error($response, 'CAMPAIGN_NOT_STARTED', 403);
+        $campaignStatus = ($this->configs ?? new FrontendConfigRepository(Database::getConnection()))->campaignStatus($this->now);
+        if ($campaignStatus !== 'open') {
+            return JsonResponse::error(
+                $response,
+                $campaignStatus === 'ended' ? 'CAMPAIGN_ENDED' : 'CAMPAIGN_NOT_STARTED',
+                403,
+            );
         }
 
         try {

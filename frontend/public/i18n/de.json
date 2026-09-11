@@ -17,7 +17,9 @@
         "title": "Mässpäggli erhalten",
         "text": "Du benötigst Mässpäggli für deine Familie? Starte hier deine Anfrage für {{year}}.",
         "action": "Mässpäggli anfragen",
-        "notStarted": "Die Mässpäggli-Aktion hat noch nicht gestartet. Sie beginnt am {{date}}."
+        "notStarted": "Die nächste Mässpäggli-Aktion beginnt am {{date}}.",
+        "ended": "Die Mässpäggli-Aktion ist bereits beendet.",
+        "unavailable": "Die Mässpäggli-Aktion ist momentan nicht verfügbar."
       }
     },
     "publicConfiguration": {

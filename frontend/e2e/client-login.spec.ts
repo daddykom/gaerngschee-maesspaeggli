@@ -9,6 +9,8 @@ test.describe('Client login route', () => {
         body: JSON.stringify([
           { variableName: 'campaign_year', value: '2026' },
           { variableName: 'donation_url', value: 'https://donate.example/maesspaeggli' },
+          { variableName: 'campaign_start_date', value: '2000-01-01' },
+          { variableName: 'campaign_end_date', value: '2999-01-01' },
         ]),
       });
     });
