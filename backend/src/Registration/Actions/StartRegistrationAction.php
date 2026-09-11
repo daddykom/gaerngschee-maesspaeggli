@@ -4,8 +4,11 @@ declare(strict_types=1);
 
 namespace App\Registration\Actions;
 
+use App\Configuration\Data\FrontendConfigRepository;
 use App\Registration\Services\AnmeldungService;
 use App\Registration\Services\RegistrationTokenService;
+use DateTimeImmutable;
+use App\Shared\Database\Database;
 use App\Shared\Mail\EmailSender;
 use App\Shared\Http\JsonRequest;
 use App\Shared\Http\JsonResponse;
@@ -20,6 +23,8 @@ final class StartRegistrationAction
     public function __construct(
         private readonly ?AnmeldungService $anmeldung = null,
         private readonly ?RegistrationTokenService $tokens = null,
+        private readonly ?FrontendConfigRepository $configs = null,
+        private readonly ?DateTimeImmutable $now = null,
     )
     {
     }
@@ -34,6 +39,9 @@ final class StartRegistrationAction
         }
         if (!in_array($locale, self::SUPPORTED_LOCALES, true)) {
             return JsonResponse::error($response, 'UNSUPPORTED_LANGUAGE', 422);
+        }
+        if (!(($this->configs ?? new FrontendConfigRepository(Database::getConnection()))->hasCampaignStarted($this->now))) {
+            return JsonResponse::error($response, 'CAMPAIGN_NOT_STARTED', 403);
         }
 
         try {

@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Tests\Registration;
 
+use App\Configuration\Data\FrontendConfigRepository;
 use App\Registration\Actions\StartRegistrationAction;
 use App\Registration\Services\AnmeldungService;
 use App\Registration\Services\RegistrationTokenService;
@@ -12,17 +13,31 @@ use Tests\Support\TestDatabase;
 use PHPUnit\Framework\TestCase;
 use Slim\Psr7\Response;
 use Slim\Psr7\Stream;
+use DateTimeImmutable;
+use DateTimeZone;
 
 final class StartRegistrationActionTest extends TestCase
 {
     public function testAcceptsValidEmailAndLanguage(): void
     {
-        $action = new StartRegistrationAction($this->service(), new RegistrationTokenService(TestDatabase::create()));
+        $pdo = TestDatabase::create();
+        $action = new StartRegistrationAction($this->service(), new RegistrationTokenService($pdo), $this->config($pdo, '2026-08-01'), new DateTimeImmutable('2026-08-25 12:00:00', new DateTimeZone('UTC')));
 
         $response = ($action)($this->request('person@example.com', 'de'), new Response());
 
         self::assertSame(202, $response->getStatusCode());
         self::assertSame(['sent' => true], json_decode((string) $response->getBody(), true));
+    }
+
+    public function testRejectsEmailBeforeCampaignStart(): void
+    {
+        $pdo = TestDatabase::create();
+        $action = new StartRegistrationAction($this->service(), new RegistrationTokenService($pdo), $this->config($pdo, '2026-10-01'), new DateTimeImmutable('2026-08-25 12:00:00', new DateTimeZone('UTC')));
+
+        $response = ($action)($this->request('person@example.com', 'de'), new Response());
+
+        self::assertSame(403, $response->getStatusCode());
+        self::assertSame('CAMPAIGN_NOT_STARTED', json_decode((string) $response->getBody(), true)['error']['code']);
     }
 
     public function testRejectsUnsupportedLanguageBeforeCallingService(): void
@@ -48,6 +63,24 @@ final class StartRegistrationActionTest extends TestCase
                 public function sendStoredEmail(string $recipient, string $subject, string $html, string $text): void {}
             },
         );
+    }
+
+    private function config(\PDO $pdo, string $startDate): FrontendConfigRepository
+    {
+        $pdo->prepare(
+            'INSERT INTO frontend_config (id, variable_name, value, description, access_group, update_group, label)
+             VALUES (:id, :variable_name, :value, :description, :access_group, :update_group, :label)',
+        )->execute([
+            'id' => 'campaign-start-date',
+            'variable_name' => 'campaign_start_date',
+            'value' => json_encode($startDate, JSON_THROW_ON_ERROR),
+            'description' => '',
+            'access_group' => json_encode(['admin', 'client'], JSON_THROW_ON_ERROR),
+            'update_group' => json_encode(['admin'], JSON_THROW_ON_ERROR),
+            'label' => '',
+        ]);
+
+        return new FrontendConfigRepository($pdo);
     }
 
     private function request(string $email, string $language): \Psr\Http\Message\ServerRequestInterface

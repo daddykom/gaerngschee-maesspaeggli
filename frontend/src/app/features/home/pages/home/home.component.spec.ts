@@ -18,6 +18,7 @@ describe('HomeComponent', () => {
               publicConfigs: [
                 { variableName: 'campaign_year', value: '2026' },
                 { variableName: 'donation_url', value: 'https://donate.example/maesspaeggli' },
+                { variableName: 'campaign_start_date', value: '2000-01-01' },
               ],
             },
           },
@@ -42,5 +43,16 @@ describe('HomeComponent', () => {
     fixture.detectChanges();
 
     expect(fixture.componentInstance.donationUrl()).toBeNull();
+  });
+
+  it('does not start the campaign before the configured start date', () => {
+    const store = TestBed.inject(MockStore);
+    store.setState({ frontendConfig: { publicConfigs: [
+      { variableName: 'campaign_year', value: '2026' },
+      { variableName: 'campaign_start_date', value: '2999-01-01' },
+    ] } });
+    fixture.detectChanges();
+
+    expect(fixture.componentInstance.campaignStarted()).toBe(false);
   });
 });

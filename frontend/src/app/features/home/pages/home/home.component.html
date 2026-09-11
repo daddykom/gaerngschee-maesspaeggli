@@ -31,9 +31,15 @@
           <h2 id="receive-heading">{{ 'app.home.receive.title' | translate }}</h2>
           <p>{{ 'app.home.receive.text' | translate: { year } }}</p>
         </div>
-        <a mat-flat-button color="primary" routerLink="/start">
-          {{ 'app.home.receive.action' | translate }}
-        </a>
+        @if (campaignStarted()) {
+          <a mat-flat-button color="primary" routerLink="/start">
+            {{ 'app.home.receive.action' | translate }}
+          </a>
+        } @else {
+          <p role="status">
+            {{ 'app.home.receive.notStarted' | translate: { date: formattedCampaignStartDate() } }}
+          </p>
+        }
       </section>
     </div>
 

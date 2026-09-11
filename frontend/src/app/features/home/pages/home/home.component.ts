@@ -17,6 +17,35 @@ export class HomeComponent {
 
   readonly publicConfigs = this.store.selectSignal(selectFrontendPublicConfigs);
   readonly campaignYear = computed(() => this.configValue('campaign_year'));
+  readonly campaignStartDate = computed(() => this.configValue('campaign_start_date'));
+  readonly campaignStarted = computed(() => {
+    const value = this.campaignStartDate();
+    if (value === null || !/^\d{4}-\d{2}-\d{2}$/.test(value)) {
+      return false;
+    }
+
+    const currentDate = new Intl.DateTimeFormat('en-CA', {
+      year: 'numeric',
+      month: '2-digit',
+      day: '2-digit',
+      timeZone: 'Europe/Zurich',
+    }).format(new Date());
+
+    return currentDate >= value;
+  });
+  readonly formattedCampaignStartDate = computed(() => {
+    const value = this.campaignStartDate();
+    if (value === null) {
+      return null;
+    }
+
+    const [year, month, day] = value.split('-').map(Number);
+    const date = new Date(Date.UTC(year, month - 1, day, 12));
+
+    return Number.isNaN(date.getTime())
+      ? null
+      : new Intl.DateTimeFormat('de-CH', { dateStyle: 'long', timeZone: 'Europe/Zurich' }).format(date);
+  });
   readonly donationUrl = computed(() => {
     const value = this.configValue('donation_url');
     if (value === null) {
