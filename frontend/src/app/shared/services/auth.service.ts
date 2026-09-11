@@ -24,6 +24,15 @@ export interface RegistrationLoginResponse extends LoginResponse {
   salutation: string;
 }
 
+export interface SessionStatusResponse {
+  expiresAt: string;
+  secondsRemaining: number;
+}
+
+export interface SessionRefreshResponse extends SessionStatusResponse {
+  token: string;
+}
+
 export interface ApiErrorResponse {
   error: {
     code: string;
@@ -51,6 +60,14 @@ export class AuthService {
 
   logout(): Observable<void> {
     return this.http.post<void>(`${environment.apiUrl}/auth/logout`, {}, { withCredentials: true });
+  }
+
+  sessionStatus(): Observable<SessionStatusResponse> {
+    return this.http.get<SessionStatusResponse>(`${environment.apiUrl}/auth/session-status`, { withCredentials: true });
+  }
+
+  refreshSession(): Observable<SessionRefreshResponse> {
+    return this.http.post<SessionRefreshResponse>(`${environment.apiUrl}/auth/session-refresh`, {}, { withCredentials: true });
   }
 
   changePassword(password: string): Observable<{ user: AuthUser }> {

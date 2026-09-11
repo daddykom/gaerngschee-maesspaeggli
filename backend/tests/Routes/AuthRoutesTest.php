@@ -157,7 +157,7 @@ final class AuthRoutesTest extends TestCase
             'password' => 'new-secret',
         ]));
 
-        self::assertSame(404, $response->getStatusCode());
+        self::assertSame(401, $response->getStatusCode());
     }
 
     public function testRegistrationTokenCreatesClientAndReturnsFairgateSummary(): void

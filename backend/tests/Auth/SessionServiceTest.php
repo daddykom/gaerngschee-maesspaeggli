@@ -53,4 +53,30 @@ final class SessionServiceTest extends TestCase
         self::assertNull($service->getUserId());
         self::assertNull($service->getGroup());
     }
+
+    public function testSessionStatusUsesTheConfiguredIdleTimeout(): void
+    {
+        putenv('SESSION_IDLE_TIMEOUT=60');
+        $service = new SessionService();
+        $service->setUser('user-123', 'admin');
+
+        $status = $service->getStatus();
+
+        self::assertNotNull($status);
+        self::assertGreaterThan(0, $status['secondsRemaining']);
+        self::assertLessThanOrEqual(60, $status['secondsRemaining']);
+        putenv('SESSION_IDLE_TIMEOUT');
+    }
+
+    public function testInactiveSessionIsExpired(): void
+    {
+        putenv('SESSION_IDLE_TIMEOUT=60');
+        $service = new SessionService();
+        $service->setUser('user-123', 'admin');
+        $_SESSION['last_activity'] = time() - 61;
+
+        self::assertNull($service->getStatus());
+        self::assertNull($service->getUserId());
+        putenv('SESSION_IDLE_TIMEOUT');
+    }
 }

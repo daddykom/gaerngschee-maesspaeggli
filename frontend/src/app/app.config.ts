@@ -17,6 +17,7 @@ import { adminOverviewFeature } from './store/admin-overview/admin-overview.feat
 import { adminUsersEffects } from './store/admin-users/admin-users.effects';
 import { adminUsersFeature } from './store/admin-users/admin-users.feature';
 import { authTokenInterceptor } from './shared/interceptors/auth-token.interceptor';
+import { authSessionInterceptor } from './shared/interceptors/auth-session.interceptor';
 import { navigationEffects } from './store/navigation/navigation.effects';
 import { notificationEffects } from './store/notification/notification.effects';
 import { notificationFeature } from './store/notification/notification.feature';
@@ -33,7 +34,7 @@ import { deliveryFeature } from './store/delivery/delivery.feature';
 export const appConfig: ApplicationConfig = {
   providers: [
     provideBrowserGlobalErrorListeners(),
-    provideHttpClient(withXhr(), withInterceptors([authTokenInterceptor])),
+    provideHttpClient(withXhr(), withInterceptors([authTokenInterceptor, authSessionInterceptor])),
     provideRouter(appRoutes),
     provideStore(),
     provideState(startFeature),

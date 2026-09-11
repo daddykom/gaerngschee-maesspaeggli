@@ -23,7 +23,11 @@ describe('authReducer', () => {
       fairgateUserExists: null,
       childrenCount: null,
       adultsCount: null,
-      salutation: null,
+       salutation: null,
+       sessionExpiresAt: null,
+       sessionSecondsRemaining: null,
+       sessionWarningVisible: false,
+       sessionRefreshLoading: false,
     });
   });
 
@@ -52,7 +56,11 @@ describe('authReducer', () => {
       fairgateUserExists: null,
       childrenCount: null,
       adultsCount: null,
-      salutation: null,
+       salutation: null,
+       sessionExpiresAt: null,
+       sessionSecondsRemaining: null,
+       sessionWarningVisible: false,
+       sessionRefreshLoading: false,
     });
   });
 
@@ -76,7 +84,11 @@ describe('authReducer', () => {
       fairgateUserExists: null,
       childrenCount: null,
       adultsCount: null,
-      salutation: null,
+       salutation: null,
+       sessionExpiresAt: null,
+       sessionSecondsRemaining: null,
+       sessionWarningVisible: false,
+       sessionRefreshLoading: false,
     });
   });
 
@@ -96,7 +108,11 @@ describe('authReducer', () => {
         fairgateUserExists: null,
         childrenCount: null,
         adultsCount: null,
-        salutation: null,
+         salutation: null,
+         sessionExpiresAt: null,
+         sessionSecondsRemaining: null,
+         sessionWarningVisible: false,
+         sessionRefreshLoading: false,
       },
       AuthActions.logoutRequested({ redirectTo: '/login' }),
     );
