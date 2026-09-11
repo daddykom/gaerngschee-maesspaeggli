@@ -1,0 +1,48 @@
+@use '../../../../layout-variables' as layout;
+
+:host {
+  display: contents;
+}
+
+.admin-menu-button {
+  margin-left: auto;
+}
+
+.app-navigation {
+  border-bottom: 1px solid var(--mat-sys-outline-variant);
+  background: var(--mat-sys-surface-container-low);
+}
+
+.app-navigation__links {
+  display: none;
+}
+
+.app-navigation a.active {
+  font-weight: 700;
+}
+
+@media (min-width: layout.$gl-section-breakpoint) {
+  .app-navigation__links {
+    display: none;
+  }
+}
+
+@media (min-width: 1500px) {
+  .app-navigation .gl-container {
+    max-width: none;
+  }
+
+  .app-navigation__links {
+    display: flex;
+    flex-wrap: nowrap;
+    justify-content: center;
+    gap: var(--gl-space-sm);
+  }
+}
+
+@media print {
+  .admin-menu-button,
+  .app-navigation {
+    display: none;
+  }
+}

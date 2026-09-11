@@ -1,31 +1,22 @@
 import { ChangeDetectionStrategy, Component, computed, inject } from '@angular/core';
-import { MatButtonModule } from '@angular/material/button';
-import { MatDividerModule } from '@angular/material/divider';
-import { MatIconModule } from '@angular/material/icon';
-import { MatMenuModule } from '@angular/material/menu';
-import { MatToolbarModule } from '@angular/material/toolbar';
-import { ActivatedRoute, NavigationEnd, Router, RouterLink, RouterLinkActive, RouterOutlet } from '@angular/router';
+import { ActivatedRoute, NavigationEnd, Router, RouterLink, RouterOutlet } from '@angular/router';
 import { Store } from '@ngrx/store';
 import { TranslatePipe } from '@ngx-translate/core';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { filter, startWith } from 'rxjs';
 import { InfoBoxComponent } from './shared/components/info-box/info-box';
 import { AuthActions } from './store/auth/auth.actions';
-import { selectAuthGroup, selectAuthToken, selectAuthUserId } from './store/auth/auth.feature';
+import { selectAuthGroup, selectAuthToken } from './store/auth/auth.feature';
 import { SessionActions } from './store/auth/session.actions';
 import { selectNotification } from './store/notification/notification.feature';
 import { selectFrontendPublicConfigStatus } from './store/frontend-config/frontend-config.feature';
+import { AdminNavigationComponent } from './shared/components/admin-navigation/admin-navigation';
 
 @Component({
   imports: [
     RouterOutlet,
     RouterLink,
-    RouterLinkActive,
-    MatToolbarModule,
-    MatButtonModule,
-    MatDividerModule,
-    MatMenuModule,
-    MatIconModule,
+    AdminNavigationComponent,
     TranslatePipe,
     InfoBoxComponent,
   ],
@@ -51,7 +42,6 @@ export class App {
   readonly notification = this.store.selectSignal(selectNotification);
   readonly publicConfigStatus = this.store.selectSignal(selectFrontendPublicConfigStatus);
   readonly authGroup = this.store.selectSignal(selectAuthGroup);
-  readonly authUserId = this.store.selectSignal(selectAuthUserId);
   readonly isAdmin = computed(() => this.authGroup() === 'admin');
 
   constructor() {

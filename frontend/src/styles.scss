@@ -20,7 +20,15 @@ $gaerngschee-theme: mat.define-theme(
 @include mat.system-level-colors($gaerngschee-theme);
 
 html {
-  @include mat.all-component-themes($gaerngschee-theme);
+  @include mat.button-theme($gaerngschee-theme);
+  @include mat.checkbox-theme($gaerngschee-theme);
+  @include mat.dialog-theme($gaerngschee-theme);
+  @include mat.divider-theme($gaerngschee-theme);
+  @include mat.form-field-theme($gaerngschee-theme);
+  @include mat.icon-theme($gaerngschee-theme);
+  @include mat.input-theme($gaerngschee-theme);
+  @include mat.menu-theme($gaerngschee-theme);
+  @include mat.select-theme($gaerngschee-theme);
   @include mat.typography-hierarchy($gaerngschee-theme);
   height: 100%;
   font-family: 'Inter', sans-serif;
