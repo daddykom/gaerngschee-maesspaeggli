@@ -92,5 +92,8 @@
   },
   "nx": {
     "includedScripts": []
+  },
+  "overrides": {
+    "smol-toml": "1.8.0"
   }
 }
