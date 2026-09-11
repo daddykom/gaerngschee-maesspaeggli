@@ -77,7 +77,8 @@ describe('Login', () => {
     forgotPassword.click();
 
     expect(store.dispatch).toHaveBeenCalledWith({
-      type: '[Auth] Forgot Password',
+      type: '[Navigation] Navigate',
+      target: '/password-reset-request',
     });
   });
 });

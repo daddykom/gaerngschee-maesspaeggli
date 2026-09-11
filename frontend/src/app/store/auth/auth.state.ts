@@ -22,6 +22,7 @@ export interface AuthState {
   sessionSecondsRemaining: number | null;
   sessionWarningVisible: boolean;
   sessionRefreshLoading: boolean;
+  email: string | null;
 }
 
 export const initialState: AuthState = {
@@ -43,4 +44,5 @@ export const initialState: AuthState = {
   sessionSecondsRemaining: null,
   sessionWarningVisible: false,
   sessionRefreshLoading: false,
+  email: null,
 };

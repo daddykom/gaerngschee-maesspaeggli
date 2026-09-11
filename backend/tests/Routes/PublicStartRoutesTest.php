@@ -149,9 +149,13 @@ final class PublicStartRoutesTest extends TestCase
                     {
                     }
 
-                     public function sendUserEmailChanged(string $recipient): void
-                     {
-                     }
+                      public function sendUserEmailChanged(string $recipient): void
+                      {
+                      }
+
+                      public function sendPasswordReset(string $recipient, string $resetUrl): void
+                      {
+                      }
 
                       public function sendOrderConfirmation(string $recipient, array $order): void
                       {
@@ -174,9 +178,13 @@ final class PublicStartRoutesTest extends TestCase
                 {
                 }
 
-                 public function sendUserEmailChanged(string $recipient): void
-                 {
-                 }
+                  public function sendUserEmailChanged(string $recipient): void
+                  {
+                  }
+
+                  public function sendPasswordReset(string $recipient, string $resetUrl): void
+                  {
+                  }
 
                   public function sendOrderConfirmation(string $recipient, array $order): void
                   {
