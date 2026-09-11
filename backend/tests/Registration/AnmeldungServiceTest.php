@@ -31,4 +31,15 @@ final class AnmeldungServiceTest extends TestCase
         $service->sendRegistrationLink('invalid', 'http://localhost:4200/client-login?token=test');
         self::assertSame([], $sender->recipients);
     }
+
+    public function testOrderStatusEmailIsSent(): void
+    {
+        $sender = new RecordingEmailSender();
+        $service = new AnmeldungService($sender);
+
+        $service->sendOrderStatus('person@example.com', 'qrcode');
+
+        self::assertSame(['person@example.com'], $sender->recipients);
+        self::assertSame(['qrcode'], $sender->orderStatuses);
+    }
 }

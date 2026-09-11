@@ -23,4 +23,14 @@ final class AnmeldungService
 
         $this->emailSender->sendAnmeldung($email, AnmeldungMailVariant::ClientOrder, $locale, $loginUrl);
     }
+
+    public function sendOrderStatus(string $email, string $status, string $locale = 'de'): void
+    {
+        $email = strtolower(trim($email));
+        if (filter_var($email, FILTER_VALIDATE_EMAIL) === false) {
+            throw new InvalidArgumentException('Invalid email address.');
+        }
+
+        $this->emailSender->sendOrderStatus($email, $status, $locale);
+    }
 }

@@ -58,6 +58,20 @@ final class OrderRepository
         ];
     }
 
+    public function findStatusForEmailAndYear(string $email, int $year): ?string
+    {
+        $statement = $this->pdo->prepare(
+            'SELECT orders.status
+             FROM orders
+             INNER JOIN users ON users.id = orders.user_id
+             WHERE users.email = :email AND orders.year = :year',
+        );
+        $statement->execute(['email' => strtolower(trim($email)), 'year' => $year]);
+        $status = $statement->fetchColumn();
+
+        return $status === false ? null : (string) $status;
+    }
+
     /** @return list<array{order: array<string, mixed>, email: string}> */
     public function findProvisionalWithUsers(): array
     {
