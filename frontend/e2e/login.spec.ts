@@ -29,10 +29,19 @@ test.describe('Login route', () => {
     await expect(page.getByRole('button', { name: 'Administrationsmenü öffnen' })).toBeVisible();
 
     await page.getByRole('button', { name: 'Administrationsmenü öffnen' }).click();
+    await expect(page.getByRole('menuitem', { name: 'Home' })).toBeVisible();
     await expect(page.getByRole('menuitem', { name: 'Startseite' })).toBeVisible();
     await expect(page.getByRole('menuitem', { name: 'Admin-Übersicht' })).toBeVisible();
     await expect(page.getByRole('menuitem', { name: 'Abmelden' })).toBeVisible();
 
+    await page.getByRole('menuitem', { name: 'Home' }).click();
+    await page.waitForURL('**/');
+    await expect(page.locator('.header-logo-link')).toHaveAttribute('href', '/');
+
+    await page.locator('.header-logo-link').click();
+    await expect(page).toHaveURL(/\/$/);
+
+    await page.getByRole('button', { name: 'Administrationsmenü öffnen' }).click();
     await page.getByRole('menuitem', { name: 'Abmelden' }).click();
     await page.waitForURL('**/login');
 

@@ -312,6 +312,7 @@
     "navigation": {
       "menuLabel": "Administrationsmenü",
       "openMenu": "Administrationsmenü öffnen",
+      "home": "Home",
       "start": "Startseite",
       "adminOverview": "Admin-Übersicht",
       "delivery": "Auslieferung",

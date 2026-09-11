@@ -1,10 +1,12 @@
 <header class="app-header">
   <div class="gl-container">
     <div class="app-header__content gl-cluster">
-      <img src="/android-chrome-512x512.png" [alt]="'app.title' | translate" class="header-logo" />
+      <a routerLink="/" [attr.aria-label]="'app.navigation.home' | translate" class="header-logo-link">
+        <img src="/android-chrome-512x512.png" [alt]="'app.title' | translate" class="header-logo" />
+      </a>
       <span class="app-header__title">{{ 'app.title' | translate }}</span>
 
-      @if (isAdminRoute()) {
+      @if (isAdmin()) {
         <button
           mat-icon-button
           type="button"
@@ -20,9 +22,12 @@
 </header>
 
 <nav class="app-navigation" aria-label="{{ 'app.navigation.menuLabel' | translate }}">
-  @if (isAdminRoute()) {
+  @if (isAdmin()) {
     <div class="gl-container">
       <div class="app-navigation__links gl-cluster">
+        <a mat-button routerLink="/" routerLinkActive="active" [routerLinkActiveOptions]="{ exact: true }">
+          {{ 'app.navigation.home' | translate }}
+        </a>
         <a mat-button routerLink="/start" routerLinkActive="active">
           {{ 'app.navigation.start' | translate }}
         </a>
@@ -58,7 +63,10 @@
 </nav>
 
 <mat-menu #adminMenu="matMenu" xPosition="before">
-  @if (isAdminRoute()) {
+  @if (isAdmin()) {
+    <a mat-menu-item routerLink="/" routerLinkActive="active" [routerLinkActiveOptions]="{ exact: true }">
+      {{ 'app.navigation.home' | translate }}
+    </a>
     <a mat-menu-item routerLink="/start" routerLinkActive="active">
       {{ 'app.navigation.start' | translate }}
     </a>

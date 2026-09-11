@@ -1,4 +1,4 @@
-import { Component, computed, inject, ChangeDetectionStrategy } from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, inject } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
 import { MatDividerModule } from '@angular/material/divider';
 import { MatIconModule } from '@angular/material/icon';
@@ -63,11 +63,6 @@ export class App {
   logout(): void {
     this.store.dispatch(AuthActions.logoutRequested({ redirectTo: '/login' }));
   }
-
-  readonly isAdminRoute = computed(() => {
-    this.navigation();
-    return this.router.url.startsWith('/admin') || this.router.url.startsWith('/delivery');
-  });
 
   readonly pageTitleKey = computed(() => {
     this.navigation();

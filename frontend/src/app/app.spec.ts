@@ -91,7 +91,7 @@ describe('App', () => {
         ],
         providers: [
           provideTranslateService(),
-          provideMockStore({ initialState: { auth: authInitialState, notification: { current: null } } }),
+          provideMockStore({ initialState: { auth: { ...authInitialState, group: 'admin' }, notification: { current: null } } }),
         ],
       })
       .compileComponents();
@@ -101,9 +101,10 @@ describe('App', () => {
     await router.navigateByUrl('/admin/overview');
     fixture.detectChanges();
 
-    expect(fixture.componentInstance.isAdminRoute()).toBe(true);
+    expect(fixture.componentInstance.isAdmin()).toBe(true);
     expect(fixture.componentInstance.pageTitleKey()).toBe('app.admin.overview.title');
     expect(fixture.nativeElement.querySelector('.admin-menu-button')).toBeTruthy();
+    expect(fixture.nativeElement.querySelector('a[routerLink="/"]')).toBeTruthy();
     expect(fixture.nativeElement.querySelector('main h1')).toBeTruthy();
     expect(fixture.nativeElement.querySelector('main router-outlet')).toBeTruthy();
   });
