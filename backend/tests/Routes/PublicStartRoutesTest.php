@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Tests\Routes;
 
 use App\Configuration\Data\FrontendConfigRepository;
+use App\Registration\Data\OrderRepository;
 use App\Routes\PublicRoutes;
 use App\Registration\Services\AnmeldungService;
 use App\Registration\Services\RegistrationTokenService;
@@ -87,7 +88,7 @@ final class PublicStartRoutesTest extends TestCase
         $pdo = TestDatabase::create();
         $app = AppFactory::create();
         $app->addRoutingMiddleware();
-        PublicRoutes::register($app, $this->service(), new RegistrationTokenService($pdo), $this->campaignConfig($pdo, '2026-08-01'));
+        PublicRoutes::register($app, $this->service(), new RegistrationTokenService($pdo), $this->campaignConfig($pdo, '2026-08-01'), new OrderRepository($pdo));
 
         $response = $app->handle($this->request('person@example.com'));
 
@@ -118,7 +119,7 @@ final class PublicStartRoutesTest extends TestCase
         $pdo = TestDatabase::create();
         $app = AppFactory::create();
         $app->addRoutingMiddleware();
-        PublicRoutes::register($app, $this->service(true), new RegistrationTokenService($pdo), $this->campaignConfig($pdo, '2026-08-01'));
+        PublicRoutes::register($app, $this->service(true), new RegistrationTokenService($pdo), $this->campaignConfig($pdo, '2026-08-01'), new OrderRepository($pdo));
 
         $response = $app->handle($this->request('person@example.com'));
 
@@ -135,6 +136,11 @@ final class PublicStartRoutesTest extends TestCase
             $failToSend
                 ? new class () implements EmailSenderInterface {
                     public function sendAnmeldung(string $recipient, \App\Registration\Services\AnmeldungMailVariant $variant, string $locale = 'de', ?string $loginUrl = null): void
+                    {
+                        throw new \RuntimeException('SMTP failed');
+                    }
+
+                    public function sendOrderStatus(string $recipient, string $status, string $locale = 'de'): void
                     {
                         throw new \RuntimeException('SMTP failed');
                     }
@@ -156,9 +162,13 @@ final class PublicStartRoutesTest extends TestCase
                        public function sendStoredEmail(string $recipient, string $subject, string $html, string $text): void {}
                  }
                 : new class () implements EmailSenderInterface {
-                public function sendAnmeldung(string $recipient, \App\Registration\Services\AnmeldungMailVariant $variant, string $locale = 'de', ?string $loginUrl = null): void
-                {
-                }
+                 public function sendAnmeldung(string $recipient, \App\Registration\Services\AnmeldungMailVariant $variant, string $locale = 'de', ?string $loginUrl = null): void
+                 {
+                 }
+
+                 public function sendOrderStatus(string $recipient, string $status, string $locale = 'de'): void
+                 {
+                 }
 
                 public function sendUserCreated(string $recipient, string $temporaryPassword): void
                 {
@@ -213,6 +223,19 @@ final class PublicStartRoutesTest extends TestCase
             'id' => 'campaign-end-date',
             'variable_name' => 'campaign_end_date',
             'value' => json_encode('2026-12-31', JSON_THROW_ON_ERROR),
+            'description' => '',
+            'access_group' => json_encode(['admin', 'client'], JSON_THROW_ON_ERROR),
+            'update_group' => json_encode(['admin'], JSON_THROW_ON_ERROR),
+            'label' => '',
+        ]);
+
+        $pdo->prepare(
+            'INSERT INTO frontend_config (id, variable_name, value, description, access_group, update_group, label)
+             VALUES (:id, :variable_name, :value, :description, :access_group, :update_group, :label)',
+        )->execute([
+            'id' => 'campaign-year',
+            'variable_name' => 'campaign_year',
+            'value' => json_encode('2026', JSON_THROW_ON_ERROR),
             'description' => '',
             'access_group' => json_encode(['admin', 'client'], JSON_THROW_ON_ERROR),
             'update_group' => json_encode(['admin'], JSON_THROW_ON_ERROR),

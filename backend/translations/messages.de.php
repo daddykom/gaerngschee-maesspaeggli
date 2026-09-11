@@ -18,4 +18,9 @@ return [
     'anmeldung.client-order.button' => 'Jetzt bestellen',
     'anmeldung.client-order.subject' => 'Dein Link zur Mässpäggli-Bestellung',
     'anmeldung.common.ignore' => 'Falls du diese Anfrage nicht ausgelöst hast, kannst du diese E-Mail ignorieren.',
+    'anmeldung.client-order-status.title' => 'Information zu deiner Mässpäggli-Bestellung',
+    'anmeldung.client-order-status.subject' => 'Information zu deiner Mässpäggli-Bestellung',
+    'anmeldung.client-order-status.toDeliver' => 'Deine Bestellung befindet sich bereits im Status «wird für die Ausgabe vorbereitet». Ein neuer Bestelllink kann deshalb nicht erstellt werden.',
+    'anmeldung.client-order-status.qrcode' => 'Wir haben Dir schon einen QR-Code für die Abholung gesandt.',
+    'anmeldung.client-order-status.delivered' => 'Die Mässpäggli wurden bereits ausgeliefert.',
 ];

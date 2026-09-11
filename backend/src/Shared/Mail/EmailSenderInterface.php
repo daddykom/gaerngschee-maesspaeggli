@@ -14,6 +14,8 @@ interface EmailSenderInterface
         ?string $loginUrl = null,
     ): void;
 
+    public function sendOrderStatus(string $recipient, string $status, string $locale = 'de'): void;
+
     public function sendUserCreated(string $recipient, string $temporaryPassword): void;
 
     public function sendUserEmailChanged(string $recipient): void;

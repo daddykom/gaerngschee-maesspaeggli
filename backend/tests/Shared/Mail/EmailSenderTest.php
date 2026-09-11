@@ -82,6 +82,25 @@ final class EmailSenderTest extends TestCase
         );
     }
 
+    public function testSendOrderStatusDoesNotContainALoginLink(): void
+    {
+        $mailer = $this->createMock(MailerInterface::class);
+        $mailer->expects(self::once())
+            ->method('send')
+            ->with(self::callback(static function (Email $email): bool {
+                self::assertSame('Information zu deiner Mässpäggli-Bestellung', $email->getSubject());
+                self::assertStringContainsString('Wir haben Dir schon einen QR-Code für die Abholung gesandt.', $email->getHtmlBody());
+                self::assertStringNotContainsString('http://localhost:4200', $email->getHtmlBody());
+                self::assertStringNotContainsString('Jetzt bestellen', $email->getHtmlBody());
+
+                return true;
+            }));
+
+        $sender = new EmailSender($mailer, 'noreply@example.com', 'Gärngschee-Mässpäggli');
+
+        $sender->sendOrderStatus('person@example.com', 'qrcode');
+    }
+
     public function testSendOrderConfirmationRendersDefinitiveOrder(): void
     {
         $mailer = $this->createMock(MailerInterface::class);

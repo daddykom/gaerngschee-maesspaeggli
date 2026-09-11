@@ -93,6 +93,38 @@ final class EmailSender implements EmailSenderInterface
         }
     }
 
+    public function sendOrderStatus(string $recipient, string $status, string $locale = 'de'): void
+    {
+        if (!in_array($status, ['toDeliver', 'qrcode', 'delivered'], true)) {
+            throw new \InvalidArgumentException('Invalid order status.');
+        }
+        if ($this->translator instanceof LocaleAwareInterface) {
+            $this->translator->setLocale($locale);
+        }
+
+        $html = $this->twig->render('anmeldung/client-order-status.html.twig', [
+            'STATUS_MESSAGE' => $this->translator->trans('anmeldung.client-order-status.' . $status, [], null, $locale),
+            'LOGO_CID' => 'cid:' . self::LOGO_CID,
+        ]);
+        $message = (new Email())
+            ->from(new Address($this->fromAddress, $this->fromName))
+            ->to($recipient)
+            ->subject($this->translator->trans('anmeldung.client-order-status.subject', [], null, $locale))
+            ->text($this->plainText($html))
+            ->html($html)
+            ->embedFromPath(
+                dirname(__DIR__, 3) . '/resources/pictures/gaerngschee-logo.png',
+                self::LOGO_CID,
+                'image/png',
+            );
+
+        try {
+            $this->mailer->send($message);
+        } catch (TransportExceptionInterface $exception) {
+            throw new EmailDeliveryException('The email could not be sent.', 0, $exception);
+        }
+    }
+
     public function sendUserCreated(string $recipient, string $temporaryPassword): void
     {
         $frontendBaseUrl = rtrim(getenv('FRONTEND_BASE_URL') ?: 'http://localhost:4200', '/');
