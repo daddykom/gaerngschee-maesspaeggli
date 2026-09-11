@@ -43,7 +43,7 @@ final class AdminRoutesTest extends TestCase
             (new ServerRequestFactory())->createServerRequest('GET', '/admin/users'),
         );
 
-        self::assertSame(404, $response->getStatusCode());
+        self::assertSame(401, $response->getStatusCode());
     }
 
     public function testAdminCanListUsersWithSession(): void

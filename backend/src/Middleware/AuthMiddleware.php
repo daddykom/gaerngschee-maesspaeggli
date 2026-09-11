@@ -20,14 +20,16 @@ final class AuthMiddleware
         $sessionService = new SessionService();
         $userId = $sessionService->getUserId();
 
-        if ($userId === null) {
+        if ($userId !== null) {
+            $sessionService->touchActivity();
+        } elseif (!$sessionService->hasUserSession()) {
             $jwtService = new JwtService();
             $token = $jwtService->getBearerToken($request);
             $userId = $token === null ? null : $jwtService->getUserIdFromToken($token);
         }
 
         if ($userId === null) {
-            return $this->jsonError('NOT_FOUND', 404);
+            return $this->jsonError('SESSION_EXPIRED', 401);
         }
 
         return $handler->handle($request->withAttribute('user_id', $userId));

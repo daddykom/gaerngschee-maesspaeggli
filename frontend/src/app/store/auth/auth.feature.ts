@@ -1,5 +1,6 @@
 import { createFeature, createReducer, on } from '@ngrx/store';
 import { AuthActions } from './auth.actions';
+import { SessionActions } from './session.actions';
 import { AuthState, initialState } from './auth.state';
 
 export const authFeature = createFeature({
@@ -24,6 +25,7 @@ export const authFeature = createFeature({
       loading: false,
       errorCode: null,
     })),
+    on(AuthActions.tokenRefreshed, (state, { token }) => ({ ...state, token })),
     on(AuthActions.loginFailure, (state, { errorCode }) => ({
       ...state,
       token: null,
@@ -83,6 +85,24 @@ export const authFeature = createFeature({
       passwordChangeErrorCode: errorCode,
     })),
     on(AuthActions.logoutRequested, () => initialState),
+    on(SessionActions.statusLoaded, (state, { expiresAt, secondsRemaining }) => ({
+      ...state,
+      sessionExpiresAt: expiresAt,
+      sessionSecondsRemaining: secondsRemaining,
+      sessionWarningVisible: secondsRemaining <= 60,
+    })),
+    on(SessionActions.refreshRequested, (state) => ({ ...state, sessionRefreshLoading: true })),
+    on(SessionActions.refreshSucceeded, (state, { expiresAt, secondsRemaining }) => ({
+      ...state,
+      sessionExpiresAt: expiresAt,
+      sessionSecondsRemaining: secondsRemaining,
+      sessionWarningVisible: false,
+      sessionRefreshLoading: false,
+    })),
+    on(SessionActions.refreshFailed, (state) => ({ ...state, sessionRefreshLoading: false })),
+    on(SessionActions.countdownStarted, (state) => ({ ...state, sessionWarningVisible: true })),
+    on(SessionActions.countdownTick, (state, { secondsRemaining }) => ({ ...state, sessionSecondsRemaining: secondsRemaining })),
+    on(SessionActions.countdownStopped, (state) => ({ ...state, sessionWarningVisible: false })),
   ),
 });
 
@@ -104,4 +124,8 @@ export const {
   selectChildrenCount: selectAuthChildrenCount,
   selectAdultsCount: selectAuthAdultsCount,
   selectSalutation: selectAuthSalutation,
+  selectSessionExpiresAt: selectAuthSessionExpiresAt,
+  selectSessionSecondsRemaining: selectAuthSessionSecondsRemaining,
+  selectSessionWarningVisible: selectAuthSessionWarningVisible,
+  selectSessionRefreshLoading: selectAuthSessionRefreshLoading,
 } = authFeature;

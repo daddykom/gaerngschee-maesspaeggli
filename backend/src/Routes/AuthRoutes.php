@@ -7,6 +7,8 @@ namespace App\Routes;
 use App\Auth\Actions\AuthenticatedPasswordChangeAction;
 use App\Auth\Actions\LoginAction;
 use App\Auth\Actions\LogoutAction;
+use App\Auth\Actions\RefreshSessionAction;
+use App\Auth\Actions\SessionStatusAction;
 use App\Registration\Actions\ClientRegistrationLoginAction;
 use App\Registration\Services\ClientRegistrationLoginService;
 use App\Users\Data\UserRepository;
@@ -44,6 +46,8 @@ final class AuthRoutes
             ));
             $group->post('/login', new LoginAction($userRepository, $jwtService, $sessionService));
             $group->post('/logout', new LogoutAction());
+            $group->get('/session-status', new SessionStatusAction($sessionService));
+            $group->post('/session-refresh', new RefreshSessionAction($sessionService, $jwtService));
         });
     }
 }

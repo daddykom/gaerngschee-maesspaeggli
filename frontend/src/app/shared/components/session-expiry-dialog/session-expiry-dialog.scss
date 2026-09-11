@@ -1,0 +1,22 @@
+:host {
+  display: block;
+}
+
+mat-dialog-actions {
+  gap: var(--gl-space-sm);
+}
+
+button {
+  min-height: 48px;
+}
+
+@media (max-width: 599px) {
+  mat-dialog-actions {
+    flex-direction: column-reverse;
+    align-items: stretch;
+  }
+
+  button {
+    width: 100%;
+  }
+}

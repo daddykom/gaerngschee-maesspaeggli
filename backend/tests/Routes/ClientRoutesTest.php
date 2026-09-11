@@ -133,7 +133,7 @@ final class ClientRoutesTest extends TestCase
     {
         $response = $this->createApp()->handle($this->request('GET'));
 
-        self::assertSame(404, $response->getStatusCode());
+        self::assertSame(401, $response->getStatusCode());
     }
 
     public function testInvalidOrderDataIsRejected(): void

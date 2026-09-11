@@ -7,8 +7,8 @@ test.describe('Integration admin edge cases', () => {
   test('hides admin resources from unauthenticated requests', async ({ page }) => {
     const response = await page.request.get('http://localhost:8082/admin/users');
 
-    expect(response.status()).toBe(404);
-    await expect(response.json()).resolves.toEqual({ error: { code: 'NOT_FOUND', details: [] } });
+    expect(response.status()).toBe(401);
+    await expect(response.json()).resolves.toEqual({ error: { code: 'SESSION_EXPIRED', details: [] } });
   });
 
   test('denies configuration changes for a normal user', async ({ page }) => {

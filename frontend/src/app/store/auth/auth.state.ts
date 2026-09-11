@@ -18,6 +18,10 @@ export interface AuthState {
   childrenCount: number | null;
   adultsCount: number | null;
   salutation: string | null;
+  sessionExpiresAt: string | null;
+  sessionSecondsRemaining: number | null;
+  sessionWarningVisible: boolean;
+  sessionRefreshLoading: boolean;
 }
 
 export const initialState: AuthState = {
@@ -35,4 +39,8 @@ export const initialState: AuthState = {
   childrenCount: persistedAuth.childrenCount ?? null,
   adultsCount: persistedAuth.adultsCount ?? null,
   salutation: persistedAuth.salutation ?? null,
+  sessionExpiresAt: null,
+  sessionSecondsRemaining: null,
+  sessionWarningVisible: false,
+  sessionRefreshLoading: false,
 };
