@@ -1,7 +1,6 @@
 <section class="gl-stack gl-stack--section">
   @if (form(); as order) {
-    <section class="summary-section gl-stack gl-stack--group" aria-labelledby="summary-heading">
-      <h2 id="summary-heading">{{ 'app.order.summary.title' | translate }}</h2>
+    <section class="summary-section gl-stack gl-stack--group">
       <p>{{ 'app.order.summary.description' | translate: { year: orderYear() } }}</p>
       <p>{{ 'app.order.intro' | translate: { adults: order.adultsCount, children: order.childrenCount } }}</p>
 
