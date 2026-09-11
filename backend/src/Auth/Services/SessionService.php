@@ -10,6 +10,7 @@ final class SessionService
     private const USER_ID_KEY = 'user_id';
     private const GROUP_KEY = 'group';
     private const FAIRGATE_USER_EXISTS_KEY = 'fairgate_user_exists';
+    private const CSRF_TOKEN_KEY = 'csrf_token';
     private const LAST_ACTIVITY_KEY = 'last_activity';
 
     public static function configure(): void
@@ -83,6 +84,25 @@ final class SessionService
         $value = $_SESSION[self::FAIRGATE_USER_EXISTS_KEY] ?? null;
 
         return is_bool($value) ? $value : null;
+    }
+
+    public function getCsrfToken(): string
+    {
+        $this->ensureSession();
+        $token = $_SESSION[self::CSRF_TOKEN_KEY] ?? null;
+        if (is_string($token) && $token !== '') {
+            return $token;
+        }
+
+        $token = bin2hex(random_bytes(32));
+        $_SESSION[self::CSRF_TOKEN_KEY] = $token;
+
+        return $token;
+    }
+
+    public function isCsrfTokenValid(string $token): bool
+    {
+        return hash_equals($this->getCsrfToken(), $token);
     }
 
     public function clear(): void
