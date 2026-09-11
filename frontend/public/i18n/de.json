@@ -296,6 +296,8 @@
         "emailLabel": "E-Mail-Adresse",
         "groupLabel": "Gruppe",
         "passwordResetRequired": "Passwort muss neu gesetzt werden",
+        "sendPasswordReset": "Passwort senden",
+        "passwordResetSent": "Der Link zum Zurücksetzen des Passworts wurde an {{recipient}} gesendet.",
         "deleteTitle": "Benutzer löschen",
         "deleteMessage": "Soll dieser Benutzer wirklich gelöscht werden?",
         "deleteConfirm": "Löschen",

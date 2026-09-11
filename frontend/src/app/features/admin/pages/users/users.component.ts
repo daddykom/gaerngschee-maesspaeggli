@@ -44,4 +44,8 @@ export class UsersComponent {
       }
     });
   }
+
+  sendPasswordReset(userId: string): void {
+    this.store.dispatch(AdminUsersActions.sendPasswordReset({ userId }));
+  }
 }

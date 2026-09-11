@@ -57,6 +57,17 @@ export const deleteAdminUserEffect = createEffect(
   { functional: true },
 );
 
+export const sendPasswordResetEffect = createEffect(
+  (actions$ = inject(Actions), service = inject(AdminUsersService)) => actions$.pipe(
+    ofType(AdminUsersActions.sendPasswordReset),
+    exhaustMap(({ userId }) => service.sendPasswordReset(userId).pipe(
+      map(({ emailSentTo }) => AdminUsersActions.sendPasswordResetSuccess({ emailSentTo })),
+      catchError((error: HttpErrorResponse) => of(AdminUsersActions.sendPasswordResetFailure({ errorCode: errorCode(error) }))),
+    )),
+  ),
+  { functional: true },
+);
+
 export const navigateBackAfterUserMutationEffect = createEffect(
   (actions$ = inject(Actions)) => actions$.pipe(
     ofType(AdminUsersActions.createSuccess, AdminUsersActions.updateSuccess),
@@ -71,9 +82,11 @@ export const adminUsersNotificationEffect = createEffect(
       AdminUsersActions.createSuccess,
       AdminUsersActions.updateSuccess,
       AdminUsersActions.deleteSuccess,
+      AdminUsersActions.sendPasswordResetSuccess,
       AdminUsersActions.createFailure,
       AdminUsersActions.updateFailure,
       AdminUsersActions.deleteFailure,
+      AdminUsersActions.sendPasswordResetFailure,
     ),
     map((action) => {
       if (action.type === AdminUsersActions.createSuccess.type) {
@@ -107,6 +120,16 @@ export const adminUsersNotificationEffect = createEffect(
         });
       }
 
+      if (action.type === AdminUsersActions.sendPasswordResetSuccess.type) {
+        return NotificationActions.show({
+          variant: 'success',
+          titleKey: 'app.admin.users.successTitle',
+          messageKey: 'app.admin.users.passwordResetSent',
+          params: { recipient: action.emailSentTo },
+          preserveOnRoutes: ['/admin/users'],
+        });
+      }
+
       return NotificationActions.show({
         variant: 'error',
         titleKey: 'app.admin.users.errorTitle',
@@ -123,6 +146,7 @@ export const adminUsersEffects = {
   createAdminUserEffect,
   updateAdminUserEffect,
   deleteAdminUserEffect,
+  sendPasswordResetEffect,
   navigateBackAfterUserMutationEffect,
   adminUsersNotificationEffect,
 };

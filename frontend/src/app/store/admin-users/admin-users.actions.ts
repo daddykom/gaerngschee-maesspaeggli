@@ -20,5 +20,8 @@ export const AdminUsersActions = createActionGroup({
     Delete: props<{ userId: string }>(),
     'Delete Success': props<{ userId: string }>(),
     'Delete Failure': props<{ errorCode: string }>(),
+    'Send Password Reset': props<{ userId: string }>(),
+    'Send Password Reset Success': props<{ emailSentTo: string }>(),
+    'Send Password Reset Failure': props<{ errorCode: string }>(),
   },
 });

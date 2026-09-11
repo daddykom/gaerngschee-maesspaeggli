@@ -18,6 +18,7 @@ use App\Users\Actions\DeleteUserAction;
 use App\Users\Actions\GetUserAction;
 use App\Users\Actions\ListUsersAction;
 use App\Users\Actions\UpdateUserAction;
+use App\Users\Actions\SendPasswordResetLinkAction;
 use Slim\App;
 use Slim\Routing\RouteCollectorProxy;
 
@@ -48,6 +49,9 @@ final class AdminRoutes
 
             $update = $group->patch('/users/{userId}', new UpdateUserAction($userRepository, $emailSender));
             $update->add(new GroupMiddleware(['admin', 'user'], $userRepository))->add(new AuthMiddleware());
+
+            $passwordReset = $group->post('/users/{userId}/password-reset', new SendPasswordResetLinkAction($userRepository, null, $emailSender));
+            $passwordReset->add(new GroupMiddleware(['admin'], $userRepository))->add(new AuthMiddleware());
 
             $delete = $group->delete('/users/{userId}', new DeleteUserAction($userRepository));
             $delete->add(new GroupMiddleware(['admin'], $userRepository))->add(new AuthMiddleware());
