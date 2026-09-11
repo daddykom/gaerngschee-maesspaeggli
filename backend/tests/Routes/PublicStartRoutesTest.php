@@ -84,9 +84,10 @@ final class PublicStartRoutesTest extends TestCase
 
     public function testStartRequestReturnsNeutralAcceptedResponse(): void
     {
+        $pdo = TestDatabase::create();
         $app = AppFactory::create();
         $app->addRoutingMiddleware();
-        PublicRoutes::register($app, $this->service(), new RegistrationTokenService(TestDatabase::create()));
+        PublicRoutes::register($app, $this->service(), new RegistrationTokenService($pdo), $this->campaignConfig($pdo, '2026-08-01'));
 
         $response = $app->handle($this->request('person@example.com'));
 
@@ -114,9 +115,10 @@ final class PublicStartRoutesTest extends TestCase
 
     public function testStartRequestReturnsServiceError(): void
     {
+        $pdo = TestDatabase::create();
         $app = AppFactory::create();
         $app->addRoutingMiddleware();
-        PublicRoutes::register($app, $this->service(true), new RegistrationTokenService(TestDatabase::create()));
+        PublicRoutes::register($app, $this->service(true), new RegistrationTokenService($pdo), $this->campaignConfig($pdo, '2026-08-01'));
 
         $response = $app->handle($this->request('person@example.com'));
 
@@ -187,5 +189,36 @@ final class PublicStartRoutesTest extends TestCase
             ->createServerRequest('POST', '/public/start')
             ->withHeader('Content-Type', 'application/json')
             ->withBody(new Stream($stream));
+    }
+
+    private function campaignConfig(PDO $pdo, string $startDate): FrontendConfigRepository
+    {
+        $pdo->prepare(
+            'INSERT INTO frontend_config (id, variable_name, value, description, access_group, update_group, label)
+             VALUES (:id, :variable_name, :value, :description, :access_group, :update_group, :label)',
+        )->execute([
+            'id' => 'campaign-start-date',
+            'variable_name' => 'campaign_start_date',
+            'value' => json_encode($startDate, JSON_THROW_ON_ERROR),
+            'description' => '',
+            'access_group' => json_encode(['admin', 'client'], JSON_THROW_ON_ERROR),
+            'update_group' => json_encode(['admin'], JSON_THROW_ON_ERROR),
+            'label' => '',
+        ]);
+
+        $pdo->prepare(
+            'INSERT INTO frontend_config (id, variable_name, value, description, access_group, update_group, label)
+             VALUES (:id, :variable_name, :value, :description, :access_group, :update_group, :label)',
+        )->execute([
+            'id' => 'campaign-end-date',
+            'variable_name' => 'campaign_end_date',
+            'value' => json_encode('2026-12-31', JSON_THROW_ON_ERROR),
+            'description' => '',
+            'access_group' => json_encode(['admin', 'client'], JSON_THROW_ON_ERROR),
+            'update_group' => json_encode(['admin'], JSON_THROW_ON_ERROR),
+            'label' => '',
+        ]);
+
+        return new FrontendConfigRepository($pdo);
     }
 }

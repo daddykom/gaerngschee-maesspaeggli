@@ -5,6 +5,8 @@ declare(strict_types=1);
 namespace App\Configuration\Data;
 
 use PDO;
+use DateTimeImmutable;
+use DateTimeZone;
 
 final class FrontendConfigRepository
 {
@@ -108,6 +110,32 @@ final class FrontendConfigRepository
         }
 
         return (int) $value;
+    }
+
+    public function campaignStatus(?DateTimeImmutable $now = null): string
+    {
+        $timezone = new DateTimeZone('Europe/Zurich');
+        $startValue = $this->findValueByVariableName('campaign_start_date');
+        $endValue = $this->findValueByVariableName('campaign_end_date');
+        $startDate = is_string($startValue) ? DateTimeImmutable::createFromFormat('!Y-m-d', $startValue, $timezone) : false;
+        $endDate = is_string($endValue) ? DateTimeImmutable::createFromFormat('!Y-m-d', $endValue, $timezone) : false;
+        if ($startDate === false || $startDate->format('Y-m-d') !== $startValue) {
+            throw new \RuntimeException('Invalid campaign start date configuration.');
+        }
+        if ($endDate === false || $endDate->format('Y-m-d') !== $endValue) {
+            throw new \RuntimeException('Invalid campaign end date configuration.');
+        }
+
+        $currentDate = ($now ?? new DateTimeImmutable('now', $timezone))->setTimezone($timezone);
+
+        if ($currentDate < $startDate) {
+            return 'not_started';
+        }
+        if ($currentDate >= $endDate->modify('+1 day')) {
+            return 'ended';
+        }
+
+        return 'open';
     }
 
     private function findById(string $id, string $group): ?array

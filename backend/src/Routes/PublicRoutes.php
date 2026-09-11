@@ -30,7 +30,7 @@ final class PublicRoutes
         });
 
         $app->group('/public', function (RouteCollectorProxy $group) use ($anmeldungService, $registrationTokens, $configRepository): void {
-            $group->post('/start', new StartRegistrationAction($anmeldungService, $registrationTokens));
+            $group->post('/start', new StartRegistrationAction($anmeldungService, $registrationTokens, $configRepository));
             $group->get('/configuration', new ListPublicConfigurationAction($configRepository));
         });
     }

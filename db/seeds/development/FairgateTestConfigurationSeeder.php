@@ -27,6 +27,24 @@ final class FairgateTestConfigurationSeeder extends AbstractSeed
                 'update_group' => ['admin'],
                 'label' => 'Spenden-Link',
             ],
+            [
+                'id' => '00000000-0000-4000-8000-000000000017',
+                'variable_name' => 'campaign_start_date',
+                'value' => '2026-10-01',
+                'description' => 'Startdatum der Mässpäggli-Aktion.',
+                'access_group' => ['admin', 'client'],
+                'update_group' => ['admin'],
+                'label' => 'Aktionsstart',
+            ],
+            [
+                'id' => '00000000-0000-4000-8000-000000000018',
+                'variable_name' => 'campaign_end_date',
+                'value' => '2026-12-31',
+                'description' => 'Enddatum der Mässpäggli-Aktion.',
+                'access_group' => ['admin', 'client'],
+                'update_group' => ['admin'],
+                'label' => 'Aktionsende',
+            ],
         ] as $config) {
             if ($this->query('SELECT id FROM frontend_config WHERE variable_name = :variable_name', ['variable_name' => $config['variable_name']])->fetch() === false) {
                 $this->query(
