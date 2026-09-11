@@ -22,7 +22,7 @@ final class UpdateConfigurationAction
     {
         $data = JsonRequest::body($request);
         $value = $data['value'] ?? null;
-        if (!is_string($value) && !$this->isStringArray($value)) {
+        if ((!is_string($value) || strlen($value) > 1000) && !$this->isStringArray($value)) {
             return JsonResponse::error($response, 'INVALID_CONFIGURATION_DATA', 422);
         }
 
@@ -47,6 +47,7 @@ final class UpdateConfigurationAction
     {
         return is_array($value)
             && array_is_list($value)
-            && count(array_filter($value, 'is_string')) === count($value);
+            && count($value) <= 50
+            && array_filter($value, static fn (mixed $item): bool => !is_string($item) || strlen($item) > 1000) === [];
     }
 }

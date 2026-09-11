@@ -22,7 +22,7 @@ final class ClientRegistrationLoginAction
 
     public function __invoke(ServerRequestInterface $request, ResponseInterface $response): ResponseInterface
     {
-        $token = JsonRequest::string(JsonRequest::body($request), 'token');
+        $token = JsonRequest::string(JsonRequest::body($request), 'token', 2048);
         if ($token === null) {
             return JsonResponse::error($response, 'INVALID_REGISTRATION_TOKEN', 401);
         }

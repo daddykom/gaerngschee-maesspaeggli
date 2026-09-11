@@ -5,13 +5,14 @@ import {
   signal,
   untracked,
 } from '@angular/core';
-import { applyEach, FieldTree, form, FormField, SchemaPath, validate } from '@angular/forms/signals';
+import { applyEach, FieldTree, form, FormField, maxLength, SchemaPath, validate } from '@angular/forms/signals';
 import { MatButtonModule } from '@angular/material/button';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { Store } from '@ngrx/store';
 import { TranslatePipe } from '@ngx-translate/core';
 import { ControlErrorComponent } from '../../../../shared/components/control-error/control-error';
+import { inputLimits } from '../../../../shared/constants/input-limits';
 import { FrontendConfig } from '../../../../shared/models/frontend-config.model';
 import { FrontendConfigActions } from '../../../../store/frontend-config/frontend-config.actions';
 import {
@@ -36,24 +37,26 @@ export class ConfigurationComponent {
   readonly form = form(this.model, (schema) => {
     this.configs().forEach((config) => {
       const regex = config.pattern ? createPattern(config.pattern) : null;
-      if (regex === null) {
-        return;
-      }
 
       if (Array.isArray(config.value)) {
         applyEach(schema[config.id] as unknown as SchemaPath<string[]>, (item) => {
-          validate(item, ({ value }) => regex.test(value()) ? undefined : { kind: 'pattern' });
+          maxLength(item, inputLimits.configurationValue);
+          if (regex !== null) {
+            validate(item, ({ value }) => regex.test(value()) ? undefined : { kind: 'pattern' });
+          }
         });
       } else {
-        validate(schema[config.id] as unknown as SchemaPath<string>, ({ value }) => (
-          regex.test(value()) ? undefined : { kind: 'pattern' }
-        ));
+        maxLength(schema[config.id] as unknown as SchemaPath<string>, inputLimits.configurationValue);
+        if (regex !== null) {
+          validate(schema[config.id] as unknown as SchemaPath<string>, ({ value }) => (
+            regex.test(value()) ? undefined : { kind: 'pattern' }
+          ));
+        }
       }
     });
   });
 
   constructor() {
-    this.store.dispatch(FrontendConfigActions.load());
     effect(() => this.syncForm(this.configs()));
   }
 
@@ -74,6 +77,10 @@ export class ConfigurationComponent {
   }
 
   addValue(config: FrontendConfig): void {
+    if (this.values(config).length >= inputLimits.configurationValues) {
+      return;
+    }
+
     this.model.update((model) => ({
       ...model,
       [config.id]: [...(model[config.id] as string[]), ''],
@@ -88,8 +95,18 @@ export class ConfigurationComponent {
   }
 
   onSubmit(): void {
-    if (this.saving() || !this.form().valid()) {
-      this.form().markAsTouched();
+    if (this.saving()) {
+      return;
+    }
+
+    if (!this.form()['valid']()) {
+      this.configs().forEach((config) => {
+        if (this.isArray(config)) {
+          this.values(config).forEach((_, index) => this.arrayField(config, index)().markAsTouched());
+        } else {
+          this.field(config)().markAsTouched();
+        }
+      });
       return;
     }
 

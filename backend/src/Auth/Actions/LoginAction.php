@@ -22,8 +22,8 @@ final class LoginAction
     public function __invoke(ServerRequestInterface $request, ResponseInterface $response): ResponseInterface
     {
         $data = JsonRequest::body($request);
-        $email = JsonRequest::string($data, 'email');
-        $password = JsonRequest::string($data, 'password');
+        $email = JsonRequest::string($data, 'email', 254);
+        $password = JsonRequest::string($data, 'password', 128);
         if ($email === null || $password === null) {
             return JsonResponse::error($response, 'INVALID_CREDENTIALS', 401);
         }

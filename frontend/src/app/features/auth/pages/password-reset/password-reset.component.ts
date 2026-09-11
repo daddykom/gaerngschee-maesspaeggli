@@ -1,6 +1,6 @@
 import { ChangeDetectionStrategy, Component, inject, signal } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
-import { form, FormField, required, validate } from '@angular/forms/signals';
+import { form, FormField, maxLength, required, validate } from '@angular/forms/signals';
 import { MatButtonModule } from '@angular/material/button';
 import { MatInputModule } from '@angular/material/input';
 import { Store } from '@ngrx/store';
@@ -8,6 +8,7 @@ import { TranslatePipe } from '@ngx-translate/core';
 import { ControlErrorComponent } from '../../../../shared/components/control-error/control-error';
 import { AuthActions } from '../../../../store/auth/auth.actions';
 import { selectPasswordResetLoading } from '../../../../store/password-reset/password-reset.feature';
+import { inputLimits } from '../../../../shared/constants/input-limits';
 
 @Component({
   selector: 'app-password-reset',
@@ -25,8 +26,11 @@ export class PasswordResetComponent {
   readonly model = signal({ email: '', newPassword: '', passwordConfirmation: '' });
   readonly passwordResetForm = form(this.model, (schema) => {
     required(schema.email);
+    maxLength(schema.email, inputLimits.email);
     required(schema.newPassword);
+    maxLength(schema.newPassword, inputLimits.password);
     required(schema.passwordConfirmation);
+    maxLength(schema.passwordConfirmation, inputLimits.password);
     validate(schema.passwordConfirmation, ({ valueOf }) =>
       valueOf(schema.newPassword) === valueOf(schema.passwordConfirmation)
         ? undefined

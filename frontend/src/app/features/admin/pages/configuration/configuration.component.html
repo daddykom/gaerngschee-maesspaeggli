@@ -19,7 +19,7 @@
                 <mat-form-field appearance="outline">
                   <mat-label>{{ config.variableName }} {{ $index + 1 }}</mat-label>
                     @if (config.canUpdate) {
-                      <input matInput type="text" [placeholder]="config.placeholder || ''" [formField]="arrayField(config, $index)" />
+                       <input matInput type="text" [placeholder]="config.placeholder || ''" [formField]="arrayField(config, $index)" (blur)="arrayField(config, $index)().markAsTouched()" />
                     } @else {
                       <input matInput type="text" [value]="value" disabled />
                     }
@@ -45,7 +45,7 @@
             <mat-form-field appearance="outline">
               <mat-label>{{ config.variableName }}</mat-label>
                @if (config.canUpdate) {
-                 <input matInput type="text" [placeholder]="config.placeholder || ''" [formField]="field(config)" />
+                <input matInput type="text" [placeholder]="config.placeholder || ''" [formField]="field(config)" (blur)="field(config)().markAsTouched()" />
                } @else {
                  <input matInput type="text" [value]="model()[config.id]" disabled />
                }

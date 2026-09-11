@@ -1,5 +1,5 @@
 import { ChangeDetectionStrategy, Component, inject, signal } from '@angular/core';
-import { email, form, FormField, required } from '@angular/forms/signals';
+import { email, form, FormField, maxLength, required } from '@angular/forms/signals';
 import { MatButtonModule } from '@angular/material/button';
 import { MatInputModule } from '@angular/material/input';
 import { Store } from '@ngrx/store';
@@ -7,6 +7,7 @@ import { TranslatePipe } from '@ngx-translate/core';
 import { ControlErrorComponent } from '../../../../shared/components/control-error/control-error';
 import { AuthActions } from '../../../../store/auth/auth.actions';
 import { selectPasswordResetRequestLoading, selectPasswordResetRequestSent } from '../../../../store/password-reset/password-reset.feature';
+import { inputLimits } from '../../../../shared/constants/input-limits';
 
 @Component({
   selector: 'app-password-reset-request',
@@ -23,6 +24,7 @@ export class PasswordResetRequestComponent {
   readonly passwordResetRequestForm = form(this.model, (schema) => {
     required(schema.email);
     email(schema.email);
+    maxLength(schema.email, inputLimits.email);
   });
 
   onSubmit(): void {

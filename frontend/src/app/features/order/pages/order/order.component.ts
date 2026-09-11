@@ -6,7 +6,7 @@ import {
   signal,
   untracked,
 } from '@angular/core';
-import { applyEach, disabled, FieldTree, form, FormField, required } from '@angular/forms/signals';
+import { applyEach, disabled, FieldTree, form, FormField, max, required } from '@angular/forms/signals';
 import { MatButtonModule } from '@angular/material/button';
 import { MatDividerModule } from '@angular/material/divider';
 import { MatFormFieldModule } from '@angular/material/form-field';
@@ -33,6 +33,7 @@ import {
   selectAuthSalutation,
 } from '../../../../store/auth/auth.feature';
 import { selectCurrentOrder } from '../../../../store/order/order.feature';
+import { inputLimits } from '../../../../shared/constants/input-limits';
 
 @Component({
   selector: 'app-order',
@@ -69,6 +70,8 @@ export class OrderComponent {
     children: [],
   });
   readonly form = form(this.model, (schema) => {
+    max(schema.adultsCount, inputLimits.persons);
+    max(schema.childrenCount, inputLimits.persons);
     applyEach(schema.adults, (category) => {
       required(category);
       disabled(category, () => this.orderLocked());

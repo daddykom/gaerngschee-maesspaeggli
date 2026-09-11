@@ -18,7 +18,7 @@ final class AuthenticatedPasswordChangeAction
 
     public function __invoke(ServerRequestInterface $request, ResponseInterface $response): ResponseInterface
     {
-        $password = JsonRequest::string(JsonRequest::body($request), 'password');
+        $password = JsonRequest::string(JsonRequest::body($request), 'password', 128);
         $userId = $request->getAttribute('user_id');
         if ($password === null || !is_string($userId) || $userId === '') {
             return JsonResponse::error($response, 'INVALID_PASSWORD', 422);

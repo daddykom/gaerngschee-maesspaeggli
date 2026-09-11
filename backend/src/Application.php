@@ -13,6 +13,7 @@ use App\Routes\DeliveryRoutes;
 use App\Routes\PublicRoutes;
 use App\Auth\Services\SessionService;
 use App\Shared\Http\RateLimitService;
+use App\Shared\Http\JsonResponse;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Slim\App;
@@ -46,7 +47,11 @@ final class Application
                     ->withStatus(204);
             }
 
-            $response = $handler->handle($request);
+            try {
+                $response = $handler->handle($request);
+            } catch (\LengthException) {
+                return JsonResponse::error(new Response(), 'PAYLOAD_TOO_LARGE', 413);
+            }
             if (!$response->hasHeader('Content-Type')) {
                 $response = $response->withHeader('Content-Type', 'application/json');
             }

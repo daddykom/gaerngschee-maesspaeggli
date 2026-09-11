@@ -23,8 +23,8 @@ final class PasswordResetAction
     public function __invoke(ServerRequestInterface $request, ResponseInterface $response): ResponseInterface
     {
         $data = JsonRequest::body($request);
-        $token = JsonRequest::string($data, 'token');
-        $password = JsonRequest::string($data, 'password');
+        $token = JsonRequest::string($data, 'token', 2048);
+        $password = JsonRequest::string($data, 'password', 128);
         if ($token === null || $password === null || $password === '') {
             return JsonResponse::error($response, 'INVALID_PASSWORD_RESET', 422);
         }

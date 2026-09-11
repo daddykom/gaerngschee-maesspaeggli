@@ -25,7 +25,7 @@ final class PasswordResetRequestAction
 
     public function __invoke(ServerRequestInterface $request, ResponseInterface $response): ResponseInterface
     {
-        $email = JsonRequest::string(JsonRequest::body($request), 'email');
+        $email = JsonRequest::string(JsonRequest::body($request), 'email', 254);
         if ($email === null || filter_var(trim($email), FILTER_VALIDATE_EMAIL) === false) {
             return JsonResponse::error($response, 'INVALID_EMAIL', 422);
         }

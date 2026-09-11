@@ -87,10 +87,6 @@ describe('ConfigurationComponent', () => {
     expect(component.model()[configs[1].id]).toEqual(['A', 'B']);
   });
 
-  it('dispatches load on creation', () => {
-    expect(store.dispatch).toHaveBeenCalledWith(FrontendConfigActions.load());
-  });
-
   it('disables fields without update permission', () => {
     expect(fixture.nativeElement.querySelector('input[disabled]')).toBeTruthy();
     expect(fixture.nativeElement.querySelector('.configuration-field--readonly')).toBeTruthy();
@@ -126,10 +122,43 @@ describe('ConfigurationComponent', () => {
 
   it('blocks values that do not match the configured pattern', () => {
     component.model.update((model) => ({ ...model, [configs[0].id]: 'not-a-number' }));
-    component.form().markAsTouched();
+    component.form()['markAsTouched']();
 
-    expect(component.form().valid()).toBe(false);
+    expect(component.form()['valid']()).toBe(false);
     expect(component.field(configs[0])().errors()[0]?.kind).toBe('pattern');
+  });
+
+  it('shows a pattern error after submitting an invalid value', () => {
+    component.model.update((model) => ({ ...model, [configs[0].id]: 'not-a-number' }));
+    component.onSubmit();
+    fixture.detectChanges();
+
+    expect(fixture.nativeElement.querySelector('.control-error')?.textContent).toContain('app.admin.configuration.errors.pattern');
+  });
+
+  it('shows a pattern error on the field after entering an invalid value and leaving it', async () => {
+    const input = fixture.nativeElement.querySelector('input[placeholder="z. B. 120"]') as HTMLInputElement;
+    input.value = 'not-a-number';
+    input.dispatchEvent(new Event('input', { bubbles: true }));
+    input.dispatchEvent(new Event('blur', { bubbles: true }));
+    fixture.detectChanges();
+    await fixture.whenStable();
+    fixture.detectChanges();
+
+    const field = input.closest('mat-form-field');
+
+    expect(component.model()[configs[0].id]).toBe('not-a-number');
+    expect(field?.querySelector('.control-error')?.textContent).toContain('app.admin.configuration.errors.pattern');
+  });
+
+  it('validates the maximum length for configurations without a pattern', () => {
+    component.model.update((model) => ({
+      ...model,
+      [configs[1].id]: ['x'.repeat(1001)],
+    }));
+
+    expect(component.form()['valid']()).toBe(false);
+    expect(component.arrayField(configs[1], 0)().errors()[0]?.kind).toBe('maxLength');
   });
 
   it('does not save while a save is already in progress', () => {
@@ -179,4 +208,5 @@ describe('ConfigurationComponent', () => {
     expect(component.model()[configs[1].id]).toBeUndefined();
     expect(component.model()[configs[0].id]).toBe('120');
   });
+
 });

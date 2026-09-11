@@ -45,7 +45,7 @@ final class SaveClientOrderAction
         $adults = $this->categories($data['adults'] ?? null, OrderCategories::ADULT);
         $children = $this->categories($data['children'] ?? null, OrderCategories::CHILD);
         if ($adultsCount === null || $childrenCount === null || $adults === null || $children === null
-            || $adultsCount < 1 || $childrenCount < 0
+            || $adultsCount < 1 || $adultsCount > 20 || $childrenCount < 0 || $childrenCount > 20
             || ($childrenCount === 0 && (count($adults) !== $adultsCount || $children !== []))
             || ($childrenCount > 0 && ($adults !== [] || count($children) !== $childrenCount))) {
             return JsonResponse::error($response, 'INVALID_ORDER_DATA', 422);
@@ -124,7 +124,7 @@ final class SaveClientOrderAction
     /** @return list<string>|null */
     private function categories(mixed $value, array $allowedCategories): ?array
     {
-        if (!is_array($value) || array_filter($value, static fn (mixed $category): bool => !is_string($category) || !in_array($category, $allowedCategories, true)) !== []) {
+        if (!is_array($value) || count($value) > 20 || array_filter($value, static fn (mixed $category): bool => !is_string($category) || strlen($category) > 50 || !in_array($category, $allowedCategories, true)) !== []) {
             return null;
         }
 

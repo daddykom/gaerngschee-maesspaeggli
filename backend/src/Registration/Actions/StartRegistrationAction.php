@@ -34,7 +34,7 @@ final class StartRegistrationAction
     public function __invoke(ServerRequestInterface $request, ResponseInterface $response): ResponseInterface
     {
         $data = JsonRequest::body($request);
-        $email = JsonRequest::string($data, 'email');
+        $email = JsonRequest::string($data, 'email', 254);
         $locale = strtolower(JsonRequest::string($data, 'language') ?? 'de');
         if ($email === null || filter_var(trim($email), FILTER_VALIDATE_EMAIL) === false) {
             return JsonResponse::error($response, 'INVALID_EMAIL', 422);

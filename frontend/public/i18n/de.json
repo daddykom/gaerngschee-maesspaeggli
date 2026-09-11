@@ -240,6 +240,7 @@
           "FORBIDDEN": "Du darfst mindestens eine Konfiguration nicht verändern.",
           "INVALID_CONFIGURATION_DATA": "Bitte prüfe die Konfigurationswerte.",
           "pattern": "Der Wert entspricht nicht dem erwarteten Format.",
+          "maxLength": "Der Wert ist zu lang.",
           "CONFIGURATION_UPDATE_FAILED": "Die Konfiguration konnte nicht gespeichert werden.",
           "REQUEST_FAILED": "Die Anfrage konnte nicht durchgeführt werden."
         }
