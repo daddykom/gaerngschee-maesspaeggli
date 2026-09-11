@@ -28,6 +28,7 @@ describe('authReducer', () => {
        sessionSecondsRemaining: null,
        sessionWarningVisible: false,
        sessionRefreshLoading: false,
+       email: null,
     });
   });
 
@@ -61,6 +62,7 @@ describe('authReducer', () => {
        sessionSecondsRemaining: null,
        sessionWarningVisible: false,
        sessionRefreshLoading: false,
+       email: null,
     });
   });
 
@@ -89,6 +91,7 @@ describe('authReducer', () => {
        sessionSecondsRemaining: null,
        sessionWarningVisible: false,
        sessionRefreshLoading: false,
+       email: null,
     });
   });
 
@@ -113,7 +116,8 @@ describe('authReducer', () => {
          sessionSecondsRemaining: null,
          sessionWarningVisible: false,
          sessionRefreshLoading: false,
-      },
+         email: null,
+       },
       AuthActions.logoutRequested({ redirectTo: '/login' }),
     );
 

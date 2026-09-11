@@ -7,6 +7,8 @@ namespace App\Routes;
 use App\Auth\Actions\AuthenticatedPasswordChangeAction;
 use App\Auth\Actions\LoginAction;
 use App\Auth\Actions\LogoutAction;
+use App\Auth\Actions\PasswordResetAction;
+use App\Auth\Actions\PasswordResetRequestAction;
 use App\Auth\Actions\RefreshSessionAction;
 use App\Auth\Actions\SessionStatusAction;
 use App\Registration\Actions\ClientRegistrationLoginAction;
@@ -38,6 +40,9 @@ final class AuthRoutes
                 new AuthenticatedPasswordChangeAction($userRepository),
             );
             $authenticatedPasswordChange->add(new AuthMiddleware());
+
+            $group->post('/password-reset-request', new PasswordResetRequestAction());
+            $group->post('/password-reset', new PasswordResetAction());
 
             $group->post('/registration-login', new ClientRegistrationLoginAction(
                 $registrationLoginService,

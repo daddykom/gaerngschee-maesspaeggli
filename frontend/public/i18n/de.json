@@ -139,6 +139,7 @@
     "passwordChange": {
       "pageTitle": "Passwort ändern",
       "heading": "Passwort ändern",
+      "emailLabel": "E-Mail-Adresse",
       "newPasswordLabel": "Neues Passwort",
       "confirmationLabel": "Neues Passwort bestätigen",
       "submit": "Passwort ändern",
@@ -151,6 +152,43 @@
           "passwordsDoNotMatch": "Die Passwörter stimmen nicht überein."
         },
         "PASSWORD_CHANGE_FAILED": "Das Passwort konnte nicht geändert werden."
+      }
+    },
+    "passwordResetRequest": {
+      "pageTitle": "Passwort zurücksetzen",
+      "heading": "Passwort vergessen?",
+      "emailLabel": "E-Mail-Adresse",
+      "submit": "Link anfordern",
+      "sent": "Wenn ein Konto mit dieser E-Mail-Adresse existiert, wurde ein Link zum Zurücksetzen des Passworts versendet. Der Link ist 10 Minuten gültig.",
+      "title": "Passwort zurücksetzen",
+      "error": "Der Link konnte nicht angefordert werden. Bitte versuche es später erneut.",
+      "errors": {
+        "email": {
+          "required": "Bitte gib deine E-Mail-Adresse ein.",
+          "email": "Bitte prüfe deine E-Mail-Adresse."
+        }
+      }
+    },
+    "passwordReset": {
+      "pageTitle": "Neues Passwort setzen",
+      "heading": "Neues Passwort setzen",
+      "emailLabel": "E-Mail-Adresse",
+      "newPasswordLabel": "Neues Passwort",
+      "confirmationLabel": "Neues Passwort bestätigen",
+      "submit": "Passwort setzen",
+      "title": "Passwort zurücksetzen",
+      "errors": {
+        "email": {
+          "required": "Bitte gib deine E-Mail-Adresse ein."
+        },
+        "newPassword": {
+          "required": "Bitte gib ein neues Passwort ein."
+        },
+        "passwordConfirmation": {
+          "required": "Bitte bestätige dein neues Passwort.",
+          "passwordsDoNotMatch": "Die Passwörter stimmen nicht überein."
+        },
+        "invalid": "Der Link ist ungültig oder abgelaufen. Bitte fordere einen neuen Link an."
       }
     },
     "notFound": {

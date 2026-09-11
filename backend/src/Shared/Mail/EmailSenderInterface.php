@@ -20,6 +20,8 @@ interface EmailSenderInterface
 
     public function sendUserEmailChanged(string $recipient): void;
 
+    public function sendPasswordReset(string $recipient, string $resetUrl): void;
+
     /** @param array<string, mixed> $order */
     public function sendOrderConfirmation(string $recipient, array $order): void;
 

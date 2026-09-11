@@ -77,4 +77,12 @@ export class AuthService {
       { withCredentials: true },
     );
   }
+
+  requestPasswordReset(email: string): Observable<{ sent: boolean }> {
+    return this.http.post<{ sent: boolean }>(`${environment.apiUrl}/auth/password-reset-request`, { email });
+  }
+
+  resetPassword(token: string, password: string): Observable<{ user: AuthUser }> {
+    return this.http.post<{ user: AuthUser }>(`${environment.apiUrl}/auth/password-reset`, { token, password });
+  }
 }

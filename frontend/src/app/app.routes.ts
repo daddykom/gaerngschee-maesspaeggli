@@ -46,6 +46,16 @@ export const appRoutes: Routes = [
         data: { pageTitle: 'app.passwordChange.pageTitle' },
         loadComponent: () => import('./features/auth/pages/password-change/password-change.component').then((m) => m.PasswordChange),
       },
+      {
+        path: 'password-reset-request',
+        data: { pageTitle: 'app.passwordResetRequest.pageTitle' },
+        loadComponent: () => import('./features/auth/pages/password-reset-request/password-reset-request.component').then((m) => m.PasswordResetRequestComponent),
+      },
+      {
+        path: 'password-reset',
+        data: { pageTitle: 'app.passwordReset.pageTitle' },
+        loadComponent: () => import('./features/auth/pages/password-reset/password-reset.component').then((m) => m.PasswordResetComponent),
+      },
       { path: 'not-found', data: { pageTitle: 'app.notFound.pageTitle' }, loadComponent: () => import('./features/errors/pages/not-found/not-found.component').then((m) => m.NotFoundComponent) },
       { path: 'delivery', canActivate: [groupGuard(['user', 'admin'])], data: { pageTitle: 'app.delivery.title' }, loadComponent: () => import('./features/delivery/pages/delivery').then((m) => m.Delivery) },
       {

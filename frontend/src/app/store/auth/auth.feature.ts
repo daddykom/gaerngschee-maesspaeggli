@@ -11,12 +11,13 @@ export const authFeature = createFeature({
       ...state,
       loading: true,
       errorCode: null,
+      email: null,
       fairgateUserExists: null,
       childrenCount: null,
       adultsCount: null,
       salutation: null,
     })),
-    on(AuthActions.loginSuccess, (state, { token, userId, group, requiredPasswordReset }) => ({
+    on(AuthActions.loginSuccess, (state, { token, userId, group, requiredPasswordReset, email }) => ({
       ...state,
       token,
       userId,
@@ -24,6 +25,7 @@ export const authFeature = createFeature({
       requiredPasswordReset,
       loading: false,
       errorCode: null,
+      email: email ?? state.email,
     })),
     on(AuthActions.tokenRefreshed, (state, { token }) => ({ ...state, token })),
     on(AuthActions.loginFailure, (state, { errorCode }) => ({
@@ -34,6 +36,7 @@ export const authFeature = createFeature({
       requiredPasswordReset: false,
       loading: false,
       errorCode,
+      email: null,
       fairgateUserExists: null,
       childrenCount: null,
       adultsCount: null,
@@ -128,4 +131,5 @@ export const {
   selectSessionSecondsRemaining: selectAuthSessionSecondsRemaining,
   selectSessionWarningVisible: selectAuthSessionWarningVisible,
   selectSessionRefreshLoading: selectAuthSessionRefreshLoading,
+  selectEmail: selectAuthEmail,
 } = authFeature;

@@ -30,6 +30,7 @@ import { orderFeature } from './store/order/order.feature';
 import { adminOverviewEffects } from './store/admin-overview/admin-overview.effects';
 import { deliveryEffects } from './store/delivery/delivery.effects';
 import { deliveryFeature } from './store/delivery/delivery.feature';
+import { passwordResetFeature } from './store/password-reset/password-reset.feature';
 
 export const appConfig: ApplicationConfig = {
   providers: [
@@ -46,6 +47,7 @@ export const appConfig: ApplicationConfig = {
     provideState(fairgateTestFeature),
     provideState(orderFeature),
     provideState(deliveryFeature),
+    provideState(passwordResetFeature),
     provideEffects(startEffects, authEffects, adminUsersEffects, frontendConfigEffects, fairgateTestEffects, orderEffects, adminOverviewEffects, deliveryEffects, navigationEffects, notificationEffects),
     provideStoreDevtools(),
     provideAnimations(),

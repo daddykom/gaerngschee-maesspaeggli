@@ -8,6 +8,7 @@ import { Store } from '@ngrx/store';
 import { AuthActions } from '../../../../store/auth/auth.actions';
 import { selectAuthLoading } from '../../../../store/auth/auth.feature';
 import { ControlErrorComponent } from '../../../../shared/components/control-error/control-error';
+import { NavigationActions } from '../../../../store/navigation/navigation.actions';
 
 @Component({
   selector: 'app-login',
@@ -55,6 +56,6 @@ export class Login implements OnInit {
   }
 
   onForgotPassword(): void {
-    this.store.dispatch(AuthActions.forgotPassword());
+    this.store.dispatch(NavigationActions.navigate({ target: '/password-reset-request' }));
   }
 }
