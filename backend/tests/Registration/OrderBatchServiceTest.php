@@ -100,6 +100,30 @@ final class OrderBatchServiceTest extends TestCase
         self::assertCount(0, (new OrderEmailQueueRepository($pdo))->pending());
     }
 
+    public function testSendsFirstFairgateReminderAfterTheConfiguredInterval(): void
+    {
+        $pdo = TestDatabase::create();
+        $user = (new UserRepository($pdo))->createUser('person+reminder@example.com', 'secret', 'client');
+        $orders = new OrderRepository($pdo);
+        $order = $orders->saveForYear($user['id'], 2026, 'provisional', 1, 0, [
+            ['personType' => 'adult', 'category' => 'catA', 'quantity' => 1],
+        ]);
+        $pdo->prepare('UPDATE orders SET created_at = :created_at WHERE id = :id')->execute([
+            'created_at' => '2000-01-01 00:00:00',
+            'id' => $order['id'],
+        ]);
+        $this->addInterval($pdo);
+        $emails = new RecordingEmailSender();
+
+        $result = $this->service($pdo, $emails, new MissingFairgateProvider())->run();
+        $updated = $orders->findForYear($user['id'], 2026);
+
+        self::assertSame(1, $result['loaded']);
+        self::assertSame(1, $result['sent']);
+        self::assertNotNull($updated['fairgateReminderEmailSentAt']);
+        self::assertStringContainsString('Fairgate', $emails->orderConfirmations[0]['order']['html']);
+    }
+
     public function testSendsDeliveryQrCodeAndMarksOrderAsQrCode(): void
     {
         $pdo = TestDatabase::create();
@@ -159,6 +183,17 @@ final class OrderBatchServiceTest extends TestCase
             'update' => json_encode([], JSON_THROW_ON_ERROR),
             'label' => 'Token Retention',
         ]);
+        $pdo->prepare(
+            'INSERT INTO frontend_config (id, variable_name, value, access_group, update_group, label)
+             VALUES (:id, :name, :value, :access, :update, :label)',
+        )->execute([
+            'id' => 'config-fairgate-url',
+            'name' => 'fairgate_url',
+            'value' => json_encode('https://fairgate.example', JSON_THROW_ON_ERROR),
+            'access' => json_encode([], JSON_THROW_ON_ERROR),
+            'update' => json_encode([], JSON_THROW_ON_ERROR),
+            'label' => 'Fairgate URL',
+        ]);
     }
 }
 
@@ -180,5 +215,18 @@ final class FixedFairgateProvider implements FairgateContactProvider
             $data['name_und_vorname_kind' . $index] = 'Kind ' . $index;
         }
         return ['success' => true, 'data' => $data];
+    }
+}
+
+final class MissingFairgateProvider implements FairgateContactProvider
+{
+    public function hasContactByEmail(string $email): bool
+    {
+        return false;
+    }
+
+    public function findContactDataByEmail(string $email): array
+    {
+        return ['success' => false, 'data' => null];
     }
 }

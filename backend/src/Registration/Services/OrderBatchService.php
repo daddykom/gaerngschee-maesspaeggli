@@ -182,11 +182,14 @@ final class OrderBatchService
     private function processMissingFairgate(array $order, string $email, array &$result): void
     {
         $last = $order['fairgateReminderEmailSentAt'] ?? null;
-        if (!is_string($last) || trim($last) === '') {
+        $reference = is_string($last) && trim($last) !== ''
+            ? $last
+            : ($order['createdAt'] ?? null);
+        if (!is_string($reference) || trim($reference) === '') {
             return;
         }
         $interval = $this->intervalDays();
-        $due = new DateTimeImmutable($last, new DateTimeZone('UTC')) < new DateTimeImmutable('now', new DateTimeZone('UTC'))->modify('-' . $interval . ' days');
+        $due = new DateTimeImmutable($reference, new DateTimeZone('UTC')) < new DateTimeImmutable('now', new DateTimeZone('UTC'))->modify('-' . $interval . ' days');
         if (!$due) {
             return;
         }
