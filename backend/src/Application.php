@@ -10,6 +10,7 @@ use App\Routes\AuthRoutes;
 use App\Routes\ClientRoutes;
 use App\Routes\DeliveryRoutes;
 use App\Routes\PublicRoutes;
+use App\Auth\Services\SessionService;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Slim\App;
@@ -21,6 +22,7 @@ final class Application
     public static function create(): App
     {
         if (session_status() === PHP_SESSION_NONE) {
+            SessionService::configure();
             session_start();
         }
 

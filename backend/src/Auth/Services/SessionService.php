@@ -12,6 +12,22 @@ final class SessionService
     private const FAIRGATE_USER_EXISTS_KEY = 'fairgate_user_exists';
     private const LAST_ACTIVITY_KEY = 'last_activity';
 
+    public static function configure(): void
+    {
+        if (session_status() !== PHP_SESSION_NONE) {
+            return;
+        }
+
+        ini_set('session.use_strict_mode', '1');
+        ini_set('session.use_only_cookies', '1');
+        session_set_cookie_params([
+            'secure' => getenv('APP_ENV') === 'prod',
+            'httponly' => true,
+            'samesite' => 'Lax',
+            'path' => '/',
+        ]);
+    }
+
     public function setUserId(string $userId): void
     {
         $this->ensureSession();
@@ -125,6 +141,7 @@ final class SessionService
     private function ensureSession(): void
     {
         if (session_status() === PHP_SESSION_NONE) {
+            self::configure();
             session_start();
         }
     }
