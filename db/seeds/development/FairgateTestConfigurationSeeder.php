@@ -8,6 +8,21 @@ final class FairgateTestConfigurationSeeder extends AbstractSeed
 {
     public function run(): void
     {
+        $fieldMetadata = [
+            'campaign_year' => ['pattern' => '\\d{4}', 'placeholder' => 'z. B. 2026'],
+            'donation_url' => ['pattern' => 'https://[^\\s]+', 'placeholder' => 'https://...'],
+            'campaign_start_date' => ['pattern' => '\\d{4}-\\d{2}-\\d{2}', 'placeholder' => 'JJJJ-MM-TT'],
+            'campaign_end_date' => ['pattern' => '\\d{4}-\\d{2}-\\d{2}', 'placeholder' => 'JJJJ-MM-TT'],
+            'startDate' => ['pattern' => '\\d{4}-\\d{2}-\\d{2}', 'placeholder' => 'JJJJ-MM-TT'],
+            'endDate' => ['pattern' => '\\d{4}-\\d{2}-\\d{2}', 'placeholder' => 'JJJJ-MM-TT'],
+            'closeDate' => ['pattern' => '\\d{4}-\\d{2}-\\d{2}', 'placeholder' => 'JJJJ-MM-TT'],
+            'fairgate_test_email' => ['pattern' => '[^@\\s]+@[^@\\s]+\\.[^@\\s]+', 'placeholder' => 'name@beispiel.ch'],
+            'registration_token_retention_days' => ['pattern' => '[1-9]\\d*', 'placeholder' => 'z. B. 365'],
+            'fairgate_email_interval_days' => ['pattern' => '[1-9]\\d*', 'placeholder' => 'z. B. 7'],
+            'fairgate_url' => ['pattern' => 'https://[^\\s]+', 'placeholder' => 'https://...'],
+            'provisional_order_recent_days' => ['pattern' => '[1-9]\\d*', 'placeholder' => 'z. B. 14'],
+        ];
+
         foreach ([
             [
                 'id' => '00000000-0000-4000-8000-000000000015',
@@ -161,6 +176,13 @@ final class FairgateTestConfigurationSeeder extends AbstractSeed
                     'update_group' => json_encode(['admin'], JSON_THROW_ON_ERROR),
                     'label' => 'Zeitraum provisorischer Bestellungen',
                 ],
+            );
+        }
+
+        foreach ($fieldMetadata as $variableName => $metadata) {
+            $this->query(
+                'UPDATE frontend_config SET pattern = :pattern, placeholder = :placeholder WHERE variable_name = :variable_name',
+                ['pattern' => $metadata['pattern'], 'placeholder' => $metadata['placeholder'], 'variable_name' => $variableName],
             );
         }
     }
