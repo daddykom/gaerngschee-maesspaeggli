@@ -23,11 +23,21 @@ final class AdminAccountSeeder extends AbstractSeed
             [
                 'id' => '00000000-0000-4000-8000-000000000001',
                 'email' => $email,
-                // Precomputed with password_hash(..., PASSWORD_DEFAULT).
-                'password' => '$2y$12$EXjOJ.51uXs1DyB8SR2sUO6SMCnh6RuwkR2M8XDMJhlHhKP.UCZ12',
+                'password' => $this->adminPasswordHash(),
                 'group' => 'admin',
                 'required_password_reset' => 1,
             ],
         );
     }
+
+    private function adminPasswordHash(): string
+    {
+        $password = getenv('ADMIN_SEED_PASSWORD');
+        if (is_string($password) && $password !== '') {
+            return password_hash($password, PASSWORD_DEFAULT);
+        }
+
+        return password_hash('secret', PASSWORD_DEFAULT) ?: throw new RuntimeException('Could not hash the test admin password.');
+    }
+
 }

@@ -1,5 +1,6 @@
 import { expect, test } from '@playwright/test';
 import { issueRegistrationToken } from './support/registration-token';
+import { authHeaders } from './support/auth-header';
 
 test.describe('Integration order', () => {
   test('saves a family order with children packages only', async ({ page }) => {
@@ -10,8 +11,9 @@ test.describe('Integration order', () => {
     await page.waitForURL('**/order/edit');
 
     const auth = await page.evaluate(() => JSON.parse(localStorage.getItem('gaerngschee.auth') ?? '{}'));
+    const headers = await authHeaders(page);
     const response = await page.request.put('http://localhost:8082/client/order', {
-      headers: { Authorization: `Bearer ${auth.token}` },
+      headers: { ...headers, Authorization: `Bearer ${auth.token}` },
       data: {
         adultsCount: 2,
         childrenCount: 3,

@@ -1,4 +1,23 @@
+import { execFileSync } from 'node:child_process';
+import { resolve } from 'node:path';
 import { Page } from '@playwright/test';
+
+export function resetIntegrationRateLimits(): void {
+  execFileSync(
+    'docker',
+    [
+      'compose',
+      '-f',
+      resolve(process.cwd(), '..', 'docker-compose.integration.yml'),
+      'exec',
+      '-T',
+      'integration-backend',
+      'php',
+      '/var/www/html/tests/Support/ResetIntegrationRateLimits.php',
+    ],
+    { stdio: 'ignore' },
+  );
+}
 
 export async function authHeaders(page: Page): Promise<{ Cookie: string; 'X-CSRF-Token': string }> {
   const cookies = await page.context().cookies('http://localhost:8082');

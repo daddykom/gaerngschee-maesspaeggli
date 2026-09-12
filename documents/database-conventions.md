@@ -26,8 +26,9 @@ db/
 │   ├── 20260614081000_create_children_table.php
 │   └── ...
 └── seeds/
-    ├── development/             # Development and test data
-    ├── test/                   # Minimal test data for CI
+    ├── development/            # Local development data
+    ├── integration/            # Fixtures for integration tests
+    ├── pre-prod/               # Pre-production initial data
     └── production/             # Production initial data
 ```
 
@@ -119,13 +120,29 @@ final class CreateRegistrationsTable extends AbstractMigration
 
 Contains seeders with realistic test data for local development and manual testing.
 
-### test/
+### integration/
 
-Minimal seeders for CI/testing. Only essential data needed for tests to run.
+Seeders for the isolated integration environment. This directory may contain
+test-only fixtures that must not be loaded in Development, Pre-Production or
+Production.
+
+### pre-prod/
+
+Seeders for the pre-production server. Pre-Production uses `APP_ENV=prod` and
+the technical Phinx environment `production`, but its seed path is selected by
+the server-provided `PHINX_SEED_PATH`.
 
 ### production/
 
 Seeders for production initial data only.
+
+### Seed Idempotency
+
+Seeders must not overwrite existing user passwords or
+`required_password_reset` values. The admin password and the initial reset
+flag are set only when the admin is inserted. Development and Integration use
+`required_password_reset = false`; Pre-Production and Production use
+`required_password_reset = true`.
 
 ## Docker Integration
 

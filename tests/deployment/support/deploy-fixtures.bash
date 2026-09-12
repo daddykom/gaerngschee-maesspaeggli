@@ -10,10 +10,10 @@ setup_deploy_fixture() {
 
   export project_directory fake_bin target_base log_file temporary_parent
 
-  mkdir -p "$fake_bin" "$target_base/test/backend" "$target_base/test/frontend" "$target_base/prod/backend"
-  printf 'APP_ENV=test\nDB_HOST=127.0.0.1\nDB_PORT=3306\nDB_NAME=gaerngschee\nDB_TEST_NAME=gaerngschee_test\nDB_USER=test-user\nDB_PASS=test-pass\n' > "$target_base/test/backend/.env"
+  mkdir -p "$fake_bin" "$target_base/pre-prod/backend" "$target_base/pre-prod/frontend" "$target_base/prod/backend"
+  printf 'APP_ENV=prod\nDB_HOST=127.0.0.1\nDB_PORT=3306\nDB_NAME=gaerngschee\nDB_USER=pre-prod-user\nDB_PASS=pre-prod-pass\n' > "$target_base/pre-prod/backend/.env"
   printf 'APP_ENV=prod\nDB_HOST=127.0.0.1\nDB_PORT=3306\nDB_NAME=gaerngschee\nDB_USER=prod-user\nDB_PASS=prod-pass\n' > "$target_base/prod/backend/.env"
-  printf 'old-test-frontend\n' > "$target_base/test/frontend/index.html"
+  printf 'old-pre-prod-frontend\n' > "$target_base/pre-prod/frontend/index.html"
   printf 'old-prod-frontend\n' > "$target_base/prod/frontend-placeholder"
 
   cat > "$fake_bin/git" <<'FAKE_GIT'
@@ -27,7 +27,7 @@ printf 'git %s\n' "$*" >> "${DEPLOY_TEST_LOG}"
   mkdir -p "$destination/frontend/public/api"
   printf '<?php\n' > "$destination/frontend/public/api/index.php"
   printf 'RewriteEngine On\n' > "$destination/frontend/public/.htaccess"
-  printf 'new-test-frontend\n' > "$destination/frontend/dist/frontend/browser/index.html"
+  printf 'new-pre-prod-frontend\n' > "$destination/frontend/dist/frontend/browser/index.html"
 FAKE_GIT
 
   cat > "$fake_bin/composer" <<'FAKE_COMPOSER'
@@ -63,7 +63,7 @@ set -Eeuo pipefail
 printf 'npm %s NX_DAEMON=%s NX_SKIP_NATIVE_FILE_CACHE=%s\n' "$*" "${NX_DAEMON:-}" "${NX_SKIP_NATIVE_FILE_CACHE:-}" >> "${DEPLOY_TEST_LOG}"
 if [[ "$*" == *'build'* ]]; then
   mkdir -p dist/frontend/browser
-  printf 'new-test-frontend\n' > dist/frontend/browser/index.html
+   printf 'new-pre-prod-frontend\n' > dist/frontend/browser/index.html
 fi
 FAKE_NPM
 

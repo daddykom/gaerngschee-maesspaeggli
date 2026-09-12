@@ -9,7 +9,7 @@ readonly composer_binary="${COMPOSER_BIN:-$HOME/bin/composer}"
 readonly build_cpu="${DEPLOY_BUILD_CPU:-0}"
 
 usage() {
-  printf 'Usage: %s <prod|test>\n' "$0" >&2
+  printf 'Usage: %s <prod|pre-prod>\n' "$0" >&2
 }
 
 require_command() {
@@ -20,7 +20,7 @@ require_command() {
 }
 
 environment="${1:-}"
-if [[ "$environment" != 'prod' && "$environment" != 'test' ]]; then
+if [[ "$environment" != 'prod' && "$environment" != 'pre-prod' ]]; then
   usage
   exit 2
 fi
@@ -81,9 +81,6 @@ rsync -a "$temporary_directory/source/frontend/public/api/" "$temporary_director
 rsync -a "$temporary_directory/source/frontend/public/.htaccess" "$temporary_directory/release/frontend/.htaccess"
 
 phinx_environment='production'
-if [[ "$environment" == 'test' ]]; then
-  phinx_environment='test'
-fi
 
 (
   cd "$temporary_directory/release/backend"
