@@ -89,16 +89,13 @@ docker exec -it gaerngschee-database mysql -u root -prootpassword
 # Migrationen ausführen
 npm run db:migrate
 
-# Seeds ausführen (Development)
-npm run db:seed
-
 # Integrationstests vorbereiten (Migration + Integration-Seeds)
 npm run integration:setup
 
-# Setup (start + migrate + seed)
+# Setup (start + migrate)
 npm run db:setup
 
-# Reset (stop + start + migrate + seed)
+# Reset (stop + start + migrate)
 npm run db:reset
 
 # Migration Status prüfen
@@ -117,10 +114,7 @@ docker exec gaerngschee-backend vendor/bin/phinx status -c /var/www/db/phinx.php
 
 | Environment | Seed Path |
 |-------------|-----------|
-| development | `db/seeds/development/` |
 | integration | `db/seeds/integration/` |
-| pre-prod | `db/seeds/pre-prod/` |
-| production | `db/seeds/production/` |
 
 ---
 

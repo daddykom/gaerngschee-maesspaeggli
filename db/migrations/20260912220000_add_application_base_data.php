@@ -2,36 +2,38 @@
 
 declare(strict_types=1);
 
-use Phinx\Seed\AbstractSeed;
+use Phinx\Migration\AbstractMigration;
+use Phinx\Migration\IrreversibleMigrationException;
 
-final class FairgateTestConfigurationSeeder extends AbstractSeed
+final class AddApplicationBaseData extends AbstractMigration
 {
-    public function run(): void
-    {
-        $fieldMetadata = [
-            'campaign_year' => ['pattern' => '\\d{4}', 'placeholder' => 'z. B. 2026'],
-            'donation_url' => ['pattern' => 'https://[^\\s]+', 'placeholder' => 'https://...'],
-            'campaign_start_date' => ['pattern' => '\\d{4}-\\d{2}-\\d{2}', 'placeholder' => 'JJJJ-MM-TT'],
-            'campaign_end_date' => ['pattern' => '\\d{4}-\\d{2}-\\d{2}', 'placeholder' => 'JJJJ-MM-TT'],
-            'startDate' => ['pattern' => '\\d{4}-\\d{2}-\\d{2}', 'placeholder' => 'JJJJ-MM-TT'],
-            'endDate' => ['pattern' => '\\d{4}-\\d{2}-\\d{2}', 'placeholder' => 'JJJJ-MM-TT'],
-            'closeDate' => ['pattern' => '\\d{4}-\\d{2}-\\d{2}', 'placeholder' => 'JJJJ-MM-TT'],
-            'fairgate_test_email' => ['pattern' => '[^@\\s]+@[^@\\s]+\\.[^@\\s]+', 'placeholder' => 'name@beispiel.ch'],
-            'registration_token_retention_days' => ['pattern' => '[1-9]\\d*', 'placeholder' => 'z. B. 365'],
-            'fairgate_email_interval_days' => ['pattern' => '[1-9]\\d*', 'placeholder' => 'z. B. 7'],
-            'fairgate_url' => ['pattern' => 'https://[^\\s]+', 'placeholder' => 'https://...'],
-            'provisional_order_recent_days' => ['pattern' => '[1-9]\\d*', 'placeholder' => 'z. B. 14'],
-        ];
+    private const ADMIN_EMAIL = 'admin@gaerngschee.ch';
+    private const ADMIN_PASSWORD_HASH = '$2y$12$MciZlmhObKryTTCXdF/OOOmrUMfXPkA3XEBK2Ks229E7Kjitu/3.W';
 
-        foreach ([
+    public function up(): void
+    {
+        $this->addFrontendConfig();
+        $this->addInitialAdmin();
+    }
+
+    public function down(): void
+    {
+        throw new IrreversibleMigrationException('Application base data cannot be removed safely.');
+    }
+
+    private function addFrontendConfig(): void
+    {
+        $configs = [
             [
                 'id' => '00000000-0000-4000-8000-000000000015',
                 'variable_name' => 'campaign_year',
-                'value' => '2026',
+                'value' => '2025',
                 'description' => 'Jahr der aktuellen Mässpäggli-Aktion und Bestellungen.',
                 'access_group' => ['admin', 'client'],
                 'update_group' => ['admin'],
                 'label' => 'Aktionsjahr',
+                'pattern' => '\\d{4}',
+                'placeholder' => 'z. B. 2026',
             ],
             [
                 'id' => '00000000-0000-4000-8000-000000000016',
@@ -41,24 +43,30 @@ final class FairgateTestConfigurationSeeder extends AbstractSeed
                 'access_group' => ['admin', 'client'],
                 'update_group' => ['admin'],
                 'label' => 'Spenden-Link',
+                'pattern' => 'https://[^\\s]+',
+                'placeholder' => 'https://...',
             ],
             [
                 'id' => '00000000-0000-4000-8000-000000000017',
                 'variable_name' => 'campaign_start_date',
-                'value' => '2026-10-01',
+                'value' => '2025-01-01',
                 'description' => 'Startdatum der Mässpäggli-Aktion.',
                 'access_group' => ['admin', 'client'],
                 'update_group' => ['admin'],
                 'label' => 'Aktionsstart',
+                'pattern' => '\\d{4}-\\d{2}-\\d{2}',
+                'placeholder' => 'JJJJ-MM-TT',
             ],
             [
                 'id' => '00000000-0000-4000-8000-000000000018',
                 'variable_name' => 'campaign_end_date',
-                'value' => '2026-12-31',
+                'value' => '2025-12-31',
                 'description' => 'Enddatum der Mässpäggli-Aktion.',
                 'access_group' => ['admin', 'client'],
                 'update_group' => ['admin'],
                 'label' => 'Aktionsende',
+                'pattern' => '\\d{4}-\\d{2}-\\d{2}',
+                'placeholder' => 'JJJJ-MM-TT',
             ],
             [
                 'id' => '00000000-0000-4000-8000-000000000010',
@@ -68,15 +76,19 @@ final class FairgateTestConfigurationSeeder extends AbstractSeed
                 'access_group' => ['admin'],
                 'update_group' => [],
                 'label' => 'Fairgate Test-E-Mail-Adresse',
+                'pattern' => '[^@\\s]+@[^@\\s]+\\.[^@\\s]+',
+                'placeholder' => 'name@beispiel.ch',
             ],
             [
                 'id' => '00000000-0000-4000-8000-000000000011',
                 'variable_name' => 'fairgate_url',
                 'value' => 'https://mein.fairgate.ch/vgbh/register/MTI0MTA=',
                 'description' => 'Link zur Registrierung bei Fairgate.',
-                'access_group' => ['admin'],
+                'access_group' => ['client'],
                 'update_group' => ['admin'],
                 'label' => 'Fairgate-Registrierungslink',
+                'pattern' => 'https://[^\\s]+',
+                'placeholder' => 'https://...',
             ],
             [
                 'id' => '00000000-0000-4000-8000-000000000012',
@@ -86,6 +98,8 @@ final class FairgateTestConfigurationSeeder extends AbstractSeed
                 'access_group' => ['admin'],
                 'update_group' => ['admin'],
                 'label' => 'Fairgate-E-Mail-Abstand',
+                'pattern' => '[1-9]\\d*',
+                'placeholder' => 'z. B. 7',
             ],
             [
                 'id' => '00000000-0000-4000-8000-000000000013',
@@ -95,6 +109,8 @@ final class FairgateTestConfigurationSeeder extends AbstractSeed
                 'access_group' => [],
                 'update_group' => [],
                 'label' => 'Registrierungstoken-Aufbewahrung',
+                'pattern' => '[1-9]\\d*',
+                'placeholder' => 'z. B. 365',
             ],
             [
                 'id' => '00000000-0000-4000-8000-000000000014',
@@ -104,55 +120,57 @@ final class FairgateTestConfigurationSeeder extends AbstractSeed
                 'access_group' => ['admin', 'user'],
                 'update_group' => ['admin'],
                 'label' => 'Zeitraum provisorischer Bestellungen',
+                'pattern' => '[1-9]\\d*',
+                'placeholder' => 'z. B. 14',
             ],
-        ] as $config) {
-            $encodedValue = json_encode($config['value'], JSON_THROW_ON_ERROR);
-            $encodedAccessGroup = json_encode($config['access_group'], JSON_THROW_ON_ERROR);
-            $encodedUpdateGroup = json_encode($config['update_group'], JSON_THROW_ON_ERROR);
-            $existing = $this->query(
-                'SELECT id FROM frontend_config WHERE variable_name = :variable_name',
-                ['variable_name' => $config['variable_name']],
-            )->fetch();
+        ];
 
-            if ($existing !== false) {
-                $this->query(
-                    'UPDATE frontend_config
-                     SET value = :value, description = :description, access_group = :access_group,
-                         update_group = :update_group, label = :label
-                     WHERE variable_name = :variable_name',
-                    [
-                        'value' => $encodedValue,
-                        'description' => $config['description'],
-                        'access_group' => $encodedAccessGroup,
-                        'update_group' => $encodedUpdateGroup,
-                        'label' => $config['label'],
-                        'variable_name' => $config['variable_name'],
-                    ],
-                );
+        foreach ($configs as $config) {
+            if ($this->fetchRow(sprintf(
+                "SELECT id FROM frontend_config WHERE variable_name = '%s'",
+                $config['variable_name'],
+            )) !== false) {
                 continue;
             }
 
-            $this->query(
+            $this->execute(
                 'INSERT INTO frontend_config
-                    (id, variable_name, value, description, access_group, update_group, label)
-                 VALUES (:id, :variable_name, :value, :description, :access_group, :update_group, :label)',
+                    (id, variable_name, value, description, access_group, update_group, label, pattern, placeholder)
+                 VALUES (:id, :variable_name, :value, :description, :access_group, :update_group, :label, :pattern, :placeholder)',
                 [
                     'id' => $config['id'],
                     'variable_name' => $config['variable_name'],
-                    'value' => $encodedValue,
+                    'value' => json_encode($config['value'], JSON_THROW_ON_ERROR),
                     'description' => $config['description'],
-                    'access_group' => $encodedAccessGroup,
-                    'update_group' => $encodedUpdateGroup,
+                    'access_group' => json_encode($config['access_group'], JSON_THROW_ON_ERROR),
+                    'update_group' => json_encode($config['update_group'], JSON_THROW_ON_ERROR),
                     'label' => $config['label'],
+                    'pattern' => $config['pattern'],
+                    'placeholder' => $config['placeholder'],
                 ],
             );
         }
+    }
 
-        foreach ($fieldMetadata as $variableName => $metadata) {
-            $this->query(
-                'UPDATE frontend_config SET pattern = :pattern, placeholder = :placeholder WHERE variable_name = :variable_name',
-                ['pattern' => $metadata['pattern'], 'placeholder' => $metadata['placeholder'], 'variable_name' => $variableName],
-            );
+    private function addInitialAdmin(): void
+    {
+        if ($this->fetchRow(sprintf(
+            "SELECT id FROM users WHERE email = '%s'",
+            self::ADMIN_EMAIL,
+        )) !== false) {
+            return;
         }
+
+        $this->execute(
+            'INSERT INTO users (id, email, password, `group`, required_password_reset)
+             VALUES (:id, :email, :password, :group, :required_password_reset)',
+            [
+                'id' => '00000000-0000-4000-8000-000000000001',
+                'email' => self::ADMIN_EMAIL,
+                'password' => self::ADMIN_PASSWORD_HASH,
+                'group' => 'admin',
+                'required_password_reset' => 0,
+            ],
+        );
     }
 }

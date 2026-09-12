@@ -76,10 +76,7 @@ db/
 │   ├── 20260614081000_create_children_table.php
 │   └── ...
 └── seeds/
-    ├── development/           # Development seed data
-    ├── integration/          # Integration test fixtures
-    ├── pre-prod/             # Pre-production seed data
-    └── production/           # Production seed data
+    └── integration/          # Integration test fixtures
 ```
 
 ## Documentation

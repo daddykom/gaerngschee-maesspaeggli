@@ -105,9 +105,6 @@ docker-compose up -d
 # Datenbank migrieren
 cd frontend && npm run db:migrate
 
-# Datenbank seeden (Entwicklungsdaten)
-cd frontend && npm run db:seed
-
 # Dependencies installieren
 cd frontend && npm install
 cd backend && composer install
@@ -161,7 +158,6 @@ npm run lint           # Linting
 npm run db:start       # Docker Datenbank starten
 npm run db:stop        # Docker Datenbank stoppen
 npm run db:migrate     # Migrationen ausführen
-npm run db:seed        # Seed-Daten laden
 npm run db:setup       # Datenbank initialisieren
 npm run db:reset       # Datenbank zurücksetzen
 ```
@@ -209,7 +205,7 @@ npm run e2e
 │   └── composer.json      # PHP Dependencies
 ├── db/                   # Datenbank
 │   ├── migrations/       # Phinx Migrationen
-│   └── seeds/            # Seed-Daten
+│   └── seeds/            # Integrationstest-Fixtures
 ├── docker-compose.yml    # Docker Konfiguration
 └── openspec/            # OpenSpec Spezifikationen
 ```

@@ -40,9 +40,10 @@ setup() {
   [[ "$(< "$log_file")" == *"composer-pwd $target_base/pre-prod"* ]]
   [[ "$(< "$log_file")" == *'php84 '* ]]
   [[ "$(< "$log_file")" == *'npm ci'* ]]
-  [[ "$(< "$log_file")" == *'taskset -c 0'* ]]
-  [[ "$(< "$log_file")" == *'npm run build NX_DAEMON=false NX_SKIP_NATIVE_FILE_CACHE=true'* ]]
-  [[ "$(< "$log_file")" == *'phinx migrate -e production'* ]]
+   [[ "$(< "$log_file")" == *'taskset -c 0'* ]]
+   [[ "$(< "$log_file")" == *'npm run build NX_DAEMON=false NX_SKIP_NATIVE_FILE_CACHE=true'* ]]
+   [[ "$(< "$log_file")" == *'phinx migrate -e production'* ]]
+   [[ "$(< "$log_file")" != *'phinx seed:run'* ]]
 }
 
 @test 'requires explicit confirmation for production deployment' {
@@ -60,8 +61,9 @@ setup() {
   [ "$status" -eq 0 ]
   [ -f "$target_base/prod/frontend/index.html" ]
   [[ "$(< "$target_base/prod/backend/.env")" == APP_ENV=prod* ]]
-  [[ "$(< "$log_file")" == *"composer-pwd $target_base/prod"* ]]
-  [[ "$(< "$log_file")" == *'phinx migrate -e production'* ]]
+   [[ "$(< "$log_file")" == *"composer-pwd $target_base/prod"* ]]
+   [[ "$(< "$log_file")" == *'phinx migrate -e production'* ]]
+   [[ "$(< "$log_file")" != *'phinx seed:run'* ]]
 }
 
 @test 'uses a configured deployment branch' {

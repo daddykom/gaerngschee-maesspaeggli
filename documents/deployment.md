@@ -62,8 +62,10 @@ composer install --no-dev --optimize-autoloader
 vendor/bin/phinx migrate -e production
 ```
 
-Die Datenbank wird vor dem Aktivieren des neuen Frontend-Builds migriert. Danach
-wird der Inhalt des Angular-Builds nach `<deployment>/frontend` veröffentlicht.
+Die Datenbank wird vor dem Aktivieren des neuen Frontend-Builds migriert. Die
+Migrationen legen auch die für den Betrieb notwendigen Basisdaten an. Seeds
+werden beim Deployment nicht ausgeführt. Danach wird der Inhalt des
+Angular-Builds nach `<deployment>/frontend` veröffentlicht.
 
 ## Deployment-Script
 
@@ -113,10 +115,10 @@ Für die Integrationstests wird `backend/.env.integration` über Docker Compose
 als `env_file` geladen. Diese Datei enthält ausschliesslich Testwerte und keine
 Produktionszugangsdaten.
 
-Die Integrationsdatenbank verwendet die technische Phinx-Umgebung `test`, aber
-den Seed-Pfad `db/seeds/integration/`. Pre-Production verwendet auf dem Server
-`APP_ENV=prod`, die technische Phinx-Umgebung `production` und den Seed-Pfad
-`db/seeds/pre-prod/`. Production verwendet `db/seeds/production/`.
+Die Integrationsdatenbank verwendet die technische Phinx-Umgebung `test` und
+kann für Test-Fixtures den Seed-Pfad `db/seeds/integration/` verwenden.
+Pre-Production und Production verwenden die technische Phinx-Umgebung
+`production`. Ihre Basisdaten werden durch Migrationen angelegt.
 
 ## Sicherheit
 
