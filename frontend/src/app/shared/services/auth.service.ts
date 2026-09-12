@@ -28,9 +28,6 @@ export interface SessionStatusResponse {
   secondsRemaining: number;
 }
 
-export interface SessionRefreshResponse extends SessionStatusResponse {
-}
-
 export interface ApiErrorResponse {
   error: {
     code: string;
@@ -45,7 +42,11 @@ export class AuthService {
   private readonly http = inject(HttpClient);
 
   login(email: string, password: string): Observable<LoginResponse> {
-    return this.http.post<LoginResponse>(`${environment.apiUrl}/auth/login`, { email, password }, { withCredentials: true });
+    return this.http.post<LoginResponse>(
+      `${environment.apiUrl}/auth/login`,
+      { email, password },
+      { withCredentials: true },
+    );
   }
 
   registrationLogin(token: string): Observable<RegistrationLoginResponse> {
@@ -61,11 +62,17 @@ export class AuthService {
   }
 
   sessionStatus(): Observable<SessionStatusResponse> {
-    return this.http.get<SessionStatusResponse>(`${environment.apiUrl}/auth/session-status`, { withCredentials: true });
+    return this.http.get<SessionStatusResponse>(`${environment.apiUrl}/auth/session-status`, {
+      withCredentials: true,
+    });
   }
 
-  refreshSession(): Observable<SessionRefreshResponse> {
-    return this.http.post<SessionRefreshResponse>(`${environment.apiUrl}/auth/session-refresh`, {}, { withCredentials: true });
+  refreshSession(): Observable<SessionStatusResponse> {
+    return this.http.post<SessionStatusResponse>(
+      `${environment.apiUrl}/auth/session-refresh`,
+      {},
+      { withCredentials: true },
+    );
   }
 
   changePassword(password: string): Observable<{ user: AuthUser }> {
@@ -77,10 +84,15 @@ export class AuthService {
   }
 
   requestPasswordReset(email: string): Observable<{ sent: boolean }> {
-    return this.http.post<{ sent: boolean }>(`${environment.apiUrl}/auth/password-reset-request`, { email });
+    return this.http.post<{ sent: boolean }>(`${environment.apiUrl}/auth/password-reset-request`, {
+      email,
+    });
   }
 
   resetPassword(token: string, password: string): Observable<{ user: AuthUser }> {
-    return this.http.post<{ user: AuthUser }>(`${environment.apiUrl}/auth/password-reset`, { token, password });
+    return this.http.post<{ user: AuthUser }>(`${environment.apiUrl}/auth/password-reset`, {
+      token,
+      password,
+    });
   }
 }
