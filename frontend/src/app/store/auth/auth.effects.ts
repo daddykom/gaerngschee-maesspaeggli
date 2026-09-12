@@ -8,7 +8,7 @@ import { NavigationActions } from '../navigation/navigation.actions';
 import { NotificationActions } from '../notification/notification.actions';
 import { clearPersistedAuthState, persistAuthState } from '../../shared/services/auth-storage';
 import { Store } from '@ngrx/store';
-import { selectAuthGroup, selectAuthState } from './auth.feature';
+import { selectAuthGroup } from './auth.feature';
 
 export const loginEffect = createEffect(
   (actions$ = inject(Actions), authService = inject(AuthService)) =>
@@ -16,8 +16,7 @@ export const loginEffect = createEffect(
       ofType(AuthActions.login),
       exhaustMap(({ email, password }) =>
         authService.login(email, password).pipe(
-           map(({ token, user, group, requiredPasswordReset }) => AuthActions.loginSuccess({
-             token,
+           map(({ user, group, requiredPasswordReset }) => AuthActions.loginSuccess({
              userId: user.id,
              group,
              requiredPasswordReset,
@@ -39,9 +38,8 @@ export const loginEffect = createEffect(
 export const persistLoginEffect = createEffect(
   (actions$ = inject(Actions)) => actions$.pipe(
     ofType(AuthActions.loginSuccess),
-    tap(({ token, userId, group }) => {
+    tap(({ userId, group }) => {
       persistAuthState({
-        token,
         userId,
         group,
         fairgateUserExists: null,
@@ -57,34 +55,14 @@ export const persistLoginEffect = createEffect(
 export const persistRegistrationLoginEffect = createEffect(
   (actions$ = inject(Actions)) => actions$.pipe(
     ofType(AuthActions.registrationLoginSuccess),
-    tap(({ token, userId, group, fairgateUserExists, childrenCount, adultsCount, salutation }) => {
+    tap(({ userId, group, fairgateUserExists, childrenCount, adultsCount, salutation }) => {
       persistAuthState({
-        token,
         userId,
         group,
         fairgateUserExists,
         childrenCount,
         adultsCount,
         salutation,
-      });
-    }),
-  ),
-  { functional: true, dispatch: false },
-);
-
-export const persistTokenRefreshEffect = createEffect(
-  (actions$ = inject(Actions), store = inject(Store)) => actions$.pipe(
-    ofType(AuthActions.tokenRefreshed),
-    tap(({ token }) => {
-      const state = store.selectSignal(selectAuthState)();
-      persistAuthState({
-        token,
-        userId: state.userId ?? '',
-        group: state.group ?? 'admin',
-        fairgateUserExists: state.fairgateUserExists,
-        childrenCount: state.childrenCount,
-        adultsCount: state.adultsCount,
-        salutation: state.salutation,
       });
     }),
   ),
@@ -224,7 +202,6 @@ export const authEffects = {
   loginEffect,
   persistLoginEffect,
   persistRegistrationLoginEffect,
-  persistTokenRefreshEffect,
   clearPersistedAuthEffect,
   navigateOnLoginSuccessEffect,
   passwordChangeEffect,

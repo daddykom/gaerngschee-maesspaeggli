@@ -18,11 +18,16 @@
               @for (value of values(config); track $index) {
                 <mat-form-field appearance="outline">
                   <mat-label>{{ config.variableName }} {{ $index + 1 }}</mat-label>
-                  @if (config.canUpdate) {
-                    <input matInput type="text" [formField]="arrayField(config, $index)" />
-                  } @else {
-                    <input matInput type="text" [value]="value" disabled />
-                  }
+                    @if (config.canUpdate) {
+                       <input matInput type="text" [placeholder]="config.placeholder || ''" [formField]="arrayField(config, $index)" (blur)="arrayField(config, $index)().markAsTouched()" />
+                    } @else {
+                      <input matInput type="text" [value]="value" disabled />
+                    }
+                    <app-control-error
+                      matError
+                      [control]="arrayField(config, $index)()"
+                      translationPrefix="app.admin.configuration.errors"
+                    />
                 </mat-form-field>
                 @if (config.canUpdate) {
                   <button mat-button type="button" (click)="removeValue(config, $index)">
@@ -39,11 +44,16 @@
           } @else {
             <mat-form-field appearance="outline">
               <mat-label>{{ config.variableName }}</mat-label>
-              @if (config.canUpdate) {
-                <input matInput type="text" [formField]="field(config)" />
-              } @else {
-                <input matInput type="text" [value]="model()[config.id]" disabled />
-              }
+               @if (config.canUpdate) {
+                <input matInput type="text" [placeholder]="config.placeholder || ''" [formField]="field(config)" (blur)="field(config)().markAsTouched()" />
+               } @else {
+                 <input matInput type="text" [value]="model()[config.id]" disabled />
+               }
+               <app-control-error
+                 matError
+                 [control]="field(config)()"
+                 translationPrefix="app.admin.configuration.errors"
+               />
             </mat-form-field>
           }
         </fieldset>

@@ -1,5 +1,5 @@
 import { Component, computed, inject } from '@angular/core';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { MatButtonModule } from '@angular/material/button';
 import { MatDialog } from '@angular/material/dialog';
 import { MatFormFieldModule } from '@angular/material/form-field';
@@ -29,6 +29,7 @@ export class Delivery {
   private readonly store = inject(Store);
   private readonly dialog = inject(MatDialog);
   private readonly route = inject(ActivatedRoute);
+  private readonly router = inject(Router);
 
   readonly email = this.store.selectSignal(selectDeliveryEmail);
   readonly order = this.store.selectSignal(selectDeliveryOrder);
@@ -49,7 +50,15 @@ export class Delivery {
 
   constructor() {
     const token = this.route.snapshot.queryParamMap.get('token');
-    if (token) this.store.dispatch(DeliveryActions.loadRequested({ token }));
+    if (token) {
+      this.store.dispatch(DeliveryActions.loadRequested({ token }));
+      void this.router.navigate([], {
+        relativeTo: this.route,
+        queryParams: { token: null },
+        queryParamsHandling: 'merge',
+        replaceUrl: true,
+      });
+    }
   }
 
   search(): void {

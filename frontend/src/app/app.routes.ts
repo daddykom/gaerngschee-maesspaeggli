@@ -5,6 +5,7 @@ import { groupGuard } from './shared/guards/group.guard';
 import { orderResolver } from './features/order/order.resolver';
 import { clientLoginGuard } from './features/auth/guards/client-login.guard';
 import { adminOverviewResolver } from './features/admin/pages/overview/admin-overview.resolver';
+import { configurationResolver } from './features/admin/pages/configuration/configuration.resolver';
 import { publicConfigurationResolver } from './features/public-configuration/public-configuration.resolver';
 import { startEffects } from './store/start/start.effects';
 import { startFeature } from './store/start/start.feature';
@@ -86,7 +87,7 @@ export const appRoutes: Routes = [
         ], children: [
           { path: 'overview', resolve: { overview: adminOverviewResolver }, data: { pageTitle: 'app.admin.overview.title' }, loadComponent: () => import('./features/admin/pages/overview/admin-overview.component').then((m) => m.AdminOverviewComponent) },
           { path: 'fairgate-test', canActivate: [groupGuard(['admin'])], data: { pageTitle: 'app.admin.fairgateTest.title' }, loadComponent: () => import('./features/admin/pages/fairgate-test/fairgate-test.component').then((m) => m.FairgateTestComponent) },
-          { path: 'configuration', data: { pageTitle: 'app.admin.configuration.title' }, loadComponent: () => import('./features/admin/pages/configuration/configuration.component').then((m) => m.ConfigurationComponent) },
+          { path: 'configuration', resolve: { configuration: configurationResolver }, data: { pageTitle: 'app.admin.configuration.title' }, loadComponent: () => import('./features/admin/pages/configuration/configuration.component').then((m) => m.ConfigurationComponent) },
           { path: 'users', children: [
             { path: 'new', canActivate: [groupGuard(['admin'])], data: { pageTitle: 'app.admin.users.createTitle' }, loadComponent: () => import('./features/admin/pages/users/user-edit.component').then((m) => m.UserEditComponent) },
             { path: ':userId', canActivate: [groupGuard(['user', 'admin'])], data: { pageTitle: 'app.admin.users.editTitle' }, loadComponent: () => import('./features/admin/pages/users/user-edit.component').then((m) => m.UserEditComponent) },

@@ -2,11 +2,15 @@
   <form class="order-form gl-stack gl-stack--section" (submit)="$event.preventDefault(); onSubmit()">
     @if (!fairgateUserExists()) {
       <app-info-box [title]="'app.order.noFairgate.title' | translate">
-        <p
-          [innerHTML]="
-            'app.order.noFairgate.message' | translate: { fairgateUrl: fairgateUrl() }
-          "
-        ></p>
+        <p>
+          {{ 'app.order.noFairgate.messageBeforeLink' | translate }}
+          @if (fairgateUrl(); as url) {
+            <a [href]="url" target="_blank" rel="noopener noreferrer">
+              {{ 'app.order.noFairgate.link' | translate }}
+            </a>
+          }
+          {{ 'app.order.noFairgate.messageAfterLink' | translate }}
+        </p>
       </app-info-box>
 
       <section class="order-section gl-stack gl-stack--group" aria-labelledby="manual-counts-heading">

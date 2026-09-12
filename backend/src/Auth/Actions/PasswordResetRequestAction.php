@@ -25,7 +25,7 @@ final class PasswordResetRequestAction
 
     public function __invoke(ServerRequestInterface $request, ResponseInterface $response): ResponseInterface
     {
-        $email = JsonRequest::string(JsonRequest::body($request), 'email');
+        $email = JsonRequest::string(JsonRequest::body($request), 'email', 254);
         if ($email === null || filter_var(trim($email), FILTER_VALIDATE_EMAIL) === false) {
             return JsonResponse::error($response, 'INVALID_EMAIL', 422);
         }
@@ -37,7 +37,8 @@ final class PasswordResetRequestAction
                 $frontendBaseUrl = rtrim(getenv('FRONTEND_BASE_URL') ?: 'http://localhost:4200', '/');
                 ($this->emails ?? new EmailSender())->sendPasswordReset(
                     (string) $user['email'],
-                    $frontendBaseUrl . '/password-reset?token=' . rawurlencode($token),
+                    $frontendBaseUrl . '/password-reset?token=' . rawurlencode($token)
+                        . '&email=' . rawurlencode((string) $user['email']),
                 );
             } catch (Throwable) {
                 return JsonResponse::error($response, 'PASSWORD_RESET_REQUEST_FAILED', 503);

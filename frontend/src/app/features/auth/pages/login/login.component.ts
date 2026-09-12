@@ -1,5 +1,5 @@
 import { Component, inject, OnInit, signal, ChangeDetectionStrategy } from '@angular/core';
-import { email, form, FormField, required } from '@angular/forms/signals';
+import { email, form, FormField, maxLength, required } from '@angular/forms/signals';
 import { MatButtonModule } from '@angular/material/button';
 import { MatInputModule } from '@angular/material/input';
 import { ActivatedRoute } from '@angular/router';
@@ -9,6 +9,7 @@ import { AuthActions } from '../../../../store/auth/auth.actions';
 import { selectAuthLoading } from '../../../../store/auth/auth.feature';
 import { ControlErrorComponent } from '../../../../shared/components/control-error/control-error';
 import { NavigationActions } from '../../../../store/navigation/navigation.actions';
+import { inputLimits } from '../../../../shared/constants/input-limits';
 
 @Component({
   selector: 'app-login',
@@ -33,7 +34,9 @@ export class Login implements OnInit {
   readonly loginForm = form(this.loginModel, (schema) => {
     required(schema.email);
     email(schema.email);
+    maxLength(schema.email, inputLimits.email);
     required(schema.password);
+    maxLength(schema.password, inputLimits.password);
   });
 
   ngOnInit(): void {

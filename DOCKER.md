@@ -92,8 +92,8 @@ npm run db:migrate
 # Seeds ausführen (Development)
 npm run db:seed
 
-# Seeds ausführen (Test)
-npm run db:seed:test
+# Integrationstests vorbereiten (Migration + Integration-Seeds)
+npm run integration:setup
 
 # Setup (start + migrate + seed)
 npm run db:setup
@@ -118,7 +118,8 @@ docker exec gaerngschee-backend vendor/bin/phinx status -c /var/www/db/phinx.php
 | Environment | Seed Path |
 |-------------|-----------|
 | development | `db/seeds/development/` |
-| test | `db/seeds/test/` |
+| integration | `db/seeds/integration/` |
+| pre-prod | `db/seeds/pre-prod/` |
 | production | `db/seeds/production/` |
 
 ---

@@ -8,7 +8,6 @@ test.describe('Login route', () => {
         contentType: 'application/json',
         body: JSON.stringify({
           user: { id: '1', email: 'admin@example.com', group: 'admin' },
-          token: 'test-token',
           group: 'admin',
           requiredPasswordReset: false,
         }),
@@ -80,7 +79,6 @@ test.describe('Login route', () => {
         contentType: 'application/json',
         body: JSON.stringify({
           user: { id: '2', email: 'user@example.com', group: 'user' },
-          token: 'test-token',
           group: 'user',
           requiredPasswordReset: true,
         }),

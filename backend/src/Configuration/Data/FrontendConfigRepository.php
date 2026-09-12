@@ -17,7 +17,7 @@ final class FrontendConfigRepository
     public function findVisibleForGroup(string $group): array
     {
         $stmt = $this->pdo->query(
-            'SELECT id, variable_name, value, description, access_group, update_group, label, created_at, updated_at
+            'SELECT id, variable_name, value, description, access_group, update_group, label, pattern, placeholder, created_at, updated_at
              FROM frontend_config
              ORDER BY variable_name',
         );
@@ -62,7 +62,7 @@ final class FrontendConfigRepository
     public function update(string $id, string $group, string|array $value): array|false|null
     {
         $stmt = $this->pdo->prepare(
-            'SELECT id, variable_name, value, description, access_group, update_group, label, created_at, updated_at
+            'SELECT id, variable_name, value, description, access_group, update_group, label, pattern, placeholder, created_at, updated_at
              FROM frontend_config
              WHERE id = :id',
         );
@@ -77,6 +77,8 @@ final class FrontendConfigRepository
         if (!in_array($group, $accessGroups, true) || !in_array($group, $updateGroups, true)) {
             return false;
         }
+
+        $this->validateValue($value, $row['pattern']);
 
         $stmt = $this->pdo->prepare(
             'UPDATE frontend_config
@@ -157,6 +159,8 @@ final class FrontendConfigRepository
             'value' => $this->decodeValue($row['value']),
             'description' => $row['description'],
             'label' => $row['label'],
+            'pattern' => $row['pattern'],
+            'placeholder' => $row['placeholder'],
             'canUpdate' => $canUpdate,
             'createdAt' => $row['created_at'],
             'updatedAt' => $row['updated_at'],
@@ -189,5 +193,23 @@ final class FrontendConfigRepository
         return is_array($value)
             && array_is_list($value)
             && count(array_filter($value, 'is_string')) === count($value);
+    }
+
+    private function validateValue(string|array $value, mixed $pattern): void
+    {
+        if (!is_string($pattern) || trim($pattern) === '') {
+            return;
+        }
+
+        $regex = '~^(?:' . $pattern . ')$~u';
+        if (@preg_match($regex, '') === false) {
+            throw new \InvalidArgumentException('Invalid configuration pattern.');
+        }
+
+        foreach (is_array($value) ? $value : [$value] as $item) {
+            if (@preg_match($regex, $item) !== 1) {
+                throw new \InvalidArgumentException('Configuration value does not match its pattern.');
+            }
+        }
     }
 }

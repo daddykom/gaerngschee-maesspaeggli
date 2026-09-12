@@ -1,5 +1,5 @@
 import { Component, inject, signal } from '@angular/core';
-import { email, form, FormField, required } from '@angular/forms/signals';
+import { email, form, FormField, maxLength, required } from '@angular/forms/signals';
 import { MatButtonModule } from '@angular/material/button';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatIconModule } from '@angular/material/icon';
@@ -9,6 +9,7 @@ import { TranslatePipe, TranslateService } from '@ngx-translate/core';
 import { ControlErrorComponent } from '../../../../shared/components/control-error/control-error';
 import { InfoBoxComponent } from '../../../../shared/components/info-box/info-box';
 import { StartActions } from '../../../../store/start/start.actions';
+import { inputLimits } from '../../../../shared/constants/input-limits';
 
 @Component({
   selector: 'app-maesspaeggli-start',
@@ -36,6 +37,7 @@ export class MaesspaeggliStartComponent {
   readonly form = form(this.model, (schema) => {
     required(schema.email);
     email(schema.email);
+    maxLength(schema.email, inputLimits.email);
   });
 
   submit(): void {

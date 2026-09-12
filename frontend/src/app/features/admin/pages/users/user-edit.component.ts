@@ -1,6 +1,6 @@
 import { Component, computed, inject, signal } from '@angular/core';
 import { toSignal } from '@angular/core/rxjs-interop';
-import { email, form, FormField, required } from '@angular/forms/signals';
+import { email, form, FormField, maxLength, required } from '@angular/forms/signals';
 import { MatButtonModule } from '@angular/material/button';
 import { MatCheckboxModule } from '@angular/material/checkbox';
 import { MatInputModule } from '@angular/material/input';
@@ -15,6 +15,7 @@ import { AdminUsersActions } from '../../../../store/admin-users/admin-users.act
 import { selectAdminUsersSaving } from '../../../../store/admin-users/admin-users.feature';
 import { selectAuthGroup } from '../../../../store/auth/auth.feature';
 import { NavigationActions } from '../../../../store/navigation/navigation.actions';
+import { inputLimits } from '../../../../shared/constants/input-limits';
 
 @Component({
   selector: 'app-admin-user-edit',
@@ -52,6 +53,7 @@ export class UserEditComponent {
   readonly form = form(this.model, (schema) => {
     required(schema.email);
     email(schema.email);
+    maxLength(schema.email, inputLimits.email);
     required(schema.group);
   });
   readonly loading = toSignal(

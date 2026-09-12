@@ -8,7 +8,7 @@ test.describe('Password change route', () => {
     await expect(page.getByText('Bitte gib ein neues Passwort ein.')).toBeVisible();
     await expect(page.getByText('Bitte bestätige dein neues Passwort.')).toBeVisible();
 
-    await page.locator('input[type="password"]').nth(0).fill('new-secret');
+    await page.locator('input[type="password"]').nth(0).fill('long-enough-secret');
     await page.locator('input[type="password"]').nth(1).fill('different-secret');
     await page.getByRole('button', { name: 'Passwort ändern' }).click();
 
@@ -20,7 +20,7 @@ test.describe('Password change route', () => {
     let requestReceived = false;
     await page.route('http://localhost:8080/auth/password-change-authenticated', async (route) => {
       requestReceived = true;
-      expect(route.request().postDataJSON()).toEqual({ password: 'new-secret' });
+      expect(route.request().postDataJSON()).toEqual({ password: 'long-enough-secret' });
       await route.fulfill({
         status: 200,
         contentType: 'application/json',
@@ -28,8 +28,8 @@ test.describe('Password change route', () => {
       });
     });
 
-    await page.locator('input[type="password"]').nth(0).fill('new-secret');
-    await page.locator('input[type="password"]').nth(1).fill('new-secret');
+    await page.locator('input[type="password"]').nth(0).fill('long-enough-secret');
+    await page.locator('input[type="password"]').nth(1).fill('long-enough-secret');
     await page.getByRole('button', { name: 'Passwort ändern' }).click();
 
     await page.waitForURL('**/delivery');
@@ -46,8 +46,8 @@ test.describe('Password change route', () => {
       });
     });
 
-    await page.locator('input[type="password"]').nth(0).fill('new-secret');
-    await page.locator('input[type="password"]').nth(1).fill('new-secret');
+    await page.locator('input[type="password"]').nth(0).fill('long-enough-secret');
+    await page.locator('input[type="password"]').nth(1).fill('long-enough-secret');
     await page.getByRole('button', { name: 'Passwort ändern' }).click();
 
     await expect(page.locator('.info-box')).toContainText(
@@ -63,7 +63,6 @@ async function loginAsUser(page: import('@playwright/test').Page): Promise<void>
       contentType: 'application/json',
       body: JSON.stringify({
         user: { id: '2', email: 'user@example.com', group: 'user' },
-        token: 'test-token',
         group: 'user',
         requiredPasswordReset: true,
       }),

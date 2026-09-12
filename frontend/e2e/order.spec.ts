@@ -8,7 +8,6 @@ test.describe('Order route', () => {
         contentType: 'application/json',
         body: JSON.stringify({
           user: { id: 'client-1', email: 'client@example.com', group: 'client' },
-          token: 'client-token',
           group: 'client',
           requiredPasswordReset: false,
           fairgateUserExists: true,
@@ -50,7 +49,6 @@ test.describe('Order route', () => {
         contentType: 'application/json',
         body: JSON.stringify({
           user: { id: 'client-1', email: 'client@example.com', group: 'client' },
-          token: 'client-token',
           group: 'client',
           requiredPasswordReset: false,
           fairgateUserExists: false,

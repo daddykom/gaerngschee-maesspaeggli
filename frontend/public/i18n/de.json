@@ -80,7 +80,9 @@
       "no": "Nein",
       "noFairgate": {
         "title": "Lieber Besteller",
-        "message": "Wir können Dich leider nicht bei Fairgate finden. Bitte melde Dich dort an, damit Du berechtigt bist, ein oder mehrere Mässpäggli zu bestellen. Verwende dabei die E-Mail, die Du hier verwendet hast. Du kannst Dich trotzdem provisorisch anmelden, Du musst uns einfach die richtige Anzahl Erwachsene und Kinder angeben. Sobald wir Deine Anmeldung bei Fairgate erhalten haben, wird Deine Anmeldung automatisch definitiv. Anmelden kannst Du Dich <a href=\"{{fairgateUrl}}\" target=\"_blank\" rel=\"noreferrer\">hier</a>."
+        "messageBeforeLink": "Wir können Dich leider nicht bei Fairgate finden. Bitte melde Dich dort an, damit Du berechtigt bist, ein oder mehrere Mässpäggli zu bestellen. Verwende dabei die E-Mail, die Du hier verwendet hast. Du kannst Dich trotzdem provisorisch anmelden, Du musst uns einfach die richtige Anzahl Erwachsene und Kinder angeben. Sobald wir Deine Anmeldung bei Fairgate erhalten haben, wird Deine Anmeldung automatisch definitiv. Anmelden kannst Du Dich",
+        "link": "hier",
+        "messageAfterLink": "."
       },
       "manualCounts": {
         "title": "Anzahl Personen erfassen",
@@ -139,18 +141,24 @@
     "passwordChange": {
       "pageTitle": "Passwort ändern",
       "heading": "Passwort ändern",
+      "passwordRules": "Dein Passwort muss mindestens 12 Zeichen lang sein und darf höchstens 128 Zeichen enthalten. Leerzeichen und Sonderzeichen sind erlaubt.",
       "emailLabel": "E-Mail-Adresse",
       "newPasswordLabel": "Neues Passwort",
       "confirmationLabel": "Neues Passwort bestätigen",
       "submit": "Passwort ändern",
       "errors": {
         "newPassword": {
-          "required": "Bitte gib ein neues Passwort ein."
+          "required": "Bitte gib ein neues Passwort ein.",
+          "minLength": "Das Passwort muss mindestens 12 Zeichen lang sein.",
+          "maxLength": "Das Passwort darf höchstens 128 Zeichen lang sein."
         },
         "passwordConfirmation": {
           "required": "Bitte bestätige dein neues Passwort.",
+          "minLength": "Das Passwort muss mindestens 12 Zeichen lang sein.",
+          "maxLength": "Das Passwort darf höchstens 128 Zeichen lang sein.",
           "passwordsDoNotMatch": "Die Passwörter stimmen nicht überein."
         },
+        "WEAK_PASSWORD": "Das Passwort erfüllt die Mindestanforderungen nicht.",
         "PASSWORD_CHANGE_FAILED": "Das Passwort konnte nicht geändert werden."
       }
     },
@@ -172,6 +180,7 @@
     "passwordReset": {
       "pageTitle": "Neues Passwort setzen",
       "heading": "Neues Passwort setzen",
+      "passwordRules": "Dein Passwort muss mindestens 12 Zeichen lang sein und darf höchstens 128 Zeichen enthalten. Leerzeichen und Sonderzeichen sind erlaubt.",
       "emailLabel": "E-Mail-Adresse",
       "newPasswordLabel": "Neues Passwort",
       "confirmationLabel": "Neues Passwort bestätigen",
@@ -182,12 +191,17 @@
           "required": "Bitte gib deine E-Mail-Adresse ein."
         },
         "newPassword": {
-          "required": "Bitte gib ein neues Passwort ein."
+          "required": "Bitte gib ein neues Passwort ein.",
+          "minLength": "Das Passwort muss mindestens 12 Zeichen lang sein.",
+          "maxLength": "Das Passwort darf höchstens 128 Zeichen lang sein."
         },
         "passwordConfirmation": {
           "required": "Bitte bestätige dein neues Passwort.",
+          "minLength": "Das Passwort muss mindestens 12 Zeichen lang sein.",
+          "maxLength": "Das Passwort darf höchstens 128 Zeichen lang sein.",
           "passwordsDoNotMatch": "Die Passwörter stimmen nicht überein."
         },
+        "WEAK_PASSWORD": "Das Passwort erfüllt die Mindestanforderungen nicht.",
         "invalid": "Der Link ist ungültig oder abgelaufen. Bitte fordere einen neuen Link an."
       }
     },
@@ -237,6 +251,8 @@
         "errors": {
           "FORBIDDEN": "Du darfst mindestens eine Konfiguration nicht verändern.",
           "INVALID_CONFIGURATION_DATA": "Bitte prüfe die Konfigurationswerte.",
+          "pattern": "Der Wert entspricht nicht dem erwarteten Format.",
+          "maxLength": "Der Wert ist zu lang.",
           "CONFIGURATION_UPDATE_FAILED": "Die Konfiguration konnte nicht gespeichert werden.",
           "REQUEST_FAILED": "Die Anfrage konnte nicht durchgeführt werden."
         }

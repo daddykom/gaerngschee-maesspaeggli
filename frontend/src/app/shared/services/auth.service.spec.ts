@@ -24,8 +24,8 @@ describe('AuthService', () => {
   it('posts login credentials to the backend', () => {
     const response = {
       user: { id: 'user-123', email: 'user@example.com', group: 'admin' as const },
-      token: 'jwt-token',
       group: 'admin' as const,
+      requiredPasswordReset: false,
     };
     let actualResponse = null;
 
@@ -61,7 +61,6 @@ describe('AuthService', () => {
   it('exchanges a registration token for a client session', () => {
     const response = {
       user: { id: 'client-123', email: 'person@example.com', group: 'client' as const },
-      token: 'jwt-token',
       group: 'client' as const,
       requiredPasswordReset: false,
       fairgateUserExists: true,

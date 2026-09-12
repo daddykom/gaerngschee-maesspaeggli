@@ -11,7 +11,6 @@ describe('Login', () => {
 
   const initialState = {
     auth: {
-      token: null,
       group: null,
       loading: false,
       errorCode: null,

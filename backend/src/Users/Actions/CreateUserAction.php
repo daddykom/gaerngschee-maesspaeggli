@@ -25,8 +25,8 @@ final class CreateUserAction
     public function __invoke(ServerRequestInterface $request, ResponseInterface $response): ResponseInterface
     {
         $data = JsonRequest::body($request);
-        $email = JsonRequest::string($data, 'email');
-        $group = JsonRequest::string($data, 'group');
+        $email = JsonRequest::string($data, 'email', 254);
+        $group = JsonRequest::string($data, 'group', 20);
         $email = $email === null ? null : trim($email);
         if ($email === null || filter_var($email, FILTER_VALIDATE_EMAIL) === false || !in_array($group, ['admin', 'user', 'client'], true)) {
             return JsonResponse::error($response, 'INVALID_USER_DATA', 422);

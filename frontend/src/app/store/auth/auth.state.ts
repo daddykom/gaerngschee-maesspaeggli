@@ -4,7 +4,6 @@ import { loadPersistedAuthState } from '../../shared/services/auth-storage';
 const persistedAuth = loadPersistedAuthState();
 
 export interface AuthState {
-  token: string | null;
   userId: string | null;
   group: UserGroup | null;
   requiredPasswordReset: boolean;
@@ -26,7 +25,6 @@ export interface AuthState {
 }
 
 export const initialState: AuthState = {
-  token: persistedAuth.token ?? null,
   userId: persistedAuth.userId ?? null,
   group: persistedAuth.group ?? null,
   requiredPasswordReset: false,

@@ -44,6 +44,8 @@ final class TestDatabase
                 access_group TEXT NOT NULL,
                 update_group TEXT NOT NULL,
                 label TEXT NOT NULL,
+                pattern TEXT NULL,
+                placeholder TEXT NULL,
                 created_at TEXT,
                 updated_at TEXT
             )',
@@ -89,6 +91,15 @@ final class TestDatabase
                 created_at TEXT,
                 updated_at TEXT,
                 UNIQUE (order_id, email_type)
+            )',
+        );
+        $pdo->exec(
+            'CREATE TABLE rate_limits (
+                key_hash TEXT NOT NULL,
+                bucket_start TEXT NOT NULL,
+                request_count INTEGER NOT NULL DEFAULT 0,
+                expires_at TEXT NOT NULL,
+                PRIMARY KEY (key_hash, bucket_start)
             )',
         );
 

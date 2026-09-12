@@ -84,14 +84,6 @@ export const refreshSession$ = createEffect(
   { functional: true },
 );
 
-export const persistRefreshedToken$ = createEffect(
-  (actions$ = inject(Actions)) => actions$.pipe(
-    ofType(SessionActions.refreshSucceeded),
-    map(({ token }) => AuthActions.tokenRefreshed({ token })),
-  ),
-  { functional: true },
-);
-
 export const stopSessionPollingOnLogout$ = createEffect(
   (actions$ = inject(Actions)) => actions$.pipe(
     ofType(AuthActions.logoutRequested, SessionActions.sessionExpired),
@@ -151,7 +143,6 @@ export const sessionEffects = {
   startSessionCountdown$,
   countdownSession$,
   refreshSession$,
-  persistRefreshedToken$,
   stopSessionPollingOnLogout$,
   sessionExpired$,
   openSessionExpiryDialog$,

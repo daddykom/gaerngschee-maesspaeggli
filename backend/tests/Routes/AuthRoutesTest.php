@@ -12,6 +12,7 @@ use App\Auth\Services\SessionService;
 use App\Registration\Services\ClientRegistrationLoginService;
 use App\Registration\Services\RegistrationTokenService;
 use App\Fairgate\Services\FairgateContactProvider;
+use App\Shared\Http\RateLimitService;
 use PDO;
 use PHPUnit\Framework\TestCase;
 use Slim\Psr7\Factory\ServerRequestFactory;
@@ -47,7 +48,7 @@ final class AuthRoutesTest extends TestCase
             ->createServerRequest('POST', '/auth/login')
             ->withBody((new \Slim\Psr7\Stream(fopen('php://temp', 'r+'))));
 
-        $response = Application::create()->handle($request);
+        $response = Application::create(new RateLimitService($this->pdo))->handle($request);
 
         self::assertSame(401, $response->getStatusCode());
         self::assertSame(
@@ -56,7 +57,7 @@ final class AuthRoutesTest extends TestCase
         );
     }
 
-    public function testAllowedUserCanLoginWithJwtAndSession(): void
+    public function testAllowedUserCanLoginWithSession(): void
     {
         $user = $this->repository->createUser('user@example.com', 'secret', 'user');
         $app = $this->createAuthApp();
@@ -70,7 +71,6 @@ final class AuthRoutesTest extends TestCase
         self::assertSame(200, $response->getStatusCode());
         self::assertSame($user['id'], $data['user']['id']);
         self::assertSame('user', $data['group']);
-        self::assertSame($user['id'], (new JwtService())->getUserIdFromToken($data['token']));
         self::assertSame($user['id'], (new SessionService())->getUserId());
         self::assertSame('user', (new SessionService())->getGroup());
         self::assertFalse($data['requiredPasswordReset']);
@@ -143,18 +143,18 @@ final class AuthRoutesTest extends TestCase
         (new SessionService())->setUser($user['id'], 'user');
 
         $response = $this->createAuthApp()->handle($this->request('/auth/password-change-authenticated', [
-            'password' => 'new-secret',
+            'password' => 'long-enough-secret',
         ]));
 
         self::assertSame(200, $response->getStatusCode());
-        self::assertNotNull($this->repository->verifyPassword('user@example.com', 'new-secret'));
+        self::assertNotNull($this->repository->verifyPassword('user@example.com', 'long-enough-secret'));
         self::assertFalse((bool) $this->repository->findById($user['id'])['required_password_reset']);
     }
 
     public function testAuthenticatedPasswordChangeRequiresAuthentication(): void
     {
         $response = $this->createAuthApp()->handle($this->request('/auth/password-change-authenticated', [
-            'password' => 'new-secret',
+            'password' => 'long-enough-secret',
         ]));
 
         self::assertSame(401, $response->getStatusCode());

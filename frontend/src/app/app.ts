@@ -6,7 +6,7 @@ import { toSignal } from '@angular/core/rxjs-interop';
 import { filter, startWith } from 'rxjs';
 import { InfoBoxComponent } from './shared/components/info-box/info-box';
 import { AuthActions } from './store/auth/auth.actions';
-import { selectAuthGroup, selectAuthToken } from './store/auth/auth.feature';
+import { selectAuthGroup } from './store/auth/auth.feature';
 import { SessionActions } from './store/auth/session.actions';
 import { selectNotification } from './store/notification/notification.feature';
 import { selectFrontendPublicConfigStatus } from './store/frontend-config/frontend-config.feature';
@@ -45,7 +45,7 @@ export class App {
   readonly isAdmin = computed(() => this.authGroup() === 'admin');
 
   constructor() {
-    if (this.store.selectSignal(selectAuthToken)() !== null) {
+    if (this.store.selectSignal(selectAuthGroup)() !== null) {
       this.store.dispatch(SessionActions.pollingStarted());
     }
   }

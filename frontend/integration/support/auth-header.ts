@@ -1,14 +1,33 @@
+import { execFileSync } from 'node:child_process';
+import { resolve } from 'node:path';
 import { Page } from '@playwright/test';
 
-export async function authHeaders(page: Page): Promise<{ Authorization: string }> {
-  const token = await page.evaluate(() => {
-    const raw = localStorage.getItem('gaerngschee.auth');
-    return raw === null ? null : (JSON.parse(raw) as { token?: string }).token;
-  });
+export function resetIntegrationRateLimits(): void {
+  execFileSync(
+    'docker',
+    [
+      'compose',
+      '-f',
+      resolve(process.cwd(), '..', 'docker-compose.integration.yml'),
+      'exec',
+      '-T',
+      'integration-backend',
+      'php',
+      '/var/www/html/tests/Support/ResetIntegrationRateLimits.php',
+    ],
+    { stdio: 'ignore' },
+  );
+}
 
-  if (!token) {
-    throw new Error('Expected an authentication token after login.');
+export async function authHeaders(page: Page): Promise<{ Cookie: string; 'X-CSRF-Token': string }> {
+  const cookies = await page.context().cookies('http://localhost:8082');
+  const csrfToken = cookies.find(({ name }) => name === 'XSRF-TOKEN')?.value;
+  if (!csrfToken) {
+    throw new Error('Expected a CSRF token after login.');
   }
 
-  return { Authorization: `Bearer ${token}` };
+  return {
+    Cookie: cookies.map(({ name, value }) => `${name}=${value}`).join('; '),
+    'X-CSRF-Token': csrfToken,
+  };
 }

@@ -1,7 +1,7 @@
 # Deployment
 
 Die Anwendung wird pro Umgebung in einem eigenen Verzeichnis installiert. Das
-Verzeichnis darf beispielsweise `prod`, `test` oder `staging` heissen:
+Verzeichnis kann `prod` oder `pre-prod` heissen:
 
 ```text
 $HOME/public_html/gaerngschee/maesspaeggli/<umgebung>/
@@ -22,10 +22,11 @@ entfernt, bevor Slim die interne Route verarbeitet.
 
 ## Environment
 
-Vor dem Start wird `backend/.env.example` nach `backend/.env` kopiert. Die
-Datei enthält umgebungsspezifische Werte und darf nicht versioniert werden.
-Alternativ kann der Prozess mit `GAERNGSCHEE_ENV_FILE` auf eine ausserhalb des
-Deployment-Verzeichnisses liegende Environment-Datei zeigen.
+Vor dem Start muss eine umgebungsspezifische `backend/.env` auf dem jeweiligen
+Server bereitgestellt werden. Diese Datei wird nicht aus dem Repository
+übernommen und darf nicht versioniert werden. Alternativ kann der Prozess mit
+`GAERNGSCHEE_ENV_FILE` auf eine ausserhalb des Deployment-Verzeichnisses
+liegende Environment-Datei zeigen.
 
 Mindestens diese Werte müssen gesetzt werden:
 
@@ -48,10 +49,10 @@ FSA_ACCESS_KEY=...
 FSA_PUBLIC_KEY="-----BEGIN PUBLIC KEY-----\n...\n-----END PUBLIC KEY-----"
 ```
 
-`APP_ENV` muss `test` oder `prod` sein. Wenn `FSA_MODE` nicht gesetzt ist,
-wird in `test` automatisch der Fake und in `prod` der echte Fairgate-Service
-verwendet. Für produktive Deployments soll `FSA_MODE=real` ausdrücklich gesetzt
-werden.
+`APP_ENV` muss `test` oder `prod` sein. Die lokale Entwicklung und die
+Integrationstests verwenden `test`. Pre-Production und Production verwenden
+`prod`. `FSA_MODE` wird für die gewünschte Fairgate-Variante separat gesetzt:
+Pre-Production kann den Fake verwenden, Production den echten Service.
 
 ## Installation
 
@@ -71,14 +72,14 @@ vorgesehene Installation. Standardmässig wird
 `$HOME/public_html/gaerngschee/maesspaeggli` als Basisverzeichnis verwendet:
 
 ```bash
-scripts/deploy.sh test
+scripts/deploy.sh pre-prod
 scripts/deploy.sh prod
 ```
 
 Die Ziele sind damit:
 
 ```text
-$HOME/public_html/gaerngschee/maesspaeggli/test/
+$HOME/public_html/gaerngschee/maesspaeggli/pre-prod/
 $HOME/public_html/gaerngschee/maesspaeggli/prod/
 ```
 
@@ -111,6 +112,11 @@ bats tests/deployment/deploy.bats
 Für die Integrationstests wird `backend/.env.integration` über Docker Compose
 als `env_file` geladen. Diese Datei enthält ausschliesslich Testwerte und keine
 Produktionszugangsdaten.
+
+Die Integrationsdatenbank verwendet die technische Phinx-Umgebung `test`, aber
+den Seed-Pfad `db/seeds/integration/`. Pre-Production verwendet auf dem Server
+`APP_ENV=prod`, die technische Phinx-Umgebung `production` und den Seed-Pfad
+`db/seeds/pre-prod/`. Production verwendet `db/seeds/production/`.
 
 ## Sicherheit
 

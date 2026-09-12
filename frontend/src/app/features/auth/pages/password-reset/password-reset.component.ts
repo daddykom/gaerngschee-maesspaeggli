@@ -1,6 +1,6 @@
 import { ChangeDetectionStrategy, Component, inject, signal } from '@angular/core';
-import { ActivatedRoute } from '@angular/router';
-import { form, FormField, required, validate } from '@angular/forms/signals';
+import { ActivatedRoute, Router } from '@angular/router';
+import { form, FormField, maxLength, minLength, required, validate } from '@angular/forms/signals';
 import { MatButtonModule } from '@angular/material/button';
 import { MatInputModule } from '@angular/material/input';
 import { Store } from '@ngrx/store';
@@ -8,6 +8,7 @@ import { TranslatePipe } from '@ngx-translate/core';
 import { ControlErrorComponent } from '../../../../shared/components/control-error/control-error';
 import { AuthActions } from '../../../../store/auth/auth.actions';
 import { selectPasswordResetLoading } from '../../../../store/password-reset/password-reset.feature';
+import { inputLimits } from '../../../../shared/constants/input-limits';
 
 @Component({
   selector: 'app-password-reset',
@@ -18,14 +19,19 @@ import { selectPasswordResetLoading } from '../../../../store/password-reset/pas
 })
 export class PasswordResetComponent {
   private readonly route = inject(ActivatedRoute);
+  private readonly router = inject(Router);
   private readonly store = inject(Store);
   readonly token = this.route.snapshot.queryParamMap.get('token') ?? '';
+  readonly email = this.route.snapshot.queryParamMap.get('email') ?? '';
   readonly loading = this.store.selectSignal(selectPasswordResetLoading);
-  readonly model = signal({ email: '', newPassword: '', passwordConfirmation: '' });
+  readonly model = signal({ email: this.email, newPassword: '', passwordConfirmation: '' });
   readonly passwordResetForm = form(this.model, (schema) => {
-    required(schema.email);
     required(schema.newPassword);
+    minLength(schema.newPassword, inputLimits.minimumPasswordLength);
+    maxLength(schema.newPassword, inputLimits.password);
     required(schema.passwordConfirmation);
+    minLength(schema.passwordConfirmation, inputLimits.minimumPasswordLength);
+    maxLength(schema.passwordConfirmation, inputLimits.password);
     validate(schema.passwordConfirmation, ({ valueOf }) =>
       valueOf(schema.newPassword) === valueOf(schema.passwordConfirmation)
         ? undefined
@@ -33,9 +39,21 @@ export class PasswordResetComponent {
     );
   });
 
+  constructor() {
+    if (this.token) {
+      void this.router.navigate([], {
+        relativeTo: this.route,
+        queryParams: {},
+        replaceUrl: true,
+      });
+    }
+  }
+
   onSubmit(): void {
     if (!this.token || !this.passwordResetForm().valid()) {
       this.passwordResetForm().markAsTouched();
+      this.passwordResetForm.newPassword().markAsTouched();
+      this.passwordResetForm.passwordConfirmation().markAsTouched();
       return;
     }
 

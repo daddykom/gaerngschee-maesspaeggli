@@ -8,7 +8,6 @@ test.describe('Delivery route', () => {
         contentType: 'application/json',
         body: JSON.stringify({
           user: { id: 'user-1', email: 'staff@example.com', group: 'user' },
-          token: 'staff-token',
           group: 'user',
           requiredPasswordReset: false,
         }),

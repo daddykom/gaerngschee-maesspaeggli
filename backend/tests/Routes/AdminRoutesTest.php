@@ -11,6 +11,7 @@ use App\Fairgate\Actions\FairgateTestAction;
 use App\Registration\Data\OrderRepository;
 use App\Routes\AdminRoutes;
 use App\Shared\Mail\EmailSenderInterface;
+use App\Shared\Http\RateLimitService;
 use Tests\Support\TestDatabase;
 use App\Auth\Services\SessionService;
 use Tests\Support\RecordingEmailSender;
@@ -39,7 +40,7 @@ final class AdminRoutesTest extends TestCase
 
     public function testAdminUsersRequiresAuthentication(): void
     {
-        $response = Application::create()->handle(
+        $response = Application::create(new RateLimitService($this->pdo))->handle(
             (new ServerRequestFactory())->createServerRequest('GET', '/admin/users'),
         );
 

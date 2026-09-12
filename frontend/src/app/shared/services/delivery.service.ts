@@ -12,14 +12,14 @@ export class DeliveryService {
     let params = new HttpParams();
     if (search.email) params = params.set('email', search.email);
     if (search.token) params = params.set('token', search.token);
-    return this.http.get<DeliveryOrderResponse>(`${environment.apiUrl}/delivery/order`, { params });
+    return this.http.get<DeliveryOrderResponse>(`${environment.apiUrl}/delivery/order`, { params, withCredentials: true });
   }
 
   deliver(orderId: string): Observable<{ status: 'qrcode' | 'delivered' }> {
-    return this.http.post<{ status: 'qrcode' | 'delivered' }>(`${environment.apiUrl}/delivery/orders/${orderId}/deliver`, {});
+    return this.http.post<{ status: 'qrcode' | 'delivered' }>(`${environment.apiUrl}/delivery/orders/${orderId}/deliver`, {}, { withCredentials: true });
   }
 
   undo(orderId: string): Observable<{ status: 'qrcode' | 'delivered' }> {
-    return this.http.post<{ status: 'qrcode' | 'delivered' }>(`${environment.apiUrl}/delivery/orders/${orderId}/undo`, {});
+    return this.http.post<{ status: 'qrcode' | 'delivered' }>(`${environment.apiUrl}/delivery/orders/${orderId}/undo`, {}, { withCredentials: true });
   }
 }

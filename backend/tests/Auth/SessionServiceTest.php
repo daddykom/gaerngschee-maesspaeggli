@@ -16,6 +16,7 @@ final class SessionServiceTest extends TestCase
         }
 
         session_id('test-session');
+        SessionService::configure();
         session_start();
     }
 
@@ -33,6 +34,16 @@ final class SessionServiceTest extends TestCase
         $service->setUserId('user-123');
 
         self::assertSame('user-123', $service->getUserId());
+    }
+
+    public function testSessionCookieUsesSecureDefaults(): void
+    {
+        $cookieParams = session_get_cookie_params();
+
+        self::assertTrue($cookieParams['httponly']);
+        self::assertSame('Lax', $cookieParams['samesite']);
+        self::assertSame('/', $cookieParams['path']);
+        self::assertFalse($cookieParams['secure']);
     }
 
     public function testUserIdAndGroupCanBeStoredAndRead(): void

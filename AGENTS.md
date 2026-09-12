@@ -164,9 +164,20 @@ src/
 - Namespace und Verzeichnis müssen der PSR-4-Struktur entsprechen.
 - Die Admin-Fairgate-Testroute `/admin/fairgate/test` wird in `Routes/AdminRoutes.php` registriert und verwendet `Fairgate/Actions/FairgateTestAction`.
 - Die früheren Sammelpfade `App\Services` und `App\Data` werden nicht mehr verwendet.
-- Fairgate-, Mail-, Datenbank- und JWT-Konfiguration werden aus `backend/.env` geladen. Versionierte Vorlagen liegen in `backend/.env.example`; produktive Zugangsdaten bleiben ausserhalb des Repositories.
+- Fairgate-, Mail-, Datenbank- und JWT-Konfiguration werden aus der jeweiligen Environment-Datei geladen. `backend/.env` ist ausschließlich für die lokale Developer-Datenbank bestimmt. `backend/.env.integration` wird ausschließlich von der Integrationsumgebung verwendet. Pre-Production- und Production-`.env`-Dateien werden auf den jeweiligen Servern bereitgestellt und existieren nicht im Repository.
 - `APP_ENV` akzeptiert `test` oder `prod`. `FSA_MODE` steuert den Fairgate-Zugriff mit `fake` oder `real`; fehlt der Wert, wird aus `APP_ENV` abgeleitet. Die `FairgateContactProviderFactory` verwendet diesen Modus für alle Fairgate-Zugriffe, einschliesslich `GET /admin/fairgate/test`.
-- Die E-Mail-Adresse der Admin-Fairgate-Testroute wird aus dem Konfigurationsschlüssel `fairgate_test_email` der Tabelle `frontend_config` gelesen. Seeds für Development, Test und Production legen `isabelle.joss@gaerngschee.ch` an.
+- Die E-Mail-Adresse der Admin-Fairgate-Testroute wird aus dem Konfigurationsschlüssel `fairgate_test_email` der Tabelle `frontend_config` gelesen. Seeds für Development, Pre-Production, Integration und Production legen `isabelle.joss@gaerngschee.ch` an.
+
+### Datenbankumgebungen und Seeds
+
+- Phinx-Migrationen sind für `development`, `test` und `production` registriert. `test` ist die technische Phinx-Umgebung der Integrationstests; Pre-Production verwendet wegen `APP_ENV=prod` die technische Phinx-Umgebung `production`.
+- Die lokale `backend/.env` gehört zur Developer-Datenbank und verwendet `db/seeds/development/`.
+- `backend/.env.integration` gehört ausschließlich zur Integrationsdatenbank und verwendet `db/seeds/integration/`. Integration-Seeds dürfen zusätzliche Test-Fixtures wie den Testbenutzer enthalten.
+- Pre-Production verwendet auf dem Server eine nicht versionierte `.env` und `db/seeds/pre-prod/`. Production verwendet auf dem Server eine nicht versionierte `.env` und `db/seeds/production/`.
+- Es werden keine Pre-Production- oder Production-`.env`-Dateien im Repository angelegt oder mit produktiven Zugangsdaten befüllt.
+- Seeds sind idempotent: Ein bestehender Admin wird nicht mit einem neuen Passwort oder einem neuen Reset-Status überschrieben.
+- Admin-Seeds setzen das Passwort und `required_password_reset` nur beim erstmaligen Anlegen. `required_password_reset` ist in Development und Integration `false`, in Pre-Production und Production `true`.
+- Strukturelle Änderungen werden als Phinx-Migration umgesetzt. Seeds dienen der umgebungsspezifischen Initial- und Testdatenbefüllung.
 
 ## Backend-Tests
 

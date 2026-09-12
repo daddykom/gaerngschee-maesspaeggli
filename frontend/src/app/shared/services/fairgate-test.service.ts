@@ -14,6 +14,6 @@ export class FairgateTestService {
   private readonly url = `${environment.apiUrl}/admin/fairgate/test`;
 
   test(): Observable<FairgateTestResult> {
-    return this.http.get<FairgateTestResult>(this.url);
+    return this.http.get<FairgateTestResult>(this.url, { withCredentials: true });
   }
 }

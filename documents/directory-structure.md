@@ -77,7 +77,8 @@ db/
 │   └── ...
 └── seeds/
     ├── development/           # Development seed data
-    ├── test/                 # Test seed data
+    ├── integration/          # Integration test fixtures
+    ├── pre-prod/             # Pre-production seed data
     └── production/           # Production seed data
 ```
 
