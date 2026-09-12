@@ -173,7 +173,7 @@ src/
 - Phinx-Migrationen sind für `development`, `test` und `production` registriert. `test` ist die technische Phinx-Umgebung der Integrationstests; Pre-Production verwendet wegen `APP_ENV=prod` die technische Phinx-Umgebung `production`.
 - Die lokale `backend/.env` gehört zur Developer-Datenbank und verwendet `db/seeds/development/`.
 - `backend/.env.integration` gehört ausschließlich zur Integrationsdatenbank und verwendet `db/seeds/integration/`. Integration-Seeds dürfen zusätzliche Test-Fixtures wie den Testbenutzer enthalten.
-- Pre-Production verwendet auf dem Server eine nicht versionierte `.env` und `db/seeds/pre-prod/`. Production verwendet auf dem Server eine nicht versionierte `.env` und `db/seeds/production/`.
+- Pre-Production verwendet auf dem Server eine nicht versionierte `.env` und `db/seeds/pre-prod/`. Production verwendet auf dem Server eine nicht versionierte `.env` und `db/seeds/prod/`.
 - Es werden keine Pre-Production- oder Production-`.env`-Dateien im Repository angelegt oder mit produktiven Zugangsdaten befüllt.
 - Seeds sind idempotent: Ein bestehender Admin wird nicht mit einem neuen Passwort oder einem neuen Reset-Status überschrieben.
 - Admin-Seeds setzen das Passwort und `required_password_reset` nur beim erstmaligen Anlegen. `required_password_reset` ist in Development und Integration `false`, in Pre-Production und Production `true`.

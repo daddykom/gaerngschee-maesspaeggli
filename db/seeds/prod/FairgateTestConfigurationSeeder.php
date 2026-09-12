@@ -115,20 +115,6 @@ final class FairgateTestConfigurationSeeder extends AbstractSeed
             )->fetch();
 
             if ($existing !== false) {
-                $this->query(
-                    'UPDATE frontend_config
-                     SET value = :value, description = :description, access_group = :access_group,
-                         update_group = :update_group, label = :label
-                     WHERE variable_name = :variable_name',
-                    [
-                        'value' => $encodedValue,
-                        'description' => $config['description'],
-                        'access_group' => $encodedAccessGroup,
-                        'update_group' => $encodedUpdateGroup,
-                        'label' => $config['label'],
-                        'variable_name' => $config['variable_name'],
-                    ],
-                );
                 continue;
             }
 

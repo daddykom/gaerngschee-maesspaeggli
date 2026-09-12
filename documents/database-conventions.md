@@ -29,7 +29,7 @@ db/
     ├── development/            # Local development data
     ├── integration/            # Fixtures for integration tests
     ├── pre-prod/               # Pre-production initial data
-    └── production/             # Production initial data
+    └── prod/                   # Production initial data
 ```
 
 ## Phinx Configuration
@@ -132,7 +132,7 @@ Seeders for the pre-production server. Pre-Production uses `APP_ENV=prod` and
 the technical Phinx environment `production`, but its seed path is selected by
 the server-provided `PHINX_SEED_PATH`.
 
-### production/
+### prod/
 
 Seeders for production initial data only.
 

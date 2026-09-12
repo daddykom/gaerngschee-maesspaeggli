@@ -120,7 +120,7 @@ docker exec gaerngschee-backend vendor/bin/phinx status -c /var/www/db/phinx.php
 | development | `db/seeds/development/` |
 | integration | `db/seeds/integration/` |
 | pre-prod | `db/seeds/pre-prod/` |
-| production | `db/seeds/production/` |
+| prod | `db/seeds/prod/` |
 
 ---
 

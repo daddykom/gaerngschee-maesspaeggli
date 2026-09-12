@@ -116,7 +116,7 @@ Produktionszugangsdaten.
 Die Integrationsdatenbank verwendet die technische Phinx-Umgebung `test`, aber
 den Seed-Pfad `db/seeds/integration/`. Pre-Production verwendet auf dem Server
 `APP_ENV=prod`, die technische Phinx-Umgebung `production` und den Seed-Pfad
-`db/seeds/pre-prod/`. Production verwendet `db/seeds/production/`.
+`db/seeds/pre-prod/`. Production verwendet `db/seeds/prod/`.
 
 ## Sicherheit
 
