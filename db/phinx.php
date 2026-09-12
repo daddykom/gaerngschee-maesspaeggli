@@ -20,7 +20,7 @@ if (!class_exists(\App\Configuration\Environment::class)) {
 return [
     'paths' => [
         'migrations' => __DIR__ . '/migrations',
-        'seeds' => getenv('PHINX_SEED_PATH') ?: __DIR__ . '/seeds/development',
+        'seeds' => getenv('PHINX_SEED_PATH') ?: __DIR__ . '/seeds',
     ],
     'environments' => [
         'default_migration_table' => 'phinxlog',

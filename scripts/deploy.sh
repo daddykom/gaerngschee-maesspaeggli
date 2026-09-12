@@ -81,15 +81,12 @@ rsync -a "$temporary_directory/source/frontend/public/api/" "$temporary_director
 rsync -a "$temporary_directory/source/frontend/public/.htaccess" "$temporary_directory/release/frontend/.htaccess"
 
 phinx_environment='production'
-seed_directory="$temporary_directory/release/db/seeds/$environment"
 
 (
   cd "$temporary_directory/release/backend"
   unset ADMIN_SEED_PASSWORD DB_HOST DB_PORT DB_NAME DB_TEST_NAME DB_USER DB_PASS
   export GAERNGSCHEE_ENV_FILE="$environment_file"
-  export PHINX_SEED_PATH="$seed_directory"
   php84 vendor/bin/phinx migrate -e "$phinx_environment" -c "$temporary_directory/release/db/phinx.php"
-  php84 vendor/bin/phinx seed:run -e "$phinx_environment" -c "$temporary_directory/release/db/phinx.php"
 )
 
 mkdir -p "$target_directory/backend" "$target_directory/frontend"

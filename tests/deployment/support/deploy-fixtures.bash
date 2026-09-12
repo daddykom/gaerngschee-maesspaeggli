@@ -52,7 +52,6 @@ if [[ "${GAERNGSCHEE_ENV_FILE:-}" != "${DEPLOY_EXPECTED_ENV_FILE}" ]]; then
   exit 1
 fi
 printf 'phinx %s\n' "$*" >> "${DEPLOY_TEST_LOG}"
-printf 'phinx-seed-path %s\n' "${PHINX_SEED_PATH:-}" >> "${DEPLOY_TEST_LOG}"
 FAKE_PHINX
 chmod +x "$working_directory/vendor/bin/phinx"
 printf 'composer-pwd %s\n' "$PWD" >> "${DEPLOY_TEST_LOG}"

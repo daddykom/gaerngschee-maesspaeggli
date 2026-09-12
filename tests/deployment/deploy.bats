@@ -43,8 +43,7 @@ setup() {
    [[ "$(< "$log_file")" == *'taskset -c 0'* ]]
    [[ "$(< "$log_file")" == *'npm run build NX_DAEMON=false NX_SKIP_NATIVE_FILE_CACHE=true'* ]]
    [[ "$(< "$log_file")" == *'phinx migrate -e production'* ]]
-   [[ "$(< "$log_file")" == *'phinx seed:run -e production'* ]]
-   [[ "$(< "$log_file")" == *"phinx-seed-path $temporary_parent"/gaerngschee-deploy.*"/release/db/seeds/pre-prod"* ]]
+   [[ "$(< "$log_file")" != *'phinx seed:run'* ]]
 }
 
 @test 'requires explicit confirmation for production deployment' {
@@ -64,8 +63,7 @@ setup() {
   [[ "$(< "$target_base/prod/backend/.env")" == APP_ENV=prod* ]]
    [[ "$(< "$log_file")" == *"composer-pwd $target_base/prod"* ]]
    [[ "$(< "$log_file")" == *'phinx migrate -e production'* ]]
-   [[ "$(< "$log_file")" == *'phinx seed:run -e production'* ]]
-   [[ "$(< "$log_file")" == *"phinx-seed-path $temporary_parent"/gaerngschee-deploy.*"/release/db/seeds/prod"* ]]
+   [[ "$(< "$log_file")" != *'phinx seed:run'* ]]
 }
 
 @test 'uses a configured deployment branch' {

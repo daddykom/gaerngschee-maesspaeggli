@@ -26,10 +26,7 @@ db/
 │   ├── 20260614081000_create_children_table.php
 │   └── ...
 └── seeds/
-    ├── development/            # Local development data
-    ├── integration/            # Fixtures for integration tests
-    ├── pre-prod/               # Pre-production initial data
-    └── prod/                   # Production initial data
+    └── integration/            # Fixtures for integration tests
 ```
 
 ## Phinx Configuration
@@ -116,33 +113,16 @@ final class CreateRegistrationsTable extends AbstractMigration
 
 ## Seed Subdirectories
 
-### development/
-
-Contains seeders with realistic test data for local development and manual testing.
-
 ### integration/
 
 Seeders for the isolated integration environment. This directory may contain
 test-only fixtures that must not be loaded in Development, Pre-Production or
 Production.
 
-### pre-prod/
-
-Seeders for the pre-production server. Pre-Production uses `APP_ENV=prod` and
-the technical Phinx environment `production`, but its seed path is selected by
-the server-provided `PHINX_SEED_PATH`.
-
-### prod/
-
-Seeders for production initial data only.
-
 ### Seed Idempotency
 
-Seeders must not overwrite existing user passwords or
-`required_password_reset` values. The admin password and the initial reset
-flag are set only when the admin is inserted. Development and Integration use
-`required_password_reset = false`; Pre-Production and Production use
-`required_password_reset = true`.
+Integration seeders must not overwrite existing test data unexpectedly. Base
+application data is created by migrations and is not created by seeders.
 
 ## Docker Integration
 
