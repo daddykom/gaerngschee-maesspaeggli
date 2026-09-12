@@ -12,14 +12,15 @@ test.describe('Password reset route', () => {
       });
     });
 
-    await page.goto('/password-reset?token=reset-token');
+    await page.goto('/password-reset?token=reset-token&email=user%40example.com');
     await expect(page).toHaveURL(/\/password-reset$/);
-    await page.locator('input[autocomplete="username"]').fill('user@example.com');
-    await page.locator('input[autocomplete="new-password"]').nth(0).fill('new-secret');
-    await page.locator('input[autocomplete="new-password"]').nth(1).fill('new-secret');
+    await expect(page.locator('input[autocomplete="username"]')).toHaveValue('user@example.com');
+    await expect(page.locator('input[autocomplete="username"]')).toHaveAttribute('readonly', 'true');
+    await page.locator('input[autocomplete="new-password"]').nth(0).fill('long-enough-secret');
+    await page.locator('input[autocomplete="new-password"]').nth(1).fill('long-enough-secret');
     await page.getByRole('button', { name: 'Passwort setzen' }).click();
 
     await page.waitForURL('**/login');
-    expect(requestBody).toEqual({ token: 'reset-token', password: 'new-secret' });
+    expect(requestBody).toEqual({ token: 'reset-token', password: 'long-enough-secret' });
   });
 });

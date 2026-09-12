@@ -143,18 +143,18 @@ final class AuthRoutesTest extends TestCase
         (new SessionService())->setUser($user['id'], 'user');
 
         $response = $this->createAuthApp()->handle($this->request('/auth/password-change-authenticated', [
-            'password' => 'new-secret',
+            'password' => 'long-enough-secret',
         ]));
 
         self::assertSame(200, $response->getStatusCode());
-        self::assertNotNull($this->repository->verifyPassword('user@example.com', 'new-secret'));
+        self::assertNotNull($this->repository->verifyPassword('user@example.com', 'long-enough-secret'));
         self::assertFalse((bool) $this->repository->findById($user['id'])['required_password_reset']);
     }
 
     public function testAuthenticatedPasswordChangeRequiresAuthentication(): void
     {
         $response = $this->createAuthApp()->handle($this->request('/auth/password-change-authenticated', [
-            'password' => 'new-secret',
+            'password' => 'long-enough-secret',
         ]));
 
         self::assertSame(401, $response->getStatusCode());

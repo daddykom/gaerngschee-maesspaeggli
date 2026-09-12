@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Auth\Actions;
 
 use App\Users\Data\UserRepository;
+use App\Auth\Services\PasswordPolicy;
 use App\Shared\Http\JsonRequest;
 use App\Shared\Http\JsonResponse;
 use Psr\Http\Message\ResponseInterface;
@@ -22,6 +23,9 @@ final class AuthenticatedPasswordChangeAction
         $userId = $request->getAttribute('user_id');
         if ($password === null || !is_string($userId) || $userId === '') {
             return JsonResponse::error($response, 'INVALID_PASSWORD', 422);
+        }
+        if (!PasswordPolicy::accepts($password)) {
+            return JsonResponse::error($response, 'WEAK_PASSWORD', 422);
         }
 
         $user = ($this->users ?? new UserRepository())->updatePassword($userId, $password);

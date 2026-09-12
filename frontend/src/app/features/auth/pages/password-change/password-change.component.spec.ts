@@ -42,7 +42,7 @@ describe('PasswordChange', () => {
 
   it('rejects different passwords', () => {
     component.passwordChangeModel.set({
-      newPassword: 'new-secret',
+      newPassword: 'long-enough-secret',
       passwordConfirmation: 'different-secret',
     });
 
@@ -54,8 +54,8 @@ describe('PasswordChange', () => {
 
   it('accepts matching passwords', () => {
     component.passwordChangeModel.set({
-      newPassword: 'new-secret',
-      passwordConfirmation: 'new-secret',
+      newPassword: 'long-enough-secret',
+      passwordConfirmation: 'long-enough-secret',
     });
 
     expect(component.passwordChangeForm().valid()).toBe(true);

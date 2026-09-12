@@ -1,5 +1,5 @@
 import { Component, inject, signal, ChangeDetectionStrategy } from '@angular/core';
-import { form, FormField, maxLength, required, validate } from '@angular/forms/signals';
+import { form, FormField, maxLength, minLength, required, validate } from '@angular/forms/signals';
 import { MatButtonModule } from '@angular/material/button';
 import { MatInputModule } from '@angular/material/input';
 import { Store } from '@ngrx/store';
@@ -25,8 +25,10 @@ export class PasswordChange {
   readonly passwordChangeModel = signal({ newPassword: '', passwordConfirmation: '' });
   readonly passwordChangeForm = form(this.passwordChangeModel, (schema) => {
     required(schema.newPassword);
+    minLength(schema.newPassword, inputLimits.minimumPasswordLength);
     maxLength(schema.newPassword, inputLimits.password);
     required(schema.passwordConfirmation);
+    minLength(schema.passwordConfirmation, inputLimits.minimumPasswordLength);
     maxLength(schema.passwordConfirmation, inputLimits.password);
     validate(schema.passwordConfirmation, ({ valueOf }) =>
       valueOf(schema.newPassword) === valueOf(schema.passwordConfirmation)

@@ -1,6 +1,7 @@
 export const inputLimits = {
   email: 254,
   password: 128,
+  minimumPasswordLength: 12,
   token: 2048,
   url: 2048,
   configurationValue: 1000,

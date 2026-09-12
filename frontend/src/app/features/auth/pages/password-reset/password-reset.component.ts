@@ -1,6 +1,6 @@
 import { ChangeDetectionStrategy, Component, inject, signal } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
-import { form, FormField, maxLength, required, validate } from '@angular/forms/signals';
+import { form, FormField, maxLength, minLength, required, validate } from '@angular/forms/signals';
 import { MatButtonModule } from '@angular/material/button';
 import { MatInputModule } from '@angular/material/input';
 import { Store } from '@ngrx/store';
@@ -22,14 +22,15 @@ export class PasswordResetComponent {
   private readonly router = inject(Router);
   private readonly store = inject(Store);
   readonly token = this.route.snapshot.queryParamMap.get('token') ?? '';
+  readonly email = this.route.snapshot.queryParamMap.get('email') ?? '';
   readonly loading = this.store.selectSignal(selectPasswordResetLoading);
-  readonly model = signal({ email: '', newPassword: '', passwordConfirmation: '' });
+  readonly model = signal({ email: this.email, newPassword: '', passwordConfirmation: '' });
   readonly passwordResetForm = form(this.model, (schema) => {
-    required(schema.email);
-    maxLength(schema.email, inputLimits.email);
     required(schema.newPassword);
+    minLength(schema.newPassword, inputLimits.minimumPasswordLength);
     maxLength(schema.newPassword, inputLimits.password);
     required(schema.passwordConfirmation);
+    minLength(schema.passwordConfirmation, inputLimits.minimumPasswordLength);
     maxLength(schema.passwordConfirmation, inputLimits.password);
     validate(schema.passwordConfirmation, ({ valueOf }) =>
       valueOf(schema.newPassword) === valueOf(schema.passwordConfirmation)
@@ -42,8 +43,7 @@ export class PasswordResetComponent {
     if (this.token) {
       void this.router.navigate([], {
         relativeTo: this.route,
-        queryParams: { token: null },
-        queryParamsHandling: 'merge',
+        queryParams: {},
         replaceUrl: true,
       });
     }
@@ -52,6 +52,8 @@ export class PasswordResetComponent {
   onSubmit(): void {
     if (!this.token || !this.passwordResetForm().valid()) {
       this.passwordResetForm().markAsTouched();
+      this.passwordResetForm.newPassword().markAsTouched();
+      this.passwordResetForm.passwordConfirmation().markAsTouched();
       return;
     }
 

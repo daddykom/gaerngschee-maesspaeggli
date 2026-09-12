@@ -36,7 +36,8 @@ final class SendPasswordResetLinkAction
             $frontendBaseUrl = rtrim(getenv('FRONTEND_BASE_URL') ?: 'http://localhost:4200', '/');
             ($this->emails ?? new EmailSender())->sendPasswordReset(
                 (string) $user['email'],
-                $frontendBaseUrl . '/password-reset?token=' . rawurlencode($token),
+                $frontendBaseUrl . '/password-reset?token=' . rawurlencode($token)
+                    . '&email=' . rawurlencode((string) $user['email']),
             );
         } catch (Throwable) {
             return JsonResponse::error($response, 'PASSWORD_RESET_REQUEST_FAILED', 503);

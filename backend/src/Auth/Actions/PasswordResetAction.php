@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Auth\Actions;
 
 use App\Auth\Services\PasswordResetTokenService;
+use App\Auth\Services\PasswordPolicy;
 use App\Shared\Http\JsonRequest;
 use App\Shared\Http\JsonResponse;
 use App\Users\Data\UserRepository;
@@ -27,6 +28,9 @@ final class PasswordResetAction
         $password = JsonRequest::string($data, 'password', 128);
         if ($token === null || $password === null || $password === '') {
             return JsonResponse::error($response, 'INVALID_PASSWORD_RESET', 422);
+        }
+        if (!PasswordPolicy::accepts($password)) {
+            return JsonResponse::error($response, 'WEAK_PASSWORD', 422);
         }
 
         try {
