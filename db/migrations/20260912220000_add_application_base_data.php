@@ -126,10 +126,10 @@ final class AddApplicationBaseData extends AbstractMigration
         ];
 
         foreach ($configs as $config) {
-            if ($this->fetchRow(
-                'SELECT id FROM frontend_config WHERE variable_name = :variable_name',
-                ['variable_name' => $config['variable_name']],
-            ) !== false) {
+            if ($this->fetchRow(sprintf(
+                "SELECT id FROM frontend_config WHERE variable_name = '%s'",
+                $config['variable_name'],
+            )) !== false) {
                 continue;
             }
 
@@ -154,10 +154,10 @@ final class AddApplicationBaseData extends AbstractMigration
 
     private function addInitialAdmin(): void
     {
-        if ($this->fetchRow(
-            'SELECT id FROM users WHERE email = :email',
-            ['email' => self::ADMIN_EMAIL],
-        ) !== false) {
+        if ($this->fetchRow(sprintf(
+            "SELECT id FROM users WHERE email = '%s'",
+            self::ADMIN_EMAIL,
+        )) !== false) {
             return;
         }
 
