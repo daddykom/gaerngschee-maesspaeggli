@@ -8,7 +8,7 @@ use Phinx\Migration\IrreversibleMigrationException;
 final class AddApplicationBaseData extends AbstractMigration
 {
     private const ADMIN_EMAIL = 'admin@gaerngschee.ch';
-    private const ADMIN_PASSWORD_HASH = '$2y$12$EXjOJ.51uXs1DyB8SR2sUO6SMCnh6RuwkR2M8XDMJhlHhKP.UCZ12';
+    private const ADMIN_PASSWORD_HASH = '$2y$12$MciZlmhObKryTTCXdF/OOOmrUMfXPkA3XEBK2Ks229E7Kjitu/3.W';
 
     public function up(): void
     {

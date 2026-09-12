@@ -205,7 +205,7 @@ npm run e2e
 │   └── composer.json      # PHP Dependencies
 ├── db/                   # Datenbank
 │   ├── migrations/       # Phinx Migrationen
-│   └── seeds/            # Seed-Daten
+│   └── seeds/            # Integrationstest-Fixtures
 ├── docker-compose.yml    # Docker Konfiguration
 └── openspec/            # OpenSpec Spezifikationen
 ```
