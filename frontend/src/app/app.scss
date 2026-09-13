@@ -1,6 +1,6 @@
 .app-header {
   border-bottom: 1px solid var(--mat-sys-outline-variant);
-  background: var(--mat-sys-surface);
+  background: #f5b6d3;
 }
 
 .app-header__content {
@@ -18,7 +18,7 @@ main {
 .app-main-content {
   padding-block: var(--gl-space-xl);
   min-height: calc(100vh - 4rem);
-  background-color: #fff;
+  background: transparent;
 }
 
 .app-main-content > .gl-stack {
@@ -47,6 +47,7 @@ main {
 }
 
 .header-logo {
-  width: 40px;
-  height: 40px;
+  width: 5.5rem;
+  height: 3rem;
+  object-fit: contain;
 }

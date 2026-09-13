@@ -33,11 +33,11 @@
 }
 
 .home-choice--donate {
-  background: color-mix(in srgb, var(--mat-sys-primary-container) 35%, transparent);
+  background: var(--mat-sys-primary-container);
 }
 
 .home-choice--receive {
-  background: color-mix(in srgb, var(--mat-sys-tertiary-container) 35%, transparent);
+  background: var(--mat-sys-secondary-container);
 }
 
 .home__login {

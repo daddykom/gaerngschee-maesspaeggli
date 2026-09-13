@@ -25,9 +25,12 @@ final class EmailSenderTest extends TestCase
                 self::assertSame('person@example.com', $email->getTo()[0]->getAddress());
                 self::assertSame($subject, $email->getSubject());
                 self::assertStringContainsString($content, $email->getHtmlBody());
-                self::assertStringContainsString($link, $email->getHtmlBody());
-                self::assertStringContainsString('cid:gaerngschee-logo', $email->getHtmlBody());
-                self::assertStringContainsString('gaerngschee-logo', $email->getBody()->toString());
+                 self::assertStringContainsString($link, $email->getHtmlBody());
+                 self::assertStringContainsString('cid:gaerngschee-logo', $email->getHtmlBody());
+                 self::assertStringContainsString('gaerngschee-logo', $email->getBody()->toString());
+                 self::assertStringContainsString('#8a2858', $email->getHtmlBody());
+                 self::assertStringContainsString('#f5b6d3', $email->getHtmlBody());
+                 self::assertStringNotContainsString('#159447', $email->getHtmlBody());
 
                 return true;
             }));
@@ -110,8 +113,10 @@ final class EmailSenderTest extends TestCase
                 self::assertSame('client@example.com', $email->getTo()[0]->getAddress());
                 self::assertSame('Deine Mässpäggli-Bestellung ist definitiv bestätigt', $email->getSubject());
                 self::assertStringContainsString('definitiv bestätigt', $email->getHtmlBody());
-                self::assertStringContainsString('Erwachsene ruhig: 2', $email->getHtmlBody());
-                self::assertStringContainsString('QR-Code', $email->getHtmlBody());
+                 self::assertStringContainsString('Erwachsene ruhig: 2', $email->getHtmlBody());
+                 self::assertStringContainsString('QR-Code', $email->getHtmlBody());
+                 self::assertStringContainsString('#f5b6d3', $email->getHtmlBody());
+                 self::assertStringContainsString('#dff4e8', $email->getHtmlBody());
 
                 return true;
             }));

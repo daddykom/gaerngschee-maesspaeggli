@@ -8,20 +8,36 @@
 
 @include mat.core();
 
-$gaerngschee-theme: mat.define-theme(
-  (
-    color: (
-      theme-type: light,
-      primary: mat.$azure-palette,
-    ),
-  )
-);
-
-@include mat.system-level-colors($gaerngschee-theme);
-
 html {
-  @include mat.all-component-themes($gaerngschee-theme);
-  @include mat.typography-hierarchy($gaerngschee-theme);
+  @include mat.theme(
+    (
+      color: mat.$rose-palette,
+      typography: Inter,
+      density: 0
+    ),
+    $overrides: (
+      primary: #8a2858,
+      on-primary: #ffffff,
+      primary-container: #f2b3d5,
+      on-primary-container: #2f2530,
+      secondary: #2f6f60,
+      on-secondary: #ffffff,
+      secondary-container: #b3f2d0,
+      on-secondary-container: #183b33,
+      tertiary: #2c5d78,
+      on-tertiary: #ffffff,
+      tertiary-container: #b3d5f2,
+      on-tertiary-container: #173446,
+      surface: #fff8fc,
+      surface-container-low: #f8eef4,
+      on-surface: #2f2530,
+      on-surface-variant: #6f6069,
+      outline: #8c7b85,
+      outline-variant: #ddcfd7,
+      error: #b3261e,
+      error-container: #ffdad6
+    )
+  );
   height: 100%;
   font-family: 'Inter', sans-serif;
 
@@ -52,15 +68,23 @@ h4 {
   margin: 0;
 }
 
+a {
+  color: var(--mat-sys-primary);
+}
+
 :root {
   --gl-space-sm: 0.5rem;
   --gl-space-md: 1rem;
   --gl-space-lg: 1.5rem;
   --gl-space-xl: 2rem;
   --gl-content-max-width: 1180px;
-  --gl-success-container: #e8f5e9;
-  --gl-success: #2e7d32;
-  --gl-on-success-container: #1b5e20;
+  --gl-success-container: #dff4e8;
+  --gl-success: #276749;
+  --gl-on-success-container: #1d5547;
+  --gl-warning-container: #fff2b7;
+  --gl-warning: #6b5700;
+  --gl-info-container: #d8e9f7;
+  --gl-info: #2c5d78;
 }
 
 .gl-container {
@@ -117,16 +141,28 @@ h4 {
 }
 
 body {
-  background-image: url('/herbstmesse.png');
-  background-size: cover;
-  background-position: center;
-  background-repeat: no-repeat;
-  background-attachment: fixed;
+  color: var(--mat-sys-on-surface);
+  position: relative;
+  background: #fff7fb;
+}
+
+body::before {
+  position: fixed;
+  inset: 0;
+  z-index: 0;
+  content: '';
+  pointer-events: none;
+  background:
+    radial-gradient(circle at 10% 10%, rgb(242 179 213 / 42%), transparent 28rem),
+    radial-gradient(circle at 92% 12%, rgb(179 242 208 / 30%), transparent 25rem),
+    linear-gradient(180deg, #fffafd 0%, #fff7fb 100%);
 }
 
 app-root {
   display: block;
   min-height: 100%;
+  position: relative;
+  z-index: 1;
 }
 
 mat-icon {
