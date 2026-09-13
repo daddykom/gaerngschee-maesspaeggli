@@ -137,30 +137,30 @@ p {
 }
 
 .step--green .step__number {
-  background: #e2f3e6;
-  color: #287a42;
+  background: var(--gl-success-container);
+  color: var(--gl-success);
 }
 
 .step--green h3 {
-  color: #287a42;
+  color: var(--gl-success);
 }
 
 .step--blue .step__number {
-  background: #e2edff;
-  color: #245fbd;
+  background: var(--gl-info-container);
+  color: var(--gl-info);
 }
 
 .step--blue h3 {
-  color: #245fbd;
+  color: var(--gl-info);
 }
 
 .step--orange .step__number {
-  background: #fff0dc;
-  color: #b96500;
+  background: var(--gl-warning-container);
+  color: var(--gl-warning);
 }
 
 .step--orange h3 {
-  color: #b96500;
+  color: var(--gl-warning);
 }
 
 .privacy-box {
