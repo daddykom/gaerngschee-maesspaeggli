@@ -68,6 +68,10 @@ h4 {
   margin: 0;
 }
 
+a {
+  color: var(--mat-sys-primary);
+}
+
 :root {
   --gl-space-sm: 0.5rem;
   --gl-space-md: 1rem;
@@ -138,6 +142,16 @@ h4 {
 
 body {
   color: var(--mat-sys-on-surface);
+  position: relative;
+  background: #fff7fb;
+}
+
+body::before {
+  position: fixed;
+  inset: 0;
+  z-index: 0;
+  content: '';
+  pointer-events: none;
   background:
     radial-gradient(circle at 10% 10%, rgb(242 179 213 / 42%), transparent 28rem),
     radial-gradient(circle at 92% 12%, rgb(179 242 208 / 30%), transparent 25rem),
@@ -147,6 +161,8 @@ body {
 app-root {
   display: block;
   min-height: 100%;
+  position: relative;
+  z-index: 1;
 }
 
 mat-icon {
