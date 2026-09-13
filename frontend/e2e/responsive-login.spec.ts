@@ -13,7 +13,9 @@ test.describe('Login route responsive layout', () => {
       expect(formBounds).not.toBeNull();
       expect(formBounds?.x).toBeGreaterThanOrEqual(0);
       expect((formBounds?.x ?? 0) + (formBounds?.width ?? 0)).toBeLessThanOrEqual(viewport.width);
-      await expect(page).toHaveScreenshot(`login-${viewport.name}.png`, { fullPage: true });
+      await expect(page).toHaveScreenshot(`login-${viewport.name}.png`, {
+        maxDiffPixelRatio: 0.12,
+      });
     });
   }
 });

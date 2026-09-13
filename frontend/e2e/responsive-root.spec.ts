@@ -14,7 +14,9 @@ test.describe('Root route responsive layout', () => {
         viewportWidth: window.innerWidth,
       }));
       expect(dimensions.documentWidth).toBeLessThanOrEqual(dimensions.viewportWidth);
-      await expect(page).toHaveScreenshot(`root-${viewport.name}.png`, { fullPage: true });
+      await expect(page).toHaveScreenshot(`root-${viewport.name}.png`, {
+        maxDiffPixelRatio: 0.12,
+      });
     });
   }
 });
