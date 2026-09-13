@@ -23,6 +23,22 @@ use Twig\Loader\FilesystemLoader;
 final class EmailSender implements EmailSenderInterface
 {
     private const LOGO_CID = 'gaerngschee-logo';
+    private const EMAIL_THEME = [
+        'pageBackground' => '#fff7fb',
+        'surface' => '#fff8fc',
+        'primaryContainer' => '#f5b6d3',
+        'primary' => '#8a2858',
+        'onPrimary' => '#ffffff',
+        'successContainer' => '#dff4e8',
+        'success' => '#276749',
+        'warningContainer' => '#fff2b7',
+        'warning' => '#6b5700',
+        'infoContainer' => '#d8e9f7',
+        'info' => '#2c5d78',
+        'text' => '#2f2530',
+        'mutedText' => '#6f6069',
+        'outline' => '#ddcfd7',
+    ];
 
     private readonly MailerInterface $mailer;
     private readonly string $fromAddress;
@@ -54,6 +70,7 @@ final class EmailSender implements EmailSenderInterface
         );
         $this->translator = $translator ?? $this->createTranslator();
         $this->twig->addExtension(new TranslationExtension($this->translator));
+        $this->twig->addGlobal('EMAIL_THEME', self::EMAIL_THEME);
     }
 
     public function sendAnmeldung(
