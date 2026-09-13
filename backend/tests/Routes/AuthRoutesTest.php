@@ -8,6 +8,7 @@ use App\Users\Data\UserRepository;
 use App\Application;
 use App\Routes\AuthRoutes;
 use App\Auth\Services\JwtService;
+use App\Auth\Services\PasswordResetTokenService;
 use App\Auth\Services\SessionService;
 use App\Registration\Services\ClientRegistrationLoginService;
 use App\Registration\Services\RegistrationTokenService;
@@ -158,6 +159,59 @@ final class AuthRoutesTest extends TestCase
         ]));
 
         self::assertSame(401, $response->getStatusCode());
+    }
+
+    public function testSessionStatusReturnsRemainingIdleTime(): void
+    {
+        putenv('SESSION_IDLE_TIMEOUT=60');
+        $user = $this->repository->createUser('user@example.com', 'secret', 'user');
+        (new SessionService())->setUser($user['id'], 'user');
+
+        $response = $this->createAuthApp()->handle(
+            (new ServerRequestFactory())->createServerRequest('GET', '/auth/session-status'),
+        );
+        $data = json_decode((string) $response->getBody(), true, 512, JSON_THROW_ON_ERROR);
+
+        self::assertSame(200, $response->getStatusCode());
+        self::assertGreaterThan(0, $data['secondsRemaining']);
+        self::assertLessThanOrEqual(60, $data['secondsRemaining']);
+        putenv('SESSION_IDLE_TIMEOUT');
+    }
+
+    public function testExpiredSessionStatusReturnsUnauthorizedAndClearsSession(): void
+    {
+        putenv('SESSION_IDLE_TIMEOUT=60');
+        $user = $this->repository->createUser('user@example.com', 'secret', 'user');
+        $session = new SessionService();
+        $session->setUser($user['id'], 'user');
+        $_SESSION['last_activity'] = time() - 61;
+
+        $response = $this->createAuthApp()->handle(
+            (new ServerRequestFactory())->createServerRequest('GET', '/auth/session-status'),
+        );
+
+        self::assertSame(401, $response->getStatusCode());
+        self::assertSame('SESSION_EXPIRED', json_decode((string) $response->getBody(), true)['error']['code']);
+        self::assertNull($session->getUserId());
+        putenv('SESSION_IDLE_TIMEOUT');
+    }
+
+    public function testSessionRefreshExtendsAnActiveSession(): void
+    {
+        putenv('SESSION_IDLE_TIMEOUT=60');
+        $user = $this->repository->createUser('user@example.com', 'secret', 'user');
+        $session = new SessionService();
+        $session->setUser($user['id'], 'user');
+        $_SESSION['last_activity'] = time() - 30;
+
+        $response = $this->createAuthApp()->handle(
+            (new ServerRequestFactory())->createServerRequest('POST', '/auth/session-refresh'),
+        );
+        $data = json_decode((string) $response->getBody(), true, 512, JSON_THROW_ON_ERROR);
+
+        self::assertSame(200, $response->getStatusCode());
+        self::assertGreaterThan(50, $data['secondsRemaining']);
+        putenv('SESSION_IDLE_TIMEOUT');
     }
 
     public function testRegistrationTokenCreatesClientAndReturnsFairgateSummary(): void
