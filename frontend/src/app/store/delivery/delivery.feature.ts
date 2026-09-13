@@ -7,7 +7,12 @@ export const deliveryFeature = createFeature({
   reducer: createReducer<DeliveryState>(
     initialState,
     on(DeliveryActions.emailChanged, (state, { email }) => ({ ...state, form: { email } })),
-    on(DeliveryActions.loadRequested, (state, search) => ({ ...state, search, load: { status: 'loading' }, action: { status: 'initial' } })),
+    on(DeliveryActions.loadRequested, (state, { email, token }) => ({
+      ...state,
+      search: { email, token },
+      load: { status: 'loading' },
+      action: { status: 'initial' },
+    })),
     on(DeliveryActions.loadSuccess, (state, { order, viaToken, clientName, children }) => ({
       ...state,
       load: { status: 'loaded' },
