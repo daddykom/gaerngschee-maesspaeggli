@@ -26,14 +26,14 @@ describe('order effects', () => {
     expect(service.getCurrent).toHaveBeenCalledTimes(1);
   });
 
-  it('logs the client out and redirects to the start page after saving', async () => {
+  it('logs the client out after saving', async () => {
     const actions$ = new Subject<Action>();
     TestBed.configureTestingModule({ providers: [provideMockActions(() => actions$)] });
     const result = firstValueFrom(TestBed.runInInjectionContext(() => orderLogoutEffect()));
 
     actions$.next(OrderActions.orderSaved({ order: {} as never }));
 
-    await expect(result).resolves.toEqual(AuthActions.logoutRequested({ redirectTo: '/start' }));
+    await expect(result).resolves.toEqual(AuthActions.logoutRequested());
   });
 
   it('turns a load error into an order load failure', async () => {

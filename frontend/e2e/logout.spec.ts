@@ -1,7 +1,7 @@
 import { expect, Page, test } from '@playwright/test';
 
 test.describe('Logout flow', () => {
-  test('navigates to login after a successful backend logout', async ({ page }) => {
+  test('navigates to home after a successful backend logout', async ({ page }) => {
     await loginAsAdmin(page);
     let logoutCalled = false;
     await page.route('http://localhost:8080/auth/logout', async (route) => {
@@ -12,11 +12,11 @@ test.describe('Logout flow', () => {
     await page.getByRole('button', { name: 'Administrationsmenü öffnen' }).click();
     await page.getByRole('menuitem', { name: 'Abmelden' }).click();
 
-    await page.waitForURL('**/login');
+    await page.waitForURL('**/');
     expect(logoutCalled).toBe(true);
   });
 
-  test('navigates to login when the backend logout fails', async ({ page }) => {
+  test('navigates to home when the backend logout fails', async ({ page }) => {
     await loginAsAdmin(page);
     let logoutCalled = false;
     await page.route('http://localhost:8080/auth/logout', async (route) => {
@@ -33,7 +33,7 @@ test.describe('Logout flow', () => {
     await page.getByRole('button', { name: 'Administrationsmenü öffnen' }).click();
     await page.getByRole('menuitem', { name: 'Abmelden' }).click();
 
-    await page.waitForURL('**/login');
+    await page.waitForURL('**/');
     expect(logoutCalled).toBe(true);
   });
 });

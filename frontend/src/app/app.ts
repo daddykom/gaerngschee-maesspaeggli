@@ -51,7 +51,7 @@ export class App {
   }
 
   logout(): void {
-    this.store.dispatch(AuthActions.logoutRequested({ redirectTo: '/login' }));
+    this.store.dispatch(AuthActions.logoutRequested());
   }
 
   readonly pageTitleKey = computed(() => {

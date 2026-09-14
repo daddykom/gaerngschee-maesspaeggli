@@ -151,10 +151,10 @@ export const logoutEffect = createEffect(
   (actions$ = inject(Actions), authService = inject(AuthService)) =>
     actions$.pipe(
       ofType(AuthActions.logoutRequested),
-      exhaustMap(({ redirectTo }) =>
+      exhaustMap(() =>
         authService.logout().pipe(
-          map(() => NavigationActions.navigate({ target: redirectTo })),
-          catchError(() => of(NavigationActions.navigate({ target: redirectTo }))),
+          map(() => NavigationActions.navigate({ target: '/' })),
+          catchError(() => of(NavigationActions.navigate({ target: '/' }))),
         ),
       ),
     ),

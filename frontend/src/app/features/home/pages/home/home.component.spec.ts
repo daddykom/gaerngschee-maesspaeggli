@@ -3,6 +3,7 @@ import { provideTranslateService } from '@ngx-translate/core';
 import { MockStore, provideMockStore } from '@ngrx/store/testing';
 import { RouterTestingModule } from '@angular/router/testing';
 import { HomeComponent } from './home.component';
+import { AuthActions } from '../../../../store/auth/auth.actions';
 
 describe('HomeComponent', () => {
   let fixture: ComponentFixture<HomeComponent>;
@@ -12,8 +13,9 @@ describe('HomeComponent', () => {
       imports: [HomeComponent, RouterTestingModule],
       providers: [
         provideTranslateService(),
-        provideMockStore({
+          provideMockStore({
           initialState: {
+              auth: { group: null },
             frontendConfig: {
               publicConfigs: [
                 { variableName: 'campaign_year', value: '2026' },
@@ -56,5 +58,25 @@ describe('HomeComponent', () => {
     fixture.detectChanges();
 
     expect(fixture.componentInstance.campaignStatus()).toBe('not_started');
+  });
+
+  it('dispatches logout for an authenticated user', () => {
+    const store = TestBed.inject(MockStore);
+    store.setState({
+      auth: { group: 'admin' },
+      frontendConfig: {
+        publicConfigs: [
+          { variableName: 'campaign_year', value: '2026' },
+          { variableName: 'campaign_start_date', value: '2000-01-01' },
+          { variableName: 'campaign_end_date', value: '2999-01-01' },
+        ],
+      },
+    });
+    const dispatch = vi.spyOn(store, 'dispatch');
+    fixture.detectChanges();
+
+    fixture.componentInstance.logout();
+
+    expect(dispatch).toHaveBeenCalledWith(AuthActions.logoutRequested());
   });
 });

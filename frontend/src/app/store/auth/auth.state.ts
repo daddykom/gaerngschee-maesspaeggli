@@ -44,3 +44,19 @@ export const initialState: AuthState = {
   sessionRefreshLoading: false,
   email: null,
 };
+
+export const loggedOutState: AuthState = {
+  ...initialState,
+  userId: null,
+  group: null,
+  requiredPasswordReset: false,
+  fairgateUserExists: null,
+  childrenCount: null,
+  adultsCount: null,
+  salutation: null,
+  sessionExpiresAt: null,
+  sessionSecondsRemaining: null,
+  sessionWarningVisible: false,
+  sessionRefreshLoading: false,
+  email: null,
+};

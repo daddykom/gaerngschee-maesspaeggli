@@ -6,8 +6,10 @@
       </a>
       <span class="app-header__title">{{ 'app.title' | translate }}</span>
 
-       @defer (when isAdmin()) {
-         <app-admin-navigation />
+       @if (isAdmin()) {
+         @defer (when isAdmin()) {
+           <app-admin-navigation />
+         }
        }
     </div>
   </div>

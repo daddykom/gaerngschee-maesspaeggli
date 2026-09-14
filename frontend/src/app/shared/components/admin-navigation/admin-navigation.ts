@@ -18,6 +18,6 @@ export class AdminNavigationComponent {
   private readonly store = inject(Store);
 
   logout(): void {
-    this.store.dispatch(AuthActions.logoutRequested({ redirectTo: '/login' }));
+    this.store.dispatch(AuthActions.logoutRequested());
   }
 }
