@@ -23,6 +23,18 @@ final class RegistrationTokenServiceTest extends TestCase
         self::assertNull($service->consume($issued['token'], $now->modify('+9 minutes')));
     }
 
+    public function testOnlyTheTokenHashIsPersisted(): void
+    {
+        $pdo = TestDatabase::create();
+        $service = new RegistrationTokenService($pdo);
+        $issued = $service->issue('person@example.com');
+
+        $storedHash = (string) $pdo->query('SELECT token_hash FROM registration_tokens')->fetchColumn();
+
+        self::assertNotSame($issued['token'], $storedHash);
+        self::assertSame(hash('sha256', $issued['token']), $storedHash);
+    }
+
     public function testTokenExpiresAfterTenMinutes(): void
     {
         $now = new DateTimeImmutable('2026-08-25 12:00:00', new DateTimeZone('UTC'));
@@ -30,6 +42,24 @@ final class RegistrationTokenServiceTest extends TestCase
         $issued = $service->issue('person@example.com', $now);
 
         self::assertNull($service->consume($issued['token'], $now->modify('+10 minutes')));
+    }
+
+    public function testIssuingANewTokenInvalidatesThePreviousTokenForTheSameEmail(): void
+    {
+        $now = new DateTimeImmutable('2026-08-25 12:00:00', new DateTimeZone('UTC'));
+        $service = new RegistrationTokenService(TestDatabase::create());
+        $first = $service->issue('person@example.com', $now);
+        $second = $service->issue('person@example.com', $now->modify('+1 minute'));
+
+        self::assertNull($service->consume($first['token'], $now->modify('+2 minutes')));
+        self::assertSame('person@example.com', $service->consume($second['token'], $now->modify('+2 minutes')));
+    }
+
+    public function testMalformedTokenCannotBeConsumed(): void
+    {
+        $service = new RegistrationTokenService(TestDatabase::create());
+
+        self::assertNull($service->consume('not-a-valid-registration-token'));
     }
 
     public function testDeletesTokensOlderThanConfiguredRetentionPeriod(): void

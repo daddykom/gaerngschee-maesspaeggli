@@ -47,6 +47,33 @@ final class ClientRegistrationLoginServiceTest extends TestCase
         self::assertNull($service->login($issued['token']));
         self::assertSame('admin', $users->findByEmail('admin@example.com')['group']);
     }
+
+    public function testInvalidTokenDoesNotCreateAClient(): void
+    {
+        $pdo = TestDatabase::create();
+        $users = new UserRepository($pdo);
+        $service = new ClientRegistrationLoginService(
+            new RegistrationTokenService($pdo),
+            $users,
+            new StubFairgateDataProvider(),
+        );
+
+        self::assertNull($service->login('invalid-token'));
+        self::assertSame(0, (int) $pdo->query('SELECT COUNT(*) FROM users')->fetchColumn());
+    }
+
+    public function testRegistrationTokenCannotBeReusedForClientLogin(): void
+    {
+        $pdo = TestDatabase::create();
+        $users = new UserRepository($pdo);
+        $tokens = new RegistrationTokenService($pdo);
+        $issued = $tokens->issue('person@example.com');
+        $service = new ClientRegistrationLoginService($tokens, $users, new StubFairgateDataProvider());
+
+        self::assertNotNull($service->login($issued['token']));
+        self::assertNull($service->login($issued['token']));
+        self::assertSame(1, (int) $pdo->query('SELECT COUNT(*) FROM users')->fetchColumn());
+    }
 }
 
 final class StubFairgateDataProvider implements FairgateContactProvider

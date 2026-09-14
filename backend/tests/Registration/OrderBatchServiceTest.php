@@ -147,6 +147,87 @@ final class OrderBatchServiceTest extends TestCase
         self::assertStringContainsString('data:image/png;base64,', $emails->orderConfirmations[0]['order']['html']);
     }
 
+    public function testFailedDeliveryNotificationIsQueuedAndRetried(): void
+    {
+        $pdo = TestDatabase::create();
+        $user = (new UserRepository($pdo))->createUser('delivery-retry@example.com', 'secret', 'client');
+        $orders = new OrderRepository($pdo);
+        $order = $orders->saveForYear($user['id'], 2026, 'definitive', 1, 0, [
+            ['personType' => 'adult', 'category' => 'catA', 'quantity' => 1],
+        ]);
+        $pdo->prepare("UPDATE orders SET status = 'toDeliver' WHERE id = :id")->execute(['id' => $order['id']]);
+        $this->addInterval($pdo);
+        $emails = new RecordingEmailSender();
+        $emails->failStoredEmail = true;
+        $service = $this->service($pdo, $emails, new FixedFairgateProvider(1, 0));
+
+        $failed = $service->run();
+        $token = $orders->findForYear($user['id'], 2026)['deliveryToken'];
+        self::assertSame(1, $failed['queued']);
+        self::assertSame('toDeliver', $orders->findForYear($user['id'], 2026)['status']);
+        self::assertCount(1, (new OrderEmailQueueRepository($pdo))->pending());
+
+        $emails->failStoredEmail = false;
+        $retried = $service->run();
+        $updated = $orders->findForYear($user['id'], 2026);
+
+        self::assertSame(1, $retried['sent']);
+        self::assertSame('qrcode', $updated['status']);
+        self::assertSame($token, $updated['deliveryToken']);
+        self::assertCount(0, (new OrderEmailQueueRepository($pdo))->pending());
+    }
+
+    public function testFailedFairgateReminderIsQueuedAndRetried(): void
+    {
+        $pdo = TestDatabase::create();
+        $user = (new UserRepository($pdo))->createUser('reminder-retry@example.com', 'secret', 'client');
+        $orders = new OrderRepository($pdo);
+        $order = $orders->saveForYear($user['id'], 2026, 'provisional', 1, 0, [
+            ['personType' => 'adult', 'category' => 'catA', 'quantity' => 1],
+        ]);
+        $pdo->prepare('UPDATE orders SET created_at = :created_at WHERE id = :id')->execute([
+            'created_at' => '2000-01-01 00:00:00',
+            'id' => $order['id'],
+        ]);
+        $this->addInterval($pdo);
+        $emails = new RecordingEmailSender();
+        $emails->failStoredEmail = true;
+        $service = $this->service($pdo, $emails, new MissingFairgateProvider());
+
+        $failed = $service->run();
+        self::assertSame(1, $failed['queued']);
+        self::assertNull($orders->findForYear($user['id'], 2026)['fairgateReminderEmailSentAt']);
+
+        $emails->failStoredEmail = false;
+        $retried = $service->run();
+        $updated = $orders->findForYear($user['id'], 2026);
+
+        self::assertSame(1, $retried['sent']);
+        self::assertNotNull($updated['fairgateReminderEmailSentAt']);
+        self::assertCount(0, (new OrderEmailQueueRepository($pdo))->pending());
+    }
+
+    public function testSuccessfulOrderIsNotSentAgainOnTheNextBatchRun(): void
+    {
+        $pdo = TestDatabase::create();
+        $user = (new UserRepository($pdo))->createUser('idempotent@example.com', 'secret', 'client');
+        $orders = new OrderRepository($pdo);
+        $orders->saveForYear($user['id'], 2026, 'provisional', 1, 0, [
+            ['personType' => 'adult', 'category' => 'catA', 'quantity' => 1],
+        ]);
+        $this->addInterval($pdo);
+        $emails = new RecordingEmailSender();
+        $service = $this->service($pdo, $emails, new FixedFairgateProvider(1, 0));
+
+        $first = $service->run();
+        $second = $service->run();
+
+        self::assertSame(1, $first['sent']);
+        self::assertSame(0, $second['loaded']);
+        self::assertSame(0, $second['sent']);
+        self::assertCount(1, $emails->orderConfirmations);
+    }
+
     private function service($pdo, RecordingEmailSender $emails, FairgateContactProvider $fairgate): OrderBatchService
     {
         return new OrderBatchService(

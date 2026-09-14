@@ -36,6 +36,17 @@ final class TestDatabase
             )',
         );
         $pdo->exec(
+            'CREATE TABLE password_reset_tokens (
+                id TEXT PRIMARY KEY,
+                user_id TEXT NOT NULL,
+                token_hash TEXT NOT NULL UNIQUE,
+                expires_at TEXT NOT NULL,
+                used_at TEXT NULL,
+                created_at TEXT,
+                updated_at TEXT
+            )',
+        );
+        $pdo->exec(
             'CREATE TABLE frontend_config (
                 id TEXT PRIMARY KEY,
                 variable_name TEXT UNIQUE NOT NULL,

@@ -77,6 +77,37 @@ test.describe('Order route', () => {
     await expect(page.getByRole('link', { name: 'hier' })).toHaveAttribute('href', 'https://fairgate.example');
   });
 
+  test('shows an error when the current order cannot be loaded', async ({ page }) => {
+    await page.route('http://localhost:8080/client/order', async (route) => {
+      await route.fulfill({
+        status: 503,
+        contentType: 'application/json',
+        body: JSON.stringify({ error: { code: 'ORDER_LOAD_FAILED', details: [] } }),
+      });
+    });
+    await page.route('http://localhost:8080/auth/registration-login', async (route) => {
+      await route.fulfill({
+        status: 200,
+        contentType: 'application/json',
+        body: JSON.stringify({
+          user: { id: 'client-1', email: 'client@example.com', group: 'client' },
+          group: 'client',
+          requiredPasswordReset: false,
+          fairgateUserExists: true,
+          childrenCount: 1,
+          adultsCount: 2,
+          salutation: 'Hallo',
+        }),
+      });
+    });
+
+    await page.goto('/client-login?token=registration-token');
+    await page.waitForURL('**/order/edit');
+
+    await expect(page).toHaveURL(/\/order\/edit$/);
+    await expect(page.getByText('Bestellung konnte nicht geladen werden')).toBeVisible();
+  });
+
   test('redirects unauthenticated users to the not-found page', async ({ page }) => {
     await page.goto('/order');
     await page.waitForURL('**/not-found');
