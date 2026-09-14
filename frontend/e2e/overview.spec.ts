@@ -25,6 +25,16 @@ test.describe('Admin overview route', () => {
         }),
       });
     });
+    await page.route('http://localhost:8080/public/configuration', async (route) => {
+      await route.fulfill({
+        status: 200,
+        contentType: 'application/json',
+        body: JSON.stringify([
+          { variableName: 'campaign_start_date', value: '2000-01-01' },
+          { variableName: 'campaign_end_date', value: '2999-12-31' },
+        ]),
+      });
+    });
 
     await page.goto('/login');
     await page.locator('input[type="email"]').fill('admin@example.com');
@@ -33,6 +43,9 @@ test.describe('Admin overview route', () => {
     await page.waitForURL('**/admin/overview');
 
     await expect(page.locator('h1')).toHaveText('Admin-Übersicht');
+    await expect(page.getByRole('button', { name: 'Bestellungen ausliefern' })).toHaveCount(0);
+    await expect(page.getByRole('heading', { name: 'Legende' })).toBeVisible();
+    await expect(page.getByText('Provisorische Bestellungen, noch nicht bei Fairgate vorhanden')).toBeVisible();
     await expect(page.getByRole('columnheader', { name: 'Definitiv' })).toBeVisible();
     await expect(page.getByRole('columnheader', { name: 'Provisorisch letzte 14 Tage' })).toBeVisible();
     await expect(page.getByRole('button', { name: 'Administrationsmenü öffnen' })).toBeVisible();

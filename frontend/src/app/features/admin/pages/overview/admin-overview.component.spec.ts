@@ -1,7 +1,8 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
-import { provideMockStore } from '@ngrx/store/testing';
+import { MockStore, provideMockStore } from '@ngrx/store/testing';
 import { TranslateService, provideTranslateService } from '@ngx-translate/core';
 import { AdminOverviewComponent } from './admin-overview.component';
+import { initialState as frontendConfigInitialState } from '../../../../store/frontend-config/frontend-config.state';
 
 describe('AdminOverviewComponent', () => {
   let component: AdminOverviewComponent;
@@ -49,6 +50,13 @@ describe('AdminOverviewComponent', () => {
                 ],
               },
             },
+            frontendConfig: {
+              ...frontendConfigInitialState,
+              publicConfigs: [
+                { variableName: 'campaign_start_date', value: '2999-01-01' },
+                { variableName: 'campaign_end_date', value: '2999-12-31' },
+              ],
+            },
           },
         }),
       ],
@@ -78,6 +86,15 @@ describe('AdminOverviewComponent', () => {
             deliverQuestion: 'Willst du wirklich alle definitiven Bestellungen ausliefern?',
             deliverConfirm: 'Ausliefern',
             deliverCancel: 'Abbrechen',
+            legend: {
+              title: 'Legende',
+              provisional: 'Provisorische Bestellungen, noch nicht bei Fairgate vorhanden',
+              recentProvisional: 'Provisorische Bestellungen der letzten {{ days }} Tage',
+              definitive: 'Definitive Bestellungen',
+              toDeliver: 'Zur Auslieferung gekennzeichnet',
+              qrcode: 'QR-Code per E-Mail versandt',
+              delivered: 'Ausgeliefert beziehungsweise vom Bezüger abgeholt',
+            },
           },
         },
         order: { categories: { options: { catA: 'Erwachsene ruhig' } } },
@@ -99,5 +116,40 @@ describe('AdminOverviewComponent', () => {
     expect(rows[1].textContent).toContain('Erwachsene ruhig');
     expect(rows[1].textContent).toContain('12');
     expect(fixture.nativeElement.textContent).not.toContain('catB');
+  });
+
+  it('shows the delivery action outside an active campaign', () => {
+    expect(fixture.nativeElement.querySelectorAll('.overview-actions button')).toHaveLength(2);
+  });
+
+  it('hides the delivery action during an active campaign', () => {
+    const store = TestBed.inject(MockStore);
+    store.setState({
+      adminOverview: {
+        status: 'loaded',
+        overview: {
+          year: 2026,
+          recentDays: 14,
+          orders: { provisional: 1, recentProvisional: 1, definitive: 1, toDeliver: 1, qrcode: 1, delivered: 0 },
+          categories: [],
+        },
+      },
+      frontendConfig: {
+        ...frontendConfigInitialState,
+        publicConfigs: [
+          { variableName: 'campaign_start_date', value: '2000-01-01' },
+          { variableName: 'campaign_end_date', value: '2999-12-31' },
+        ],
+      },
+    });
+    fixture.detectChanges();
+
+    expect(fixture.nativeElement.querySelectorAll('.overview-actions button')).toHaveLength(1);
+  });
+
+  it('renders the column explanations below the table without tooltip attributes', () => {
+    expect(fixture.nativeElement.querySelector('.overview-legend')).toBeTruthy();
+    expect(fixture.nativeElement.querySelector('.overview-legend')?.textContent).toContain('Provisorische Bestellungen, noch nicht bei Fairgate vorhanden');
+    expect(fixture.nativeElement.querySelectorAll('[data-tooltip]')).toHaveLength(0);
   });
 });
