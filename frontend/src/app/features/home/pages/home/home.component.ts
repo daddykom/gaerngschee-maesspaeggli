@@ -3,6 +3,8 @@ import { MatButtonModule } from '@angular/material/button';
 import { RouterLink } from '@angular/router';
 import { Store } from '@ngrx/store';
 import { TranslatePipe } from '@ngx-translate/core';
+import { AuthActions } from '../../../../store/auth/auth.actions';
+import { selectAuthGroup } from '../../../../store/auth/auth.feature';
 import { selectFrontendPublicConfigs } from '../../../../store/frontend-config/frontend-config.feature';
 
 @Component({
@@ -16,6 +18,7 @@ export class HomeComponent {
   private readonly store = inject(Store);
 
   readonly publicConfigs = this.store.selectSignal(selectFrontendPublicConfigs);
+  readonly authGroup = this.store.selectSignal(selectAuthGroup);
   readonly campaignYear = computed(() => this.configValue('campaign_year'));
   readonly campaignStartDate = computed(() => this.configValue('campaign_start_date'));
   readonly campaignEndDate = computed(() => this.configValue('campaign_end_date'));
@@ -68,6 +71,10 @@ export class HomeComponent {
       return null;
     }
   });
+
+  logout(): void {
+    this.store.dispatch(AuthActions.logoutRequested());
+  }
 
   private configValue(variableName: string): string | null {
     const value = this.publicConfigs().find((config) => config.variableName === variableName)?.value;

@@ -6,7 +6,8 @@
       "lead": "Mit deiner Unterstützung ermöglichen wir Familien mit knappem Budget einen Besuch der Messe {{year}}.",
       "externalLink": "(öffnet in einem neuen Fenster)",
       "loading": "Die Aktionsseite wird geladen ...",
-      "login": "Login",
+      "login": "Anmelden",
+      "logout": "Abmelden",
       "donate": {
         "title": "Mässpäggli spenden",
         "text": "Erfülle den Wunsch einer Familie und ermögliche ihr den Besuch der Messe {{year}}.",

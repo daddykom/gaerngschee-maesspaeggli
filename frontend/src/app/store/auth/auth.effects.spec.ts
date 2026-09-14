@@ -128,26 +128,26 @@ describe('loginEffect', () => {
     await expect(failure).resolves.toEqual(AuthActions.passwordChangeFailure({ errorCode: 'PASSWORD_CHANGE_FAILED' }));
   });
 
-  it('calls the backend logout and dispatches navigation to login after success', async () => {
+  it('calls the backend logout and dispatches navigation to home after success', async () => {
     authService.logout.mockReturnValue(of(undefined));
     const effect$ = TestBed.runInInjectionContext(() => logoutEffect());
     const result = firstValueFrom(effect$);
 
-    actions$.next(AuthActions.logoutRequested({ redirectTo: '/login' }));
+    actions$.next(AuthActions.logoutRequested());
 
     expect(authService.logout).toHaveBeenCalledTimes(1);
-    await expect(result).resolves.toEqual(NavigationActions.navigate({ target: '/login' }));
+    await expect(result).resolves.toEqual(NavigationActions.navigate({ target: '/' }));
   });
 
-  it('dispatches navigation to login when the backend logout fails', async () => {
+  it('dispatches navigation to home when the backend logout fails', async () => {
     authService.logout.mockReturnValue(throwError(() => new Error('Logout failed')));
     const effect$ = TestBed.runInInjectionContext(() => logoutEffect());
     const result = firstValueFrom(effect$);
 
-    actions$.next(AuthActions.logoutRequested({ redirectTo: '/login' }));
+    actions$.next(AuthActions.logoutRequested());
 
     expect(authService.logout).toHaveBeenCalledTimes(1);
-    await expect(result).resolves.toEqual(NavigationActions.navigate({ target: '/login' }));
+    await expect(result).resolves.toEqual(NavigationActions.navigate({ target: '/' }));
   });
 
   it('persists login state and clears it on logout', () => {
@@ -166,7 +166,7 @@ describe('loginEffect', () => {
       salutation: null,
     });
     const logoutSubscription = clearResult.subscribe();
-    actions$.next(AuthActions.logoutRequested({ redirectTo: '/login' }));
+    actions$.next(AuthActions.logoutRequested());
 
     expect(localStorage.getItem('gaerngschee.auth')).toBeNull();
     loginSubscription.unsubscribe();

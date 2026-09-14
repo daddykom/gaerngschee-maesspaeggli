@@ -113,7 +113,7 @@ describe('authReducer', () => {
          sessionRefreshLoading: false,
          email: null,
        },
-      AuthActions.logoutRequested({ redirectTo: '/login' }),
+      AuthActions.logoutRequested(),
     );
 
     expect(state).toEqual(initialState);

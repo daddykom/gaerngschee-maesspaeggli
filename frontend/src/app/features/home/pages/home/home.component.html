@@ -48,7 +48,11 @@
     </div>
 
     <p class="home__login">
-      <a routerLink="/login">{{ 'app.home.login' | translate }}</a>
+      @if (authGroup()) {
+        <button mat-button type="button" (click)="logout()">{{ 'app.home.logout' | translate }}</button>
+      } @else {
+        <a routerLink="/login">{{ 'app.home.login' | translate }}</a>
+      }
     </p>
   } @else {
     <p role="status" aria-live="polite">{{ 'app.home.loading' | translate }}</p>

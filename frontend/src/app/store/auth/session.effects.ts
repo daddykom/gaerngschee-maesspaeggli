@@ -2,11 +2,9 @@ import { HttpErrorResponse } from '@angular/common/http';
 import { inject } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { Actions, createEffect, ofType } from '@ngrx/effects';
-import { Store } from '@ngrx/store';
 import { catchError, EMPTY, exhaustMap, filter, map, of, switchMap, takeUntil, takeWhile, timer } from 'rxjs';
 import { AuthService } from '../../shared/services/auth.service';
 import { AuthActions } from './auth.actions';
-import { selectAuthGroup } from './auth.feature';
 import { SessionActions } from './session.actions';
 import { NotificationActions } from '../notification/notification.actions';
 import { NavigationActions } from '../navigation/navigation.actions';
@@ -93,19 +91,18 @@ export const stopSessionPollingOnLogout$ = createEffect(
 );
 
 export const sessionExpired$ = createEffect(
-  (actions$ = inject(Actions), store = inject(Store)) => actions$.pipe(
+  (actions$ = inject(Actions)) => actions$.pipe(
     ofType(SessionActions.sessionExpired),
-    map(() => store.selectSignal(selectAuthGroup)()),
-    switchMap((group) => [
+    switchMap(() => [
       SessionActions.countdownStopped(),
-      AuthActions.logoutRequested({ redirectTo: group === 'client' ? '/start' : '/login' }),
+      AuthActions.logoutRequested(),
       NotificationActions.show({
         variant: 'warning',
         titleKey: 'app.auth.sessionExpiredTitle',
         messageKey: 'app.auth.sessionExpiredMessage',
-        preserveOnRoutes: [group === 'client' ? '/start' : '/login'],
+        preserveOnRoutes: ['/'],
       }),
-      NavigationActions.navigate({ target: group === 'client' ? '/start' : '/login' }),
+      NavigationActions.navigate({ target: '/' }),
     ]),
   ),
   { functional: true },

@@ -75,7 +75,7 @@ export const orderNotificationEffect = createEffect(
 export const orderLogoutEffect = createEffect(
   (actions$ = inject(Actions)) => actions$.pipe(
     ofType(OrderActions.orderSaved),
-    map(() => AuthActions.logoutRequested({ redirectTo: '/start' })),
+    map(() => AuthActions.logoutRequested()),
   ),
   { functional: true },
 );
