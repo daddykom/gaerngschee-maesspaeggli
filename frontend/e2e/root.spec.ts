@@ -21,7 +21,7 @@ test.describe('Root route', () => {
     await expect(page.locator('.home__lead')).toContainText('Besuch der Messe 2026');
     await expect(page.getByRole('link', { name: 'Jetzt spenden' })).toHaveAttribute('href', 'https://donate.example/maesspaeggli');
     await expect(page.getByRole('link', { name: 'Mässpäggli anfragen' })).toHaveAttribute('href', '/start');
-    await expect(page.getByRole('link', { name: 'Login' })).toHaveAttribute('href', '/login');
+    await expect(page.getByRole('link', { name: 'Anmelden' })).toHaveAttribute('href', '/login');
   });
 
   test('shows the campaign start date instead of the receive link before launch', async ({ page }) => {
@@ -72,6 +72,6 @@ test.describe('Root route', () => {
     await expect(page.getByRole('button', { name: 'Abmelden' })).toBeVisible();
     await page.getByRole('button', { name: 'Abmelden' }).click();
     await page.waitForURL('**/');
-    await expect(page.getByRole('link', { name: 'Login' })).toBeVisible();
+    await expect(page.getByRole('link', { name: 'Anmelden' })).toBeVisible();
   });
 });

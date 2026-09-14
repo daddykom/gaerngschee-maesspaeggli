@@ -1,7 +1,7 @@
 import { createFeature, createReducer, on } from '@ngrx/store';
 import { AuthActions } from './auth.actions';
 import { SessionActions } from './session.actions';
-import { AuthState, initialState } from './auth.state';
+import { AuthState, initialState, loggedOutState } from './auth.state';
 
 export const authFeature = createFeature({
   name: 'auth',
@@ -82,7 +82,7 @@ export const authFeature = createFeature({
       passwordChangeLoading: false,
       passwordChangeErrorCode: errorCode,
     })),
-    on(AuthActions.logoutRequested, () => initialState),
+    on(AuthActions.logoutRequested, () => loggedOutState),
     on(SessionActions.statusLoaded, (state, { expiresAt, secondsRemaining }) => ({
       ...state,
       sessionExpiresAt: expiresAt,

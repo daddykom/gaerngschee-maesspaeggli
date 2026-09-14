@@ -1,6 +1,6 @@
 import { AuthActions } from './auth.actions';
 import { authReducer } from './auth.feature';
-import { initialState } from './auth.state';
+import { initialState, loggedOutState } from './auth.state';
 
 describe('authReducer', () => {
   it('starts loading and clears the previous error on login', () => {
@@ -116,7 +116,7 @@ describe('authReducer', () => {
       AuthActions.logoutRequested(),
     );
 
-    expect(state).toEqual(initialState);
+    expect(state).toEqual(loggedOutState);
   });
 
   it('stores registration login data and resets its loading state', () => {

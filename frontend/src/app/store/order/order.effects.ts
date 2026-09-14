@@ -53,7 +53,7 @@ export const orderNotificationEffect = createEffect(
         variant: 'success',
         titleKey: 'app.order.notifications.successTitle',
         messageKey: 'app.order.notifications.success',
-         preserveOnRoutes: ['/start'],
+          preserveOnRoutes: ['/'],
       })
       : action.type === OrderActions.orderLoadFailed.type
         ? NotificationActions.show({

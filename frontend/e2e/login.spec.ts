@@ -42,7 +42,7 @@ test.describe('Login route', () => {
 
     await page.getByRole('button', { name: 'Administrationsmenü öffnen' }).click();
     await page.getByRole('menuitem', { name: 'Abmelden' }).click();
-    await page.waitForURL('**/login');
+    await page.waitForURL('**/');
 
     await page.goto('/admin/overview');
     await page.waitForURL('**/not-found');
