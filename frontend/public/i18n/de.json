@@ -280,6 +280,15 @@
         "deliveredShort": "Gelief.",
         "tableCaption": "Bestellungen nach Kategorie und Status",
         "empty": "Keine Bestellungen vorhanden.",
+        "legend": {
+          "title": "Legende",
+          "provisional": "Provisorische Bestellungen, noch nicht bei Fairgate vorhanden",
+          "recentProvisional": "Provisorische Bestellungen der letzten {{ days }} Tage",
+          "definitive": "Definitive Bestellungen",
+          "toDeliver": "Zur Auslieferung gekennzeichnet",
+          "qrcode": "QR-Code per E-Mail versandt",
+          "delivered": "Ausgeliefert beziehungsweise vom Bezüger abgeholt"
+        },
         "deliver": "Bestellungen ausliefern",
         "print": "Drucken",
         "printDate": "Druckdatum",

@@ -1,4 +1,4 @@
-import { Component, inject } from '@angular/core';
+import { Component, computed, inject } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
 import { MatDialog } from '@angular/material/dialog';
 import { Store } from '@ngrx/store';
@@ -7,6 +7,7 @@ import { ConfirmDialogComponent, ConfirmDialogData } from '../../../../shared/co
 import { AdminOverviewCategory } from '../../../../shared/models/admin-overview.model';
 import { AdminOverviewActions } from '../../../../store/admin-overview/admin-overview.actions';
 import { selectAdminOverview } from '../../../../store/admin-overview/admin-overview.feature';
+import { selectFrontendPublicConfigs } from '../../../../store/frontend-config/frontend-config.feature';
 
 @Component({
   selector: 'app-admin-overview',
@@ -19,7 +20,32 @@ export class AdminOverviewComponent {
   private readonly dialog = inject(MatDialog);
 
   readonly overview = this.store.selectSignal(selectAdminOverview);
+  readonly publicConfigs = this.store.selectSignal(selectFrontendPublicConfigs);
   readonly printDate = new Intl.DateTimeFormat('de-CH', { dateStyle: 'long' }).format(new Date());
+  readonly campaignStatus = computed(() => {
+    const startDate = this.configValue('campaign_start_date');
+    const endDate = this.configValue('campaign_end_date');
+    if (startDate === null || endDate === null || !/^\d{4}-\d{2}-\d{2}$/.test(startDate) || !/^\d{4}-\d{2}-\d{2}$/.test(endDate)) {
+      return 'unavailable';
+    }
+
+    const currentDate = new Intl.DateTimeFormat('en-CA', {
+      year: 'numeric',
+      month: '2-digit',
+      day: '2-digit',
+      timeZone: 'Europe/Zurich',
+    }).format(new Date());
+
+    if (currentDate < startDate) {
+      return 'not_started';
+    }
+    if (currentDate > endDate) {
+      return 'ended';
+    }
+
+    return 'open';
+  });
+  readonly canDeliver = computed(() => this.campaignStatus() === 'not_started' || this.campaignStatus() === 'ended');
 
   categories(categories: AdminOverviewCategory[]): AdminOverviewCategory[] {
     return categories.filter((category) => Object.values(category)
@@ -43,5 +69,10 @@ export class AdminOverviewComponent {
 
   print(): void {
     window.print();
+  }
+
+  private configValue(variableName: string): string | null {
+    const value = this.publicConfigs().find((config) => config.variableName === variableName)?.value;
+    return typeof value === 'string' && value.trim() !== '' ? value.trim() : null;
   }
 }
