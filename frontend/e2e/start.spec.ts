@@ -33,7 +33,7 @@ test.describe('Start route', () => {
     expect(requestCalled).toBe(false);
   });
 
-  test('submits the email request', async ({ page }) => {
+  test('submits the email request and shows the success page', async ({ page }) => {
     await page.route('http://localhost:8080/public/start', async (route) => {
       expect(route.request().postDataJSON()).toEqual({ email: 'person@example.com', language: 'de' });
       await route.fulfill({ status: 202, contentType: 'application/json', body: JSON.stringify({ sent: true }) });
@@ -42,6 +42,12 @@ test.describe('Start route', () => {
     await page.goto('/start');
     await page.locator('input[type="email"]').fill('person@example.com');
     await page.getByRole('button', { name: 'Weiter' }).click();
-    await expect(page.locator('input[type="email"]')).toHaveValue('person@example.com');
+
+    await expect(page).toHaveURL(/\/start\/success$/);
+    await expect(page.locator('#email-sent-heading')).toBeVisible();
+    await expect(page.getByText('Wir haben dir eine E-Mail mit deinem persönlichen Bestelllink geschickt.')).toBeVisible();
+    const successNavigation = page.getByRole('navigation', { name: 'Erfolgsnavigation' });
+    await expect(successNavigation.getByRole('link', { name: 'Home' })).toHaveAttribute('href', '/');
+    await expect(successNavigation.getByRole('link', { name: 'Anmeldung' })).toHaveAttribute('href', '/start');
   });
 });

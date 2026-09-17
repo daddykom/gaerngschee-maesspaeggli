@@ -1,4 +1,5 @@
 import { TestBed } from '@angular/core/testing';
+import { Router } from '@angular/router';
 import { type Mock } from 'vitest';
 import { provideMockActions } from '@ngrx/effects/testing';
 import { Action } from '@ngrx/store';
@@ -7,22 +8,25 @@ import { AnmeldungService } from '../../shared/services/anmeldung.service';
 import { StartActions } from './start.actions';
 import {
   showStartFailureNotificationEffect,
-  showStartSuccessNotificationEffect,
+  navigateToStartSuccessEffect,
   submitStartEffect,
 } from './start.effects';
 
 describe('submitStartEffect', () => {
   let actions$: Subject<Action>;
   let anmeldungService: { requestInformation: Mock };
+  let router: { navigate: Mock };
 
   beforeEach(() => {
     actions$ = new Subject<Action>();
     anmeldungService = { requestInformation: vi.fn() };
+    router = { navigate: vi.fn() };
 
     TestBed.configureTestingModule({
       providers: [
         provideMockActions(() => actions$),
         { provide: AnmeldungService, useValue: anmeldungService },
+        { provide: Router, useValue: router },
       ],
     });
   });
@@ -48,19 +52,14 @@ describe('submitStartEffect', () => {
     await expect(result).resolves.toEqual(StartActions.submitFailure());
   });
 
-  it('shows a success notification after the email was sent', async () => {
-    const effect$ = TestBed.runInInjectionContext(() => showStartSuccessNotificationEffect());
+  it('navigates to the success page after the email was sent', async () => {
+    const effect$ = TestBed.runInInjectionContext(() => navigateToStartSuccessEffect());
     const result = firstValueFrom(effect$);
 
     actions$.next(StartActions.submitSuccess({ sent: true }));
 
-    await expect(result).resolves.toEqual({
-      type: '[Notification] Show',
-      variant: 'success',
-      titleKey: 'app.anmeldung.emailSentTitle',
-      messageKey: 'app.anmeldung.emailSentMessage',
-      preserveOnRoutes: ['/start'],
-    });
+    await expect(result).resolves.toEqual(StartActions.submitSuccess({ sent: true }));
+    expect(router.navigate).toHaveBeenCalledWith(['/start/success']);
   });
 
   it('shows an error notification when sending fails', async () => {

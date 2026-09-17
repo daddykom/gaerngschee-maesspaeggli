@@ -34,8 +34,18 @@ export const appRoutes: Routes = [
       {
         path: 'start',
         providers: [provideState(startFeature), provideEffects(startEffects)],
-        data: { pageTitle: 'app.anmeldung.title' },
-        loadComponent: () => import('./features/auth/pages/start/maesspaeggli-start.component').then((m) => m.MaesspaeggliStartComponent),
+        children: [
+          {
+            path: '',
+            data: { pageTitle: 'app.anmeldung.title' },
+            loadComponent: () => import('./features/auth/pages/start/maesspaeggli-start.component').then((m) => m.MaesspaeggliStartComponent),
+          },
+          {
+            path: 'success',
+            data: { pageTitle: 'app.anmeldung.emailSentTitle' },
+            loadComponent: () => import('./features/auth/pages/start-success/start-success').then((m) => m.StartSuccess),
+          },
+        ],
       },
       {
         path: 'login',
