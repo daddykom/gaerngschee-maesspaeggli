@@ -66,6 +66,99 @@ describe('App', () => {
     expect(fixture.nativeElement.textContent).toContain('INVALID_CREDENTIALS');
   });
 
+  it('scrolls a new notification into view when it is outside the viewport', async () => {
+    await TestBed.resetTestingModule()
+      .configureTestingModule({
+        imports: [App, RouterTestingModule],
+        providers: [
+          provideTranslateService(),
+          provideMockStore({
+            initialState: {
+              notification: {
+                current: {
+                  variant: 'error',
+                  titleKey: 'app.auth.loginErrorTitle',
+                  messageKey: 'INVALID_CREDENTIALS',
+                  params: {},
+                  preserveOnRoutes: [],
+                },
+              },
+              auth: authInitialState,
+            },
+          }),
+        ],
+      })
+      .compileComponents();
+
+    const scrollIntoView = vi.fn();
+    Object.defineProperty(HTMLElement.prototype, 'scrollIntoView', {
+      configurable: true,
+      value: scrollIntoView,
+    });
+    vi.spyOn(HTMLElement.prototype, 'getBoundingClientRect').mockReturnValue({
+      top: -100,
+      bottom: 100,
+      left: 0,
+      right: 0,
+      width: 0,
+      height: 200,
+      x: 0,
+      y: -100,
+      toJSON: () => ({}),
+    });
+    const fixture = TestBed.createComponent(App);
+    await fixture.whenStable();
+
+    expect(scrollIntoView).toHaveBeenCalledWith({ behavior: 'smooth', block: 'start' });
+  });
+
+  it('does not scroll a notification that is already visible', async () => {
+    await TestBed.resetTestingModule()
+      .configureTestingModule({
+        imports: [App, RouterTestingModule],
+        providers: [
+          provideTranslateService(),
+          provideMockStore({
+            initialState: {
+              notification: {
+                current: {
+                  variant: 'info',
+                  titleKey: 'app.title',
+                  messageKey: 'app.title',
+                  params: {},
+                  preserveOnRoutes: [],
+                },
+              },
+              auth: authInitialState,
+            },
+          }),
+        ],
+      })
+      .compileComponents();
+
+    vi.spyOn(HTMLElement.prototype, 'getBoundingClientRect').mockReturnValue({
+      top: 100,
+      bottom: 200,
+      left: 0,
+      right: 0,
+      width: 0,
+      height: 100,
+      x: 0,
+      y: 100,
+      toJSON: () => ({}),
+    });
+    const scrollIntoView = vi.fn();
+    Object.defineProperty(HTMLElement.prototype, 'scrollIntoView', {
+      configurable: true,
+      value: scrollIntoView,
+    });
+
+    const fixture = TestBed.createComponent(App);
+    await fixture.whenStable();
+
+    expect(scrollIntoView).not.toHaveBeenCalled();
+  });
+
   it('dispatches logout from the app shell', () => {
     const store = TestBed.inject(MockStore);
     const dispatch = vi.spyOn(store, 'dispatch');

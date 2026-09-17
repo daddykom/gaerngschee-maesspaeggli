@@ -23,7 +23,7 @@
       }
 
       @if (notification(); as currentNotification) {
-        <div role="alert" aria-live="assertive">
+         <div #notification class="app-notification" role="alert" aria-live="assertive">
           <app-info-box [variant]="currentNotification.variant" [title]="currentNotification.titleKey | translate">
             <span>{{ currentNotification.messageKey | translate: currentNotification.params }}</span>
           </app-info-box>

@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, computed, inject } from '@angular/core';
+import { afterRenderEffect, ChangeDetectionStrategy, Component, computed, ElementRef, inject, viewChild } from '@angular/core';
 import { ActivatedRoute, NavigationEnd, Router, RouterLink, RouterOutlet } from '@angular/router';
 import { Store } from '@ngrx/store';
 import { TranslatePipe } from '@ngx-translate/core';
@@ -40,14 +40,33 @@ export class App {
   );
 
   readonly notification = this.store.selectSignal(selectNotification);
+  private readonly notificationElement = viewChild<ElementRef<HTMLElement>>('notification');
   readonly publicConfigStatus = this.store.selectSignal(selectFrontendPublicConfigStatus);
   readonly authGroup = this.store.selectSignal(selectAuthGroup);
   readonly isAdmin = computed(() => this.authGroup() === 'admin');
+  private lastScrolledNotification: unknown = null;
 
   constructor() {
     if (this.store.selectSignal(selectAuthGroup)() !== null) {
       this.store.dispatch(SessionActions.pollingStarted());
     }
+
+    afterRenderEffect(() => {
+      const notification = this.notification();
+      const element = this.notificationElement()?.nativeElement;
+
+      if (!notification || !element || notification === this.lastScrolledNotification) {
+        return;
+      }
+
+      this.lastScrolledNotification = notification;
+      const rectangle = element.getBoundingClientRect();
+      const viewportHeight = window.innerHeight || document.documentElement.clientHeight;
+
+      if (rectangle.top < 0 || rectangle.bottom > viewportHeight) {
+        element.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      }
+    });
   }
 
   logout(): void {
