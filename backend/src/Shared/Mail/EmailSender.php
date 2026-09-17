@@ -39,7 +39,7 @@ final class EmailSender implements EmailSenderInterface
         'error' => '#b3261e',
         'text' => '#2f2530',
         'mutedText' => '#6f6069',
-        'outline' => '#ddcfd7',
+        'outline' => '#8c7b85',
     ];
 
     private readonly MailerInterface $mailer;

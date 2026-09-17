@@ -33,7 +33,7 @@ nicht seiten- oder komponentenspezifisch frei gewählt.
 | Primärfarbe | `#8a2858` | Links, Buttons und primäre Aktionen |
 | Haupttext | `#2f2530` | Überschriften und normale Textinhalte |
 | Sekundärtext | `#6f6069` | Beschreibungen und ergänzende Informationen |
-| Rahmen | `#ddcfd7` | Grenzen und Trennlinien |
+| Rahmen | `#8c7b85` | Grenzen und Trennlinien |
 | Erfolg-Hintergrund | `#dff4e8` | Erfolgs- und Bestätigungsbereiche |
 | Erfolg-Text | `#276749` | Text und Hervorhebungen in Erfolgsbereichen |
 | Warnung-Hintergrund | `#fff2b7` | Warnungen und offene Prüfungen |
@@ -47,7 +47,9 @@ Rosa ist die Marken- und Primärcontainerfarbe, nicht die Farbe für
 Informationen. Links und primäre Aktionen verwenden `#8a2858`; ein beliebiger
 roter Link ist nicht Teil des Farbsystems.
 
-Das Frontend verwendet für den Angular-Material-Schlüssel
+Die Rahmenfarbe erreicht auf den hellen Oberflächen einen ausreichenden
+Kontrast für sichtbare UI-Grenzen. Das Frontend verwendet für den
+Angular-Material-Schlüssel
 `primary-container` derzeit `#f2b3d5`; E-Mail-Vorlagen verwenden für den
 Header `#f5b6d3`. Diese geringe technische Abweichung betrifft nur den
 Marken-Header. Die semantischen Statusfarben für Information, Warnung, Erfolg
@@ -57,6 +59,11 @@ Für ausreichende Lesbarkeit werden Text und Hintergrund immer als Paar
 verwendet. Eine Information darf nicht ausschließlich durch Farbe vermittelt
 werden, sondern benötigt zusätzlich Text, eine Beschriftung oder ein
 geeignetes Symbol.
+
+Bei `InfoBoxComponent`-Varianten kennzeichnet die Statusfarbe den Rahmen und
+das Icon. Der Inhaltstext bleibt bewusst in der gut lesbaren Haupttextfarbe.
+Jede Statusmeldung muss deshalb zusätzlich eine verständliche Überschrift oder
+Nachricht enthalten; die Farbe allein ist niemals die Bedeutung der Meldung.
 
 Die E-Mail-Vorschauen unter `frontend/public/test/index.html` zeigen die
 Farbrollen und ihre praktische Verwendung.
