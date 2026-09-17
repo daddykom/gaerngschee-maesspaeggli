@@ -48,12 +48,10 @@ Informationen. Links und primäre Aktionen verwenden `#8a2858`; ein beliebiger
 roter Link ist nicht Teil des Farbsystems.
 
 Die Rahmenfarbe erreicht auf den hellen Oberflächen einen ausreichenden
-Kontrast für sichtbare UI-Grenzen. Das Frontend verwendet für den
-Angular-Material-Schlüssel
-`primary-container` derzeit `#f2b3d5`; E-Mail-Vorlagen verwenden für den
-Header `#f5b6d3`. Diese geringe technische Abweichung betrifft nur den
-Marken-Header. Die semantischen Statusfarben für Information, Warnung, Erfolg
-und Fehler sind systemweit einheitlich.
+Kontrast für sichtbare UI-Grenzen. Frontend und E-Mail-Vorlagen verwenden für
+den Marken-Header den gemeinsamen Wert `#f5b6d3`. Die semantischen
+Statusfarben für Information, Warnung, Erfolg und Fehler sind systemweit
+einheitlich.
 
 Für ausreichende Lesbarkeit werden Text und Hintergrund immer als Paar
 verwendet. Eine Information darf nicht ausschließlich durch Farbe vermittelt

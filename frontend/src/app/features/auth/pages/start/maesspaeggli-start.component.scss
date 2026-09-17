@@ -154,27 +154,27 @@ p {
   color: var(--gl-info);
 }
 
-.step--orange .step__number {
+.step--warning .step__number {
   background: var(--gl-warning-container);
   color: var(--gl-warning);
 }
 
-.step--orange h3 {
+.step--warning h3 {
   color: var(--gl-warning);
 }
 
 .privacy-box {
   padding: var(--gl-space-lg);
-  background: color-mix(in srgb, var(--mat-sys-tertiary) 8%, transparent);
+  background: var(--gl-info-container);
 }
 
 .privacy-box > mat-icon {
   flex: 0 0 auto;
-  color: var(--mat-sys-tertiary);
+  color: var(--gl-info);
 }
 
 .privacy-box h2 {
-  color: var(--mat-sys-tertiary);
+  color: var(--gl-info);
 }
 
 @media (min-width: layout.$gl-section-breakpoint) {
