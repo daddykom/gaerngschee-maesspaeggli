@@ -83,8 +83,13 @@ a {
   --gl-on-success-container: #1d5547;
   --gl-warning-container: #fff2b7;
   --gl-warning: #6b5700;
+  --gl-on-warning-container: #4f4100;
   --gl-info-container: #d8e9f7;
   --gl-info: #2c5d78;
+  --gl-on-info-container: #173446;
+  --gl-error-container: #ffdad6;
+  --gl-error: #b3261e;
+  --gl-on-error-container: #690005;
 }
 
 .gl-container {

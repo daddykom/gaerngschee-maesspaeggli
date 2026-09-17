@@ -24,29 +24,29 @@
   }
 
   &--info {
-    background: var(--mat-sys-primary-container);
-    border-color: var(--mat-sys-primary);
+    background: var(--gl-info-container);
+    border-color: var(--gl-info);
 
     .info-box__icon {
-      color: var(--mat-sys-on-primary-container);
+      color: var(--gl-on-info-container);
     }
   }
 
   &--warning {
-    background: var(--mat-sys-tertiary-container);
-    border-color: var(--mat-sys-tertiary);
+    background: var(--gl-warning-container);
+    border-color: var(--gl-warning);
 
     .info-box__icon {
-      color: var(--mat-sys-on-tertiary-container);
+      color: var(--gl-on-warning-container);
     }
   }
 
   &--error {
-    background: var(--mat-sys-error-container);
-    border-color: var(--mat-sys-error);
+    background: var(--gl-error-container);
+    border-color: var(--gl-error);
 
     .info-box__icon {
-      color: var(--mat-sys-on-error-container);
+      color: var(--gl-on-error-container);
     }
   }
 

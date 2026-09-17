@@ -35,6 +35,8 @@ final class EmailSender implements EmailSenderInterface
         'warning' => '#6b5700',
         'infoContainer' => '#d8e9f7',
         'info' => '#2c5d78',
+        'errorContainer' => '#ffdad6',
+        'error' => '#b3261e',
         'text' => '#2f2530',
         'mutedText' => '#6f6069',
         'outline' => '#ddcfd7',

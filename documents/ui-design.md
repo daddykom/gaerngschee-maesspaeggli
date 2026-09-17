@@ -18,6 +18,51 @@ räumliche Anordnung.
 
 ------------------------------------------------------------------------
 
+## Farbsystem
+
+Das Gärngschee-Farbsystem verwendet eine helle rosa Grundstimmung, einen
+dunklen Pflaumenton für Text und Aktionen sowie klar unterscheidbare
+Statusfarben. Farben werden nach ihrer semantischen Rolle verwendet und
+nicht seiten- oder komponentenspezifisch frei gewählt.
+
+| Rolle | Farbe | Verwendung |
+|---|---|---|
+| Seitenhintergrund | `#fff7fb` | Globaler Seitenhintergrund |
+| Oberfläche | `#fff8fc` | Karten, E-Mail-Flächen und Inhaltsbereiche |
+| Header / Primärcontainer | `#f5b6d3` | E-Mail-Header und hervorgehobene Markenbereiche |
+| Primärfarbe | `#8a2858` | Links, Buttons und primäre Aktionen |
+| Haupttext | `#2f2530` | Überschriften und normale Textinhalte |
+| Sekundärtext | `#6f6069` | Beschreibungen und ergänzende Informationen |
+| Rahmen | `#ddcfd7` | Grenzen und Trennlinien |
+| Erfolg-Hintergrund | `#dff4e8` | Erfolgs- und Bestätigungsbereiche |
+| Erfolg-Text | `#276749` | Text und Hervorhebungen in Erfolgsbereichen |
+| Warnung-Hintergrund | `#fff2b7` | Warnungen und offene Prüfungen |
+| Warnung-Text | `#6b5700` | Text in Warnungsbereichen |
+| Information-Hintergrund | `#d8e9f7` | Neutrale Informationsbereiche |
+| Information-Text | `#2c5d78` | Text in Informationsbereichen |
+| Fehler-Hintergrund | `#ffdad6` | Fehlermeldungen und blockierende Probleme |
+| Fehler-Text | `#b3261e` | Text, Rahmen und Hervorhebungen in Fehlerbereichen |
+
+Rosa ist die Marken- und Primärcontainerfarbe, nicht die Farbe für
+Informationen. Links und primäre Aktionen verwenden `#8a2858`; ein beliebiger
+roter Link ist nicht Teil des Farbsystems.
+
+Das Frontend verwendet für den Angular-Material-Schlüssel
+`primary-container` derzeit `#f2b3d5`; E-Mail-Vorlagen verwenden für den
+Header `#f5b6d3`. Diese geringe technische Abweichung betrifft nur den
+Marken-Header. Die semantischen Statusfarben für Information, Warnung, Erfolg
+und Fehler sind systemweit einheitlich.
+
+Für ausreichende Lesbarkeit werden Text und Hintergrund immer als Paar
+verwendet. Eine Information darf nicht ausschließlich durch Farbe vermittelt
+werden, sondern benötigt zusätzlich Text, eine Beschriftung oder ein
+geeignetes Symbol.
+
+Die E-Mail-Vorschauen unter `frontend/public/test/index.html` zeigen die
+Farbrollen und ihre praktische Verwendung.
+
+------------------------------------------------------------------------
+
 # 1. Grundprinzipien
 
 ## Mobile First
