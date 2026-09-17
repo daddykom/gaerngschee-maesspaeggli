@@ -66,6 +66,21 @@ Nachricht enthalten; die Farbe allein ist niemals die Bedeutung der Meldung.
 Die E-Mail-Vorschauen unter `frontend/public/test/index.html` zeigen die
 Farbrollen und ihre praktische Verwendung.
 
+### Farben der Home-Karten
+
+Die beiden Home-Karten verwenden Rosa und Mintgrün als Kategorienfarben:
+
+-   Die Spendenkarte verwendet den primären Container und damit die
+    Markenfarbe Rosa.
+-   Die Karte zum Erhalten von Mässpäggli verwendet den sekundären Container
+    und damit Mintgrün.
+
+Diese Farben beschreiben unterschiedliche Einstiege, aber keinen Status. Sie
+stehen weder für Erfolg noch für eine abgeschlossene oder verfügbare Aktion.
+Die Bedeutung wird immer durch die klare Überschrift, den Beschreibungstext
+und die beschriftete Aktion vermittelt und darf nicht allein aus der Farbe
+abgeleitet werden.
+
 ------------------------------------------------------------------------
 
 # 1. Grundprinzipien
