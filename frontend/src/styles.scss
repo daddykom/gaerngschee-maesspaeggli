@@ -18,7 +18,7 @@ html {
     $overrides: (
       primary: #8a2858,
       on-primary: #ffffff,
-      primary-container: #f2b3d5,
+       primary-container: #f5b6d3,
       on-primary-container: #2f2530,
       secondary: #2f6f60,
       on-secondary: #ffffff,
@@ -33,7 +33,7 @@ html {
       on-surface: #2f2530,
       on-surface-variant: #6f6069,
       outline: #8c7b85,
-      outline-variant: #ddcfd7,
+       outline-variant: #8c7b85,
       error: #b3261e,
       error-container: #ffdad6
     )
@@ -83,8 +83,13 @@ a {
   --gl-on-success-container: #1d5547;
   --gl-warning-container: #fff2b7;
   --gl-warning: #6b5700;
+  --gl-on-warning-container: #4f4100;
   --gl-info-container: #d8e9f7;
   --gl-info: #2c5d78;
+  --gl-on-info-container: #173446;
+  --gl-error-container: #ffdad6;
+  --gl-error: #b3261e;
+  --gl-on-error-container: #690005;
 }
 
 .gl-container {
