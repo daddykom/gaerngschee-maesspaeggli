@@ -44,8 +44,9 @@ test.describe('Start route', () => {
     await page.getByRole('button', { name: 'Weiter' }).click();
 
     await expect(page).toHaveURL(/\/start\/success$/);
-    await expect(page.locator('#email-sent-heading')).toBeVisible();
-    await expect(page.getByText('Wir haben dir eine E-Mail mit deinem persönlichen Bestelllink geschickt.')).toBeVisible();
+    const alert = page.getByRole('alert');
+    await expect(alert).toContainText('E-Mail versandt');
+    await expect(alert).toContainText('Wir haben dir eine E-Mail mit deinem persönlichen Bestelllink geschickt.');
     const successNavigation = page.getByRole('navigation', { name: 'Erfolgsnavigation' });
     await expect(successNavigation.getByRole('link', { name: 'Home' })).toHaveAttribute('href', '/');
     await expect(successNavigation.getByRole('link', { name: 'Anmeldung' })).toHaveAttribute('href', '/start');

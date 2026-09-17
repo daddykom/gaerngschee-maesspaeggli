@@ -1,10 +1,10 @@
 import { inject } from '@angular/core';
-import { Router } from '@angular/router';
 import { Actions, createEffect, ofType } from '@ngrx/effects';
-import { catchError, exhaustMap, map, of, tap } from 'rxjs';
+import { catchError, exhaustMap, map, of, concatMap } from 'rxjs';
 import { AnmeldungService } from '../../shared/services/anmeldung.service';
 import { StartActions } from './start.actions';
 import { NotificationActions } from '../notification/notification.actions';
+import { NavigationActions } from '../navigation/navigation.actions';
 
 export const submitStartEffect = createEffect(
   (actions$ = inject(Actions), anmeldungService = inject(AnmeldungService)) =>
@@ -20,12 +20,20 @@ export const submitStartEffect = createEffect(
   { functional: true },
 );
 
-export const navigateToStartSuccessEffect = createEffect(
-  (actions$ = inject(Actions), router = inject(Router)) => actions$.pipe(
+export const showStartSuccessAndNavigateEffect = createEffect(
+  (actions$ = inject(Actions)) => actions$.pipe(
     ofType(StartActions.submitSuccess),
-    tap(() => void router.navigate(['/start/success'])),
+    concatMap(() => [
+      NotificationActions.show({
+        variant: 'success',
+        titleKey: 'app.anmeldung.emailSentTitle',
+        messageKey: 'app.anmeldung.emailSentMessage',
+        preserveOnRoutes: ['/start/success'],
+      }),
+      NavigationActions.navigate({ target: '/start/success' }),
+    ]),
   ),
-  { dispatch: false, functional: true },
+  { functional: true },
 );
 
 export const showStartFailureNotificationEffect = createEffect(
@@ -43,6 +51,6 @@ export const showStartFailureNotificationEffect = createEffect(
 
 export const startEffects = {
   submitStartEffect,
-  navigateToStartSuccessEffect,
+  showStartSuccessAndNavigateEffect,
   showStartFailureNotificationEffect,
 };
