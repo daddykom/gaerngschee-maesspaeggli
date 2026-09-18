@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Shared\Mail;
 
 use App\Registration\Services\AnmeldungMailVariant;
+use App\Shared\Translation\SharedJsonFileLoader;
 use Symfony\Bridge\Twig\Extension\TranslationExtension;
 use Symfony\Component\Mailer\Exception\TransportExceptionInterface;
 use Symfony\Component\Mailer\Mailer;
@@ -13,7 +14,6 @@ use Symfony\Component\Mailer\Transport;
 use Symfony\Component\Mime\Address;
 use Symfony\Component\Mime\Email;
 use Symfony\Component\Translation\Loader\ArrayLoader;
-use Symfony\Component\Translation\Loader\PhpFileLoader;
 use Symfony\Component\Translation\Translator;
 use Symfony\Contracts\Translation\LocaleAwareInterface;
 use Symfony\Contracts\Translation\TranslatorInterface;
@@ -96,7 +96,7 @@ final class EmailSender implements EmailSenderInterface
         $message = (new Email())
             ->from(new Address($this->fromAddress, $this->fromName))
             ->to($recipient)
-            ->subject($this->translator->trans('anmeldung.' . $variant->value . '.subject', [], null, $locale))
+            ->subject($this->translator->trans('app.mail.registration.clientOrder.subject', [], null, $locale))
             ->text($this->plainText($html))
             ->html($html)
             ->embedFromPath(
@@ -122,13 +122,13 @@ final class EmailSender implements EmailSenderInterface
         }
 
         $html = $this->twig->render('anmeldung/client-order-status.html.twig', [
-            'STATUS_MESSAGE' => $this->translator->trans('anmeldung.client-order-status.' . $status, [], null, $locale),
+            'STATUS_MESSAGE' => $this->translator->trans('app.mail.registration.clientOrderStatus.' . $status, [], null, $locale),
             'LOGO_CID' => 'cid:' . self::LOGO_CID,
         ]);
         $message = (new Email())
             ->from(new Address($this->fromAddress, $this->fromName))
             ->to($recipient)
-            ->subject($this->translator->trans('anmeldung.client-order-status.subject', [], null, $locale))
+            ->subject($this->translator->trans('app.mail.registration.clientOrderStatus.subject', [], null, $locale))
             ->text($this->plainText($html))
             ->html($html)
             ->embedFromPath(
@@ -194,19 +194,24 @@ final class EmailSender implements EmailSenderInterface
         }
         $order['items'] = array_map(function (array $item): array {
             $item['categoryLabel'] = $this->translator->trans(
-                'order.category.' . $item['category'],
+                'app.order.categories.options.' . $item['category'],
                 [],
                 null,
                 'de',
             );
-            $item['personTypeLabel'] = $item['personType'] === 'adult' ? 'Erwachsene' : 'Kinder';
+            $item['personTypeLabel'] = $this->translator->trans(
+                $item['personType'] === 'adult' ? 'app.order.categories.adult' : 'app.order.categories.child',
+                [],
+                null,
+                'de',
+            );
             return $item;
         }, $order['items'] ?? []);
         $html = $this->twig->render('order-confirmation-' . $mailStatus . '.html.twig', [
             'LOGO_CID' => 'cid:' . self::LOGO_CID,
             'ORDER' => $order,
         ]);
-        $subject = $this->translator->trans('order.confirmation.' . $mailStatus . '.subject', [], null, 'de');
+        $subject = $this->translator->trans('app.mail.order.confirmation.' . $mailStatus . '.subject', [], null, 'de');
 
         return ['subject' => $subject, 'html' => $html, 'text' => $this->plainText($html)];
     }
@@ -257,10 +262,10 @@ final class EmailSender implements EmailSenderInterface
     {
         $translator = new Translator(getenv('APP_LOCALE') ?: 'de');
         $translator->addLoader('array', new ArrayLoader());
-        $translator->addLoader('php', new PhpFileLoader());
+        $translator->addLoader('json', new SharedJsonFileLoader());
         $translator->addResource(
-            'php',
-            dirname(__DIR__, 3) . '/translations/messages.de.php',
+            'json',
+            getenv('SHARED_TRANSLATIONS_PATH') ?: dirname(__DIR__, 4) . '/frontend/public/i18n/de.json',
             'de',
         );
 

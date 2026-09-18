@@ -23,8 +23,11 @@ COPY docker/supervisord.conf /etc/supervisor/conf.d/supervisord.conf
 COPY docker/php.ini /usr/local/etc/php/conf.d/99-custom.ini
 COPY backend/ ./
 COPY db/ /var/www/db/
+COPY frontend/public/i18n/ /var/www/shared/i18n/
 
 WORKDIR /var/www/html
+
+ENV SHARED_TRANSLATIONS_PATH=/var/www/shared/i18n/de.json
 
 RUN composer install --no-dev --optimize-autoloader
 

@@ -389,6 +389,39 @@
       "userManagement": "Benutzerverwaltung",
       "myUser": "Meine Daten",
       "logout": "Abmelden"
+    },
+    "mail": {
+      "order": {
+        "confirmation": {
+          "definitive": {
+            "subject": "Deine Mässpäggli-Bestellung ist definitiv bestätigt"
+          },
+          "provisional": {
+            "subject": "Deine Mässpäggli-Bestellung wurde vorläufig gespeichert"
+          }
+        }
+      },
+      "registration": {
+        "clientOrder": {
+          "title": "Jetzt Mässpäggli bestellen",
+          "highlight": "Dein direkter Bestelllink ist bereit.",
+          "body": "Klicke auf den folgenden Link, um dich direkt anzumelden und deine Bestellung zu starten.",
+          "nextTitle": "Wichtig",
+          "nextText": "Der Link ist 10 Minuten gültig und kann nur einmal verwendet werden.",
+          "button": "Jetzt bestellen",
+          "subject": "Dein Link zur Mässpäggli-Bestellung"
+        },
+        "common": {
+          "ignore": "Falls du diese Anfrage nicht ausgelöst hast, kannst du diese E-Mail ignorieren."
+        },
+        "clientOrderStatus": {
+          "title": "Information zu deiner Mässpäggli-Bestellung",
+          "subject": "Information zu deiner Mässpäggli-Bestellung",
+          "toDeliver": "Deine Bestellung befindet sich bereits im Status «wird für die Ausgabe vorbereitet». Ein neuer Bestelllink kann deshalb nicht erstellt werden.",
+          "qrcode": "Wir haben Dir schon einen QR-Code für die Abholung gesandt.",
+          "delivered": "Die Mässpäggli wurden bereits ausgeliefert."
+        }
+      }
     }
   }
 }
