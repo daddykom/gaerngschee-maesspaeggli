@@ -87,8 +87,7 @@ Die Anwendung selbst verarbeitet keine Zahlungsdaten.
 4. Den persönlichen Link aus der E-Mail öffnen.
 
 Aus Datenschutzgründen wird keine Auskunft darüber gegeben, ob die E-Mail-
-Adresse bereits bekannt ist. Der persönliche Link ist nur begrenzte Zeit
-gültig.
+gültig und kann nur einmal verwendet werden.
 
 ## Klienten
 
@@ -112,9 +111,15 @@ Anzahl der Erwachsenen, die Anzahl der Kinder und die Anrede aus Fairgate.
 
 Wenn kein Fairgate-Konto gefunden wird, erscheint ein Hinweis. In diesem Fall
 können die Personenanzahlen manuell erfasst werden. Die Bestellung wird
-zunächst provisorisch gespeichert und später erneut geprüft.
+zunächst provisorisch gespeichert und später erneut geprüft. Auf der
+Bestellseite und auf der Bestellübersicht steht ein Fairgate-Link zur Verfügung,
+über den die Anmeldung mit derselben E-Mail-Adresse geöffnet werden kann.
 
 ### Bestellung erfassen
+
+Wenn keine Kinder angemeldet sind, können Mässpäggli für Erwachsene ausgewählt
+werden. Sobald Kinder angemeldet sind, können nur noch Mässpäggli für Kinder
+ausgewählt werden.
 
 1. Die angezeigten Personenanzahlen prüfen.
 2. Falls kein Fairgate-Konto gefunden wurde, die Anzahl Erwachsene und Kinder
@@ -129,7 +134,8 @@ ausgefüllte Pflichtfelder werden beim Absenden markiert.
 ### Bestellung prüfen und speichern
 
 Auf der Bestellübersicht werden die ausgewählten Kategorien und der erwartete
-Status angezeigt.
+Status angezeigt. Wenn die Fairgate-Prüfung noch nicht erfolgreich war, wird
+auch dort der Link zur Fairgate-Anmeldung angezeigt.
 
 - **Provisorisch**: Die Berechtigung ist noch nicht definitiv bestätigt.
 - **Definitiv**: Die Person wurde in Fairgate gefunden.
@@ -137,8 +143,10 @@ Status angezeigt.
 Mit **Zurück** kann die Bestellung nochmals bearbeitet werden. Mit
 **Bestellen** wird die Bestellung gespeichert.
 
-Nach dem Speichern erscheint eine Bestätigung. Die Sitzung wird beendet und
-die Anwendung kehrt zur Startseite zurück.
+Nach dem Speichern erscheint eine Bestätigung. Bei einer provisorischen
+Bestellung wird zusätzlich eine Bestätigungs-E-Mail mit dem Fairgate-Link
+versendet. Die Sitzung wird beendet und die Anwendung kehrt zur Startseite
+zurück.
 
 ## Mitarbeitende
 
@@ -189,7 +197,10 @@ Auslieferung über **Rückgängig machen** zurückgesetzt werden.
 2. **Rückgängig machen** auswählen.
 3. Die Sicherheitsabfrage bestätigen.
 
-Diese Funktion steht nur berechtigten Mitarbeitenden zur Verfügung.
+Das Rückgängigmachen steht Mitarbeitenden und Administratoren zur Verfügung,
+also den Benutzergruppen `user` und `admin`. Ein Klient kann über den
+persönlichen Auslieferungslink nur die Auslieferung bestätigen, nicht aber eine
+bereits erfolgte Auslieferung rückgängig machen.
 
 ### Eigenes Konto und Passwort
 
@@ -297,6 +308,13 @@ Fairgate-Testkontakt.
 
 Die Funktion steht nur Administratoren zur Verfügung.
 
+### Fairgate-Link in Bestellungen
+
+Der Fairgate-Link wird in der Konfiguration unter **Fairgate-Registrierungslink**
+verwaltet. Er wird Klienten angezeigt, wenn die E-Mail-Adresse noch nicht in
+Fairgate gefunden wurde. Nach einer Änderung der Konfiguration werden die
+öffentlichen Konfigurationsdaten automatisch neu geladen.
+
 ## Passwort vergessen
 
 ### Link anfordern
@@ -354,6 +372,7 @@ dieser Zeit ausgeblendet.
 | `/` | Öffentliche Startseite |
 | `/start` | Bestellung per E-Mail anfordern |
 | `/login` | Anmeldung für Mitarbeitende und Administratoren |
+| `/client-login` | Persönlichen Client-Login-Link verarbeiten |
 | `/order/edit` | Bestellung erfassen oder bearbeiten |
 | `/order/summary` | Bestellung prüfen und speichern |
 | `/delivery` | Bestellung suchen und ausliefern |
