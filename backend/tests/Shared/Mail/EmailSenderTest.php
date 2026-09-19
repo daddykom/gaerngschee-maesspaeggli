@@ -170,7 +170,9 @@ final class EmailSenderTest extends TestCase
         ], 'provisional');
 
         self::assertStringContainsString('https://fairgate.example/login', $message['html']);
-        self::assertStringContainsString('Bei Fairgate anmelden', $message['text']);
+        self::assertStringContainsString('Mässpäggli 2026', $message['html']);
+        self::assertStringNotContainsString('{{ YEAR }}', $message['html']);
+        self::assertStringContainsString('Zum Anmeldeformular', $message['text']);
     }
 
     public function testSendUserEmailChangedNotifiesNewAddress(): void

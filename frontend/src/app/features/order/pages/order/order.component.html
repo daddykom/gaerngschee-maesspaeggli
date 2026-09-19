@@ -15,7 +15,7 @@
 
       <section class="order-section gl-stack gl-stack--group" aria-labelledby="manual-counts-heading">
         <h2 id="manual-counts-heading">{{ 'app.order.manualCounts.title' | translate }}</h2>
-        <p>{{ 'app.order.manualCounts.description' | translate }}</p>
+        <p class="gl-text--multiline">{{ 'app.order.manualCounts.description' | translate }}</p>
         <div class="count-fields">
           <mat-form-field appearance="outline">
             <mat-label>{{ 'app.order.manualCounts.adults' | translate }}</mat-label>
@@ -31,7 +31,7 @@
 
     <div class="order-intro">
       <p class="order-intro__salutation">{{ salutation() }}</p>
-      <p class="order-intro__description">
+      <p class="order-intro__description gl-text--multiline">
         {{
           'app.order.intro'
             | translate: { adults: displayAdultsCount(), children: displayChildrenCount() }
@@ -42,7 +42,7 @@
 
     <section class="order-section gl-stack gl-stack--group" aria-labelledby="categories-heading">
       <h2 id="categories-heading">{{ 'app.order.categories.title' | translate }}</h2>
-      <p>{{ 'app.order.categories.description' | translate }}</p>
+      <p class="gl-text--multiline">{{ 'app.order.categories.description' | translate }}</p>
 
        @if (model().children.length === 0) {
          <section class="person-group gl-stack" aria-labelledby="adults-heading">
