@@ -50,6 +50,7 @@ final class TestDatabase
             'CREATE TABLE frontend_config (
                 id TEXT PRIMARY KEY,
                 variable_name TEXT UNIQUE NOT NULL,
+                sort_order INTEGER NOT NULL DEFAULT 0,
                 value TEXT,
                 description TEXT,
                 access_group TEXT NOT NULL,

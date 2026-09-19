@@ -36,6 +36,19 @@ final class FrontendConfigRepositoryTest extends TestCase
         $repository->update('config-2', 'admin', ['ABC', 'invalid']);
     }
 
+    public function testOrdersVisibleConfigurationsBySortOrderAndVariableName(): void
+    {
+        $pdo = TestDatabase::create();
+        $this->insertConfig($pdo, 'config-z', null, null, 20);
+        $this->insertConfig($pdo, 'config-b', null, null, 10);
+        $this->insertConfig($pdo, 'config-a', null, null, 10);
+        $repository = new FrontendConfigRepository($pdo);
+
+        $configs = $repository->findVisibleForGroup('admin');
+
+        self::assertSame(['config-a', 'config-b', 'config-z'], array_column($configs, 'variableName'));
+    }
+
     public function testRejectsInvalidStoredPattern(): void
     {
         $pdo = TestDatabase::create();
@@ -45,15 +58,16 @@ final class FrontendConfigRepositoryTest extends TestCase
         (new FrontendConfigRepository($pdo))->update('config-3', 'admin', 'value');
     }
 
-    private function insertConfig(\PDO $pdo, string $id, ?string $pattern, ?string $placeholder): void
+    private function insertConfig(\PDO $pdo, string $id, ?string $pattern, ?string $placeholder, int $sortOrder = 0): void
     {
         $pdo->prepare(
             'INSERT INTO frontend_config
-                (id, variable_name, value, description, access_group, update_group, label, pattern, placeholder)
-             VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)',
+                (id, variable_name, sort_order, value, description, access_group, update_group, label, pattern, placeholder)
+             VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)',
         )->execute([
             $id,
             $id,
+            $sortOrder,
             json_encode('value', JSON_THROW_ON_ERROR),
             'Description',
             '["admin"]',
