@@ -1,5 +1,16 @@
 <section class="gl-stack gl-stack--section">
   @if (form(); as order) {
+    @if (!fairgateUserExists() && fairgateUrl(); as url) {
+      <app-info-box [title]="'app.order.noFairgate.title' | translate">
+        <p>
+          {{ 'app.order.noFairgate.messageBeforeLink' | translate }}
+          <a [href]="url" target="_blank" rel="noopener noreferrer">
+            {{ 'app.order.noFairgate.link' | translate }}
+          </a>
+          {{ 'app.order.noFairgate.messageAfterLink' | translate }}
+        </p>
+      </app-info-box>
+    }
     <section class="summary-section gl-stack gl-stack--group">
       <p>{{ 'app.order.summary.description' | translate: { year: orderYear() } }}</p>
       <p>{{ 'app.order.intro' | translate: { adults: order.adultsCount, children: order.childrenCount } }}</p>

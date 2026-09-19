@@ -150,6 +150,29 @@ final class EmailSenderTest extends TestCase
         self::assertStringContainsString('Fairgate anmelden', $message['text']);
     }
 
+    public function testRenderProvisionalOrderIncludesFairgateLink(): void
+    {
+        $sender = new EmailSender(
+            $this->createMock(MailerInterface::class),
+            'noreply@example.com',
+            'Gärngschee-Mässpäggli',
+        );
+
+        $message = $sender->renderOrderConfirmation([
+            'year' => 2026,
+            'status' => 'provisional',
+            'adultsCount' => 1,
+            'childrenCount' => 0,
+            'fairgateUrl' => 'https://fairgate.example/login',
+            'items' => [
+                ['personType' => 'adult', 'category' => 'catA', 'quantity' => 1],
+            ],
+        ], 'provisional');
+
+        self::assertStringContainsString('https://fairgate.example/login', $message['html']);
+        self::assertStringContainsString('Bei Fairgate anmelden', $message['text']);
+    }
+
     public function testSendUserEmailChangedNotifiesNewAddress(): void
     {
         $mailer = $this->createMock(MailerInterface::class);

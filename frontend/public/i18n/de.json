@@ -414,6 +414,7 @@
             "body": "Deine Bestellung für das Jahr {{year}} ist gespeichert, aber noch nicht definitiv bestätigt.",
             "fairgateTitle": "Fairgate-Prüfung steht noch aus",
             "fairgateText": "Bitte melde dich bei Fairgate mit derselben E-Mail-Adresse an, die du für diese Bestellung verwendet hast. Sobald wir dich dort finden, prüfen wir deine Bestellung automatisch und schicken dir eine definitive Bestätigung.",
+            "fairgateLink": "Bei Fairgate anmelden",
             "overviewTitle": "Bestellübersicht",
             "year": "Jahr:",
             "adults": "Erwachsene:",
