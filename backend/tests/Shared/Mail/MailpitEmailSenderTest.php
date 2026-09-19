@@ -62,8 +62,8 @@ final class MailpitEmailSenderTest extends TestCase
             "created-$suffix@example.com" => 'Dein Benutzerkonto wurde erstellt',
             "changed-$suffix@example.com" => 'Deine E-Mail-Adresse wurde geändert',
             "reset-$suffix@example.com" => 'Passwort zurücksetzen',
-            "confirmation-definitive-$suffix@example.com" => 'Deine Mässpäggli-Bestellung ist definitiv bestätigt',
-            "confirmation-provisional-$suffix@example.com" => 'Deine Mässpäggli-Bestellung wurde vorläufig gespeichert',
+            "confirmation-definitive-$suffix@example.com" => 'Deine Mässpäggli-Anmeldung ist definitiv bestätigt',
+            "confirmation-provisional-$suffix@example.com" => 'Deine Mässpäggli-Anmeldung wurde noch nicht bestätigt',
             "delivery-$suffix@example.com" => 'Deine Mässpäggli sind bereit',
         ];
 

@@ -18,11 +18,11 @@ final class SharedJsonFileLoaderTest extends TestCase
 
         self::assertSame('Mässpäggli', $catalogue->get('app.title'));
         self::assertSame(
-            'Mit deiner Unterstützung ermöglichen wir Familien mit knappem Budget einen Besuch der Messe %year%.',
+            'Gemeinsam machen wir einen Herbstmess-Besuch möglich - auch wenn das Geld knapp ist.',
             $catalogue->get('app.home.lead'),
         );
         self::assertSame(
-            'Deine Mässpäggli-Bestellung ist definitiv bestätigt',
+            'Deine Mässpäggli-Anmeldung ist definitiv bestätigt',
             $catalogue->get('app.mail.order.confirmation.definitive.subject'),
         );
     }

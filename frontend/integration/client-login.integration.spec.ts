@@ -8,7 +8,7 @@ test.describe('Integration client login', () => {
 
     await page.goto(`/client-login?token=${encodeURIComponent(token)}`);
     await page.waitForURL('**/order/edit');
-    await expect(page.locator('h2')).toHaveText('Mässpäggli bestellen');
+    await expect(page.locator('h2')).toHaveText('Mässpäggli anfordern');
   });
 
   test('rejects an already consumed registration token', async ({ page }) => {
