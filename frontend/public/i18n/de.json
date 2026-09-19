@@ -295,6 +295,7 @@
         "deliverTitle": "Bestellungen ausliefern",
         "deliverQuestion": "Willst du wirklich alle definitiven Bestellungen ausliefern?",
         "deliverConfirm": "Ausliefern",
+        "deliverUnavailable": "Die Auslieferung ist erst nach dem Ende der Anmeldefrist im Verarbeitungsjahr möglich.",
         "deliverCancel": "Abbrechen",
         "successTitle": "Erfolgreich",
         "deliveredMessage": "{{ updated }} definitive Bestellungen wurden zur Auslieferung markiert.",
