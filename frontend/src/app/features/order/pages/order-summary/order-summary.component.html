@@ -12,7 +12,7 @@
       </app-info-box>
     }
     <section class="summary-section gl-stack gl-stack--group">
-      <p>{{ 'app.order.summary.description' | translate: { year: orderYear() } }}</p>
+      <p class="gl-text--multiline">{{ 'app.order.summary.description' | translate: { year: orderYear() } }}</p>
       <p>{{ 'app.order.intro' | translate: { adults: order.adultsCount, children: order.childrenCount } }}</p>
 
       @if (adults().length > 0) {

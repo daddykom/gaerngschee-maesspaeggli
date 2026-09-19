@@ -10,7 +10,7 @@
         >
           <legend>{{ config.label || config.variableName }}</legend>
           @if (config.description) {
-            <p class="configuration-description">{{ config.description }}</p>
+            <p class="configuration-description gl-text--multiline">{{ config.description }}</p>
           }
 
           @if (isArray(config)) {

@@ -129,6 +129,10 @@ a {
   gap: var(--gl-space-md);
 }
 
+.gl-text--multiline {
+  white-space: pre-line;
+}
+
 .list-as-form {
   margin: 0;
   padding: 0;
