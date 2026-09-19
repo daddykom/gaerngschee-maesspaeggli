@@ -19,7 +19,7 @@ final class FrontendConfigRepository
         $stmt = $this->pdo->query(
             'SELECT id, variable_name, value, description, access_group, update_group, label, pattern, placeholder, created_at, updated_at
              FROM frontend_config
-             ORDER BY variable_name',
+             ORDER BY sort_order, variable_name',
         );
 
         $configs = [];
@@ -41,7 +41,7 @@ final class FrontendConfigRepository
         $stmt = $this->pdo->query(
             'SELECT variable_name, value, access_group
              FROM frontend_config
-             ORDER BY variable_name',
+             ORDER BY sort_order, variable_name',
         );
 
         $configs = [];

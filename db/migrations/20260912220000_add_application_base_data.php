@@ -34,6 +34,7 @@ final class AddApplicationBaseData extends AbstractMigration
                 'label' => 'Aktionsjahr',
                 'pattern' => '\\d{4}',
                 'placeholder' => 'z. B. 2026',
+                'sort_order' => 10,
             ],
             [
                 'id' => '00000000-0000-4000-8000-000000000016',
@@ -45,6 +46,7 @@ final class AddApplicationBaseData extends AbstractMigration
                 'label' => 'Spenden-Link',
                 'pattern' => 'https://[^\\s]+',
                 'placeholder' => 'https://...',
+                'sort_order' => 60,
             ],
             [
                 'id' => '00000000-0000-4000-8000-000000000017',
@@ -56,6 +58,7 @@ final class AddApplicationBaseData extends AbstractMigration
                 'label' => 'Aktionsstart',
                 'pattern' => '\\d{4}-\\d{2}-\\d{2}',
                 'placeholder' => 'JJJJ-MM-TT',
+                'sort_order' => 20,
             ],
             [
                 'id' => '00000000-0000-4000-8000-000000000018',
@@ -67,6 +70,7 @@ final class AddApplicationBaseData extends AbstractMigration
                 'label' => 'Aktionsende',
                 'pattern' => '\\d{4}-\\d{2}-\\d{2}',
                 'placeholder' => 'JJJJ-MM-TT',
+                'sort_order' => 30,
             ],
             [
                 'id' => '00000000-0000-4000-8000-000000000010',
@@ -78,6 +82,7 @@ final class AddApplicationBaseData extends AbstractMigration
                 'label' => 'Fairgate Test-E-Mail-Adresse',
                 'pattern' => '[^@\\s]+@[^@\\s]+\\.[^@\\s]+',
                 'placeholder' => 'name@beispiel.ch',
+                'sort_order' => 80,
             ],
             [
                 'id' => '00000000-0000-4000-8000-000000000011',
@@ -89,6 +94,7 @@ final class AddApplicationBaseData extends AbstractMigration
                 'label' => 'Fairgate-Registrierungslink',
                 'pattern' => 'https://[^\\s]+',
                 'placeholder' => 'https://...',
+                'sort_order' => 70,
             ],
             [
                 'id' => '00000000-0000-4000-8000-000000000012',
@@ -100,6 +106,7 @@ final class AddApplicationBaseData extends AbstractMigration
                 'label' => 'Fairgate-E-Mail-Abstand',
                 'pattern' => '[1-9]\\d*',
                 'placeholder' => 'z. B. 7',
+                'sort_order' => 90,
             ],
             [
                 'id' => '00000000-0000-4000-8000-000000000013',
@@ -111,6 +118,7 @@ final class AddApplicationBaseData extends AbstractMigration
                 'label' => 'Registrierungstoken-Aufbewahrung',
                 'pattern' => '[1-9]\\d*',
                 'placeholder' => 'z. B. 365',
+                'sort_order' => 10,
             ],
             [
                 'id' => '00000000-0000-4000-8000-000000000014',
@@ -122,6 +130,7 @@ final class AddApplicationBaseData extends AbstractMigration
                 'label' => 'Zeitraum provisorischer Bestellungen',
                 'pattern' => '[1-9]\\d*',
                 'placeholder' => 'z. B. 14',
+                'sort_order' => 100,
             ],
         ];
 
