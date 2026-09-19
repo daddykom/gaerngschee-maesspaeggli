@@ -43,7 +43,8 @@ test.describe('Admin overview route', () => {
     await page.waitForURL('**/admin/overview');
 
     await expect(page.locator('h1')).toHaveText('Admin-Übersicht');
-    await expect(page.getByRole('button', { name: 'Bestellungen ausliefern' })).toHaveCount(0);
+    await expect(page.getByRole('button', { name: 'Bestellungen ausliefern' })).toBeDisabled();
+    await expect(page.getByText('Die Auslieferung ist erst nach dem Ende der Anmeldefrist im Verarbeitungsjahr möglich.')).toBeVisible();
     await expect(page.getByRole('heading', { name: 'Legende' })).toBeVisible();
     await expect(page.getByText('Provisorische Bestellungen, noch nicht bei Fairgate vorhanden')).toBeVisible();
     await expect(page.getByRole('columnheader', { name: 'Definitiv' })).toBeVisible();

@@ -22,11 +22,11 @@ export class AdminOverviewComponent {
   readonly overview = this.store.selectSignal(selectAdminOverview);
   readonly publicConfigs = this.store.selectSignal(selectFrontendPublicConfigs);
   readonly printDate = new Intl.DateTimeFormat('de-CH', { dateStyle: 'long' }).format(new Date());
-  readonly campaignStatus = computed(() => {
-    const startDate = this.configValue('campaign_start_date');
+  readonly canDeliver = computed(() => {
     const endDate = this.configValue('campaign_end_date');
-    if (startDate === null || endDate === null || !/^\d{4}-\d{2}-\d{2}$/.test(startDate) || !/^\d{4}-\d{2}-\d{2}$/.test(endDate)) {
-      return 'unavailable';
+    const processingYear = this.overview()?.year;
+    if (endDate === null || processingYear === undefined || !/^\d{4}-\d{2}-\d{2}$/.test(endDate)) {
+      return false;
     }
 
     const currentDate = new Intl.DateTimeFormat('en-CA', {
@@ -36,16 +36,8 @@ export class AdminOverviewComponent {
       timeZone: 'Europe/Zurich',
     }).format(new Date());
 
-    if (currentDate < startDate) {
-      return 'not_started';
-    }
-    if (currentDate > endDate) {
-      return 'ended';
-    }
-
-    return 'open';
+    return currentDate.slice(0, 4) === String(processingYear) && currentDate > endDate;
   });
-  readonly canDeliver = computed(() => this.campaignStatus() === 'not_started' || this.campaignStatus() === 'ended');
 
   categories(categories: AdminOverviewCategory[]): AdminOverviewCategory[] {
     return categories.filter((category) => Object.values(category)

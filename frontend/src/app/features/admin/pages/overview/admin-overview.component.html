@@ -68,10 +68,11 @@
     </section>
 
     <div class="gl-cluster overview-actions">
-      @if (canDeliver()) {
-        <button mat-flat-button color="primary" type="button" (click)="deliver()">
-          {{ 'app.admin.overview.deliver' | translate }}
-        </button>
+      <button mat-flat-button color="primary" type="button" [disabled]="!canDeliver()" (click)="deliver()">
+        {{ 'app.admin.overview.deliver' | translate }}
+      </button>
+      @if (!canDeliver()) {
+        <p>{{ 'app.admin.overview.deliverUnavailable' | translate }}</p>
       }
       <button mat-stroked-button type="button" (click)="print()">
         {{ 'app.admin.overview.print' | translate }}

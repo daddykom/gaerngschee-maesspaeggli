@@ -233,9 +233,10 @@ Die Spalten bedeuten:
 Unter der Tabelle befindet sich eine Legende mit den ausführlichen
 Erklärungen.
 
-Die Schaltfläche **Bestellungen ausliefern** steht nur ausserhalb einer
-laufenden Kampagne zur Verfügung. Vor dem Ausführen erscheint eine
-Bestätigungsabfrage.
+Die Schaltfläche **Bestellungen ausliefern** ist immer sichtbar, aber bis zum
+Ende der Anmeldefrist deaktiviert. Sie wird erst am Tag nach dem
+`campaign_end_date` des Verarbeitungsjahres aktiv. Vor dem Ausführen erscheint
+eine Bestätigungsabfrage.
 
 Mit **Drucken** kann eine Druckansicht der Übersicht geöffnet werden. Die
 Auslieferungsaktionen und die Auslieferungsspalten werden in der Druckansicht
