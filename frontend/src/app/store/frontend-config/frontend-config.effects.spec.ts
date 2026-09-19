@@ -3,11 +3,16 @@ import { type Mock } from 'vitest';
 import { TestBed } from '@angular/core/testing';
 import { provideMockActions } from '@ngrx/effects/testing';
 import { Action } from '@ngrx/store';
-import { firstValueFrom, of, Subject, throwError } from 'rxjs';
+import { firstValueFrom, of, Subject, take, throwError, toArray } from 'rxjs';
 import { FrontendConfigService } from '../../shared/services/frontend-config.service';
 import { NotificationActions } from '../notification/notification.actions';
 import { FrontendConfigActions } from './frontend-config.actions';
-import { frontendConfigNotificationEffect, loadFrontendConfigEffect, loadPublicFrontendConfigEffect, saveFrontendConfigEffect } from './frontend-config.effects';
+import {
+  frontendConfigNotificationEffect,
+  loadFrontendConfigEffect,
+  loadPublicFrontendConfigEffect,
+  saveFrontendConfigEffect,
+} from './frontend-config.effects';
 
 describe('frontend config effects', () => {
   let actions$: Subject<Action>;
@@ -27,9 +32,12 @@ describe('frontend config effects', () => {
     await expect(load).resolves.toEqual(FrontendConfigActions.loadSuccess({ configs }));
 
     service.update.mockImplementation((id: string, value: string | string[]) => of({ id, value } as never));
-    const save = firstValueFrom(TestBed.runInInjectionContext(() => saveFrontendConfigEffect()));
+    const save = firstValueFrom(TestBed.runInInjectionContext(() => saveFrontendConfigEffect().pipe(take(2), toArray())));
     actions$.next(FrontendConfigActions.save({ configs: [{ id: 'site_name', value: 'Gaerngschee' }, { id: 'languages', value: ['de', 'fr'] }] }));
-    await expect(save).resolves.toEqual(FrontendConfigActions.saveSuccess({ configs: [{ id: 'site_name', value: 'Gaerngschee' }, { id: 'languages', value: ['de', 'fr'] }] as never }));
+    await expect(save).resolves.toEqual([
+      FrontendConfigActions.saveSuccess({ configs: [{ id: 'site_name', value: 'Gaerngschee' }, { id: 'languages', value: ['de', 'fr'] }] as never }),
+      FrontendConfigActions.loadPublic(),
+    ]);
     expect(service.update).toHaveBeenNthCalledWith(1, 'site_name', 'Gaerngschee');
     expect(service.update).toHaveBeenNthCalledWith(2, 'languages', ['de', 'fr']);
   });

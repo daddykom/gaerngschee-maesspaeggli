@@ -35,6 +35,13 @@ test.describe('Configuration route', () => {
         body: JSON.stringify({ id: 'config-1', variableName: 'SITE_TITLE', value: 'Neuer Titel' }),
       });
     });
+    await page.route('http://localhost:8080/public/configuration', async (route) => {
+      await route.fulfill({
+        status: 200,
+        contentType: 'application/json',
+        body: JSON.stringify([]),
+      });
+    });
 
     await page.goto('/admin/configuration');
 
