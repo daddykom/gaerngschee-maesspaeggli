@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>{{ 'anmeldung.client-order.title'|trans }}</title>
+  <title>{{ 'app.mail.registration.clientOrder.title'|trans }}</title>
 </head>
 <body style="margin:0; padding:0; background-color:{{ EMAIL_THEME.pageBackground }}; font-family:Arial,Helvetica,sans-serif; color:{{ EMAIL_THEME.text }};">
   <table role="presentation" width="100%" cellspacing="0" cellpadding="0" border="0" style="width:100%; background-color:{{ EMAIL_THEME.pageBackground }};">
@@ -20,17 +20,17 @@
                 </tr>
               </table>
               <h1 style="margin:0; font-size:28px; line-height:1.2; font-weight:700; color:{{ EMAIL_THEME.text }};">
-                {{ 'anmeldung.client-order.title'|trans }}
+                {{ 'app.mail.registration.clientOrder.title'|trans }}
               </h1>
             </td>
           </tr>
           <tr>
             <td style="padding:0 32px 8px 32px; text-align:center;">
               <p style="margin:0 0 14px 0; font-size:18px; line-height:1.5; color:{{ EMAIL_THEME.text }};">
-                <strong style="color:{{ EMAIL_THEME.success }};">{{ 'anmeldung.client-order.highlight'|trans }}</strong>
+                <strong style="color:{{ EMAIL_THEME.success }};">{{ 'app.mail.registration.clientOrder.highlight'|trans }}</strong>
               </p>
               <p style="margin:0; font-size:17px; line-height:1.55; color:{{ EMAIL_THEME.mutedText }};">
-                {{ 'anmeldung.client-order.body'|trans }}
+                {{ 'app.mail.registration.clientOrder.body'|trans }}
               </p>
             </td>
           </tr>
@@ -40,8 +40,8 @@
                 <tr>
                   <td width="52" valign="top" style="padding:18px 0 18px 18px; font-size:28px; line-height:1;">🔐</td>
                   <td style="padding:16px 18px 16px 8px;">
-                    <p style="margin:0 0 4px 0; font-size:16px; line-height:1.4; font-weight:700; color:{{ EMAIL_THEME.text }};">{{ 'anmeldung.client-order.next_title'|trans }}</p>
-                    <p style="margin:0; font-size:16px; line-height:1.5; color:{{ EMAIL_THEME.mutedText }};">{{ 'anmeldung.client-order.next_text'|trans }}</p>
+                    <p style="margin:0 0 4px 0; font-size:16px; line-height:1.4; font-weight:700; color:{{ EMAIL_THEME.text }};">{{ 'app.mail.registration.clientOrder.nextTitle'|trans }}</p>
+                    <p style="margin:0; font-size:16px; line-height:1.5; color:{{ EMAIL_THEME.mutedText }};">{{ 'app.mail.registration.clientOrder.nextText'|trans }}</p>
                   </td>
                 </tr>
               </table>
@@ -53,12 +53,12 @@
                 <tr>
                     <td align="center" bgcolor="{{ EMAIL_THEME.primary }}" style="border-radius:999px;">
                     <a href="{{ LOGIN_URL }}" style="display:inline-block; padding:14px 26px; font-size:17px; line-height:1; font-weight:700; color:{{ EMAIL_THEME.onPrimary }}; text-decoration:none; border-radius:999px;">
-                      {{ 'anmeldung.client-order.button'|trans }}
+                      {{ 'app.mail.registration.clientOrder.button'|trans }}
                     </a>
                   </td>
                 </tr>
               </table>
-              <p style="margin:18px 0 0 0; font-size:13px; line-height:1.5; color:{{ EMAIL_THEME.mutedText }};">{{ 'anmeldung.common.ignore'|trans }}</p>
+              <p style="margin:18px 0 0 0; font-size:13px; line-height:1.5; color:{{ EMAIL_THEME.mutedText }};">{{ 'app.mail.registration.common.ignore'|trans }}</p>
             </td>
           </tr>
         </table>

@@ -2,6 +2,7 @@ import { Component, computed, inject } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
 import { Store } from '@ngrx/store';
 import { TranslatePipe } from '@ngx-translate/core';
+import { InfoBoxComponent } from '../../../../shared/components/info-box/info-box';
 import { CategorySelection, orderCategories, OrderCategory } from '../../../../shared/models/order.model';
 import { NavigationActions } from '../../../../store/navigation/navigation.actions';
 import { selectAuthFairgateUserExists } from '../../../../store/auth/auth.feature';
@@ -20,7 +21,7 @@ interface CategoryQuantity {
 @Component({
   selector: 'app-order-summary',
   standalone: true,
-  imports: [MatButtonModule, TranslatePipe],
+  imports: [InfoBoxComponent, MatButtonModule, TranslatePipe],
   templateUrl: './order-summary.component.html',
   styleUrl: './order-summary.component.scss',
 })
@@ -33,6 +34,10 @@ export class OrderSummaryComponent {
   readonly publicConfigs = this.store.selectSignal(selectFrontendPublicConfigs);
   readonly campaignYear = computed(() => this.configValue('campaign_year'));
   readonly orderYear = computed(() => this.savedOrder()?.year ?? this.campaignYear() ?? '');
+  readonly fairgateUrl = computed(() => {
+    const config = this.publicConfigs().find(({ variableName }) => variableName === 'fairgate_url');
+    return typeof config?.value === 'string' ? config.value : null;
+  });
   readonly adults = computed(() => this.countCategories(this.form()?.adults ?? []));
   readonly children = computed(() => this.countCategories(this.form()?.children ?? []));
   readonly status = computed(() => this.fairgateUserExists() === true ? 'definitive' : 'provisional');

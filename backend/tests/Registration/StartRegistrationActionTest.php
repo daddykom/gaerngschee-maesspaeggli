@@ -113,6 +113,7 @@ final class StartRegistrationActionTest extends TestCase
                 public function sendOrderConfirmation(string $recipient, array $order): void {}
                 public function renderOrderConfirmation(array $order, string $mailStatus): array { return []; }
                 public function renderDeliveryNotification(array $order, string $deliveryUrl, string $qrDataUri): array { return []; }
+                public function renderFairgateReminder(string $fairgateUrl): array { return []; }
                 public function sendStoredEmail(string $recipient, string $subject, string $html, string $text): void {}
             },
         );

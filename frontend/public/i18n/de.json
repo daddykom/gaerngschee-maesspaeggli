@@ -389,6 +389,101 @@
       "userManagement": "Benutzerverwaltung",
       "myUser": "Meine Daten",
       "logout": "Abmelden"
+    },
+    "mail": {
+      "order": {
+        "confirmation": {
+          "definitive": {
+            "subject": "Deine Mässpäggli-Bestellung ist definitiv bestätigt",
+            "title": "Deine Mässpäggli-Bestellung ist definitiv bestätigt",
+            "highlight": "Danke für deine Bestellung.",
+            "body": "Deine Bestellung für das Jahr {{year}} wurde definitiv bestätigt.",
+            "nextTitle": "Wie geht es weiter?",
+            "nextText": "Sobald die Mässpäggli zur Abholung bereit sind, schicken wir dir eine weitere E-Mail mit dem QR-Code für die Abholung.",
+            "correction": "Wir haben die Anzahl der Erwachsenen und Kinder anhand der Angaben in Fairgate angepasst. Bitte prüfe deine Bestellübersicht.",
+            "correctionLink": "Bestellung prüfen oder anpassen",
+            "overviewTitle": "Bestellübersicht",
+            "year": "Jahr:",
+            "adults": "Erwachsene:",
+            "children": "Kinder:"
+          },
+          "provisional": {
+            "subject": "Deine Mässpäggli-Bestellung wurde vorläufig gespeichert",
+            "title": "Deine Mässpäggli-Bestellung wurde vorläufig gespeichert",
+            "highlight": "Danke für deine Bestellung.",
+            "body": "Deine Bestellung für das Jahr {{year}} ist gespeichert, aber noch nicht definitiv bestätigt.",
+            "fairgateTitle": "Fairgate-Prüfung steht noch aus",
+            "fairgateText": "Bitte melde dich bei Fairgate mit derselben E-Mail-Adresse an, die du für diese Bestellung verwendet hast. Sobald wir dich dort finden, prüfen wir deine Bestellung automatisch und schicken dir eine definitive Bestätigung.",
+            "fairgateLink": "Bei Fairgate anmelden",
+            "overviewTitle": "Bestellübersicht",
+            "year": "Jahr:",
+            "adults": "Erwachsene:",
+            "children": "Kinder:"
+          }
+        }
+      },
+      "user": {
+        "created": {
+          "subject": "Dein Benutzerkonto wurde erstellt",
+          "title": "Dein Benutzerkonto wurde erstellt",
+          "highlight": "Dein Konto ist bereit.",
+          "body": "Du kannst dich mit deiner E-Mail-Adresse und dem folgenden temporären Passwort anmelden:",
+          "passwordNotice": "Nach der Anmeldung musst du ein neues Passwort setzen.",
+          "button": "Zur Anmeldung"
+        },
+        "emailChanged": {
+          "subject": "Deine E-Mail-Adresse wurde geändert",
+          "title": "Deine E-Mail-Adresse wurde geändert",
+          "highlight": "Die Änderung war erfolgreich.",
+          "body": "Verwende ab sofort diese neue Adresse für die Anmeldung.",
+          "button": "Zur Anmeldung"
+        }
+      },
+      "passwordReset": {
+        "subject": "Passwort zurücksetzen",
+        "title": "Passwort zurücksetzen",
+        "highlight": "Wir helfen dir weiter.",
+        "body": "Du hast angefordert, dein Passwort zurückzusetzen. Klicke auf den folgenden Button, um ein neues Passwort festzulegen.",
+        "button": "Passwort zurücksetzen",
+        "validity": "Der Link ist 10 Minuten gültig und kann nur einmal verwendet werden.",
+        "ignore": "Wenn du diese Anfrage nicht gestellt hast, kannst du diese E-Mail ignorieren."
+      },
+      "delivery": {
+        "subject": "Deine Mässpäggli sind bereit",
+        "title": "Deine Mässpäggli sind bereit",
+        "greeting": "Liebe/r Bezüger/in",
+        "body": "Dein oder deine Mässpäggli sind bereit. Du kannst sie abholen. Bitte komm bei uns vorbei und bring diesen QR-Code mit.",
+        "qrAlt": "QR-Code für die Abholung",
+        "closing": "Liebe Grüsse",
+        "team": "das Gärngschee-Team"
+      },
+      "fairgateReminder": {
+        "subject": "Bitte vervollständige deine Mässpäggli-Bestellung",
+        "notFound": "Wir konnten deine Bestellung noch nicht definitiv bestätigen, weil wir dich unter dieser E-Mail-Adresse noch nicht bei Fairgate gefunden haben.",
+        "body": "Bitte melde dich bei Fairgate mit derselben E-Mail-Adresse an, die du für deine Bestellung verwendet hast. Sobald wir dich dort finden, prüfen wir deine Bestellung automatisch.",
+        "button": "Bei Fairgate anmelden"
+      },
+      "registration": {
+        "clientOrder": {
+          "title": "Jetzt Mässpäggli bestellen",
+          "highlight": "Dein direkter Bestelllink ist bereit.",
+          "body": "Klicke auf den folgenden Link, um dich direkt anzumelden und deine Bestellung zu starten.",
+          "nextTitle": "Wichtig",
+          "nextText": "Der Link ist 10 Minuten gültig und kann nur einmal verwendet werden.",
+          "button": "Jetzt bestellen",
+          "subject": "Dein Link zur Mässpäggli-Bestellung"
+        },
+        "common": {
+          "ignore": "Falls du diese Anfrage nicht ausgelöst hast, kannst du diese E-Mail ignorieren."
+        },
+        "clientOrderStatus": {
+          "title": "Information zu deiner Mässpäggli-Bestellung",
+          "subject": "Information zu deiner Mässpäggli-Bestellung",
+          "toDeliver": "Deine Bestellung befindet sich bereits im Status «wird für die Ausgabe vorbereitet». Ein neuer Bestelllink kann deshalb nicht erstellt werden.",
+          "qrcode": "Wir haben Dir schon einen QR-Code für die Abholung gesandt.",
+          "delivered": "Die Mässpäggli wurden bereits ausgeliefert."
+        }
+      }
     }
   }
 }

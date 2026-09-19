@@ -38,6 +38,12 @@ final class ClientRoutesTest extends TestCase
         )->execute([
             'config-campaign-year', 'campaign_year', '"2026"', '["client"]', '["admin"]', 'Campaign year',
         ]);
+        $this->pdo->prepare(
+            'INSERT INTO frontend_config (id, variable_name, value, access_group, update_group, label)
+             VALUES (?, ?, ?, ?, ?, ?)',
+        )->execute([
+            'config-fairgate-url', 'fairgate_url', '"https://fairgate.example"', '["client"]', '["admin"]', 'Fairgate URL',
+        ]);
     }
 
     protected function tearDown(): void
@@ -105,6 +111,7 @@ final class ClientRoutesTest extends TestCase
         self::assertSame($firstOrder['id'], $secondOrder['id']);
         self::assertSame('provisional', $secondOrder['status']);
         self::assertSame('catB', $secondOrder['items'][0]['category']);
+        self::assertStringContainsString('fairgate.example', $this->emails->orderConfirmations[0]['order']['html']);
         self::assertSame(1, (int) $this->pdo->query('SELECT COUNT(*) FROM orders')->fetchColumn());
         self::assertSame(1, (int) $this->pdo->query('SELECT COUNT(*) FROM order_items')->fetchColumn());
     }

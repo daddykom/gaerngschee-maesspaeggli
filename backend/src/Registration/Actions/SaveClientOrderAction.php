@@ -88,7 +88,15 @@ final class SaveClientOrderAction
         if (is_array($user) && is_string($user['email'] ?? null)) {
             try {
                 $emails = $this->emails ?? new EmailSender();
-                $message = $emails->renderOrderConfirmation($order, (string) $order['status']);
+                $messageOrder = $order;
+                if ($order['status'] === 'provisional') {
+                    $fairgateUrl = ($this->configs ?? new FrontendConfigRepository(Database::getConnection()))
+                        ->findValueByVariableName('fairgate_url');
+                    if (is_string($fairgateUrl)) {
+                        $messageOrder['fairgateUrl'] = $fairgateUrl;
+                    }
+                }
+                $message = $emails->renderOrderConfirmation($messageOrder, (string) $order['status']);
                 $emails->sendStoredEmail($user['email'], $message['subject'], $message['html'], $message['text']);
                 ($this->orders ?? new OrderRepository(Database::getConnection()))
                     ->markConfirmationEmailSent((string) $order['id']);
@@ -98,7 +106,7 @@ final class SaveClientOrderAction
             } catch (Throwable $exception) {
                 try {
                     $emails ??= $this->emails ?? new EmailSender();
-                    $message ??= $emails->renderOrderConfirmation($order, (string) $order['status']);
+                    $message ??= $emails->renderOrderConfirmation($messageOrder ?? $order, (string) $order['status']);
                     ($this->emailQueue ?? new OrderEmailQueueRepository(Database::getConnection()))->enqueue(
                         (string) $order['id'],
                         'order_confirmation',

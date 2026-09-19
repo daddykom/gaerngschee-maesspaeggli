@@ -16,7 +16,13 @@ describe('OrderSummaryComponent', () => {
         provideMockStore({
           initialState: {
             auth: { ...authInitialState, fairgateUserExists },
-            frontendConfig: { ...frontendConfigInitialState, publicConfigs: [{ variableName: 'campaign_year', value: '2026' }] },
+               frontendConfig: {
+                 ...frontendConfigInitialState,
+                 publicConfigs: [
+                   { variableName: 'campaign_year', value: '2026' },
+                   { variableName: 'fairgate_url', value: 'https://fairgate.example' },
+                 ],
+               },
             order: {
               status: 'loaded',
               order: null,
@@ -40,5 +46,13 @@ describe('OrderSummaryComponent', () => {
     createComponent(false);
 
     expect(fixture.componentInstance.status()).toBe('provisional');
+  });
+
+  it('shows the Fairgate link for a provisional order', () => {
+    createComponent(false);
+
+    const link = fixture.nativeElement.querySelector('app-info-box a');
+
+    expect(link?.getAttribute('href')).toBe('https://fairgate.example');
   });
 });
