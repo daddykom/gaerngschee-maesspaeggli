@@ -134,6 +134,22 @@ final class EmailSenderTest extends TestCase
         ]);
     }
 
+    public function testRenderFairgateReminderUsesSharedTranslations(): void
+    {
+        $sender = new EmailSender(
+            $this->createMock(MailerInterface::class),
+            'noreply@example.com',
+            'Gärngschee-Mässpäggli',
+        );
+
+        $message = $sender->renderFairgateReminder('https://fairgate.example/login');
+
+        self::assertSame('Bitte vervollständige deine Mässpäggli-Bestellung', $message['subject']);
+        self::assertStringContainsString('Fairgate', $message['html']);
+        self::assertStringContainsString('https://fairgate.example/login', $message['html']);
+        self::assertStringContainsString('Fairgate anmelden', $message['text']);
+    }
+
     public function testSendUserEmailChangedNotifiesNewAddress(): void
     {
         $mailer = $this->createMock(MailerInterface::class);

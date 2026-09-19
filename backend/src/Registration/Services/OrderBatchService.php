@@ -193,14 +193,7 @@ final class OrderBatchService
         if (!$due) {
             return;
         }
-        $message = [
-            'subject' => 'Bitte vervollständige deine Mässpäggli-Bestellung',
-            'html' => sprintf(
-                '<p>Wir konnten deine Bestellung noch nicht definitiv bestätigen, weil wir dich unter dieser E-Mail-Adresse noch nicht bei Fairgate gefunden haben.</p><p>Bitte melde dich bei Fairgate mit derselben E-Mail-Adresse an, die du für deine Bestellung verwendet hast. Sobald wir dich dort finden, prüfen wir deine Bestellung automatisch.</p><p><a href="%s">Bei Fairgate anmelden</a></p>',
-                htmlspecialchars($this->fairgateUrl(), ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8'),
-            ),
-            'text' => 'Wir konnten deine Bestellung noch nicht definitiv bestätigen, weil wir dich unter dieser E-Mail-Adresse noch nicht bei Fairgate gefunden haben. Bitte melde dich bei Fairgate mit derselben E-Mail-Adresse an, die du für deine Bestellung verwendet hast. Sobald wir dich dort finden, prüfen wir deine Bestellung automatisch: ' . $this->fairgateUrl(),
-        ];
+        $message = $this->emails->renderFairgateReminder($this->fairgateUrl());
         try {
             $this->emails->sendStoredEmail($email, $message['subject'], $message['html'], $message['text']);
             $this->orders->markFairgateReminderSent($order['id']);

@@ -69,6 +69,11 @@ final class RecordingEmailSender implements EmailSenderInterface
         return ['subject' => 'delivery', 'html' => $qrDataUri . $deliveryUrl, 'text' => $deliveryUrl];
     }
 
+    public function renderFairgateReminder(string $fairgateUrl): array
+    {
+        return ['subject' => 'Fairgate', 'html' => $fairgateUrl . ' Fairgate', 'text' => $fairgateUrl];
+    }
+
     public function sendStoredEmail(string $recipient, string $subject, string $html, string $text): void
     {
         if ($this->failOrderConfirmation || $this->failStoredEmail) {

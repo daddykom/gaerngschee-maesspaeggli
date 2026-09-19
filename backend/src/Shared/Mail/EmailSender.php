@@ -153,7 +153,7 @@ final class EmailSender implements EmailSenderInterface
             'TEMPORARY_PASSWORD' => $temporaryPassword,
         ]);
 
-        $this->sendUserEmail($recipient, 'Dein Benutzerkonto wurde erstellt', $html);
+        $this->sendUserEmail($recipient, $this->translator->trans('app.mail.user.created.subject'), $html);
     }
 
     public function sendUserEmailChanged(string $recipient): void
@@ -164,7 +164,7 @@ final class EmailSender implements EmailSenderInterface
             'LOGO_CID' => 'cid:' . self::LOGO_CID,
         ]);
 
-        $this->sendUserEmail($recipient, 'Deine E-Mail-Adresse wurde geändert', $html);
+        $this->sendUserEmail($recipient, $this->translator->trans('app.mail.user.emailChanged.subject'), $html);
     }
 
     public function sendPasswordReset(string $recipient, string $resetUrl): void
@@ -176,7 +176,7 @@ final class EmailSender implements EmailSenderInterface
             'LOGO_CID' => 'cid:' . self::LOGO_CID,
         ]);
 
-        $this->sendUserEmail($recipient, 'Passwort zurücksetzen', $html);
+        $this->sendUserEmail($recipient, $this->translator->trans('app.mail.passwordReset.subject'), $html);
     }
 
     /** @param array<string, mixed> $order */
@@ -226,7 +226,21 @@ final class EmailSender implements EmailSenderInterface
         ]);
 
         return [
-            'subject' => 'Deine Mässpäggli sind bereit',
+            'subject' => $this->translator->trans('app.mail.delivery.subject'),
+            'html' => $html,
+            'text' => $this->plainText($html),
+        ];
+    }
+
+    /** @return array{subject: string, html: string, text: string} */
+    public function renderFairgateReminder(string $fairgateUrl): array
+    {
+        $html = $this->twig->render('fairgate-reminder.html.twig', [
+            'FAIRGATE_URL' => $fairgateUrl,
+        ]);
+
+        return [
+            'subject' => $this->translator->trans('app.mail.fairgateReminder.subject'),
             'html' => $html,
             'text' => $this->plainText($html),
         ];

@@ -162,8 +162,9 @@ final class PublicStartRoutesTest extends TestCase
                       }
 
                         public function renderOrderConfirmation(array $order, string $mailStatus): array { return []; }
-                       public function renderDeliveryNotification(array $order, string $deliveryUrl, string $qrDataUri): array { return []; }
-                       public function sendStoredEmail(string $recipient, string $subject, string $html, string $text): void {}
+                        public function renderDeliveryNotification(array $order, string $deliveryUrl, string $qrDataUri): array { return []; }
+                        public function renderFairgateReminder(string $fairgateUrl): array { return []; }
+                        public function sendStoredEmail(string $recipient, string $subject, string $html, string $text): void {}
                  }
                 : new class () implements EmailSenderInterface {
                  public function sendAnmeldung(string $recipient, \App\Registration\Services\AnmeldungMailVariant $variant, string $locale = 'de', ?string $loginUrl = null): void
@@ -191,8 +192,9 @@ final class PublicStartRoutesTest extends TestCase
                   }
 
                     public function renderOrderConfirmation(array $order, string $mailStatus): array { return []; }
-                   public function renderDeliveryNotification(array $order, string $deliveryUrl, string $qrDataUri): array { return []; }
-                   public function sendStoredEmail(string $recipient, string $subject, string $html, string $text): void {}
+                    public function renderDeliveryNotification(array $order, string $deliveryUrl, string $qrDataUri): array { return []; }
+                    public function renderFairgateReminder(string $fairgateUrl): array { return []; }
+                    public function sendStoredEmail(string $recipient, string $subject, string $html, string $text): void {}
               },
         );
     }
