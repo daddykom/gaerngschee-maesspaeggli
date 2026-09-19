@@ -3,7 +3,7 @@ import { expect, test } from '@playwright/test';
 test.describe('Start route', () => {
   test('displays the email form', async ({ page }) => {
     await page.goto('/start');
-    await expect(page.locator('h1')).toHaveText('Mässpäggli bekommen');
+    await expect(page.locator('h1')).toHaveText('Mässpäggli Anmeldung');
     await expect(page.locator('input[type="email"]')).toBeVisible();
     await expect(page.locator('button[type="submit"]')).toBeVisible();
   });
@@ -46,7 +46,7 @@ test.describe('Start route', () => {
     await expect(page).toHaveURL(/\/start\/success$/);
     const alert = page.getByRole('alert');
     await expect(alert).toContainText('E-Mail versandt');
-    await expect(alert).toContainText('Wir haben dir eine E-Mail mit deinem persönlichen Bestelllink geschickt.');
+    await expect(alert).toContainText('Wir haben dir eine E-Mail mit deinem persönlichen Anmeldelink geschickt.');
     const successNavigation = page.getByRole('navigation', { name: 'Erfolgsnavigation' });
     await expect(successNavigation.getByRole('link', { name: 'Home' })).toHaveAttribute('href', '/');
     await expect(successNavigation.getByRole('link', { name: 'Anmeldung' })).toHaveAttribute('href', '/start');

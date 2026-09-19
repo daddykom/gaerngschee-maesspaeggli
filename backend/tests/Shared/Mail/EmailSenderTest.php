@@ -66,7 +66,7 @@ final class EmailSenderTest extends TestCase
             ->method('send')
             ->with(self::callback(static function (Email $email): bool {
                 self::assertSame('Dein Link zur Mässpäggli-Bestellung', $email->getSubject());
-                self::assertStringContainsString('Jetzt bestellen', $email->getHtmlBody());
+                 self::assertStringContainsString('Mässpäggli auswählen', $email->getHtmlBody());
                 self::assertStringContainsString('http://localhost:4200/client-login?token=test-token', $email->getHtmlBody());
                 self::assertStringContainsString('10 Minuten gültig', $email->getHtmlBody());
                 self::assertStringContainsString('http://localhost:4200/client-login?token=test-token', $email->getTextBody());
@@ -92,9 +92,9 @@ final class EmailSenderTest extends TestCase
             ->method('send')
             ->with(self::callback(static function (Email $email): bool {
                 self::assertSame('Information zu deiner Mässpäggli-Bestellung', $email->getSubject());
-                self::assertStringContainsString('Wir haben Dir schon einen QR-Code für die Abholung gesandt.', $email->getHtmlBody());
+                 self::assertStringContainsString('Wir haben dir schon einen QR-Code für die Abholung gesandt.', $email->getHtmlBody());
                 self::assertStringNotContainsString('http://localhost:4200', $email->getHtmlBody());
-                self::assertStringNotContainsString('Jetzt bestellen', $email->getHtmlBody());
+                 self::assertStringNotContainsString('Mässpäggli auswählen', $email->getHtmlBody());
 
                 return true;
             }));
@@ -111,7 +111,7 @@ final class EmailSenderTest extends TestCase
             ->method('send')
             ->with(self::callback(static function (Email $email): bool {
                 self::assertSame('client@example.com', $email->getTo()[0]->getAddress());
-                self::assertSame('Deine Mässpäggli-Bestellung ist definitiv bestätigt', $email->getSubject());
+                 self::assertSame('Deine Mässpäggli-Anmeldung ist definitiv bestätigt', $email->getSubject());
                 self::assertStringContainsString('definitiv bestätigt', $email->getHtmlBody());
                  self::assertStringContainsString('Erwachsene ruhig: 2', $email->getHtmlBody());
                  self::assertStringContainsString('QR-Code', $email->getHtmlBody());
@@ -170,7 +170,9 @@ final class EmailSenderTest extends TestCase
         ], 'provisional');
 
         self::assertStringContainsString('https://fairgate.example/login', $message['html']);
-        self::assertStringContainsString('Bei Fairgate anmelden', $message['text']);
+        self::assertStringContainsString('Mässpäggli 2026', $message['html']);
+        self::assertStringNotContainsString('{{ YEAR }}', $message['html']);
+        self::assertStringContainsString('Zum Anmeldeformular', $message['text']);
     }
 
     public function testSendUserEmailChangedNotifiesNewAddress(): void
