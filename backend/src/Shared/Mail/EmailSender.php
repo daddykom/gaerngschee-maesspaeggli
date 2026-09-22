@@ -279,11 +279,30 @@ final class EmailSender implements EmailSenderInterface
         $translator->addLoader('json', new SharedJsonFileLoader());
         $translator->addResource(
             'json',
-            getenv('SHARED_TRANSLATIONS_PATH') ?: dirname(__DIR__, 4) . '/frontend/public/i18n/de.json',
+            $this->translationPath(),
             'de',
         );
 
         return $translator;
+    }
+
+    private function translationPath(): string
+    {
+        $configuredPath = getenv('SHARED_TRANSLATIONS_PATH');
+        $paths = [
+            is_string($configuredPath) && trim($configuredPath) !== '' ? $configuredPath : null,
+            dirname(__DIR__, 4) . '/frontend/public/i18n/de.json',
+            dirname(__DIR__, 4) . '/frontend/i18n/de.json',
+            '/var/www/shared/i18n/de.json',
+        ];
+
+        foreach ($paths as $path) {
+            if (is_string($path) && is_file($path)) {
+                return $path;
+            }
+        }
+
+        throw new \RuntimeException('Shared German translation file could not be found.');
     }
 
     private function plainText(string $html): string

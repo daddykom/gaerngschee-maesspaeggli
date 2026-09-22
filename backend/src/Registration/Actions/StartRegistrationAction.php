@@ -13,6 +13,7 @@ use App\Shared\Database\Database;
 use App\Shared\Mail\EmailSender;
 use App\Shared\Http\JsonRequest;
 use App\Shared\Http\JsonResponse;
+use App\Shared\Logging\ExceptionLogger;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Throwable;
@@ -58,7 +59,7 @@ final class StartRegistrationAction
             try {
                 ($this->anmeldung ?? self::createService())->sendOrderStatus($email, $orderStatus, $locale);
             } catch (Throwable $exception) {
-                self::logEmailFailure($exception);
+                ExceptionLogger::log('Start registration email delivery failed', $exception);
                 return JsonResponse::error($response, 'REQUEST_FAILED', 503);
             }
 
@@ -71,7 +72,7 @@ final class StartRegistrationAction
             $loginUrl = $frontendBaseUrl . '/client-login?token=' . rawurlencode($token);
             ($this->anmeldung ?? self::createService())->sendRegistrationLink($email, $loginUrl, $locale);
         } catch (Throwable $exception) {
-            self::logEmailFailure($exception);
+            ExceptionLogger::log('Start registration email delivery failed', $exception);
             return JsonResponse::error($response, 'REQUEST_FAILED', 503);
         }
 
@@ -83,12 +84,4 @@ final class StartRegistrationAction
         return new AnmeldungService(new EmailSender());
     }
 
-    private static function logEmailFailure(Throwable $exception): void
-    {
-        error_log(sprintf(
-            'Start registration email delivery failed (%s): %s',
-            $exception::class,
-            $exception->getMessage(),
-        ));
-    }
 }

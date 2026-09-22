@@ -8,6 +8,7 @@ use App\Auth\Services\PasswordResetTokenService;
 use App\Auth\Services\PasswordPolicy;
 use App\Shared\Http\JsonRequest;
 use App\Shared\Http\JsonResponse;
+use App\Shared\Logging\ExceptionLogger;
 use App\Users\Data\UserRepository;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
@@ -40,7 +41,8 @@ final class PasswordResetAction
             }
 
             $user = ($this->users ?? new UserRepository())->updatePassword($userId, $password);
-        } catch (Throwable) {
+        } catch (Throwable $exception) {
+            ExceptionLogger::log('Password reset failed', $exception);
             return JsonResponse::error($response, 'PASSWORD_RESET_FAILED', 503);
         }
 

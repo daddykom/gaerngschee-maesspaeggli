@@ -13,6 +13,7 @@ use App\Registration\Data\OrderNotEditableException;
 use App\Shared\Database\Database;
 use App\Shared\Http\JsonRequest;
 use App\Shared\Http\JsonResponse;
+use App\Shared\Logging\ExceptionLogger;
 use App\Shared\Mail\EmailSender;
 use App\Shared\Mail\EmailSenderInterface;
 use App\Users\Data\UserRepository;
@@ -80,7 +81,8 @@ final class SaveClientOrderAction
             );
         } catch (OrderNotEditableException) {
             return JsonResponse::error($response, 'ORDER_NOT_EDITABLE', 409);
-        } catch (Throwable) {
+        } catch (Throwable $exception) {
+            ExceptionLogger::log('Client order save failed', $exception);
             return JsonResponse::error($response, 'ORDER_SAVE_FAILED', 500);
         }
 
@@ -104,6 +106,7 @@ final class SaveClientOrderAction
                     ->findForYear($userId, $this->campaignYear()) ?? $order;
                 $emailSent = true;
             } catch (Throwable $exception) {
+                ExceptionLogger::log('Client order confirmation email failed and was queued', $exception);
                 try {
                     $emails ??= $this->emails ?? new EmailSender();
                     $message ??= $emails->renderOrderConfirmation($messageOrder ?? $order, (string) $order['status']);
@@ -114,7 +117,8 @@ final class SaveClientOrderAction
                         $message,
                         $exception->getMessage(),
                     );
-                } catch (Throwable) {
+                } catch (Throwable $queueException) {
+                    ExceptionLogger::log('Order email queue persistence failed', $queueException);
                     // The original save response remains successful even if queue persistence fails.
                 }
                 $emailSent = false;

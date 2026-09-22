@@ -9,6 +9,7 @@ use App\Shared\Mail\EmailSender;
 use App\Shared\Mail\EmailSenderInterface;
 use App\Shared\Http\JsonRequest;
 use App\Shared\Http\JsonResponse;
+use App\Shared\Logging\ExceptionLogger;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Throwable;
@@ -62,7 +63,8 @@ final class UpdateUserAction
             if ($user['email'] !== $current['email']) {
                 ($this->emails ?? new EmailSender())->sendUserEmailChanged($user['email']);
             }
-        } catch (Throwable) {
+        } catch (Throwable $exception) {
+            ExceptionLogger::log('User update or notification failed', $exception);
             return JsonResponse::error($response, 'USER_UPDATE_FAILED', 500);
         }
 

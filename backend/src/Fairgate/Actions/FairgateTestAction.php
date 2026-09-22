@@ -10,6 +10,7 @@ use App\Fairgate\Services\FairgateContactProviderFactory;
 use App\Fairgate\Services\FairgateException;
 use App\Shared\Database\Database;
 use App\Shared\Http\JsonResponse;
+use App\Shared\Logging\ExceptionLogger;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 
@@ -39,7 +40,8 @@ final class FairgateTestAction
                 'email' => $email,
                 'fairgate' => $lookup($email),
             ]);
-        } catch (FairgateException) {
+        } catch (FairgateException $exception) {
+            ExceptionLogger::log('Fairgate test failed', $exception);
             return JsonResponse::error($response, 'FAIRGATE_TEST_FAILED', 502);
         }
     }

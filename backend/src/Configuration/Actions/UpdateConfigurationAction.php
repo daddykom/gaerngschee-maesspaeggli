@@ -8,6 +8,7 @@ use App\Shared\Database\Database;
 use App\Configuration\Data\FrontendConfigRepository;
 use App\Shared\Http\JsonRequest;
 use App\Shared\Http\JsonResponse;
+use App\Shared\Logging\ExceptionLogger;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Throwable;
@@ -32,7 +33,8 @@ final class UpdateConfigurationAction
             $config = $configs->update((string) ($args['configId'] ?? ''), $user['group'], $value);
         } catch (\InvalidArgumentException) {
             return JsonResponse::error($response, 'INVALID_CONFIGURATION_DATA', 422);
-        } catch (Throwable) {
+        } catch (Throwable $exception) {
+            ExceptionLogger::log('Configuration update failed', $exception);
             return JsonResponse::error($response, 'CONFIGURATION_UPDATE_FAILED', 500);
         }
 
