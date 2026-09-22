@@ -6,6 +6,7 @@ namespace App\Users\Actions;
 
 use App\Auth\Services\PasswordResetTokenService;
 use App\Shared\Http\JsonResponse;
+use App\Shared\Logging\ExceptionLogger;
 use App\Shared\Mail\EmailSender;
 use App\Shared\Mail\EmailSenderInterface;
 use App\Users\Data\UserRepository;
@@ -39,7 +40,8 @@ final class SendPasswordResetLinkAction
                 $frontendBaseUrl . '/password-reset?token=' . rawurlencode($token)
                     . '&email=' . rawurlencode((string) $user['email']),
             );
-        } catch (Throwable) {
+        } catch (Throwable $exception) {
+            ExceptionLogger::log('Admin password reset email delivery failed', $exception);
             return JsonResponse::error($response, 'PASSWORD_RESET_REQUEST_FAILED', 503);
         }
 

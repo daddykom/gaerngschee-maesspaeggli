@@ -8,6 +8,7 @@ use App\Auth\Services\SessionService;
 use App\Registration\Services\ClientRegistrationLoginService;
 use App\Shared\Http\JsonRequest;
 use App\Shared\Http\JsonResponse;
+use App\Shared\Logging\ExceptionLogger;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Throwable;
@@ -29,7 +30,8 @@ final class ClientRegistrationLoginAction
 
         try {
             $result = ($this->loginService ?? self::createService())->login($token);
-        } catch (Throwable) {
+        } catch (Throwable $exception) {
+            ExceptionLogger::log('Client registration login failed', $exception);
             return JsonResponse::error($response, 'REGISTRATION_LOGIN_FAILED', 503);
         }
 

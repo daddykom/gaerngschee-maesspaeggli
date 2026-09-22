@@ -10,6 +10,7 @@ use App\Fairgate\Services\FairgateContactProvider;
 use App\Fairgate\Services\FairgateContactProviderFactory;
 use App\Shared\Database\Database;
 use App\Shared\Http\JsonResponse;
+use App\Shared\Logging\ExceptionLogger;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 
@@ -50,7 +51,8 @@ final class GetDeliveryOrderAction
             try {
                 $fairgate = ($this->fairgate ?? FairgateContactProviderFactory::create())
                     ->findContactDataByEmail($email)['data'] ?? null;
-            } catch (\Throwable) {
+            } catch (\Throwable $exception) {
+                ExceptionLogger::log('Fairgate delivery lookup failed', $exception);
                 $fairgate = null;
             }
         }

@@ -9,6 +9,7 @@ use App\Shared\Mail\EmailSender;
 use App\Shared\Mail\EmailSenderInterface;
 use App\Shared\Http\JsonRequest;
 use App\Shared\Http\JsonResponse;
+use App\Shared\Logging\ExceptionLogger;
 use PDOException;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
@@ -43,8 +44,10 @@ final class CreateUserAction
             $user = $repository->createUser($email, $temporaryPassword, $group, true);
             ($this->emails ?? new EmailSender())->sendUserCreated($user['email'], $temporaryPassword);
         } catch (PDOException $exception) {
+            ExceptionLogger::log('User creation failed', $exception);
             return JsonResponse::error($response, $exception->getCode() === '23000' ? 'EMAIL_ALREADY_REGISTERED' : 'USER_CREATION_FAILED', $exception->getCode() === '23000' ? 409 : 500);
-        } catch (Throwable) {
+        } catch (Throwable $exception) {
+            ExceptionLogger::log('User creation or notification failed', $exception);
             if (is_array($user) && isset($user['id'])) {
                 $repository->deleteUser($user['id']);
             }

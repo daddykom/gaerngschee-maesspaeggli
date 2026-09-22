@@ -7,6 +7,7 @@ namespace App\Auth\Actions;
 use App\Auth\Services\PasswordResetTokenService;
 use App\Shared\Http\JsonRequest;
 use App\Shared\Http\JsonResponse;
+use App\Shared\Logging\ExceptionLogger;
 use App\Shared\Mail\EmailSender;
 use App\Shared\Mail\EmailSenderInterface;
 use App\Users\Data\UserRepository;
@@ -40,7 +41,8 @@ final class PasswordResetRequestAction
                     $frontendBaseUrl . '/password-reset?token=' . rawurlencode($token)
                         . '&email=' . rawurlencode((string) $user['email']),
                 );
-            } catch (Throwable) {
+            } catch (Throwable $exception) {
+                ExceptionLogger::log('Password reset email delivery failed', $exception);
                 return JsonResponse::error($response, 'PASSWORD_RESET_REQUEST_FAILED', 503);
             }
         }
