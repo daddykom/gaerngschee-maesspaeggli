@@ -57,7 +57,8 @@ final class StartRegistrationAction
         if ($orderStatus !== null && !in_array($orderStatus, ['provisional', 'definitive'], true)) {
             try {
                 ($this->anmeldung ?? self::createService())->sendOrderStatus($email, $orderStatus, $locale);
-            } catch (Throwable) {
+            } catch (Throwable $exception) {
+                self::logEmailFailure($exception);
                 return JsonResponse::error($response, 'REQUEST_FAILED', 503);
             }
 
@@ -69,7 +70,8 @@ final class StartRegistrationAction
             $frontendBaseUrl = rtrim(getenv('FRONTEND_BASE_URL') ?: 'http://localhost:4200', '/');
             $loginUrl = $frontendBaseUrl . '/client-login?token=' . rawurlencode($token);
             ($this->anmeldung ?? self::createService())->sendRegistrationLink($email, $loginUrl, $locale);
-        } catch (Throwable) {
+        } catch (Throwable $exception) {
+            self::logEmailFailure($exception);
             return JsonResponse::error($response, 'REQUEST_FAILED', 503);
         }
 
@@ -79,5 +81,14 @@ final class StartRegistrationAction
     private static function createService(): AnmeldungService
     {
         return new AnmeldungService(new EmailSender());
+    }
+
+    private static function logEmailFailure(Throwable $exception): void
+    {
+        error_log(sprintf(
+            'Start registration email delivery failed (%s): %s',
+            $exception::class,
+            $exception->getMessage(),
+        ));
     }
 }
