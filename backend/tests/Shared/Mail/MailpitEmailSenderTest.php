@@ -64,7 +64,7 @@ final class MailpitEmailSenderTest extends TestCase
             "reset-$suffix@example.com" => 'Passwort zurücksetzen',
             "confirmation-definitive-$suffix@example.com" => 'Deine Mässpäggli-Anmeldung ist definitiv bestätigt',
             "confirmation-provisional-$suffix@example.com" => 'Deine Mässpäggli-Anmeldung wurde noch nicht bestätigt',
-            "delivery-$suffix@example.com" => 'Deine Mässpäggli sind bereit',
+            "delivery-$suffix@example.com" => 'Das Mässpäggli ist bereit zur Abholung!',
         ];
 
         foreach ($expected as $recipient => $subject) {

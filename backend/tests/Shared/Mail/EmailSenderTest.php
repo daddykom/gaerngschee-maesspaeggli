@@ -134,6 +134,38 @@ final class EmailSenderTest extends TestCase
         ]);
     }
 
+    public function testRenderDeliveryNotificationUsesThePickupInformationAndQrCode(): void
+    {
+        $sender = new EmailSender(
+            $this->createMock(MailerInterface::class),
+            'noreply@example.com',
+            'Gärngschee-Mässpäggli',
+        );
+
+        $message = $sender->renderDeliveryNotification(
+            [],
+            'https://example.com/delivery?token=test-token',
+            'data:image/svg+xml;base64,qr-code',
+        );
+
+        foreach ([
+            'Das Mässpäggli ist bereit zur Abholung!',
+            'Es ist so weit: Dein Mässpäggli liegt für dich bereit!',
+            'Freitag, 30. Oktober 2026',
+            '13:00 – 17:00 Uhr',
+            'Clarastrasse 10, 4058 Basel',
+            'Bitte zeige bei der Ausgabe diesen QR-Code',
+            'Falls du es persönlich nicht schaffst',
+            'Basler Herbstmesse',
+        ] as $text) {
+            self::assertStringContainsString($text, $message['html']);
+            self::assertStringContainsString($text, $message['text']);
+        }
+
+        self::assertStringContainsString('data:image/svg+xml;base64,qr-code', $message['html']);
+        self::assertStringNotContainsString('https://example.com/delivery?token=test-token', $message['html']);
+    }
+
     public function testRenderFairgateReminderUsesSharedTranslations(): void
     {
         $sender = new EmailSender(
