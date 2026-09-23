@@ -16,7 +16,7 @@ final class EmailSenderTest extends TestCase
     {
         $variant = AnmeldungMailVariant::ClientOrder;
         $subject = 'Dein Link zur Mässpäggli-Bestellung';
-        $content = 'Jetzt Mässpäggli bestellen';
+        $content = 'Jetzt für Mässpäggli anmelden';
         $link = 'http://localhost:4200/login';
         $mailer = $this->createMock(MailerInterface::class);
         $mailer->expects(self::once())
@@ -176,7 +176,7 @@ final class EmailSenderTest extends TestCase
 
         $message = $sender->renderFairgateReminder('https://fairgate.example/login');
 
-        self::assertSame('Bitte vervollständige deine Mässpäggli-Bestellung', $message['subject']);
+        self::assertSame('Bitte schliesse deine Mässpäggli-Anmeldung ab', $message['subject']);
         self::assertStringContainsString('Fairgate', $message['html']);
         self::assertStringContainsString('https://fairgate.example/login', $message['html']);
         self::assertStringContainsString('Fairgate anmelden', $message['text']);
@@ -204,7 +204,7 @@ final class EmailSenderTest extends TestCase
         self::assertStringContainsString('https://fairgate.example/login', $message['html']);
         self::assertStringContainsString('Mässpäggli 2026', $message['html']);
         self::assertStringNotContainsString('{{ YEAR }}', $message['html']);
-        self::assertStringContainsString('Zum Anmeldeformular', $message['text']);
+        self::assertStringContainsString('Zum Registrierungsformular', $message['text']);
     }
 
     public function testSendUserEmailChangedNotifiesNewAddress(): void

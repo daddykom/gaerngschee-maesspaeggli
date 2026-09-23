@@ -63,7 +63,7 @@ final class MailpitEmailSenderTest extends TestCase
             "changed-$suffix@example.com" => 'Deine E-Mail-Adresse wurde geändert',
             "reset-$suffix@example.com" => 'Passwort zurücksetzen',
             "confirmation-definitive-$suffix@example.com" => 'Deine Mässpäggli-Anmeldung ist definitiv bestätigt',
-            "confirmation-provisional-$suffix@example.com" => 'Deine Mässpäggli-Anmeldung wurde noch nicht bestätigt',
+            "confirmation-provisional-$suffix@example.com" => 'Fast geschafft!',
             "delivery-$suffix@example.com" => 'Das Mässpäggli ist bereit zur Abholung!',
         ];
 
