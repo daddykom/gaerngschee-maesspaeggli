@@ -1,6 +1,15 @@
 {
   "app": {
     "title": "Mässpäggli",
+    "footer": {
+      "product": "Mässpäggli",
+      "openSource": "Open Source auf GitHub",
+      "developedBy": "entwickelt von",
+      "imprint": "Impressum",
+      "privacy": "Datenschutzerklärung",
+      "garngschee": "Gärngschee",
+      "navigationLabel": "Rechtliche und weiterführende Links"
+    },
     "home": {
       "title": "Mässpäggli",
       "lead": "Gemeinsam machen wir einen Herbstmess-Besuch möglich - auch wenn das Geld knapp ist.",

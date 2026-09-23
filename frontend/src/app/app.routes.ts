@@ -86,6 +86,8 @@ export const appRoutes: Routes = [
         data: { pageTitle: 'app.passwordReset.pageTitle' },
         loadComponent: () => import('./features/auth/pages/password-reset/password-reset.component').then((m) => m.PasswordResetComponent),
       },
+      { path: 'impressum', data: { legalPage: 'impressum' }, loadComponent: () => import('./features/legal/pages/legal-page/legal-page.component').then((m) => m.LegalPageComponent) },
+      { path: 'datenschutz', data: { legalPage: 'datenschutz' }, loadComponent: () => import('./features/legal/pages/legal-page/legal-page.component').then((m) => m.LegalPageComponent) },
       { path: 'not-found', data: { pageTitle: 'app.notFound.pageTitle' }, loadComponent: () => import('./features/errors/pages/not-found/not-found.component').then((m) => m.NotFoundComponent) },
       { path: 'delivery', canActivate: [groupGuard(['user', 'admin'])], providers: [provideState(deliveryFeature), provideEffects(deliveryEffects)], data: { pageTitle: 'app.delivery.title' }, loadComponent: () => import('./features/delivery/pages/delivery').then((m) => m.Delivery) },
       {
