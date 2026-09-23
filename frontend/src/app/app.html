@@ -40,3 +40,28 @@
     </div>
   </div>
 </main>
+
+<footer class="app-footer">
+  <div class="gl-container">
+    <div class="app-footer__content gl-stack">
+      <nav class="app-footer__links gl-cluster" [attr.aria-label]="'app.footer.navigationLabel' | translate">
+        <a routerLink="/impressum">{{ 'app.footer.imprint' | translate }}</a>
+        <a routerLink="/datenschutz">{{ 'app.footer.privacy' | translate }}</a>
+        <a href="https://gärngschee.ch" target="_blank" rel="noopener noreferrer">{{ 'app.footer.garngschee' | translate }}</a>
+      </nav>
+
+      <p class="app-footer__credit">
+        <span>{{ 'app.footer.product' | translate }}</span>
+        <span aria-hidden="true">·</span>
+        <a
+          href="https://github.com/daddykom/gaerngschee-maesspaeggli"
+          target="_blank"
+          rel="noopener noreferrer"
+        >{{ 'app.footer.openSource' | translate }}</a>
+        <span aria-hidden="true">·</span>
+        <span>{{ 'app.footer.developedBy' | translate }}</span>
+        <a href="https://github.com/daddykom" target="_blank" rel="noopener noreferrer">Charley Collins</a>
+      </p>
+    </div>
+  </div>
+</footer>
