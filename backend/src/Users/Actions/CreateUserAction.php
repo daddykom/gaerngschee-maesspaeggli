@@ -29,7 +29,7 @@ final class CreateUserAction
         $email = JsonRequest::string($data, 'email', 254);
         $group = JsonRequest::string($data, 'group', 20);
         $email = $email === null ? null : trim($email);
-        if ($email === null || filter_var($email, FILTER_VALIDATE_EMAIL) === false || !in_array($group, ['admin', 'user', 'client'], true)) {
+        if ($email === null || filter_var($email, FILTER_VALIDATE_EMAIL) === false || !in_array($group, ['admin', 'user'], true)) {
             return JsonResponse::error($response, 'INVALID_USER_DATA', 422);
         }
 

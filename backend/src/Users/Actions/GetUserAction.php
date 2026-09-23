@@ -25,7 +25,7 @@ final class GetUserAction
 
         $user = ($this->users ?? new UserRepository())->findById($userId);
 
-        return $user === null
+        return $user === null || $user['group'] === 'client'
             ? JsonResponse::error($response, 'NOT_FOUND', 404)
             : JsonResponse::success($response, ['user' => $user]);
     }
