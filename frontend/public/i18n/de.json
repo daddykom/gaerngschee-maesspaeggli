@@ -57,8 +57,9 @@
       "registrationTokenError": "Der Anmeldelink ist ungültig oder abgelaufen. Bitte fordere auf der Startseite einen neuen Link an.",
       "emailSentTitle": "E-Mail versandt",
       "emailSentMessage": "Wir haben dir eine E-Mail mit deinem persönlichen Anmeldelink geschickt. Der Link ist 10 Minuten gültig.",
-      "privacyTitle": "Deine Daten bleiben privat",
-      "privacyText": "Wir prüfen deine Angaben. Auf dieser Seite zeigen wir nicht, ob diese E-Mail-Adresse bei uns oder bei Fairgate gespeichert ist. Die nächsten Schritte schicken wir dir per E-Mail."
+      "privacyTitle": "Warum brauchen wir deine E-Mail-Adresse?",
+      "privacyText": "Wir schicken dir per E-Mail einen persönlichen Link für deine Anmeldung zur Mässpäggli-Aktion.\n\nBei der Anmeldung prüfen wir bei Fairgate, ob du bei Gärngschee registriert bist und wie viele Erwachsene und Kinder zu deiner Anmeldung gehören.\n\nWir speichern nur deine E-Mail-Adresse und die Anzahl Erwachsene und Kinder.",
+      "privacyLink": "Mehr zum Datenschutz"
     },
     "login": {
       "pageTitle": "Mässpäggli verwalten",
