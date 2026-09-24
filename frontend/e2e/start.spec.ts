@@ -6,6 +6,7 @@ test.describe('Start route', () => {
     await expect(page.locator('h1')).toHaveText('Mässpäggli Anmeldung');
     await expect(page.locator('input[type="email"]')).toBeVisible();
     await expect(page.locator('button[type="submit"]')).toBeVisible();
+    await expect(page.getByRole('main').getByRole('link', { name: 'Datenschutzerklärung' })).toHaveAttribute('href', '/datenschutz');
   });
 
   test('displays the Fairgate info box with a background color', async ({ page }) => {

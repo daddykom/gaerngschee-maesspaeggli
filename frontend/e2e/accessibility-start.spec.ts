@@ -7,7 +7,7 @@ test.describe('Start route accessibility', () => {
     await expect(page.locator('header')).toHaveCount(1);
     await expect(page.locator('main')).toHaveCount(1);
     await expect(page.getByRole('heading', { level: 1 })).toHaveCount(1);
-    await expect(page.getByRole('heading', { name: 'Deine E-Mail-Adresse' })).toBeVisible();
+    await expect(page.getByRole('heading', { name: 'Deine E-Mail-Adresse', exact: true })).toBeVisible();
 
     const email = page.getByRole('textbox', { name: 'E-Mail-Adresse' });
     const continueButton = page.getByRole('button', { name: 'Weiter' });
