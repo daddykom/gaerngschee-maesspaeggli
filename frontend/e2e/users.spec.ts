@@ -16,8 +16,8 @@ test.describe('User administration route', () => {
     });
 
     await openUserManagement(page);
-    await expect(page.getByText('admin@example.com')).toBeVisible();
-    await expect(page.getByText('user@example.com')).toBeVisible();
+    await expect(page.locator('main').getByText('admin@example.com')).toBeVisible();
+    await expect(page.locator('main').getByText('user@example.com')).toBeVisible();
      await expectTranslatedText(page.locator('main'), 'app.admin.users.groups.admin');
      await expectTranslatedText(page.locator('main'), 'app.admin.users.passwordResetRequired');
     await expect(page.getByRole('link', { name: 'Benutzer erstellen' })).toBeVisible();

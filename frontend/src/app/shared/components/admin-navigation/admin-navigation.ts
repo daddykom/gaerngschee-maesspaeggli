@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
+import { ChangeDetectionStrategy, Component, inject, input } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { MatMenuModule } from '@angular/material/menu';
@@ -16,6 +16,7 @@ import { AuthActions } from '../../../store/auth/auth.actions';
 })
 export class AdminNavigationComponent {
   private readonly store = inject(Store);
+  readonly email = input<string | null>(null);
 
   logout(): void {
     this.store.dispatch(AuthActions.logoutRequested());

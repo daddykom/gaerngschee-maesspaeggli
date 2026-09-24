@@ -27,6 +27,34 @@
   white-space: nowrap;
 }
 
+.app-header__account-button {
+  display: none;
+}
+
+.app-header__account-entry {
+  display: flex;
+  align-items: center;
+  gap: var(--gl-space-sm);
+  max-width: min(18rem, 80vw);
+}
+
+.app-header__account-entry span {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+@media (max-width: 47.99rem) {
+  .app-header__email {
+    display: none;
+  }
+
+  .app-header__account-button {
+    display: inline-flex;
+    margin-inline-start: auto;
+  }
+}
+
 main {
   flex: 1;
   min-height: 0;

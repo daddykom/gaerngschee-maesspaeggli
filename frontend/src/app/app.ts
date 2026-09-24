@@ -11,6 +11,9 @@ import { SessionActions } from './store/auth/session.actions';
 import { selectNotification } from './store/notification/notification.feature';
 import { selectFrontendPublicConfigStatus } from './store/frontend-config/frontend-config.feature';
 import { AdminNavigationComponent } from './shared/components/admin-navigation/admin-navigation';
+import { MatButtonModule } from '@angular/material/button';
+import { MatIconModule } from '@angular/material/icon';
+import { MatMenuModule } from '@angular/material/menu';
 
 @Component({
   imports: [
@@ -19,6 +22,9 @@ import { AdminNavigationComponent } from './shared/components/admin-navigation/a
     AdminNavigationComponent,
     TranslatePipe,
     InfoBoxComponent,
+    MatButtonModule,
+    MatIconModule,
+    MatMenuModule,
   ],
   selector: 'app-root',
   templateUrl: './app.html',

@@ -8,11 +8,26 @@
 
        @if (authEmail(); as email) {
          <span class="app-header__email">{{ email }}</span>
+         <button
+           mat-icon-button
+           type="button"
+           class="app-header__account-button"
+           [attr.aria-label]="'app.navigation.openAccountMenu' | translate"
+           [matMenuTriggerFor]="accountMenu"
+         >
+           <mat-icon>account_circle</mat-icon>
+         </button>
+         <mat-menu #accountMenu="matMenu" xPosition="before">
+           <div mat-menu-item disabled class="app-header__account-entry">
+             <mat-icon aria-hidden="true">account_circle</mat-icon>
+             <span>{{ email }}</span>
+           </div>
+         </mat-menu>
        }
 
        @if (isAdmin()) {
          @defer (when isAdmin()) {
-           <app-admin-navigation />
+            <app-admin-navigation [email]="authEmail()" />
          }
        }
     </div>
