@@ -18,7 +18,7 @@ test.describe('Integration user administration', () => {
 
     await loginAsAdmin(page);
     await openUserManagement(page);
-    await expect(page.getByText('admin@gaerngschee.ch')).toBeVisible();
+    await expect(page.locator('main').getByText('admin@gaerngschee.ch')).toBeVisible();
 
     await page.getByRole('link', { name: 'Benutzer erstellen' }).click();
     await page.waitForURL('**/admin/users/new');
