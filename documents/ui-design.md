@@ -31,7 +31,7 @@ nicht seiten- oder komponentenspezifisch frei gewählt.
 | Oberfläche | `#fff8fc` | Karten, E-Mail-Flächen und Inhaltsbereiche |
 | Header / Primärcontainer | `#f5b6d3` | E-Mail-Header und hervorgehobene Markenbereiche |
 | Primärfarbe | `#8a2858` | Links, Buttons und primäre Aktionen |
-| Haupttext | `#2f2530` | Überschriften und normale Textinhalte |
+| Haupttext | `#000000` | Überschriften und normale Textinhalte |
 | Sekundärtext | `#6f6069` | Beschreibungen und ergänzende Informationen |
 | Rahmen | `#8c7b85` | Grenzen und Trennlinien |
 | Erfolg-Hintergrund | `#dff4e8` | Erfolgs- und Bestätigungsbereiche |
