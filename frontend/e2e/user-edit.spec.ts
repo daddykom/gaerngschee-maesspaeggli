@@ -105,6 +105,12 @@ async function login(page: Page, email: string, group: 'admin' | 'user', id: str
       body: JSON.stringify({ expiresAt: '2099-01-01T00:00:00Z', secondsRemaining: 3600 }),
     });
   });
+  await page.route('http://localhost:8080/admin/overview', async (route) => {
+    await route.fulfill({ status: 200, contentType: 'application/json', body: JSON.stringify({ year: 2026, recentDays: 14, orders: {}, categories: [] }) });
+  });
+  await page.route('http://localhost:8080/public/configuration', async (route) => {
+    await route.fulfill({ status: 200, contentType: 'application/json', body: JSON.stringify([]) });
+  });
   await page.goto('/login');
   await page.locator('input[type="email"]').fill(email);
   await page.locator('input[type="password"]').fill('secret');

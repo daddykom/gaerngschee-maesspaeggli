@@ -18,6 +18,7 @@ import { notificationEffects } from './store/notification/notification.effects';
 import { notificationFeature } from './store/notification/notification.feature';
 import { frontendConfigEffects } from './store/frontend-config/frontend-config.effects';
 import { frontendConfigFeature } from './store/frontend-config/frontend-config.feature';
+import { sessionEffects } from './store/auth/session.effects';
 
 export const appConfig: ApplicationConfig = {
   providers: [
@@ -28,7 +29,7 @@ export const appConfig: ApplicationConfig = {
     provideState(authFeature),
     provideState(notificationFeature),
     provideState(frontendConfigFeature),
-    provideEffects(authEffects, frontendConfigEffects, navigationEffects, notificationEffects),
+    provideEffects(authEffects, frontendConfigEffects, navigationEffects, notificationEffects, sessionEffects),
     provideStoreDevtools(),
     provideAnimations(),
     provideTranslateService({

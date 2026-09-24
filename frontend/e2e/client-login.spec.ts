@@ -18,6 +18,12 @@ test.describe('Client login route', () => {
   });
 
   test('exchanges the registration token and navigates to the order page', async ({ page }) => {
+    await page.route('http://localhost:8080/auth/session-status', async (route) => {
+      await route.fulfill({ status: 200, contentType: 'application/json', body: JSON.stringify({ expiresAt: '2099-01-01T00:00:00Z', secondsRemaining: 3600 }) });
+    });
+    await page.route('http://localhost:8080/client/order', async (route) => {
+      await route.fulfill({ status: 200, contentType: 'application/json', body: JSON.stringify({ order: null, viaToken: false }) });
+    });
     await page.route('http://localhost:8080/auth/registration-login', async (route) => {
       await route.fulfill({
         status: 200,
