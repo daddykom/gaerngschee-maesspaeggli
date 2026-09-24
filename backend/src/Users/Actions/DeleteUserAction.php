@@ -18,7 +18,13 @@ final class DeleteUserAction
     public function __invoke(ServerRequestInterface $request, ResponseInterface $response, array $args): ResponseInterface
     {
         $userId = (string) ($args['userId'] ?? '');
-        $deleted = ($this->users ?? new UserRepository())->deleteUser($userId);
+        $users = $this->users ?? new UserRepository();
+        $user = $users->findById($userId);
+        if ($user === null || $user['group'] === 'client') {
+            return JsonResponse::error($response, 'NOT_FOUND', 404);
+        }
+
+        $deleted = $users->deleteUser($userId);
 
         return $deleted
             ? JsonResponse::success($response, ['deleted' => true, 'userId' => $userId])

@@ -2,20 +2,15 @@ import { expect, test } from '@playwright/test';
 import { loginAsAdmin, openUserManagement } from './support/admin-login';
 
 test.describe('Integration user administration', () => {
-  test('does not display client users', async ({ page }) => {
-    const email = `integration-client-${Date.now()}@example.com`;
-
+  test('offers only admin and user groups', async ({ page }) => {
     await loginAsAdmin(page);
     await openUserManagement(page);
     await page.getByRole('link', { name: 'Benutzer erstellen' }).click();
     await page.waitForURL('**/admin/users/new');
-    await page.locator('input[type="email"]').fill(email);
     await page.getByRole('combobox').click();
-    await page.getByRole('option', { name: 'Klient' }).click();
-    await page.getByRole('button', { name: 'Speichern' }).click();
-
-    await page.waitForURL('**/admin/users');
-    await expect(page.getByRole('listitem').filter({ hasText: email })).toHaveCount(0);
+    await expect(page.getByRole('option')).toHaveCount(2);
+    await expect(page.getByRole('option', { name: 'Administrator' })).toBeVisible();
+    await expect(page.getByRole('option', { name: 'Benutzer' })).toBeVisible();
   });
 
   test('loads, creates, updates and deletes a user through the real backend', async ({ page }) => {
