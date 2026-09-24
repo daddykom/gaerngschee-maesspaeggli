@@ -7,14 +7,17 @@ test.describe('Start route', () => {
     await expectTranslatedText(page.locator('h1'), 'app.anmeldung.title');
     await expect(page.locator('input[type="email"]')).toBeVisible();
     await expect(page.locator('button[type="submit"]')).toBeVisible();
+    await expect(
+      page.getByRole('main').getByRole('link', { name: 'Mehr zum Datenschutz' }),
+    ).toHaveAttribute('href', '/datenschutz');
   });
 
   test('displays the Fairgate info box with a background color', async ({ page }) => {
     await page.goto('/start');
 
-    const backgroundColor = await page.locator('app-info-box .info-box').evaluate(
-      (element) => getComputedStyle(element).backgroundColor,
-    );
+    const backgroundColor = await page
+      .locator('app-info-box .info-box')
+      .evaluate((element) => getComputedStyle(element).backgroundColor);
 
     expect(backgroundColor).toMatch(/^rgb\(/);
   });
@@ -36,8 +39,15 @@ test.describe('Start route', () => {
 
   test('submits the email request and shows the success page', async ({ page }) => {
     await page.route('http://localhost:8080/public/start', async (route) => {
-      expect(route.request().postDataJSON()).toEqual({ email: 'person@example.com', language: 'de' });
-      await route.fulfill({ status: 202, contentType: 'application/json', body: JSON.stringify({ sent: true }) });
+      expect(route.request().postDataJSON()).toEqual({
+        email: 'person@example.com',
+        language: 'de',
+      });
+      await route.fulfill({
+        status: 202,
+        contentType: 'application/json',
+        body: JSON.stringify({ sent: true }),
+      });
     });
 
     await page.goto('/start');
@@ -49,7 +59,13 @@ test.describe('Start route', () => {
     await expectTranslatedText(alert, 'app.anmeldung.emailSentTitle');
     await expectTranslatedText(alert, 'app.anmeldung.emailSentMessage');
     const successNavigation = page.getByRole('navigation', { name: 'Erfolgsnavigation' });
-    await expect(successNavigation.getByRole('link', { name: 'Home' })).toHaveAttribute('href', '/');
-    await expect(successNavigation.getByRole('link', { name: 'Anmeldung' })).toHaveAttribute('href', '/start');
+    await expect(successNavigation.getByRole('link', { name: 'Home' })).toHaveAttribute(
+      'href',
+      '/',
+    );
+    await expect(successNavigation.getByRole('link', { name: 'Anmeldung' })).toHaveAttribute(
+      'href',
+      '/start',
+    );
   });
 });
