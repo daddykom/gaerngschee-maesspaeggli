@@ -10,6 +10,7 @@ export const AuthActions = createActionGroup({
     'Registration Login': props<{ token: string }>(),
     'Registration Login Success': props<{
       userId: string;
+      email: string;
       group: UserGroup;
       fairgateUserExists: boolean;
       childrenCount: number;

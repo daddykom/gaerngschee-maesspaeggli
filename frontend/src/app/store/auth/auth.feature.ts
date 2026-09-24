@@ -47,6 +47,7 @@ export const authFeature = createFeature({
     on(AuthActions.registrationLoginSuccess, (state, result) => ({
       ...state,
       userId: result.userId,
+      email: result.email,
       group: result.group,
       registrationLoginLoading: false,
       registrationLoginErrorCode: null,

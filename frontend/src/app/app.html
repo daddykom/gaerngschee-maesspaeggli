@@ -6,6 +6,10 @@
       </a>
       <span class="app-header__title">{{ 'app.title' | translate }}</span>
 
+       @if (authEmail(); as email) {
+         <span class="app-header__email">{{ email }}</span>
+       }
+
        @if (isAdmin()) {
          @defer (when isAdmin()) {
            <app-admin-navigation />

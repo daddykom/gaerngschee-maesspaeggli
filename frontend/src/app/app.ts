@@ -6,7 +6,7 @@ import { toSignal } from '@angular/core/rxjs-interop';
 import { filter, startWith } from 'rxjs';
 import { InfoBoxComponent } from './shared/components/info-box/info-box';
 import { AuthActions } from './store/auth/auth.actions';
-import { selectAuthGroup } from './store/auth/auth.feature';
+import { selectAuthEmail, selectAuthGroup } from './store/auth/auth.feature';
 import { SessionActions } from './store/auth/session.actions';
 import { selectNotification } from './store/notification/notification.feature';
 import { selectFrontendPublicConfigStatus } from './store/frontend-config/frontend-config.feature';
@@ -43,6 +43,7 @@ export class App {
   private readonly notificationElement = viewChild<ElementRef<HTMLElement>>('notification');
   readonly publicConfigStatus = this.store.selectSignal(selectFrontendPublicConfigStatus);
   readonly authGroup = this.store.selectSignal(selectAuthGroup);
+  readonly authEmail = this.store.selectSignal(selectAuthEmail);
   readonly isAdmin = computed(() => this.authGroup() === 'admin');
   private lastScrolledNotification: unknown = null;
 

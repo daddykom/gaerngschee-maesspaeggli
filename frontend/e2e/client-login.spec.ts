@@ -36,6 +36,7 @@ test.describe('Client login route', () => {
 
     await page.goto('/client-login?token=registration-token');
      await page.waitForURL('**/order/edit');
+    await expect(page.locator('.app-header__email')).toHaveText('client@example.com');
     await expectTranslatedText(page.locator('h1'), 'app.order.pageTitle');
   });
 

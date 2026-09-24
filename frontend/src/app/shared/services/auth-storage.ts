@@ -5,6 +5,7 @@ const STORAGE_KEY = 'gaerngschee.auth';
 export interface PersistedAuthState {
   userId: string;
   group: UserGroup;
+  email?: string | null;
   fairgateUserExists: boolean | null;
   childrenCount: number | null;
   adultsCount: number | null;
@@ -50,6 +51,7 @@ export function clearPersistedAuthState(): void {
 function isValidPersistedState(state: Partial<PersistedAuthState>): state is PersistedAuthState {
   return typeof state.userId === 'string'
     && ['admin', 'user', 'client'].includes(state.group ?? '')
+    && (state.email === undefined || state.email === null || typeof state.email === 'string')
     && (state.fairgateUserExists === null || typeof state.fairgateUserExists === 'boolean')
     && (state.childrenCount === null || typeof state.childrenCount === 'number')
     && (state.adultsCount === null || typeof state.adultsCount === 'number')

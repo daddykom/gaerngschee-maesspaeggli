@@ -42,7 +42,7 @@ export const initialState: AuthState = {
   sessionSecondsRemaining: null,
   sessionWarningVisible: false,
   sessionRefreshLoading: false,
-  email: null,
+  email: persistedAuth.email ?? null,
 };
 
 export const loggedOutState: AuthState = {

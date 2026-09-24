@@ -18,6 +18,15 @@
   font-weight: 500;
 }
 
+.app-header__email {
+  margin-inline-start: auto;
+  max-width: min(22rem, 45vw);
+  overflow: hidden;
+  font-size: 0.875rem;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
 main {
   flex: 1;
   min-height: 0;
