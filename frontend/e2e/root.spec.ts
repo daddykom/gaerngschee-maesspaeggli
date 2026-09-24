@@ -1,4 +1,5 @@
 import { expect, test } from '@playwright/test';
+import { expectTranslatedText } from './support/assertions';
 
 test.describe('Root route', () => {
   test('shows the public campaign landing page', async ({ page }) => {
@@ -17,8 +18,8 @@ test.describe('Root route', () => {
 
     await page.goto('/');
     await expect(page.locator('app-root')).toBeVisible();
-    await expect(page.locator('h1')).toHaveText('Mässpäggli');
-    await expect(page.locator('.home__lead')).toContainText('Herbstmess-Besuch möglich');
+     await expectTranslatedText(page.locator('h1'), 'app.home.title');
+     await expectTranslatedText(page.locator('.home__lead'), 'app.home.lead');
     await expect(page.getByRole('link', { name: 'Jetzt spenden' })).toHaveAttribute('href', 'https://donate.example/maesspaeggli');
     await expect(page.getByRole('link', { name: 'Mässpäggli anfragen' })).toHaveAttribute('href', '/start');
     await expect(page.getByRole('link', { name: 'Anmelden' })).toHaveAttribute('href', '/login');
@@ -38,7 +39,7 @@ test.describe('Root route', () => {
     });
 
     await page.goto('/');
-    await expect(page.getByText('Die nächste Mässpäggli-Aktion beginnt am 01.01.2999.')).toBeVisible();
+     await expectTranslatedText(page.locator('main'), 'app.home.receive.notStarted');
     await expect(page.getByRole('link', { name: 'Mässpäggli anfragen' })).toHaveCount(0);
   });
 

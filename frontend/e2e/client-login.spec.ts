@@ -1,4 +1,5 @@
 import { expect, test } from '@playwright/test';
+import { expectTranslatedText } from './support/assertions';
 
 test.describe('Client login route', () => {
   test.beforeEach(async ({ page }) => {
@@ -35,7 +36,7 @@ test.describe('Client login route', () => {
 
     await page.goto('/client-login?token=registration-token');
      await page.waitForURL('**/order/edit');
-    await expect(page.locator('h1')).toHaveText('Mässpäggli bestellen');
+    await expectTranslatedText(page.locator('h1'), 'app.order.pageTitle');
   });
 
   test('shows an error when the registration token is invalid', async ({ page }) => {
@@ -51,7 +52,7 @@ test.describe('Client login route', () => {
 
     await page.goto('/client-login?token=invalid-token');
     await expect(page).toHaveURL(/\/start$/);
-    await expect(page.getByText('Fehler')).toBeVisible();
-    await expect(page.getByText('Der Anmeldelink ist ungültig oder abgelaufen. Bitte fordere auf der Startseite einen neuen Link an.')).toBeVisible();
+     await expectTranslatedText(page.getByRole('alert'), 'app.anmeldung.errorTitle');
+     await expectTranslatedText(page.getByRole('alert'), 'app.anmeldung.registrationTokenError');
   });
 });

@@ -1,4 +1,5 @@
 import { expect, test } from '@playwright/test';
+import { expectTranslatedText } from './support/assertions';
 
 test.describe('Configuration route', () => {
   test('loads and saves editable configuration values', async ({ page }) => {
@@ -48,7 +49,7 @@ test.describe('Configuration route', () => {
     await expect(page.getByText('Seitentitel')).toBeVisible();
     await page.locator('input').fill('Neuer Titel');
     await page.getByRole('button', { name: 'Konfiguration speichern' }).click();
-    await expect(page.getByText('Die Konfiguration wurde gespeichert.')).toBeVisible();
+     await expectTranslatedText(page.getByRole('alert'), 'app.admin.configuration.saved');
   });
 
   test('shows the pattern error for an invalid campaign start date after blur', async ({ page }) => {
@@ -86,6 +87,6 @@ test.describe('Configuration route', () => {
     await input.blur();
 
     const field = input.locator('xpath=ancestor::mat-form-field');
-    await expect(field.locator('.control-error')).toHaveText('Der Wert entspricht nicht dem erwarteten Format.');
+     await expectTranslatedText(field.locator('.control-error'), 'app.admin.configuration.errors.pattern');
   });
 });

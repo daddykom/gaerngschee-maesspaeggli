@@ -1,4 +1,5 @@
 import { expect, test } from '@playwright/test';
+import { expectTranslatedText } from './support/assertions';
 
 test.describe('Start route accessibility', () => {
   test('exposes landmarks, headings, labels and keyboard-focusable controls', async ({ page }) => {
@@ -30,6 +31,6 @@ test.describe('Start route accessibility', () => {
 
     const alert = page.getByRole('alert');
     await expect(alert).toBeVisible();
-    await expect(alert).toContainText('Bitte prüfe deine E-Mail-Adresse.');
+    await expectTranslatedText(alert, 'app.anmeldung.errors.email.email');
   });
 });

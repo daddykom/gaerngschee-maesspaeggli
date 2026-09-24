@@ -1,4 +1,5 @@
 import { expect, Page, test } from '@playwright/test';
+import { expectTranslatedText } from './support/assertions';
 
 test.describe('User administration route', () => {
   test('loads the users and shows the create action', async ({ page }) => {
@@ -17,8 +18,8 @@ test.describe('User administration route', () => {
     await openUserManagement(page);
     await expect(page.getByText('admin@example.com')).toBeVisible();
     await expect(page.getByText('user@example.com')).toBeVisible();
-    await expect(page.getByText('Administrator')).toBeVisible();
-    await expect(page.getByText('Passwort muss neu gesetzt werden')).toBeVisible();
+     await expectTranslatedText(page.locator('main'), 'app.admin.users.groups.admin');
+     await expectTranslatedText(page.locator('main'), 'app.admin.users.passwordResetRequired');
     await expect(page.getByRole('link', { name: 'Benutzer erstellen' })).toBeVisible();
   });
 
@@ -63,7 +64,7 @@ test.describe('User administration route', () => {
     await openUserManagement(page);
     await page.getByRole('button', { name: 'Passwort senden' }).click();
 
-    await expect(page.getByText('Der Link zum Zurücksetzen des Passworts wurde an user@example.com gesendet.')).toBeVisible();
+     await expectTranslatedText(page.getByRole('alert'), 'app.admin.users.passwordResetSent');
     expect(requestBody).toEqual({});
   });
 
@@ -82,7 +83,7 @@ test.describe('User administration route', () => {
     await page.getByRole('button', { name: 'Löschen' }).click();
     await page.getByRole('dialog').getByRole('button', { name: 'Löschen' }).click();
 
-    await expect(page.getByText('Der Benutzer wurde gelöscht.')).toBeVisible();
+     await expectTranslatedText(page.getByRole('alert'), 'app.admin.users.deleted');
     await expect(page.getByText('user@example.com')).not.toBeVisible();
   });
 

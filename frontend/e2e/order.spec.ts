@@ -1,4 +1,5 @@
 import { expect, test } from '@playwright/test';
+import { expectTranslatedText } from './support/assertions';
 
 test.describe('Order route', () => {
   test('shows the order introduction for a client', async ({ page }) => {
@@ -21,10 +22,8 @@ test.describe('Order route', () => {
     await page.goto('/client-login?token=registration-token');
      await page.waitForURL('**/order/edit');
 
-    await expect(page.locator('h1')).toHaveText('Mässpäggli bestellen');
-    await expect(
-      page.getByText('Für deine Bestellung sind 2 Erwachsene und 1 Kinder erfasst.'),
-    ).toBeVisible();
+     await expectTranslatedText(page.locator('h1'), 'app.order.pageTitle');
+     await expectTranslatedText(page.locator('main'), 'app.order.intro');
     await expect(page.getByText('Hallo')).toBeVisible();
     await expect(page.getByRole('combobox')).toHaveCount(1);
   });
@@ -71,9 +70,9 @@ test.describe('Order route', () => {
     await page.getByRole('button', { name: 'Weiter' }).click();
     await expect(page.getByRole('alert')).toHaveCount(3);
      await expect(page).toHaveURL('/order/edit');
-    await expect(page.getByText('Anzahl Personen erfassen')).toBeVisible();
-    await expect(page.getByText('Lieber Besteller', { exact: true })).toBeVisible();
-    await expect(page.getByText('Wir können Dich leider nicht bei Fairgate finden.')).toBeVisible();
+     await expectTranslatedText(page.locator('main'), 'app.order.manualCounts.title');
+     await expectTranslatedText(page.locator('main'), 'app.order.noFairgate.title');
+     await expectTranslatedText(page.locator('main'), 'app.order.noFairgate.messageBeforeLink');
     await expect(page.getByRole('link', { name: 'hier' })).toHaveAttribute('href', 'https://fairgate.example');
   });
 
@@ -105,12 +104,12 @@ test.describe('Order route', () => {
     await page.waitForURL('**/order/edit');
 
     await expect(page).toHaveURL(/\/order\/edit$/);
-    await expect(page.getByText('Bestellung konnte nicht geladen werden')).toBeVisible();
+     await expectTranslatedText(page.getByRole('alert'), 'app.order.notifications.loadErrorTitle');
   });
 
   test('redirects unauthenticated users to the not-found page', async ({ page }) => {
     await page.goto('/order');
     await page.waitForURL('**/not-found');
-    await expect(page.locator('h1')).toHaveText('Seite nicht gefunden');
+     await expectTranslatedText(page.locator('h1'), 'app.notFound.pageTitle');
   });
 });

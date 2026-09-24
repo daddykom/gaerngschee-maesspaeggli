@@ -1,4 +1,5 @@
 import { expect, test } from '@playwright/test';
+import { expectTranslatedText } from './support/assertions';
 
 test.describe('Login route accessibility', () => {
   test('exposes named login controls and keyboard focus order', async ({ page }) => {
@@ -40,6 +41,6 @@ test.describe('Login route accessibility', () => {
 
     const alert = page.getByRole('alert');
     await expect(alert).toHaveAttribute('aria-live', 'assertive');
-    await expect(alert).toContainText('Anmeldung fehlgeschlagen');
+    await expectTranslatedText(alert, 'app.auth.loginErrorTitle');
   });
 });

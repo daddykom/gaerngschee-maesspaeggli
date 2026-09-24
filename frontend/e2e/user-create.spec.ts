@@ -1,4 +1,5 @@
 import { expect, Page, test } from '@playwright/test';
+import { expectTranslatedText } from './support/assertions';
 
 test.describe('User creation route', () => {
   test('validates the email and creates a user', async ({ page }) => {
@@ -16,7 +17,7 @@ test.describe('User creation route', () => {
     await page.getByRole('link', { name: 'Benutzer erstellen' }).click();
     await page.waitForURL('**/admin/users/new');
     await page.getByRole('button', { name: 'Speichern' }).click();
-    await expect(page.getByText('Dieses Feld ist erforderlich.')).toBeVisible();
+     await expectTranslatedText(page.getByRole('alert'), 'app.admin.users.errors.email.required');
 
     await page.locator('input[type="email"]').fill('new@example.com');
     await page.getByRole('combobox').click();
@@ -35,8 +36,8 @@ test.describe('User creation route', () => {
     await page.getByRole('button', { name: 'Speichern' }).click();
 
     await page.waitForURL('**/admin/users');
-    await expect(page.getByText('Der Benutzer wurde erstellt.')).toBeVisible();
-    await expect(page.getByText('Eine E-Mail wurde an new@example.com versendet.')).toBeVisible();
+     await expectTranslatedText(page.getByRole('alert'), 'app.admin.users.created');
+     await expectTranslatedText(page.getByRole('alert'), 'app.admin.users.emailSentTo');
   });
 });
 
