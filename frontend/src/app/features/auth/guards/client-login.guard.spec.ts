@@ -39,6 +39,7 @@ describe('clientLoginGuard', () => {
     await expect(firstValueFrom(result as ReturnType<typeof of>)).resolves.toEqual(orderRedirect);
     expect(store.dispatch).toHaveBeenCalledWith(AuthActions.registrationLoginSuccess({
       userId: 'client-1',
+      email: 'client@example.com',
       group: 'client',
       fairgateUserExists: true,
       childrenCount: 1,

@@ -3,7 +3,20 @@
 }
 
 .admin-menu-button {
-  margin-left: auto;
+  margin-left: 0;
+}
+
+.admin-menu-identity {
+  display: flex;
+  align-items: center;
+  gap: var(--gl-space-sm);
+  max-width: min(18rem, 80vw);
+}
+
+.admin-menu-identity span {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
 @media print {
