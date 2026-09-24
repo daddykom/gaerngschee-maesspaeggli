@@ -1,18 +1,19 @@
 import { expect, test } from '@playwright/test';
+import { expectTranslatedText } from './support/assertions';
 
 test.describe('Password change route', () => {
   test('validates required and matching passwords', async ({ page }) => {
     await page.goto('/password-change');
     await page.getByRole('button', { name: 'Passwort ändern' }).click();
 
-    await expect(page.getByText('Bitte gib ein neues Passwort ein.')).toBeVisible();
-    await expect(page.getByText('Bitte bestätige dein neues Passwort.')).toBeVisible();
+    await expectTranslatedText(page.locator('main'), 'app.passwordChange.errors.newPassword.required');
+    await expectTranslatedText(page.locator('main'), 'app.passwordChange.errors.passwordConfirmation.required');
 
     await page.locator('input[type="password"]').nth(0).fill('long-enough-secret');
     await page.locator('input[type="password"]').nth(1).fill('different-secret');
     await page.getByRole('button', { name: 'Passwort ändern' }).click();
 
-    await expect(page.getByText('Die Passwörter stimmen nicht überein.')).toBeVisible();
+    await expectTranslatedText(page.locator('main'), 'app.passwordChange.errors.passwordConfirmation.passwordsDoNotMatch');
   });
 
   test('changes the password and navigates to the overview', async ({ page }) => {
@@ -50,9 +51,7 @@ test.describe('Password change route', () => {
     await page.locator('input[type="password"]').nth(1).fill('long-enough-secret');
     await page.getByRole('button', { name: 'Passwort ändern' }).click();
 
-    await expect(page.locator('.info-box')).toContainText(
-      'Das Passwort konnte nicht geändert werden.',
-    );
+    await expectTranslatedText(page.locator('.info-box'), 'app.passwordChange.errors.PASSWORD_CHANGE_FAILED');
   });
 });
 

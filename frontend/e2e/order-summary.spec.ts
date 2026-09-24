@@ -1,4 +1,5 @@
 import { expect, test } from '@playwright/test';
+import { expectTranslatedText } from './support/assertions';
 
 test.describe('Order summary route', () => {
   test('shows the grouped order, supports back navigation and saves the order', async ({ page }) => {
@@ -57,20 +58,20 @@ test.describe('Order summary route', () => {
     await page.getByRole('button', { name: 'Weiter' }).click();
     await page.waitForURL('**/order/summary');
 
-    await expect(page.locator('h1', { hasText: 'Bestellübersicht' })).toBeVisible();
-     await expect(page.getByText(`Deine Bestellung für das Jahr ${new Date().getFullYear()}`)).toBeVisible();
-     await expect(page.getByText('Definitiv')).toBeVisible();
-    await expect(page.getByText('1 x Kinder 1-3 Jahre')).toBeVisible();
+     await expectTranslatedText(page.locator('h1'), 'app.order.summary.pageTitle');
+     await expectTranslatedText(page.locator('main'), 'app.order.summary.description');
+     await expectTranslatedText(page.locator('main'), 'app.order.summary.statuses.definitive');
+     await expectTranslatedText(page.locator('main'), 'app.order.categories.options.catC');
     await expect(page.getByRole('heading', { name: 'Erwachsene', exact: true })).toHaveCount(0);
 
     await page.getByRole('button', { name: 'Zurück' }).click();
      await page.waitForURL('**/order/edit');
-    await expect(selects.nth(0)).toHaveText('Kinder 1-3 Jahre');
+     await expectTranslatedText(selects.nth(0), 'app.order.categories.options.catC');
 
     await page.getByRole('button', { name: 'Weiter' }).click();
     await page.waitForURL('**/order/summary');
     await page.getByRole('button', { name: 'Bestellen' }).click();
     await page.waitForURL('**/');
-    await expect(page.getByText('Bestellung gespeichert')).toBeVisible();
+     await expectTranslatedText(page.getByRole('alert'), 'app.order.notifications.successTitle');
   });
 });

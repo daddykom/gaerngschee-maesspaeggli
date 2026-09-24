@@ -1,4 +1,5 @@
 import { expect, test } from '@playwright/test';
+import { expectTranslatedText } from './support/assertions';
 
 test.describe('Admin overview route', () => {
   test('shows the administration menu on a direct admin route', async ({ page }) => {
@@ -42,11 +43,11 @@ test.describe('Admin overview route', () => {
     await page.locator('button[type="submit"]').click();
     await page.waitForURL('**/admin/overview');
 
-    await expect(page.locator('h1')).toHaveText('Admin-Übersicht');
+     await expectTranslatedText(page.locator('h1'), 'app.admin.overview.title');
     await expect(page.getByRole('button', { name: 'Bestellungen ausliefern' })).toBeDisabled();
-    await expect(page.getByText('Die Auslieferung ist erst nach dem Ende der Anmeldefrist im Verarbeitungsjahr möglich.')).toBeVisible();
+     await expectTranslatedText(page.locator('main'), 'app.admin.overview.deliverUnavailable');
     await expect(page.getByRole('heading', { name: 'Legende' })).toBeVisible();
-    await expect(page.getByText('Provisorische Bestellungen, noch nicht bei Fairgate vorhanden')).toBeVisible();
+     await expectTranslatedText(page.locator('main'), 'app.admin.overview.legend.provisional');
     await expect(page.getByRole('columnheader', { name: 'Definitiv' })).toBeVisible();
     await expect(page.getByRole('columnheader', { name: 'Provisorisch letzte 14 Tage' })).toBeVisible();
     await expect(page.getByRole('button', { name: 'Administrationsmenü öffnen' })).toBeVisible();
@@ -79,6 +80,6 @@ test.describe('Admin overview route', () => {
     await page.locator('input[type="password"]').fill('secret');
     await page.locator('button[type="submit"]').click();
     await page.waitForURL('**/delivery');
-    await expect(page.locator('h1')).toHaveText('Auslieferung');
+     await expectTranslatedText(page.locator('h1'), 'app.delivery.title');
   });
 });

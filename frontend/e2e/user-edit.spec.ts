@@ -1,4 +1,5 @@
 import { expect, Page, test } from '@playwright/test';
+import { expectTranslatedText } from './support/assertions';
 
 test.describe('User edit route', () => {
   test('admin loads and updates a user including the reset flag', async ({ page }) => {
@@ -41,7 +42,7 @@ test.describe('User edit route', () => {
     await page.getByRole('button', { name: 'Speichern' }).click();
 
     await page.waitForURL('**/admin/users');
-    await expect(page.getByText('Der Benutzer wurde geändert.')).toBeVisible();
+     await expectTranslatedText(page.getByRole('alert'), 'app.admin.users.updated');
   });
 
   test('normal user sees only the own email field', async ({ page }) => {

@@ -1,12 +1,13 @@
 import { expect, test } from '@playwright/test';
+import { expectTranslatedText } from './support/assertions';
 
 test.describe('Not-found route', () => {
   test('shows the not-found page for an unknown route', async ({ page }) => {
     await page.goto('/route-does-not-exist');
 
     await page.waitForURL('**/not-found');
-    await expect(page.locator('h1')).toHaveText('Seite nicht gefunden');
-    await expect(page.getByText('Diese Seite gibt es nicht')).toBeVisible();
+    await expectTranslatedText(page.locator('h1'), 'app.notFound.pageTitle');
+    await expectTranslatedText(page.locator('main'), 'app.notFound.heading');
   });
 
   test('links to the login page', async ({ page }) => {
@@ -27,13 +28,13 @@ test.describe('Not-found route', () => {
     await page.goto('/admin/overview');
 
     await page.waitForURL('**/not-found');
-    await expect(page.locator('h1')).toHaveText('Seite nicht gefunden');
+    await expectTranslatedText(page.locator('h1'), 'app.notFound.pageTitle');
   });
 
   test('shows the not-found page for the unauthenticated user administration route', async ({ page }) => {
     await page.goto('/admin/users');
     await page.waitForURL('**/not-found');
-    await expect(page.locator('h1')).toHaveText('Seite nicht gefunden');
+    await expectTranslatedText(page.locator('h1'), 'app.notFound.pageTitle');
   });
 
   test('shows the not-found page when a client opens an admin route', async ({ page }) => {
@@ -54,6 +55,6 @@ test.describe('Not-found route', () => {
     await page.locator('input[type="password"]').fill('secret');
     await page.locator('button[type="submit"]').click();
     await page.waitForURL('**/not-found');
-    await expect(page.locator('h1')).toHaveText('Seite nicht gefunden');
+    await expectTranslatedText(page.locator('h1'), 'app.notFound.pageTitle');
   });
 });

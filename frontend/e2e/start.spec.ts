@@ -1,9 +1,10 @@
 import { expect, test } from '@playwright/test';
+import { expectTranslatedText } from './support/assertions';
 
 test.describe('Start route', () => {
   test('displays the email form', async ({ page }) => {
     await page.goto('/start');
-    await expect(page.locator('h1')).toHaveText('Mässpäggli Anmeldung');
+    await expectTranslatedText(page.locator('h1'), 'app.anmeldung.title');
     await expect(page.locator('input[type="email"]')).toBeVisible();
     await expect(page.locator('button[type="submit"]')).toBeVisible();
     await expect(
@@ -32,7 +33,7 @@ test.describe('Start route', () => {
     await page.locator('input[type="email"]').fill('invalid');
     await page.getByRole('button', { name: 'Weiter' }).click();
 
-    await expect(page.getByText('Bitte prüfe deine E-Mail-Adresse.')).toBeVisible();
+    await expectTranslatedText(page.getByRole('alert'), 'app.anmeldung.errors.email.email');
     expect(requestCalled).toBe(false);
   });
 
@@ -55,10 +56,8 @@ test.describe('Start route', () => {
 
     await expect(page).toHaveURL(/\/start\/success$/);
     const alert = page.getByRole('alert');
-    await expect(alert).toContainText('E-Mail versandt');
-    await expect(alert).toContainText(
-      'Wir haben dir eine E-Mail mit deinem persönlichen Anmeldelink geschickt.',
-    );
+    await expectTranslatedText(alert, 'app.anmeldung.emailSentTitle');
+    await expectTranslatedText(alert, 'app.anmeldung.emailSentMessage');
     const successNavigation = page.getByRole('navigation', { name: 'Erfolgsnavigation' });
     await expect(successNavigation.getByRole('link', { name: 'Home' })).toHaveAttribute(
       'href',
