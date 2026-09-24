@@ -28,7 +28,7 @@ final class SendPasswordResetLinkAction
         $userId = (string) ($args['userId'] ?? '');
         $users = $this->users ?? new UserRepository();
         $user = $users->findById($userId);
-        if ($user === null) {
+        if ($user === null || $user['group'] === 'client') {
             return JsonResponse::error($response, 'NOT_FOUND', 404);
         }
 

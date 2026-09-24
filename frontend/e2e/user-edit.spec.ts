@@ -35,6 +35,7 @@ test.describe('User edit route', () => {
     await expect(page.locator('input[type="email"]')).toHaveValue('user@example.com');
     await page.locator('input[type="email"]').fill('changed@example.com');
     await page.getByRole('combobox').click();
+    await expect(page.getByRole('option')).toHaveCount(2);
     await page.getByRole('option', { name: 'Administrator' }).click();
     await page.getByRole('checkbox').check();
     await page.getByRole('button', { name: 'Speichern' }).click();

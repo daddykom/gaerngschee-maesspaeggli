@@ -66,6 +66,19 @@ final class AdminRoutesTest extends TestCase
         self::assertNotSame('client@example.com', $users[1]['email']);
     }
 
+    public function testAdminCannotAccessClientUserDetails(): void
+    {
+        $admin = $this->repository->createUser('admin@example.com', 'secret', 'admin');
+        $client = $this->repository->createUser('client@example.com', 'secret', 'client');
+        (new SessionService())->setUser($admin['id'], 'admin');
+
+        $response = $this->createApp()->handle(
+            (new ServerRequestFactory())->createServerRequest('GET', '/admin/users/' . $client['id']),
+        );
+
+        self::assertSame(404, $response->getStatusCode());
+    }
+
     public function testUserCannotListAdminUsers(): void
     {
         $user = $this->repository->createUser('user@example.com', 'secret', 'user');
@@ -201,6 +214,20 @@ final class AdminRoutesTest extends TestCase
         self::assertSame('new@example.com', $data['emailSentTo']);
     }
 
+    public function testAdminCannotCreateClientUser(): void
+    {
+        $admin = $this->repository->createUser('admin@example.com', 'secret', 'admin');
+        (new SessionService())->setUser($admin['id'], 'admin');
+
+        $response = $this->createApp()->handle($this->request('POST', '/admin/users', [
+            'email' => 'client@example.com',
+            'group' => 'client',
+        ]));
+
+        self::assertSame(422, $response->getStatusCode());
+        self::assertNull($this->repository->findByEmail('client@example.com'));
+    }
+
     public function testUserCanUpdateOwnEmailButNotAnotherUser(): void
     {
         $user = $this->repository->createUser('user@example.com', 'secret', 'user');
@@ -240,6 +267,22 @@ final class AdminRoutesTest extends TestCase
         self::assertFalse((bool) $data['user']['required_password_reset']);
     }
 
+    public function testAdminCannotUpdateClientUser(): void
+    {
+        $admin = $this->repository->createUser('admin@example.com', 'secret', 'admin');
+        $client = $this->repository->createUser('client@example.com', 'secret', 'client');
+        (new SessionService())->setUser($admin['id'], 'admin');
+
+        $response = $this->createApp()->handle($this->request('PATCH', '/admin/users/' . $client['id'], [
+            'email' => 'changed@example.com',
+            'group' => 'user',
+            'required_password_reset' => false,
+        ]));
+
+        self::assertSame(404, $response->getStatusCode());
+        self::assertSame('client@example.com', $this->repository->findById($client['id'])['email']);
+    }
+
     public function testAdminCanReadUserDetails(): void
     {
         $admin = $this->repository->createUser('admin@example.com', 'secret', 'admin');
@@ -265,6 +308,33 @@ final class AdminRoutesTest extends TestCase
 
         self::assertSame(200, $response->getStatusCode());
         self::assertNull($this->repository->findById($user['id']));
+    }
+
+    public function testAdminCannotDeleteClientUser(): void
+    {
+        $admin = $this->repository->createUser('admin@example.com', 'secret', 'admin');
+        $client = $this->repository->createUser('client@example.com', 'secret', 'client');
+        (new SessionService())->setUser($admin['id'], 'admin');
+
+        $response = $this->createApp()->handle(
+            $this->request('DELETE', '/admin/users/' . $client['id']),
+        );
+
+        self::assertSame(404, $response->getStatusCode());
+        self::assertNotNull($this->repository->findById($client['id']));
+    }
+
+    public function testAdminCannotSendPasswordResetToClientUser(): void
+    {
+        $admin = $this->repository->createUser('admin@example.com', 'secret', 'admin');
+        $client = $this->repository->createUser('client@example.com', 'secret', 'client');
+        (new SessionService())->setUser($admin['id'], 'admin');
+
+        $response = $this->createApp()->handle(
+            $this->request('POST', '/admin/users/' . $client['id'] . '/password-reset'),
+        );
+
+        self::assertSame(404, $response->getStatusCode());
     }
 
     private function createApp(
