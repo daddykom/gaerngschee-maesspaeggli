@@ -1,0 +1,26 @@
+.legal-page__content {
+  max-width: 70ch;
+}
+
+.legal-page__content :is(h2, p) {
+  margin: 0;
+}
+
+.legal-page__content h2 {
+  margin-top: var(--gl-space-xl);
+}
+
+.legal-page__content a {
+  color: var(--mat-sys-primary);
+}
+
+.legal-page__content ul {
+  margin-block: 0;
+  padding-inline-start: var(--gl-space-lg);
+}
+
+.legal-page__content hr {
+  margin-block: var(--gl-space-xl);
+  border: 0;
+  border-top: 1px solid var(--mat-sys-outline-variant);
+}

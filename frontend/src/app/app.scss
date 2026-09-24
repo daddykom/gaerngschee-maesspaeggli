@@ -1,6 +1,13 @@
+:host {
+  display: flex;
+  min-height: 100vh;
+  flex-direction: column;
+}
+
 .app-header {
   border-bottom: 1px solid var(--mat-sys-outline-variant);
   background: var(--mat-sys-primary-container);
+  flex-shrink: 0;
 }
 
 .app-header__content {
@@ -12,7 +19,8 @@
 }
 
 main {
-  min-height: calc(100vh - 4rem);
+  flex: 1;
+  min-height: 0;
 }
 
 .app-notification {
@@ -21,12 +29,44 @@ main {
 
 .app-main-content {
   padding-block: var(--gl-space-xl);
-  min-height: calc(100vh - 4rem);
+  min-height: 0;
   background: transparent;
 }
 
 .app-main-content > .gl-stack {
   gap: var(--gl-space-lg);
+}
+
+.app-footer {
+  border-top: 1px solid var(--mat-sys-outline-variant);
+  background: var(--mat-sys-primary-container);
+  color: var(--mat-sys-on-primary-container);
+  flex-shrink: 0;
+}
+
+.app-footer__content {
+  align-items: center;
+  padding-block: var(--gl-space-lg);
+  text-align: center;
+}
+
+.app-footer__credit {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: center;
+  gap: var(--gl-space-sm);
+  margin: 0;
+}
+
+.app-footer__credit,
+.app-footer__links {
+  justify-content: center;
+}
+
+.app-footer a {
+  color: var(--mat-sys-on-primary-container);
+  font-weight: 500;
 }
 
 .app-main-content h1 {
