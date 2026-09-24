@@ -1,4 +1,5 @@
 import { expect, test } from '@playwright/test';
+import { expectTranslatedText } from './support/assertions';
 
 test.describe('Fairgate test route', () => {
   test('rejects a normal user', async ({ page }) => {
@@ -21,6 +22,6 @@ test.describe('Fairgate test route', () => {
     await page.waitForURL('**/delivery');
     await page.goto('/admin/fairgate-test');
     await page.waitForURL('**/not-found');
-    await expect(page.locator('h1')).toHaveText('Seite nicht gefunden');
+    await expectTranslatedText(page.locator('h1'), 'app.notFound.pageTitle');
   });
 });

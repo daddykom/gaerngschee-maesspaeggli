@@ -1,4 +1,5 @@
 import { expect, test } from '@playwright/test';
+import { expectTranslatedText } from './support/assertions';
 
 test.describe('Login route', () => {
   test('logs in and navigates to the admin overview', async ({ page }) => {
@@ -18,13 +19,13 @@ test.describe('Login route', () => {
     });
 
     await page.goto('/login');
-    await expect(page.locator('h1')).toHaveText('Mässpäggli verwalten');
+    await expectTranslatedText(page.locator('h1'), 'app.login.pageTitle');
     await page.locator('input[type="email"]').fill('admin@example.com');
     await page.locator('input[type="password"]').fill('secret');
     await page.locator('button[type="submit"]').click();
 
     await page.waitForURL('**/admin/overview');
-    await expect(page.locator('h1')).toHaveText('Admin-Übersicht');
+    await expectTranslatedText(page.locator('h1'), 'app.admin.overview.title');
     await expect(page.getByRole('button', { name: 'Administrationsmenü öffnen' })).toBeVisible();
 
     await page.getByRole('button', { name: 'Administrationsmenü öffnen' }).click();
@@ -46,7 +47,7 @@ test.describe('Login route', () => {
 
     await page.goto('/admin/overview');
     await page.waitForURL('**/not-found');
-    await expect(page.locator('h1')).toHaveText('Seite nicht gefunden');
+    await expectTranslatedText(page.locator('h1'), 'app.notFound.pageTitle');
   });
 
   test('shows a translated error for invalid credentials', async ({ page }) => {
@@ -61,15 +62,13 @@ test.describe('Login route', () => {
     });
 
     await page.goto('/login');
-    await expect(page.locator('h1')).toHaveText('Mässpäggli verwalten');
+    await expectTranslatedText(page.locator('h1'), 'app.login.pageTitle');
     await page.locator('input[type="email"]').fill('admin@example.com');
     await page.locator('input[type="password"]').fill('wrong-password');
     await page.locator('button[type="submit"]').click();
 
-    await expect(page.locator('.info-box')).toContainText('Anmeldung fehlgeschlagen');
-    await expect(page.locator('.info-box')).toContainText(
-      'E-Mail-Adresse oder Passwort ist ungültig.',
-    );
+    await expectTranslatedText(page.locator('.info-box'), 'app.auth.loginErrorTitle');
+    await expectTranslatedText(page.locator('.info-box'), 'app.auth.errors.INVALID_CREDENTIALS');
   });
 
   test('redirects users with a required password reset', async ({ page }) => {
@@ -91,6 +90,6 @@ test.describe('Login route', () => {
     await page.getByRole('button', { name: 'Anmelden' }).click();
 
     await page.waitForURL('**/password-change');
-    await expect(page.locator('h1')).toHaveText('Passwort ändern');
+    await expectTranslatedText(page.locator('h1'), 'app.passwordChange.pageTitle');
   });
 });

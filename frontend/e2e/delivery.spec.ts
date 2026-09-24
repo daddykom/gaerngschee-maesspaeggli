@@ -1,4 +1,5 @@
 import { expect, test } from '@playwright/test';
+import { expectTranslatedText } from './support/assertions';
 
 test.describe('Delivery route', () => {
   test('loads an order by email and confirms delivery', async ({ page }) => {
@@ -47,7 +48,7 @@ test.describe('Delivery route', () => {
     await expect(page.getByText('Bezüger/in: Jane Doe')).toBeVisible();
     await expect(page.getByText('Baby Doe')).toBeVisible();
     await page.getByRole('button', { name: 'Ausliefern' }).click();
-    await expect(page.getByText('Hast du den Ausweis überprüft?')).toBeVisible();
+     await expectTranslatedText(page.getByRole('dialog'), 'app.delivery.identityQuestion');
     await page.getByRole('button', { name: 'Ausliefern' }).last().click();
   });
 });
