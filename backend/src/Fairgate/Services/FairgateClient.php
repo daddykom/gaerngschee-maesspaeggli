@@ -19,6 +19,7 @@ use Psr\Http\Client\ClientInterface;
 final class FairgateClient implements FairgateContactProvider, FairgateBatchContactProvider
 {
     private const CONTACTS_PATH = '/fsa/v1.1/contact/%s/contacts';
+    private const FILTERED_CONTACTS_PATH = '/fsa/v1.1/contact/%s/contacts/list';
     private const CONTACT_DATA_PATH = '/fsa/v2.0/contact/%s/data/%s';
     private const TOKEN_PATH = '/fsa/v1.1/auth/create/%s/token';
 
@@ -150,7 +151,8 @@ final class FairgateClient implements FairgateContactProvider, FairgateBatchCont
         }
 
         try {
-            $response = $this->client()->request('GET', sprintf(self::CONTACTS_PATH, $this->organizationId()), [
+            $path = $email === null ? self::CONTACTS_PATH : self::FILTERED_CONTACTS_PATH;
+            $response = $this->client()->request('GET', sprintf($path, $this->organizationId()), [
                 'headers' => $this->headers(),
                 'query' => $query,
             ]);
