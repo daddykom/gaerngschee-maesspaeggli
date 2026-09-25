@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Shared\Mail;
 
 use App\Registration\Services\AnmeldungMailVariant;
+use App\Shared\Logging\ExternalErrorLogger;
 use App\Shared\Translation\SharedJsonFileLoader;
 use Symfony\Bridge\Twig\Extension\TranslationExtension;
 use Symfony\Component\Mailer\Exception\TransportExceptionInterface;
@@ -108,6 +109,7 @@ final class EmailSender implements EmailSenderInterface
         try {
             $this->mailer->send($message);
         } catch (TransportExceptionInterface $exception) {
+            ExternalErrorLogger::log('email', 'registration_email', $exception->getMessage());
             throw new EmailDeliveryException(
                 'The email could not be sent: ' . $exception->getMessage(),
                 0,
@@ -144,6 +146,7 @@ final class EmailSender implements EmailSenderInterface
         try {
             $this->mailer->send($message);
         } catch (TransportExceptionInterface $exception) {
+            ExternalErrorLogger::log('email', 'order_status_email', $exception->getMessage());
             throw new EmailDeliveryException(
                 'The email could not be sent: ' . $exception->getMessage(),
                 0,
@@ -276,6 +279,7 @@ final class EmailSender implements EmailSenderInterface
         try {
             $this->mailer->send($message);
         } catch (TransportExceptionInterface $exception) {
+            ExternalErrorLogger::log('email', 'smtp_send', $exception->getMessage());
             throw new EmailDeliveryException(
                 'The email could not be sent: ' . $exception->getMessage(),
                 0,
