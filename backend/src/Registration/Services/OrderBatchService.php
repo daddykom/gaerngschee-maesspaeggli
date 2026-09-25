@@ -13,6 +13,8 @@ use App\Registration\Data\OrderRepository;
 use App\Registration\Data\RegistrationTokenRepository;
 use App\Registration\Services\QrCodeGenerator;
 use App\Shared\Mail\EmailSenderInterface;
+use App\Shared\Database\Database;
+use App\Shared\Logging\ExternalErrorLogRepository;
 use DateTimeImmutable;
 use DateTimeZone;
 use Throwable;
@@ -30,6 +32,7 @@ final class OrderBatchService
         private readonly EmailSenderInterface $emails,
         private readonly RegistrationTokenRepository $tokens,
         private readonly ?QrCodeGenerator $qrCodes = null,
+        private readonly ?ExternalErrorLogRepository $externalErrors = null,
     ) {
     }
 
@@ -37,6 +40,11 @@ final class OrderBatchService
     public function run(): array
     {
         $this->intervalDays();
+        try {
+            ($this->externalErrors ?? new ExternalErrorLogRepository(Database::getConnection()))->pruneToConfiguredLimit();
+        } catch (Throwable $exception) {
+            error_log('External error log cleanup failed: ' . $exception->getMessage());
+        }
         $retentionDays = $this->tokenRetentionDays();
         $now = new DateTimeImmutable('now', new DateTimeZone('UTC'));
         $result = [
@@ -173,7 +181,21 @@ final class OrderBatchService
     private function sendConfirmation(array $order, string $email, array &$result): void
     {
         $message = $this->emails->renderOrderConfirmation($order, 'definitive');
-        $this->emails->sendStoredEmail($email, $message['subject'], $message['html'], $message['text']);
+        try {
+            $this->emails->sendStoredEmail($email, $message['subject'], $message['html'], $message['text']);
+        } catch (Throwable $exception) {
+            $this->queue->enqueue(
+                $order['id'],
+                'order_confirmation',
+                $email,
+                $message,
+                $exception->getMessage(),
+            );
+            $this->log('Order confirmation failed and queued', $order['id'], $exception);
+            $result['queued']++;
+            return;
+        }
+
         $this->orders->markBatchEmailSent($order['id']);
         $result['sent']++;
     }

@@ -125,7 +125,7 @@ describe('authReducer', () => {
     expect(loading.registrationLoginErrorCode).toBeNull();
 
     const state = authReducer(loading, AuthActions.registrationLoginSuccess({
-       userId: 'client-1', group: 'client', fairgateUserExists: true,
+       userId: 'client-1', email: 'client@example.com', group: 'client', fairgateUserExists: true,
       childrenCount: 2, adultsCount: 2, salutation: 'Hallo',
     }));
     expect(state).toMatchObject({ userId: 'client-1', group: 'client', registrationLoginLoading: false, registrationLoginErrorCode: null, fairgateUserExists: true, childrenCount: 2, adultsCount: 2, salutation: 'Hallo' });

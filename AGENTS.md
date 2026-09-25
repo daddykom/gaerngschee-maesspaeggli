@@ -426,6 +426,16 @@ Playwright-E2E-Specs testen jeweils nur eine Route:
 
 Eine Spec DARF grundsätzlich keine Tests für mehrere unterschiedliche Routen enthalten. Authentifizierungs- und Redirect-Lifecycle-Tests dürfen die dafür notwendigen Zielrouten durchlaufen. Der Login-Lifecycle in `login.spec.ts` darf deshalb `/login` und den geschützten Übergang zu `/admin/overview` testen.
 
+Lokalisierte Texte dürfen in Playwright-E2E-Assertions nicht als konkrete
+Übersetzung hardcodiert werden. Für Textprüfungen sind semantische Locators
+und der gemeinsame Helper `expectTranslatedText` unter
+`frontend/e2e/support/assertions.ts` zu verwenden. Der Helper prüft, dass
+sichtbarer Text vorhanden ist und nicht als Übersetzungsschlüssel gerendert
+wird. Konkrete Übersetzungstexte dürfen nur geprüft werden, wenn sie selbst
+das fachliche Testziel sind, beispielsweise bei statischen rechtlichen
+Inhalten. Fachliche Testdaten, technische Werte und Locators für notwendige
+Benutzerinteraktionen sind von dieser Regel nicht betroffen.
+
 ## Entwicklungsphilosophie
 
 Bei Architektur- und Implementierungsentscheidungen gelten folgende Grundsätze:

@@ -185,7 +185,7 @@ describe('App', () => {
         ],
         providers: [
           provideTranslateService(),
-          provideMockStore({ initialState: { auth: { ...authInitialState, group: 'admin' }, notification: { current: null } } }),
+           provideMockStore({ initialState: { auth: { ...authInitialState, group: 'admin', email: 'admin@example.com' }, notification: { current: null } } }),
         ],
       })
       .compileComponents();
@@ -199,6 +199,7 @@ describe('App', () => {
     fixture.detectChanges();
 
     expect(fixture.componentInstance.isAdmin()).toBe(true);
+    expect(fixture.nativeElement.querySelector('.app-header__email')?.textContent).toContain('admin@example.com');
     expect(fixture.componentInstance.pageTitleKey()).toBe('app.admin.overview.title');
     expect(fixture.nativeElement.querySelector('.admin-menu-button')).toBeTruthy();
     expect(fixture.nativeElement.querySelector('a[routerLink="/"]')).toBeTruthy();

@@ -390,6 +390,7 @@
     "navigation": {
       "menuLabel": "Administrationsmenü",
       "openMenu": "Administrationsmenü öffnen",
+      "openAccountMenu": "Kontoidentität öffnen",
       "home": "Home",
       "start": "Startseite",
       "registration": "Anmeldung",

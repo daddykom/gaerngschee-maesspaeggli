@@ -37,6 +37,7 @@ test.describe('Login route', () => {
     await page.locator('button[type="submit"]').click();
 
     await page.waitForURL('**/admin/overview');
+    await expect(page.locator('.app-header__email')).toHaveText('admin@example.com');
     await expectTranslatedText(page.locator('h1'), 'app.admin.overview.title');
     await expect(page.getByRole('button', { name: 'Administrationsmenü öffnen' })).toBeVisible();
 

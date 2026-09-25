@@ -20,8 +20,8 @@ export const loginEffect = createEffect(
              userId: user.id,
              group,
              requiredPasswordReset,
-             email: user.email,
-          })),
+             email: user.email || email,
+           })),
           catchError((error: HttpErrorResponse) =>
             of(AuthActions.loginFailure({
               errorCode: typeof error.error?.error?.code === 'string'
@@ -38,10 +38,11 @@ export const loginEffect = createEffect(
 export const persistLoginEffect = createEffect(
   (actions$ = inject(Actions)) => actions$.pipe(
     ofType(AuthActions.loginSuccess),
-    tap(({ userId, group }) => {
+    tap(({ userId, group, email }) => {
       persistAuthState({
         userId,
         group,
+        email,
         fairgateUserExists: null,
         childrenCount: null,
         adultsCount: null,
@@ -55,9 +56,10 @@ export const persistLoginEffect = createEffect(
 export const persistRegistrationLoginEffect = createEffect(
   (actions$ = inject(Actions)) => actions$.pipe(
     ofType(AuthActions.registrationLoginSuccess),
-    tap(({ userId, group, fairgateUserExists, childrenCount, adultsCount, salutation }) => {
+    tap(({ userId, email, group, fairgateUserExists, childrenCount, adultsCount, salutation }) => {
       persistAuthState({
         userId,
+        email,
         group,
         fairgateUserExists,
         childrenCount,

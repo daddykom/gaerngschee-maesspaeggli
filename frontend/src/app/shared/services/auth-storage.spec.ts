@@ -17,6 +17,7 @@ describe('auth storage', () => {
     const state = {
       userId: 'client-123',
       group: 'client' as const,
+      email: 'client@example.com',
       fairgateUserExists: true,
       childrenCount: 2,
       adultsCount: 2,
@@ -32,6 +33,7 @@ describe('auth storage', () => {
     persistAuthState({
       userId: 'client-123',
       group: 'client',
+      email: 'client@example.com',
       fairgateUserExists: null,
       childrenCount: null,
       adultsCount: null,
@@ -59,6 +61,7 @@ describe('auth storage', () => {
       token: 'legacy-jwt',
       userId: 'client-123',
       group: 'client',
+      email: 'client@example.com',
       fairgateUserExists: null,
       childrenCount: null,
       adultsCount: null,

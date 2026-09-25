@@ -59,6 +59,27 @@ describe('loginEffect', () => {
     expect(authService.login).toHaveBeenCalledWith('user@example.com', 'secret');
   });
 
+  it('uses the submitted email when the response does not provide one', async () => {
+    authService.login.mockReturnValue(of({
+      user: { id: 'user-123', email: '', group: 'admin' },
+      group: 'admin',
+      requiredPasswordReset: false,
+    }));
+    const effect$ = TestBed.runInInjectionContext(() => loginEffect());
+    const result = firstValueFrom(effect$);
+
+    actions$.next(AuthActions.login({ email: 'user@example.com', password: 'secret' }));
+
+    await expect(result).resolves.toEqual(
+      AuthActions.loginSuccess({
+        userId: 'user-123',
+        group: 'admin',
+        requiredPasswordReset: false,
+        email: 'user@example.com',
+      }),
+    );
+  });
+
   it('maps a structured backend error to a failure action', async () => {
     authService.login.mockReturnValue(throwError(() => new HttpErrorResponse({
       status: 401,
@@ -156,10 +177,11 @@ describe('loginEffect', () => {
     const clearResult = TestBed.runInInjectionContext(() => clearPersistedAuthEffect());
 
     const loginSubscription = persistResult.subscribe();
-    actions$.next(AuthActions.loginSuccess({ userId: 'user-1', group: 'admin', requiredPasswordReset: false }));
+    actions$.next(AuthActions.loginSuccess({ userId: 'user-1', email: 'admin@example.com', group: 'admin', requiredPasswordReset: false }));
     expect(JSON.parse(localStorage.getItem('gaerngschee.auth') ?? '{}')).toEqual({
       userId: 'user-1',
       group: 'admin',
+      email: 'admin@example.com',
       fairgateUserExists: null,
       childrenCount: null,
       adultsCount: null,
@@ -179,11 +201,11 @@ describe('loginEffect', () => {
     const subscription = effect$.subscribe();
 
     actions$.next(AuthActions.registrationLoginSuccess({
-      userId: 'client-1', group: 'client', fairgateUserExists: true,
+      userId: 'client-1', email: 'client@example.com', group: 'client', fairgateUserExists: true,
       childrenCount: 1, adultsCount: 2, salutation: 'Hallo',
     }));
 
-    expect(JSON.parse(localStorage.getItem('gaerngschee.auth') ?? '{}')).toEqual({ userId: 'client-1', group: 'client', fairgateUserExists: true, childrenCount: 1, adultsCount: 2, salutation: 'Hallo' });
+    expect(JSON.parse(localStorage.getItem('gaerngschee.auth') ?? '{}')).toEqual({ userId: 'client-1', email: 'client@example.com', group: 'client', fairgateUserExists: true, childrenCount: 1, adultsCount: 2, salutation: 'Hallo' });
     subscription.unsubscribe();
   });
 

@@ -114,6 +114,18 @@ final class TestDatabase
                 PRIMARY KEY (key_hash, bucket_start)
             )',
         );
+        $pdo->exec(
+            'CREATE TABLE external_error_logs (
+                id TEXT PRIMARY KEY,
+                source TEXT NOT NULL,
+                operation TEXT NOT NULL,
+                message TEXT NOT NULL,
+                details TEXT NULL,
+                http_status INTEGER NULL,
+                order_id TEXT NULL,
+                created_at TEXT
+            )',
+        );
 
         return $pdo;
     }

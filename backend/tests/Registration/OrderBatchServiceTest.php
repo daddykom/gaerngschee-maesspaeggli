@@ -10,6 +10,7 @@ use App\Registration\Data\OrderEmailQueueRepository;
 use App\Registration\Data\OrderRepository;
 use App\Registration\Data\RegistrationTokenRepository;
 use App\Registration\Services\OrderBatchService;
+use App\Shared\Logging\ExternalErrorLogRepository;
 use App\Users\Data\UserRepository;
 use Tests\Support\RecordingEmailSender;
 use Tests\Support\TestDatabase;
@@ -57,7 +58,7 @@ final class OrderBatchServiceTest extends TestCase
         ], $orders->findForYear($user['id'], 2026)['items']);
     }
 
-    public function testFailedEmailLeavesOrderProvisionalForTheNextBatchRun(): void
+    public function testFailedEmailIsQueuedAndLeavesOrderProvisional(): void
     {
         $pdo = TestDatabase::create();
         $user = (new UserRepository($pdo))->createUser('person+fair1@example.com', 'secret', 'client');
@@ -71,10 +72,10 @@ final class OrderBatchServiceTest extends TestCase
 
         $result = $this->service($pdo, $emails, new FixedFairgateProvider(1, 0))->run();
 
-        self::assertSame(1, $result['failed']);
-        self::assertSame(0, $result['queued']);
+        self::assertSame(0, $result['failed']);
+        self::assertSame(1, $result['queued']);
         self::assertSame('provisional', $orders->findForYear($user['id'], 2026)['status']);
-        self::assertCount(0, (new OrderEmailQueueRepository($pdo))->pending());
+        self::assertCount(1, (new OrderEmailQueueRepository($pdo))->pending());
     }
 
     public function testNextBatchRunRetriesFailedEmail(): void
@@ -95,7 +96,7 @@ final class OrderBatchServiceTest extends TestCase
         $result = $service->run();
 
         self::assertSame(1, $result['sent']);
-        self::assertSame(1, $result['loaded']);
+        self::assertSame(0, $result['loaded']);
         self::assertSame('definitive', $orders->findForYear($user['id'], 2026)['status']);
         self::assertCount(0, (new OrderEmailQueueRepository($pdo))->pending());
     }
@@ -237,6 +238,8 @@ final class OrderBatchServiceTest extends TestCase
             $fairgate,
             $emails,
             new RegistrationTokenRepository($pdo),
+            null,
+            new ExternalErrorLogRepository($pdo),
         );
     }
 
