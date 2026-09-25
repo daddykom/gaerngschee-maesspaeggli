@@ -1,8 +1,17 @@
-import { expect, test } from '@playwright/test';
+import { expect, test } from './support/test';
 import { expectTranslatedText } from './support/assertions';
 
 test.describe('Order route', () => {
+  test.beforeEach(async ({ page }) => {
+    await page.route('http://localhost:8080/auth/session-status', async (route) => {
+      await route.fulfill({ status: 200, contentType: 'application/json', body: JSON.stringify({ expiresAt: '2099-01-01T00:00:00Z', secondsRemaining: 3600 }) });
+    });
+  });
+
   test('shows the order introduction for a client', async ({ page }) => {
+    await page.route('http://localhost:8080/client/order', async (route) => {
+      await route.fulfill({ status: 200, contentType: 'application/json', body: JSON.stringify({ order: null, viaToken: false }) });
+    });
     await page.route('http://localhost:8080/auth/registration-login', async (route) => {
       await route.fulfill({
         status: 200,

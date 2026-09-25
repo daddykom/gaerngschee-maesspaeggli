@@ -1,4 +1,4 @@
-import { expect, test } from '@playwright/test';
+import { expect, test } from './support/test';
 
 test.describe('Imprint route', () => {
   test('renders the static imprint content', async ({ page }) => {

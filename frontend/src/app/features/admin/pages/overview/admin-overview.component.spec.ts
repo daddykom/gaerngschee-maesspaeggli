@@ -88,6 +88,8 @@ describe('AdminOverviewComponent', () => {
             deliverConfirm: 'Ausliefern',
             deliverCancel: 'Abbrechen',
             deliverUnavailable: 'Die Auslieferung ist erst nach dem Ende der Anmeldefrist im Verarbeitungsjahr möglich.',
+            errorTitle: 'Übersicht konnte nicht geladen werden',
+            errors: { REQUEST_FAILED: 'Die Übersicht konnte nicht geladen werden.' },
             legend: {
               title: 'Legende',
               provisional: 'Provisorische Bestellungen, noch nicht bei Fairgate vorhanden',
@@ -156,5 +158,17 @@ describe('AdminOverviewComponent', () => {
     expect(fixture.nativeElement.querySelector('.overview-legend')).toBeTruthy();
     expect(fixture.nativeElement.querySelector('.overview-legend')?.textContent).toContain('Provisorische Bestellungen, noch nicht bei Fairgate vorhanden');
     expect(fixture.nativeElement.querySelectorAll('[data-tooltip]')).toHaveLength(0);
+  });
+
+  it('shows an error message when loading the overview fails', () => {
+    const store = TestBed.inject(MockStore);
+    store.setState({
+      adminOverview: { status: 'error', errorCode: 'REQUEST_FAILED' },
+      frontendConfig: frontendConfigInitialState,
+    });
+    fixture.detectChanges();
+
+    expect(fixture.nativeElement.textContent).toContain('Die Übersicht konnte nicht geladen werden.');
+    expect(fixture.nativeElement.querySelector('button')).toBeNull();
   });
 });

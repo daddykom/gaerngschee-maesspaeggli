@@ -1,4 +1,4 @@
-import { expect, test } from '@playwright/test';
+import { expect, test } from './support/test';
 
 test.describe('Password reset route', () => {
   test('sets a new password with the reset token', async ({ page }) => {

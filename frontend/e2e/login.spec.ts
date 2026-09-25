@@ -1,7 +1,19 @@
-import { expect, test } from '@playwright/test';
+import { expect, test } from './support/test';
 import { expectTranslatedText } from './support/assertions';
 
 test.describe('Login route', () => {
+  test.beforeEach(async ({ page }) => {
+    await page.route('http://localhost:8080/auth/session-status', async (route) => {
+      await route.fulfill({ status: 200, contentType: 'application/json', body: JSON.stringify({ expiresAt: '2099-01-01T00:00:00Z', secondsRemaining: 3600 }) });
+    });
+    await page.route('http://localhost:8080/admin/overview', async (route) => {
+      await route.fulfill({ status: 200, contentType: 'application/json', body: JSON.stringify({ year: 2026, recentDays: 14, orders: {}, categories: [] }) });
+    });
+    await page.route('http://localhost:8080/public/configuration', async (route) => {
+      await route.fulfill({ status: 200, contentType: 'application/json', body: JSON.stringify([]) });
+    });
+  });
+
   test('logs in and navigates to the admin overview', async ({ page }) => {
     await page.route('http://localhost:8080/auth/login', async (route) => {
       await route.fulfill({
@@ -70,6 +82,41 @@ test.describe('Login route', () => {
 
     await expectTranslatedText(page.locator('.info-box'), 'app.auth.loginErrorTitle');
     await expectTranslatedText(page.locator('.info-box'), 'app.auth.errors.INVALID_CREDENTIALS');
+  });
+
+  test('warns before the session expires', async ({ page }) => {
+    await page.route('http://localhost:8080/auth/login', async (route) => {
+      await route.fulfill({
+        status: 200,
+        contentType: 'application/json',
+        body: JSON.stringify({
+          user: { id: '1', email: 'admin@example.com', group: 'admin' },
+          group: 'admin',
+          requiredPasswordReset: false,
+        }),
+      });
+    });
+    await page.route('http://localhost:8080/auth/session-status', async (route) => {
+      await route.fulfill({
+        status: 200,
+        contentType: 'application/json',
+        body: JSON.stringify({
+          expiresAt: new Date(Date.now() + 30_000).toISOString(),
+          secondsRemaining: 30,
+        }),
+      });
+    });
+
+    await page.goto('/login');
+    await page.locator('input[type="email"]').fill('admin@example.com');
+    await page.locator('input[type="password"]').fill('secret');
+    await page.getByRole('button', { name: 'Anmelden' }).click();
+
+    await page.waitForURL('**/admin/overview');
+    await expect(page.getByRole('dialog')).toBeVisible();
+    await expectTranslatedText(page.getByRole('dialog'), 'app.auth.sessionExpiredWarningTitle');
+    await expect(page.getByRole('button', { name: 'Angemeldet bleiben' })).toBeVisible();
+    await expect(page.getByRole('button', { name: 'Abmelden' })).toBeVisible();
   });
 
   test('redirects users with a required password reset', async ({ page }) => {

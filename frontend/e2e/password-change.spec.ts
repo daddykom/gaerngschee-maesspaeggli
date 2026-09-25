@@ -1,4 +1,4 @@
-import { expect, test } from '@playwright/test';
+import { expect, test } from './support/test';
 import { expectTranslatedText } from './support/assertions';
 
 test.describe('Password change route', () => {
@@ -56,6 +56,9 @@ test.describe('Password change route', () => {
 });
 
 async function loginAsUser(page: import('@playwright/test').Page): Promise<void> {
+  await page.route('http://localhost:8080/auth/session-status', async (route) => {
+    await route.fulfill({ status: 200, contentType: 'application/json', body: JSON.stringify({ expiresAt: '2099-01-01T00:00:00Z', secondsRemaining: 3600 }) });
+  });
   await page.route('http://localhost:8080/auth/login', async (route) => {
     await route.fulfill({
       status: 200,
