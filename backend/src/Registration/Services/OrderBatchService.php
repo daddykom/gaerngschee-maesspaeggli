@@ -173,7 +173,21 @@ final class OrderBatchService
     private function sendConfirmation(array $order, string $email, array &$result): void
     {
         $message = $this->emails->renderOrderConfirmation($order, 'definitive');
-        $this->emails->sendStoredEmail($email, $message['subject'], $message['html'], $message['text']);
+        try {
+            $this->emails->sendStoredEmail($email, $message['subject'], $message['html'], $message['text']);
+        } catch (Throwable $exception) {
+            $this->queue->enqueue(
+                $order['id'],
+                'order_confirmation',
+                $email,
+                $message,
+                $exception->getMessage(),
+            );
+            $this->log('Order confirmation failed and queued', $order['id'], $exception);
+            $result['queued']++;
+            return;
+        }
+
         $this->orders->markBatchEmailSent($order['id']);
         $result['sent']++;
     }
