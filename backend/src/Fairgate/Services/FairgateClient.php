@@ -17,7 +17,7 @@ use Psr\Http\Client\ClientInterface;
 
 final class FairgateClient implements FairgateContactProvider, FairgateBatchContactProvider
 {
-    private const CONTACTS_PATH = '/fsa/v1.1/contact/%s/contacts/list';
+    private const CONTACTS_PATH = '/fsa/v1.1/contact/%s/contacts';
     private const CONTACT_DATA_PATH = '/fsa/v2.0/contact/%s/data/%s';
     private const TOKEN_PATH = '/fsa/v1.1/auth/create/%s/token';
 
