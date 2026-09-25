@@ -40,7 +40,7 @@ final class FairgateClientTest extends TestCase
         self::assertTrue($client->hasContactByEmail(' Person@Example.com '));
         self::assertCount(2, $history);
         self::assertSame('/fsa/v1.1/auth/create/org-123/token', $history[0]['request']->getUri()->getPath());
-        self::assertSame('/fsa/v1.1/contact/org-123/contacts/list', $history[1]['request']->getUri()->getPath());
+        self::assertSame('/fsa/v1.1/contact/org-123/contacts', $history[1]['request']->getUri()->getPath());
         self::assertSame('test-token', $history[1]['request']->getHeaderLine('Authorization'));
     }
 
