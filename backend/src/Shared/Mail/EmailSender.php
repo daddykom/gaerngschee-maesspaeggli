@@ -108,7 +108,11 @@ final class EmailSender implements EmailSenderInterface
         try {
             $this->mailer->send($message);
         } catch (TransportExceptionInterface $exception) {
-            throw new EmailDeliveryException('The email could not be sent.', 0, $exception);
+            throw new EmailDeliveryException(
+                'The email could not be sent: ' . $exception->getMessage(),
+                0,
+                $exception,
+            );
         }
     }
 
@@ -140,7 +144,11 @@ final class EmailSender implements EmailSenderInterface
         try {
             $this->mailer->send($message);
         } catch (TransportExceptionInterface $exception) {
-            throw new EmailDeliveryException('The email could not be sent.', 0, $exception);
+            throw new EmailDeliveryException(
+                'The email could not be sent: ' . $exception->getMessage(),
+                0,
+                $exception,
+            );
         }
     }
 
@@ -268,7 +276,11 @@ final class EmailSender implements EmailSenderInterface
         try {
             $this->mailer->send($message);
         } catch (TransportExceptionInterface $exception) {
-            throw new EmailDeliveryException('The email could not be sent.', 0, $exception);
+            throw new EmailDeliveryException(
+                'The email could not be sent: ' . $exception->getMessage(),
+                0,
+                $exception,
+            );
         }
     }
 
