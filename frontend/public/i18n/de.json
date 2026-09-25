@@ -270,6 +270,7 @@
       },
       "overview": {
         "title": "Admin-Übersicht",
+        "loading": "Übersicht wird geladen ...",
         "definitiveTitle": "Definitive Bestellungen",
         "provisionalTitle": "Provisorische Bestellungen",
         "recentProvisionalTitle": "Provisorische Bestellungen in den letzten {{ days }} Tagen",

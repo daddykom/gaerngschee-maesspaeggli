@@ -1,4 +1,10 @@
-@if (overview(); as data) {
+@if (status() === 'initial' || status() === 'loading') {
+  <p role="status" aria-live="polite">{{ 'app.admin.overview.loading' | translate }}</p>
+} @else if (status() === 'error') {
+  <app-info-box variant="error" [title]="'app.admin.overview.errorTitle' | translate">
+    <p>{{ 'app.admin.overview.errors.REQUEST_FAILED' | translate }}</p>
+  </app-info-box>
+} @else if (overview(); as data) {
   <div class="overview-print-header">
     <img src="/android-chrome-512x512.png" [alt]="'app.title' | translate" />
   </div>

@@ -1,4 +1,4 @@
-import { expect, test } from '@playwright/test';
+import { expect, test } from './support/test';
 import { expectTranslatedText } from './support/assertions';
 
 test.describe('Configuration route', () => {

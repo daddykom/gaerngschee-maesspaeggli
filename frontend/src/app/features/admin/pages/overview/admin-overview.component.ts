@@ -4,14 +4,15 @@ import { MatDialog } from '@angular/material/dialog';
 import { Store } from '@ngrx/store';
 import { TranslatePipe } from '@ngx-translate/core';
 import { ConfirmDialogComponent, ConfirmDialogData } from '../../../../shared/components/confirm-dialog/confirm-dialog';
+import { InfoBoxComponent } from '../../../../shared/components/info-box/info-box';
 import { AdminOverviewCategory } from '../../../../shared/models/admin-overview.model';
 import { AdminOverviewActions } from '../../../../store/admin-overview/admin-overview.actions';
-import { selectAdminOverview } from '../../../../store/admin-overview/admin-overview.feature';
+import { selectAdminOverview, selectAdminOverviewStatus } from '../../../../store/admin-overview/admin-overview.feature';
 import { selectFrontendPublicConfigs } from '../../../../store/frontend-config/frontend-config.feature';
 
 @Component({
   selector: 'app-admin-overview',
-  imports: [MatButtonModule, TranslatePipe],
+  imports: [MatButtonModule, TranslatePipe, InfoBoxComponent],
   templateUrl: './admin-overview.component.html',
   styleUrl: './admin-overview.component.scss',
 })
@@ -20,6 +21,7 @@ export class AdminOverviewComponent {
   private readonly dialog = inject(MatDialog);
 
   readonly overview = this.store.selectSignal(selectAdminOverview);
+  readonly status = this.store.selectSignal(selectAdminOverviewStatus);
   readonly publicConfigs = this.store.selectSignal(selectFrontendPublicConfigs);
   readonly printDate = new Intl.DateTimeFormat('de-CH', { dateStyle: 'long' }).format(new Date());
   readonly canDeliver = computed(() => {
