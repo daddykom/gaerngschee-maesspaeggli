@@ -6,6 +6,7 @@ namespace App\Fairgate\Services;
 
 use GuzzleHttp\Client;
 use GuzzleHttp\Exception\GuzzleException;
+use App\Shared\Logging\ExternalErrorLogger;
 use Lcobucci\JWT\Encoding\JoseEncoder;
 use Lcobucci\JWT\Signer\Ecdsa\Sha512;
 use Lcobucci\JWT\Signer\Key\InMemory;
@@ -133,10 +134,11 @@ final class FairgateClient implements FairgateContactProvider, FairgateBatchCont
                 'headers' => $this->headers(),
             ]);
         } catch (GuzzleException $exception) {
+            ExternalErrorLogger::log('fairgate', 'contact_data', $exception->getMessage());
             throw new FairgateException('FSA contact data request failed.', 0, $exception);
         }
 
-        return $this->decodeResponse($response->getStatusCode(), (string) $response->getBody());
+        return $this->decodeResponse('contact_data', $response->getStatusCode(), (string) $response->getBody());
     }
 
     /** @return array<string, mixed> */
@@ -153,10 +155,11 @@ final class FairgateClient implements FairgateContactProvider, FairgateBatchCont
                 'query' => $query,
             ]);
         } catch (GuzzleException $exception) {
+            ExternalErrorLogger::log('fairgate', 'contact_lookup', $exception->getMessage());
             throw new FairgateException('FSA contact request failed.', 0, $exception);
         }
 
-        return $this->decodeResponse($response->getStatusCode(), (string) $response->getBody());
+        return $this->decodeResponse('contact_lookup', $response->getStatusCode(), (string) $response->getBody());
     }
 
     private function client(): ClientInterface
@@ -194,12 +197,20 @@ final class FairgateClient implements FairgateContactProvider, FairgateBatchCont
                 'json' => ['access_key' => $this->accessKey()],
             ]);
         } catch (GuzzleException $exception) {
+            ExternalErrorLogger::log('fairgate', 'authentication', $exception->getMessage());
             throw new FairgateException('FSA authentication request failed.', 0, $exception);
         }
 
-        $data = $this->decodeResponse($response->getStatusCode(), (string) $response->getBody());
+        $data = $this->decodeResponse('authentication', $response->getStatusCode(), (string) $response->getBody());
         $token = $data['data']['token'] ?? null;
         if (!is_string($token) || $token === '' || !($this->tokenValidator)($token)) {
+            $details = json_encode($data);
+            ExternalErrorLogger::log(
+                'fairgate',
+                'authentication',
+                'FSA authentication returned an invalid token.',
+                $details === false ? null : $details,
+            );
             throw new FairgateException('FSA authentication returned an invalid token.');
         }
 
@@ -207,19 +218,23 @@ final class FairgateClient implements FairgateContactProvider, FairgateBatchCont
     }
 
     /** @return array<string, mixed> */
-    private function decodeResponse(int $statusCode, string $body): array
+    private function decodeResponse(string $operation, int $statusCode, string $body): array
     {
         if ($statusCode < 200 || $statusCode >= 300) {
-            throw new FairgateException(sprintf('FSA returned HTTP status %d.', $statusCode));
+            $message = sprintf('FSA returned HTTP status %d.', $statusCode);
+            ExternalErrorLogger::log('fairgate', $operation, $message, $body, $statusCode);
+            throw new FairgateException($message);
         }
 
         try {
             $data = json_decode($body, true, 512, JSON_THROW_ON_ERROR);
         } catch (\JsonException $exception) {
+            ExternalErrorLogger::log('fairgate', $operation, $exception->getMessage(), $body, $statusCode);
             throw new FairgateException('FSA returned invalid JSON.', 0, $exception);
         }
 
         if (!is_array($data) || ($data['success'] ?? true) === false) {
+            ExternalErrorLogger::log('fairgate', $operation, 'FSA returned an unsuccessful response.', $body, $statusCode);
             throw new FairgateException('FSA returned an unsuccessful response.');
         }
 

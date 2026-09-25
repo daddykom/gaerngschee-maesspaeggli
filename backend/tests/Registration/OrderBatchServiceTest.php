@@ -10,6 +10,7 @@ use App\Registration\Data\OrderEmailQueueRepository;
 use App\Registration\Data\OrderRepository;
 use App\Registration\Data\RegistrationTokenRepository;
 use App\Registration\Services\OrderBatchService;
+use App\Shared\Logging\ExternalErrorLogRepository;
 use App\Users\Data\UserRepository;
 use Tests\Support\RecordingEmailSender;
 use Tests\Support\TestDatabase;
@@ -237,6 +238,8 @@ final class OrderBatchServiceTest extends TestCase
             $fairgate,
             $emails,
             new RegistrationTokenRepository($pdo),
+            null,
+            new ExternalErrorLogRepository($pdo),
         );
     }
 
