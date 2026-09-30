@@ -126,6 +126,12 @@ final class TestDatabase
                 created_at TEXT
             )',
         );
+        $pdo->exec(
+            'CREATE TABLE events (
+                "key" TEXT PRIMARY KEY,
+                value INTEGER NOT NULL DEFAULT 0
+            )',
+        );
 
         return $pdo;
     }
