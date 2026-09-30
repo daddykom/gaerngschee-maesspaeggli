@@ -259,7 +259,8 @@ Die Fairgate-Abfrage liefert die erweiterten Kontaktdaten in folgender Struktur:
       "name_und_vorname_kind2": "Jonny Doe",
       "name_und_vorname_kind3": "",
       "geburtsdatum_kind1": "2019-03-28T00:00:00Z",
-      "geburtsdatum_kind2": null
+      "geburtsdatum_kind2": null,
+      "gultig_bis": "2026-12-31T00:00:00Z"
     }
   }
 }

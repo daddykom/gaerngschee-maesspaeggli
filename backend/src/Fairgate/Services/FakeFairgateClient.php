@@ -24,7 +24,7 @@ final class FakeFairgateClient implements FairgateContactProvider
         ];
     }
 
-    /** @return array<string, string>|null */
+    /** @return array<string, mixed>|null */
     private function profileForEmail(string $email): ?array
     {
         $email = strtolower(trim($email));
@@ -44,6 +44,10 @@ final class FakeFairgateClient implements FairgateContactProvider
             'fair2' => ['wohnt_im_gleichen_haushalt' => 'Nein', 'children' => 2],
             'fair3' => ['wohnt_im_gleichen_haushalt' => 'Ja', 'children' => 0],
             'fair4' => ['wohnt_im_gleichen_haushalt' => 'Ja', 'children' => 7],
+            'expired' => ['wohnt_im_gleichen_haushalt' => 'Nein', 'children' => 1, 'validUntil' => '2025-12-31'],
+            'invalid-date' => ['wohnt_im_gleichen_haushalt' => 'Nein', 'children' => 1, 'validUntil' => 'not-a-date'],
+            'adult-child' => ['wohnt_im_gleichen_haushalt' => 'Nein', 'children' => 1, 'birthDates' => ['2008-12-31']],
+            'partial-child' => ['wohnt_im_gleichen_haushalt' => 'Nein', 'children' => 2, 'birthDates' => ['2010-01-01', null]],
         ];
 
         foreach ($profiles as $fairMarker => $profile) {
@@ -57,8 +61,14 @@ final class FakeFairgateClient implements FairgateContactProvider
                     'correspondence_lang' => 'de',
                     'wohnt_im_gleichen_haushalt' => $profile['wohnt_im_gleichen_haushalt'],
                 ];
+                if (isset($profile['validUntil'])) {
+                    $data['gultig_bis'] = $profile['validUntil'];
+                }
                 for ($index = 1; $index <= $profile['children']; $index++) {
                     $data['name_und_vorname_kind' . $index] = 'Kind ' . $index;
+                    $data['geburtsdatum_kind' . $index] = array_key_exists($index - 1, $profile['birthDates'] ?? [])
+                        ? $profile['birthDates'][$index - 1]
+                        : '2010-01-01';
                 }
 
                 return $data;

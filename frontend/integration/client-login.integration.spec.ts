@@ -30,4 +30,32 @@ test.describe('Integration client login', () => {
     await expect(page).toHaveURL(/\/start$/);
     await expect(page.locator('.info-box--error')).toContainText('Der Anmeldelink ist ungültig oder abgelaufen. Bitte fordere auf der Startseite einen neuen Link an.');
   });
+
+  test('counts only eligible children from Fairgate data', async ({ page }) => {
+    const email = `summary+partial-child-${Date.now()}@example.com`;
+    const token = issueRegistrationToken(email);
+
+    const response = await page.request.post('http://localhost:8082/auth/registration-login', {
+      data: { token },
+    });
+    expect(response.status()).toBe(200);
+
+    const data = await response.json();
+    expect(data.fairgateUserExists).toBe(true);
+    expect(data.childrenCount).toBe(1);
+  });
+
+  test('rejects an invalid Fairgate validity date', async ({ page }) => {
+    const email = `invalid+invalid-date-${Date.now()}@example.com`;
+    const token = issueRegistrationToken(email);
+
+    const response = await page.request.post('http://localhost:8082/auth/registration-login', {
+      data: { token },
+    });
+    expect(response.status()).toBe(200);
+
+    const data = await response.json();
+    expect(data.fairgateUserExists).toBe(false);
+    expect(data.childrenCount).toBe(0);
+  });
 });
