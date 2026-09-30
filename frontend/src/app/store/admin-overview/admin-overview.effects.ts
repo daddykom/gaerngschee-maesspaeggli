@@ -1,10 +1,11 @@
 import { HttpErrorResponse } from '@angular/common/http';
 import { inject } from '@angular/core';
 import { Actions, createEffect, ofType } from '@ngrx/effects';
-import { catchError, exhaustMap, map, of } from 'rxjs';
+import { catchError, exhaustMap, filter, map, of, switchMap } from 'rxjs';
 import { AdminOverviewService } from '../../shared/services/admin-overview.service';
 import { NotificationActions } from '../notification/notification.actions';
 import { AdminOverviewActions } from './admin-overview.actions';
+import { EventActions } from '../events/events.actions';
 
 const errorCode = (error: HttpErrorResponse): string =>
   typeof error.error?.error?.code === 'string' ? error.error.error.code : 'REQUEST_FAILED';
@@ -12,10 +13,19 @@ const errorCode = (error: HttpErrorResponse): string =>
 export const loadAdminOverviewEffect = createEffect(
   (actions$ = inject(Actions), service = inject(AdminOverviewService)) => actions$.pipe(
     ofType(AdminOverviewActions.load),
-    exhaustMap(() => service.get().pipe(
+    switchMap(() => service.get().pipe(
       map((overview) => AdminOverviewActions.loadSuccess({ overview })),
       catchError((error: HttpErrorResponse) => of(AdminOverviewActions.loadFailure({ errorCode: errorCode(error) }))),
     )),
+  ),
+  { functional: true },
+);
+
+export const reloadAdminOverviewAfterOrderStatusChangeEffect = createEffect(
+  (actions$ = inject(Actions)) => actions$.pipe(
+    ofType(EventActions.received),
+    filter(({ key }) => key === 'order-status-change'),
+    map(() => AdminOverviewActions.load()),
   ),
   { functional: true },
 );
@@ -79,4 +89,5 @@ export const adminOverviewEffects = {
   deliverAdminOverviewEffect,
   deliverAdminOverviewNotificationEffect,
   reloadAdminOverviewAfterDeliveryEffect,
+  reloadAdminOverviewAfterOrderStatusChangeEffect,
 };

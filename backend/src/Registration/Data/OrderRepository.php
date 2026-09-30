@@ -4,11 +4,15 @@ declare(strict_types=1);
 
 namespace App\Registration\Data;
 
+use App\Shared\Events\EventRepository;
 use PDO;
 
 final class OrderRepository
 {
-    public function __construct(private readonly PDO $pdo)
+    public function __construct(
+        private readonly PDO $pdo,
+        private readonly ?EventRepository $events = null,
+    )
     {
     }
 
@@ -165,13 +169,22 @@ final class OrderRepository
 
     public function markDefinitiveForDelivery(int $year): int
     {
-        $statement = $this->pdo->prepare(
-            "UPDATE orders SET status = 'toDeliver', updated_at = CURRENT_TIMESTAMP
-             WHERE year = :year AND status = 'definitive'",
-        );
-        $statement->execute(['year' => $year]);
+        $this->pdo->beginTransaction();
+        try {
+            $statement = $this->pdo->prepare(
+                "UPDATE orders SET status = 'toDeliver', updated_at = CURRENT_TIMESTAMP
+                 WHERE year = :year AND status = 'definitive'",
+            );
+            $statement->execute(['year' => $year]);
+            $changed = $statement->rowCount();
+            $this->recordStatusChanges($changed);
+            $this->pdo->commit();
 
-        return $statement->rowCount();
+            return $changed;
+        } catch (\Throwable $exception) {
+            $this->pdo->rollBack();
+            throw $exception;
+        }
     }
 
     /** @return list<array{order: array<string, mixed>, email: string}> */
@@ -207,11 +220,19 @@ final class OrderRepository
 
     public function markQrCodeSent(string $orderId): void
     {
+        $this->pdo->beginTransaction();
+        try {
         $statement = $this->pdo->prepare(
             "UPDATE orders SET status = 'qrcode', updated_at = CURRENT_TIMESTAMP
              WHERE id = :id AND status = 'toDeliver'",
         );
         $statement->execute(['id' => $orderId]);
+            $this->recordStatusChanges($statement->rowCount());
+            $this->pdo->commit();
+        } catch (\Throwable $exception) {
+            $this->pdo->rollBack();
+            throw $exception;
+        }
     }
 
     /** @return array<string, mixed>|null */
@@ -251,24 +272,42 @@ final class OrderRepository
 
     public function markDelivered(string $orderId): bool
     {
+        $this->pdo->beginTransaction();
+        try {
         $statement = $this->pdo->prepare(
             "UPDATE orders SET status = 'delivered', updated_at = CURRENT_TIMESTAMP
              WHERE id = :id AND status = 'qrcode'",
         );
         $statement->execute(['id' => $orderId]);
+            $changed = $statement->rowCount() === 1;
+            $this->recordStatusChanges($changed ? 1 : 0);
+            $this->pdo->commit();
 
-        return $statement->rowCount() === 1;
+            return $changed;
+        } catch (\Throwable $exception) {
+            $this->pdo->rollBack();
+            throw $exception;
+        }
     }
 
     public function undoDelivery(string $orderId): bool
     {
+        $this->pdo->beginTransaction();
+        try {
         $statement = $this->pdo->prepare(
             "UPDATE orders SET status = 'qrcode', updated_at = CURRENT_TIMESTAMP
              WHERE id = :id AND status = 'delivered'",
         );
         $statement->execute(['id' => $orderId]);
+            $changed = $statement->rowCount() === 1;
+            $this->recordStatusChanges($changed ? 1 : 0);
+            $this->pdo->commit();
 
-        return $statement->rowCount() === 1;
+            return $changed;
+        } catch (\Throwable $exception) {
+            $this->pdo->rollBack();
+            throw $exception;
+        }
     }
 
     /** @param list<array{personType: string, category: string, quantity: int}> $items */
@@ -313,11 +352,19 @@ final class OrderRepository
 
     public function markBatchEmailSent(string $orderId): void
     {
+        $this->pdo->beginTransaction();
+        try {
         $statement = $this->pdo->prepare(
             "UPDATE orders SET status = 'definitive', confirmation_email_sent_at = CURRENT_TIMESTAMP,
-                updated_at = CURRENT_TIMESTAMP WHERE id = :id",
+             updated_at = CURRENT_TIMESTAMP WHERE id = :id AND status = 'provisional'",
         );
         $statement->execute(['id' => $orderId]);
+            $this->recordStatusChanges($statement->rowCount());
+            $this->pdo->commit();
+        } catch (\Throwable $exception) {
+            $this->pdo->rollBack();
+            throw $exception;
+        }
     }
 
     public function markFairgateReminderSent(string $orderId): void
@@ -365,6 +412,9 @@ final class OrderRepository
                     'adults_count' => $adultsCount,
                     'children_count' => $childrenCount,
                 ]);
+                if ((string) $existing['status'] !== $status) {
+                    $this->recordStatusChanges(1);
+                }
                 $delete = $this->pdo->prepare('DELETE FROM order_items WHERE order_id = :order_id');
                 $delete->execute(['order_id' => $orderId]);
             } else {
@@ -381,6 +431,7 @@ final class OrderRepository
                     'adults_count' => $adultsCount,
                     'children_count' => $childrenCount,
                 ]);
+                $this->recordStatusChanges(1);
             }
 
             $insertItem = $this->pdo->prepare(
@@ -404,6 +455,13 @@ final class OrderRepository
         }
 
         return $this->findForYear($userId, $year) ?? throw new \RuntimeException('Order was not saved.');
+    }
+
+    private function recordStatusChanges(int $count): void
+    {
+        if ($count > 0) {
+            ($this->events ?? new EventRepository($this->pdo))->increment('order-status-change', $count);
+        }
     }
 
     public function markConfirmationEmailSent(string $orderId): void

@@ -14,6 +14,9 @@ use App\Routes\PublicRoutes;
 use App\Auth\Services\SessionService;
 use App\Shared\Http\RateLimitService;
 use App\Shared\Http\JsonResponse;
+use App\Shared\Http\EventResponseHeaders;
+use App\Shared\Events\EventRepository;
+use App\Shared\Database\Database;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Slim\App;
@@ -37,28 +40,35 @@ final class Application
         $frontendOrigin = rtrim(getenv('FRONTEND_BASE_URL') ?: 'http://localhost:4200', '/');
 
         $app->add(function (ServerRequestInterface $request, $handler) use ($frontendOrigin): ResponseInterface {
+            $addEventHeaders = static function (ResponseInterface $response): ResponseInterface {
+                try {
+                    return EventResponseHeaders::add($response, new EventRepository(Database::getConnection()));
+                } catch (\Throwable) {
+                    return $response;
+                }
+            };
             if ($request->getMethod() === 'OPTIONS') {
                 $response = new Response();
-                return $response
+                return $addEventHeaders($response
                     ->withHeader('Access-Control-Allow-Origin', $frontendOrigin)
                     ->withHeader('Access-Control-Allow-Methods', 'GET, POST, PATCH, PUT, DELETE, OPTIONS')
                     ->withHeader('Access-Control-Allow-Headers', 'Content-Type, Authorization, X-CSRF-Token')
                     ->withHeader('Access-Control-Allow-Credentials', 'true')
-                    ->withStatus(204);
+                    ->withStatus(204));
             }
 
             try {
                 $response = $handler->handle($request);
             } catch (\LengthException) {
-                return JsonResponse::error(new Response(), 'PAYLOAD_TOO_LARGE', 413);
+                return $addEventHeaders(JsonResponse::error(new Response(), 'PAYLOAD_TOO_LARGE', 413));
             }
             if (!$response->hasHeader('Content-Type')) {
                 $response = $response->withHeader('Content-Type', 'application/json');
             }
 
-            return $response
+            return $addEventHeaders($response
                 ->withHeader('Access-Control-Allow-Origin', $frontendOrigin)
-                ->withHeader('Access-Control-Allow-Credentials', 'true');
+                ->withHeader('Access-Control-Allow-Credentials', 'true'));
         });
 
         PublicRoutes::register($app, null, null, null, null, $rateLimitService);

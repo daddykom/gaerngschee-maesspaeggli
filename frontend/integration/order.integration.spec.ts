@@ -24,6 +24,7 @@ test.describe('Integration order', () => {
     });
 
     expect(response.status()).toBe(200);
+    expect(Number(response.headers()['x-event-order-status-change'])).toBeGreaterThan(0);
     const data = await response.json();
     expect(data.order.adultsCount).toBe(2);
     expect(data.order.childrenCount).toBe(3);

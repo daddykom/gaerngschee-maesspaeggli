@@ -13,22 +13,25 @@ import { authEffects } from './store/auth/auth.effects';
 import { authFeature } from './store/auth/auth.feature';
 import { authTokenInterceptor } from './shared/interceptors/auth-token.interceptor';
 import { authSessionInterceptor } from './shared/interceptors/auth-session.interceptor';
+import { eventInterceptor } from './shared/interceptors/event.interceptor';
 import { navigationEffects } from './store/navigation/navigation.effects';
 import { notificationEffects } from './store/notification/notification.effects';
 import { notificationFeature } from './store/notification/notification.feature';
 import { frontendConfigEffects } from './store/frontend-config/frontend-config.effects';
 import { frontendConfigFeature } from './store/frontend-config/frontend-config.feature';
 import { sessionEffects } from './store/auth/session.effects';
+import { eventsFeature } from './store/events/events.feature';
 
 export const appConfig: ApplicationConfig = {
   providers: [
     provideBrowserGlobalErrorListeners(),
-    provideHttpClient(withXhr(), withInterceptors([authTokenInterceptor, authSessionInterceptor])),
+    provideHttpClient(withXhr(), withInterceptors([authTokenInterceptor, authSessionInterceptor, eventInterceptor])),
     provideRouter(appRoutes),
     provideStore(),
     provideState(authFeature),
     provideState(notificationFeature),
     provideState(frontendConfigFeature),
+    provideState(eventsFeature),
     provideEffects(authEffects, frontendConfigEffects, navigationEffects, notificationEffects, sessionEffects),
     provideStoreDevtools(),
     provideAnimations(),
