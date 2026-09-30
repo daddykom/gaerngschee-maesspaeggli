@@ -34,6 +34,7 @@ final class FakeFairgateClientTest extends TestCase
         $fair1 = $client->findContactDataByEmail('person+fair1@example.com')['data'];
         self::assertSame('Ja', $fair1['wohnt_im_gleichen_haushalt']);
         self::assertSame('Kind 3', $fair1['name_und_vorname_kind3']);
+        self::assertSame('2010-01-01', $fair1['geburtsdatum_kind3']);
 
         $fair2 = $client->findContactDataByEmail('person+fair2@example.com')['data'];
         self::assertSame('Nein', $fair2['wohnt_im_gleichen_haushalt']);

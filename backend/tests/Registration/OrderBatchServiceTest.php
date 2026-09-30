@@ -260,6 +260,17 @@ final class OrderBatchServiceTest extends TestCase
             'INSERT INTO frontend_config (id, variable_name, value, access_group, update_group, label)
              VALUES (:id, :name, :value, :access, :update, :label)',
         )->execute([
+            'id' => 'config-campaign-year',
+            'name' => 'campaign_year',
+            'value' => json_encode('2026', JSON_THROW_ON_ERROR),
+            'access' => json_encode(['admin', 'client'], JSON_THROW_ON_ERROR),
+            'update' => json_encode(['admin'], JSON_THROW_ON_ERROR),
+            'label' => 'Campaign Year',
+        ]);
+        $pdo->prepare(
+            'INSERT INTO frontend_config (id, variable_name, value, access_group, update_group, label)
+             VALUES (:id, :name, :value, :access, :update, :label)',
+        )->execute([
             'id' => 'config-retention',
             'name' => 'registration_token_retention_days',
             'value' => json_encode('365', JSON_THROW_ON_ERROR),
@@ -297,6 +308,7 @@ final class FixedFairgateProvider implements FairgateContactProvider
         $data = ['wohnt_im_gleichen_haushalt' => $this->adults === 2 ? 'Ja' : 'Nein'];
         for ($index = 1; $index <= $this->children; $index++) {
             $data['name_und_vorname_kind' . $index] = 'Kind ' . $index;
+            $data['geburtsdatum_kind' . $index] = '2010-01-01';
         }
         return ['success' => true, 'data' => $data];
     }

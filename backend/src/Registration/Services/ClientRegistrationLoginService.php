@@ -4,7 +4,10 @@ declare(strict_types=1);
 
 namespace App\Registration\Services;
 
+use App\Configuration\Data\FrontendConfigRepository;
 use App\Fairgate\Services\FairgateContactProvider;
+use App\Fairgate\Services\FairgateOrderDataEvaluator;
+use App\Registration\Data\OrderRepository;
 use App\Users\Data\UserRepository;
 use DateTimeImmutable;
 use DateTimeZone;
@@ -16,6 +19,9 @@ final class ClientRegistrationLoginService
         private readonly RegistrationTokenService $tokens,
         private readonly UserRepository $users,
         private readonly FairgateContactProvider $fairgate,
+        private readonly ?FrontendConfigRepository $config = null,
+        private readonly ?OrderRepository $orders = null,
+        private readonly ?FairgateOrderDataEvaluator $evaluator = null,
     ) {
     }
 
@@ -38,38 +44,23 @@ final class ClientRegistrationLoginService
 
         $fairgateResponse = $this->fairgate->findContactDataByEmail($email);
         $data = $fairgateResponse['data'] ?? null;
-        $fairgateUserExists = is_array($data);
+        $campaignYear = $this->config?->findCampaignYear() ?? (int) (new DateTimeImmutable('now', new DateTimeZone('UTC')))->format('Y');
+        $order = $this->orders?->findForYear((string) $user['id'], $campaignYear);
+        $orderCreatedAt = is_array($order) && is_string($order['createdAt'] ?? null)
+            ? new DateTimeImmutable($order['createdAt'], new DateTimeZone('UTC'))
+            : new DateTimeImmutable('now', new DateTimeZone('UTC'));
+        $evaluation = is_array($data)
+            ? ($this->evaluator ?? new FairgateOrderDataEvaluator())->evaluate($data, $orderCreatedAt, $campaignYear)
+            : ['valid' => false, 'childrenCount' => 0, 'adultsCount' => 1];
+        $summaryData = $evaluation['valid'] ? $data : null;
 
         return [
             'user' => $user,
-            'fairgateUserExists' => $fairgateUserExists,
-            'childrenCount' => $this->childrenCount($data),
-            'adultsCount' => $this->adultsCount($data),
-            'salutation' => $this->salutation($data),
+            'fairgateUserExists' => $evaluation['valid'],
+            'childrenCount' => $evaluation['valid'] ? $evaluation['childrenCount'] : 0,
+            'adultsCount' => $evaluation['valid'] ? $evaluation['adultsCount'] : 1,
+            'salutation' => $this->salutation($summaryData),
         ];
-    }
-
-    /** @param array<string, mixed>|null $data */
-    private function childrenCount(?array $data): int
-    {
-        if ($data === null) {
-            return 0;
-        }
-
-        $count = 0;
-        for ($index = 1; $index <= 10; $index++) {
-            if (trim((string) ($data['name_und_vorname_kind' . $index] ?? '')) !== '') {
-                $count++;
-            }
-        }
-
-        return $count;
-    }
-
-    /** @param array<string, mixed>|null $data */
-    private function adultsCount(?array $data): int
-    {
-        return ($data['wohnt_im_gleichen_haushalt'] ?? null) === 'Ja' ? 2 : 1;
     }
 
     /** @param array<string, mixed>|null $data */

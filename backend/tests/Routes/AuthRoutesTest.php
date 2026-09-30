@@ -234,6 +234,7 @@ final class AuthRoutesTest extends TestCase
                             'correspondence_lang' => 'de',
                             'wohnt_im_gleichen_haushalt' => 'Ja',
                             'name_und_vorname_kind1' => 'Child',
+                            'geburtsdatum_kind1' => '2010-01-01',
                         ],
                     ];
                 }

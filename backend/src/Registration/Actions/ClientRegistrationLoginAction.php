@@ -5,6 +5,8 @@ declare(strict_types=1);
 namespace App\Registration\Actions;
 
 use App\Auth\Services\SessionService;
+use App\Configuration\Data\FrontendConfigRepository;
+use App\Registration\Data\OrderRepository;
 use App\Registration\Services\ClientRegistrationLoginService;
 use App\Shared\Http\JsonRequest;
 use App\Shared\Http\JsonResponse;
@@ -62,6 +64,8 @@ final class ClientRegistrationLoginAction
             $tokens,
             $users,
             \App\Fairgate\Services\FairgateContactProviderFactory::create(),
+            new FrontendConfigRepository(\App\Shared\Database\Database::getConnection()),
+            new OrderRepository(\App\Shared\Database\Database::getConnection()),
         );
     }
 }

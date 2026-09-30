@@ -7,6 +7,7 @@ namespace App\Registration\Services;
 use App\Configuration\Data\FrontendConfigRepository;
 use App\Fairgate\Services\FairgateContactProvider;
 use App\Fairgate\Services\FairgateBatchContactProvider;
+use App\Fairgate\Services\FairgateOrderDataEvaluator;
 use App\Registration\Data\OrderEmailQueueRepository;
 use App\Registration\Data\OrderCategories;
 use App\Registration\Data\OrderRepository;
@@ -33,6 +34,7 @@ final class OrderBatchService
         private readonly RegistrationTokenRepository $tokens,
         private readonly ?QrCodeGenerator $qrCodes = null,
         private readonly ?ExternalErrorLogRepository $externalErrors = null,
+        private readonly ?FairgateOrderDataEvaluator $evaluator = null,
     ) {
     }
 
@@ -89,8 +91,19 @@ final class OrderBatchService
                     continue;
                 }
 
-                $adults = $this->adultsCount($data);
-                $children = $this->childrenCount($data);
+                $createdAt = new DateTimeImmutable((string) $order['createdAt'], new DateTimeZone('UTC'));
+                $evaluation = ($this->evaluator ?? new FairgateOrderDataEvaluator())->evaluate(
+                    $data,
+                    $createdAt,
+                    $this->config->findCampaignYear(),
+                );
+                if (!$evaluation['valid']) {
+                    $this->processMissingFairgate($order, $entry['email'], $result);
+                    continue;
+                }
+
+                $adults = $evaluation['adultsCount'];
+                $children = $evaluation['childrenCount'];
                 $corrected = $adults !== $order['adultsCount'] || $children !== $order['childrenCount'];
                 if ($corrected) {
                     $items = $this->correctItems($order['items'], $adults, $children);
@@ -225,18 +238,6 @@ final class OrderBatchService
             $this->log('Fairgate reminder failed and queued', $order['id'], $exception);
             $result['queued']++;
         }
-    }
-
-    /** @param array<string, mixed> $data */
-    private function adultsCount(array $data): int
-    {
-        return ($data['wohnt_im_gleichen_haushalt'] ?? null) === 'Ja' ? 2 : 1;
-    }
-
-    /** @param array<string, mixed> $data */
-    private function childrenCount(array $data): int
-    {
-        return count(array_filter(array_map(fn (int $i): string => trim((string) ($data['name_und_vorname_kind' . $i] ?? '')), range(1, 10))));
     }
 
     /** @param list<array{personType: string, category: string, quantity: int}> $items */

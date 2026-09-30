@@ -94,6 +94,8 @@ final class StubFairgateDataProvider implements FairgateContactProvider
                 'wohnt_im_gleichen_haushalt' => 'Ja',
                 'name_und_vorname_kind1' => 'Child One',
                 'name_und_vorname_kind2' => 'Child Two',
+                'geburtsdatum_kind1' => '2010-01-01',
+                'geburtsdatum_kind2' => '2011-01-01',
             ],
         ];
     }
