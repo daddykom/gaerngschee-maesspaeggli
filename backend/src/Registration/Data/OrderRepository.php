@@ -21,7 +21,7 @@ final class OrderRepository
     {
         $statement = $this->pdo->prepare(
             'SELECT id, user_id, year, status, adults_count, children_count,
-                    confirmation_email_sent_at, fairgate_reminder_email_sent_at, delivery_token, created_at, updated_at
+                    fairgate_status, confirmation_email_sent_at, fairgate_reminder_email_sent_at, delivery_token, created_at, updated_at
              FROM orders
              WHERE user_id = :user_id AND year = :year',
         );
@@ -46,6 +46,7 @@ final class OrderRepository
             'status' => $order['status'],
             'adultsCount' => (int) $order['adults_count'],
             'childrenCount' => (int) $order['children_count'],
+            'fairgateStatus' => $order['fairgate_status'],
             'confirmationEmailSentAt' => $order['confirmation_email_sent_at'],
             'fairgateReminderEmailSentAt' => $order['fairgate_reminder_email_sent_at'],
             'deliveryToken' => $order['delivery_token'],
@@ -316,6 +317,7 @@ final class OrderRepository
         int $adultsCount,
         int $childrenCount,
         array $items,
+        ?string $fairgateStatus = null,
     ): void {
         $this->pdo->beginTransaction();
         try {
@@ -384,6 +386,7 @@ final class OrderRepository
         int $adultsCount,
         int $childrenCount,
         array $items,
+        ?string $fairgateStatus = null,
     ): array {
         $this->pdo->beginTransaction();
 
@@ -402,7 +405,7 @@ final class OrderRepository
                 $update = $this->pdo->prepare(
                     'UPDATE orders
                      SET status = :status, adults_count = :adults_count,
-                          children_count = :children_count, updated_at = CURRENT_TIMESTAMP
+                          children_count = :children_count, fairgate_status = :fairgate_status, updated_at = CURRENT_TIMESTAMP
                           , confirmation_email_sent_at = NULL
                      WHERE id = :id',
                 );
@@ -411,6 +414,7 @@ final class OrderRepository
                     'status' => $status,
                     'adults_count' => $adultsCount,
                     'children_count' => $childrenCount,
+                    'fairgate_status' => $fairgateStatus,
                 ]);
                 if ((string) $existing['status'] !== $status) {
                     $this->recordStatusChanges(1);
@@ -420,8 +424,8 @@ final class OrderRepository
             } else {
                 $insert = $this->pdo->prepare(
                     'INSERT INTO orders
-                        (id, user_id, year, status, adults_count, children_count)
-                     VALUES (:id, :user_id, :year, :status, :adults_count, :children_count)',
+                        (id, user_id, year, status, adults_count, children_count, fairgate_status)
+                     VALUES (:id, :user_id, :year, :status, :adults_count, :children_count, :fairgate_status)',
                 );
                 $insert->execute([
                     'id' => $orderId,
@@ -430,6 +434,7 @@ final class OrderRepository
                     'status' => $status,
                     'adults_count' => $adultsCount,
                     'children_count' => $childrenCount,
+                    'fairgate_status' => $fairgateStatus,
                 ]);
                 $this->recordStatusChanges(1);
             }

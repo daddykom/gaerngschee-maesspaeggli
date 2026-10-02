@@ -42,12 +42,18 @@ final class ClientRegistrationLoginAction
         }
 
         $user = $result['user'];
-        ($this->session ?? new SessionService())->setUser($user['id'], 'client', $result['fairgateUserExists']);
+        ($this->session ?? new SessionService())->setUser(
+            $user['id'],
+            'client',
+            $result['fairgateUserExists'],
+            $result['fairgateStatus'],
+        );
 
         return JsonResponse::success($response, [
             'user' => $user,
             'group' => 'client',
             'requiredPasswordReset' => false,
+            'fairgateStatus' => $result['fairgateStatus'],
             'fairgateUserExists' => $result['fairgateUserExists'],
             'childrenCount' => $result['childrenCount'],
             'adultsCount' => $result['adultsCount'],

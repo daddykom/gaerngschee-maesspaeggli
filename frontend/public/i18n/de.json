@@ -95,6 +95,10 @@
         "link": "hier",
         "messageAfterLink": "."
       },
+      "expiredFairgate": {
+        "title": "Dein Bedürftigkeitsausweis ist abgelaufen",
+        "message": "Bitte sende uns einen aktuellen Bedürftigkeitsausweis an "
+      },
       "manualCounts": {
         "title": "Anzahl Personen erfassen",
         "description": "Wie viele Erwachsene und Kinder möchtest du anmelden?",
@@ -428,6 +432,8 @@
             "fairgateTitle": "Fairgate-Prüfung steht noch aus",
             "fairgateText": "Wichtig: Verwende die gleiche E-Mail-Adresse wie bei deiner Anmeldung.\n\nDanach prüfen wir deine Angaben und schicken dir die Bestätigung per E-Mail.",
             "fairgateLink": "Zum Registrierungsformular",
+            "expiredTitle": "Dein Bedürftigkeitsausweis ist abgelaufen",
+            "expiredText": "Bitte sende uns einen aktuellen Bedürftigkeitsausweis an folgende Adresse:",
             "overviewTitle": "Bestellübersicht",
             "year": "Jahr:",
             "adults": "Erwachsene:",
@@ -485,7 +491,9 @@
         "subject": "Bitte schliesse deine Mässpäggli-Anmeldung ab",
         "notFound": "Wir haben dich bei Fairgate noch nicht gefunden.",
         "body": "Bitte registriere dich bei Fairgate.\nWichtig: Verwende die gleiche E-Mail-Adresse wie für deine Mässpäggli-Anmeldung.\n\nDanach prüfen wir deine Anmeldung automatisch.",
-        "button": "Bei Fairgate anmelden"
+        "button": "Bei Fairgate anmelden",
+        "expired": "Dein Bedürftigkeitsausweis bei Fairgate ist abgelaufen.",
+        "expiredBody": "Bitte sende uns einen aktuellen Bedürftigkeitsausweis an folgende Adresse:"
       },
       "registration": {
         "clientOrder": {

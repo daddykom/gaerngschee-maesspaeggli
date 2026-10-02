@@ -32,7 +32,7 @@ interface EmailSenderInterface
     public function renderDeliveryNotification(array $order, string $deliveryUrl, string $qrDataUri): array;
 
     /** @return array{subject: string, html: string, text: string} */
-    public function renderFairgateReminder(string $fairgateUrl): array;
+    public function renderFairgateReminder(string $fairgateUrl, string $status = 'not_found', ?string $documentEmail = null): array;
 
     public function sendStoredEmail(string $recipient, string $subject, string $html, string $text): void;
 }

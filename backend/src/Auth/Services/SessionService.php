@@ -10,6 +10,7 @@ final class SessionService
     private const USER_ID_KEY = 'user_id';
     private const GROUP_KEY = 'group';
     private const FAIRGATE_USER_EXISTS_KEY = 'fairgate_user_exists';
+    private const FAIRGATE_STATUS_KEY = 'fairgate_status';
     private const CSRF_TOKEN_KEY = 'csrf_token';
     private const LAST_ACTIVITY_KEY = 'last_activity';
 
@@ -37,7 +38,7 @@ final class SessionService
         $_SESSION[self::LAST_ACTIVITY_KEY] = time();
     }
 
-    public function setUser(string $userId, string $group, ?bool $fairgateUserExists = null): void
+    public function setUser(string $userId, string $group, ?bool $fairgateUserExists = null, ?string $fairgateStatus = null): void
     {
         $this->ensureSession();
         session_regenerate_id(true);
@@ -48,6 +49,11 @@ final class SessionService
             $_SESSION[self::FAIRGATE_USER_EXISTS_KEY] = $fairgateUserExists;
         } else {
             unset($_SESSION[self::FAIRGATE_USER_EXISTS_KEY]);
+        }
+        if ($fairgateStatus !== null) {
+            $_SESSION[self::FAIRGATE_STATUS_KEY] = $fairgateStatus;
+        } else {
+            unset($_SESSION[self::FAIRGATE_STATUS_KEY]);
         }
     }
 
@@ -84,6 +90,14 @@ final class SessionService
         $value = $_SESSION[self::FAIRGATE_USER_EXISTS_KEY] ?? null;
 
         return is_bool($value) ? $value : null;
+    }
+
+    public function getFairgateStatus(): ?string
+    {
+        $this->ensureSession();
+        $value = $_SESSION[self::FAIRGATE_STATUS_KEY] ?? null;
+
+        return is_string($value) && $value !== '' ? $value : null;
     }
 
     public function getCsrfToken(): string

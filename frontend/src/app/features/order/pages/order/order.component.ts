@@ -29,6 +29,7 @@ import { selectFrontendPublicConfigs } from '../../../../store/frontend-config/f
 import {
   selectAuthAdultsCount,
   selectAuthChildrenCount,
+  selectAuthFairgateStatus,
   selectAuthFairgateUserExists,
   selectAuthSalutation,
 } from '../../../../store/auth/auth.feature';
@@ -55,6 +56,7 @@ export class OrderComponent {
   private readonly store = inject(Store);
 
   readonly fairgateUserExists = this.store.selectSignal(selectAuthFairgateUserExists);
+  readonly fairgateStatus = this.store.selectSignal(selectAuthFairgateStatus);
   readonly childrenCount = this.store.selectSignal(selectAuthChildrenCount);
   readonly adultsCount = this.store.selectSignal(selectAuthAdultsCount);
   readonly salutation = this.store.selectSignal(selectAuthSalutation);
@@ -85,6 +87,10 @@ export class OrderComponent {
   readonly displayChildrenCount = computed(() => this.model().childrenCount);
   readonly fairgateUrl = computed(() => {
     const config = this.publicConfigs().find(({ variableName }) => variableName === 'fairgate_url');
+    return typeof config?.value === 'string' ? config.value : null;
+  });
+  readonly fairgateDocumentEmail = computed(() => {
+    const config = this.publicConfigs().find(({ variableName }) => variableName === 'fairgate_document_email');
     return typeof config?.value === 'string' ? config.value : null;
   });
   readonly orderLocked = computed(() => ['toDeliver', 'qrcode', 'delivered'].includes(this.currentOrder()?.status ?? ''));

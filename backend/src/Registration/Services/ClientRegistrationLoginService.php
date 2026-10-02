@@ -51,11 +51,12 @@ final class ClientRegistrationLoginService
             : new DateTimeImmutable('now', new DateTimeZone('UTC'));
         $evaluation = is_array($data)
             ? ($this->evaluator ?? new FairgateOrderDataEvaluator())->evaluate($data, $orderCreatedAt, $campaignYear)
-            : ['valid' => false, 'childrenCount' => 0, 'adultsCount' => 1];
+            : ['status' => 'not_found', 'valid' => false, 'childrenCount' => 0, 'adultsCount' => 1];
         $summaryData = $evaluation['valid'] ? $data : null;
 
         return [
             'user' => $user,
+            'fairgateStatus' => $evaluation['status'],
             'fairgateUserExists' => $evaluation['valid'],
             'childrenCount' => $evaluation['valid'] ? $evaluation['childrenCount'] : 0,
             'adultsCount' => $evaluation['valid'] ? $evaluation['adultsCount'] : 1,

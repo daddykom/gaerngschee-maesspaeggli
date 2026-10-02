@@ -69,7 +69,10 @@ final class SaveClientOrderAction
         }
 
         $session = $this->session ?? new SessionService();
-        $status = $session->getFairgateUserExists() === true ? 'definitive' : 'provisional';
+        $fairgateStatus = $session->getFairgateStatus();
+        $status = ($fairgateStatus === 'valid' || ($fairgateStatus === null && $session->getFairgateUserExists() === true))
+            ? 'definitive'
+            : 'provisional';
         try {
             $order = ($this->orders ?? new OrderRepository(Database::getConnection()))->saveForYear(
                 $userId,
@@ -78,6 +81,7 @@ final class SaveClientOrderAction
                 $adultsCount,
                 $childrenCount,
                 $items,
+                $fairgateStatus,
             );
         } catch (OrderNotEditableException) {
             return JsonResponse::error($response, 'ORDER_NOT_EDITABLE', 409);
@@ -96,6 +100,11 @@ final class SaveClientOrderAction
                         ->findValueByVariableName('fairgate_url');
                     if (is_string($fairgateUrl)) {
                         $messageOrder['fairgateUrl'] = $fairgateUrl;
+                    }
+                    $fairgateDocumentEmail = ($this->configs ?? new FrontendConfigRepository(Database::getConnection()))
+                        ->findValueByVariableName('fairgate_document_email');
+                    if (is_string($fairgateDocumentEmail)) {
+                        $messageOrder['fairgateDocumentEmail'] = $fairgateDocumentEmail;
                     }
                 }
                 $message = $emails->renderOrderConfirmation($messageOrder, (string) $order['status']);

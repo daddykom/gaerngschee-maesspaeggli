@@ -3,6 +3,7 @@ import { inject, Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 import { environment } from '../../../environments/environment';
 import { UserGroup } from '../models/frontend-config.model';
+import { FairgateStatus } from '../models/fairgate.model';
 
 export interface AuthUser {
   id: string;
@@ -17,6 +18,7 @@ export interface LoginResponse {
 }
 
 export interface RegistrationLoginResponse extends LoginResponse {
+  fairgateStatus?: FairgateStatus;
   fairgateUserExists: boolean;
   childrenCount: number;
   adultsCount: number;
