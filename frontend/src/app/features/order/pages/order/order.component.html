@@ -1,6 +1,15 @@
 <section class="gl-stack gl-stack--section">
   <form class="order-form gl-stack gl-stack--section" (submit)="$event.preventDefault(); onSubmit()">
-    @if (!fairgateUserExists()) {
+    @if (fairgateStatus() === 'expired') {
+      <app-info-box variant="warning" [title]="'app.order.expiredFairgate.title' | translate">
+        <p>
+          {{ 'app.order.expiredFairgate.message' | translate }}
+          @if (fairgateDocumentEmail(); as email) {
+            <a [href]="'mailto:' + email">{{ email }}</a>
+          }
+        </p>
+      </app-info-box>
+    } @else if (!fairgateUserExists()) {
       <app-info-box [title]="'app.order.noFairgate.title' | translate">
         <p>
           {{ 'app.order.noFairgate.messageBeforeLink' | translate }}

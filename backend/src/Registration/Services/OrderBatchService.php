@@ -87,7 +87,7 @@ final class OrderBatchService
             try {
                 $data = $this->contactData($entry['email'], $fairgateContacts);
                 if (!is_array($data)) {
-                    $this->processMissingFairgate($order, $entry['email'], $result);
+                    $this->processMissingFairgate($order, $entry['email'], $result, 'not_found');
                     continue;
                 }
 
@@ -98,7 +98,7 @@ final class OrderBatchService
                     $this->config->findCampaignYear(),
                 );
                 if (!$evaluation['valid']) {
-                    $this->processMissingFairgate($order, $entry['email'], $result);
+                    $this->processMissingFairgate($order, $entry['email'], $result, $evaluation['status']);
                     continue;
                 }
 
@@ -193,6 +193,9 @@ final class OrderBatchService
     /** @param array<string, mixed> $order */
     private function sendConfirmation(array $order, string $email, array &$result): void
     {
+        if (($order['fairgateStatus'] ?? null) === 'expired') {
+            $order['fairgateDocumentEmail'] = $this->documentEmail();
+        }
         $message = $this->emails->renderOrderConfirmation($order, 'definitive');
         try {
             $this->emails->sendStoredEmail($email, $message['subject'], $message['html'], $message['text']);
@@ -214,7 +217,7 @@ final class OrderBatchService
     }
 
     /** @param array<string, mixed> $order */
-    private function processMissingFairgate(array $order, string $email, array &$result): void
+    private function processMissingFairgate(array $order, string $email, array &$result, string $status): void
     {
         $last = $order['fairgateReminderEmailSentAt'] ?? null;
         $reference = is_string($last) && trim($last) !== ''
@@ -228,7 +231,8 @@ final class OrderBatchService
         if (!$due) {
             return;
         }
-        $message = $this->emails->renderFairgateReminder($this->fairgateUrl());
+        $documentEmail = $status === 'expired' ? $this->documentEmail() : null;
+        $message = $this->emails->renderFairgateReminder($this->fairgateUrl(), $status, $documentEmail);
         try {
             $this->emails->sendStoredEmail($email, $message['subject'], $message['html'], $message['text']);
             $this->orders->markFairgateReminderSent($order['id']);
@@ -302,6 +306,15 @@ final class OrderBatchService
         $value = $this->config->findValueByVariableName('fairgate_url');
         if (!is_string($value) || filter_var($value, FILTER_VALIDATE_URL) === false) {
             throw new \RuntimeException('Invalid Fairgate URL configuration.');
+        }
+        return $value;
+    }
+
+    private function documentEmail(): string
+    {
+        $value = $this->config->findValueByVariableName('fairgate_document_email');
+        if (!is_string($value) || filter_var($value, FILTER_VALIDATE_EMAIL) === false) {
+            throw new \RuntimeException('Invalid Fairgate document email configuration.');
         }
         return $value;
     }

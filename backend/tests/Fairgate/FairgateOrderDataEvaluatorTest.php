@@ -27,6 +27,7 @@ final class FairgateOrderDataEvaluatorTest extends TestCase
         );
 
         self::assertTrue($result['valid']);
+        self::assertSame('valid', $result['status']);
     }
 
     public function testValidityDateBeforeOrderDateIsInvalid(): void
@@ -38,6 +39,7 @@ final class FairgateOrderDataEvaluatorTest extends TestCase
         );
 
         self::assertFalse($result['valid']);
+        self::assertSame('expired', $result['status']);
     }
 
     public function testInvalidValidityDateIsInvalid(): void
@@ -49,6 +51,7 @@ final class FairgateOrderDataEvaluatorTest extends TestCase
         );
 
         self::assertFalse($result['valid']);
+        self::assertSame('expired', $result['status']);
     }
 
     public function testChildrenRequireNameBirthDateAndAgeUnderEighteenAtYearEnd(): void

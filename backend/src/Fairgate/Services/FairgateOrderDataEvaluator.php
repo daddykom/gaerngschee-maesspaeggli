@@ -12,27 +12,32 @@ final class FairgateOrderDataEvaluator
     /** @param array<string, mixed> $data */
     public function evaluate(array $data, DateTimeImmutable $orderCreatedAt, int $processingYear): array
     {
+        $status = $this->validityStatus($data, $orderCreatedAt);
+
         return [
-            'valid' => $this->isValid($data, $orderCreatedAt),
+            'status' => $status,
+            'valid' => $status === 'valid',
             'childrenCount' => $this->childrenCount($data, $processingYear),
             'adultsCount' => ($data['wohnt_im_gleichen_haushalt'] ?? null) === 'Ja' ? 2 : 1,
         ];
     }
 
     /** @param array<string, mixed> $data */
-    private function isValid(array $data, DateTimeImmutable $orderCreatedAt): bool
+    private function validityStatus(array $data, DateTimeImmutable $orderCreatedAt): string
     {
         $value = $data['gultig_bis'] ?? null;
         if ($value === null || trim((string) $value) === '') {
-            return true;
+            return 'valid';
         }
 
         $validUntil = $this->parseDate((string) $value);
         if ($validUntil === null) {
-            return false;
+            return 'expired';
         }
 
-        return $validUntil->format('Y-m-d') >= $orderCreatedAt->format('Y-m-d');
+        return $validUntil->format('Y-m-d') >= $orderCreatedAt->format('Y-m-d')
+            ? 'valid'
+            : 'expired';
     }
 
     /** @param array<string, mixed> $data */

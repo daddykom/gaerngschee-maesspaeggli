@@ -1,3 +1,5 @@
+import { FairgateStatus } from './fairgate.model';
+
 export const adultCategories = ['catA', 'catB'] as const;
 export type AdultCategory = (typeof adultCategories)[number];
 
@@ -29,6 +31,7 @@ export interface ClientOrder {
   userId: string;
   year: number;
   status: OrderStatus;
+  fairgateStatus?: FairgateStatus | null;
   adultsCount: number;
   childrenCount: number;
   items: OrderItem[];

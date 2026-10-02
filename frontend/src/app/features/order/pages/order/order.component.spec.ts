@@ -69,6 +69,22 @@ describe('OrderComponent', () => {
     expect(fixture.componentInstance.fairgateUrl()).toBe('http://fairgate.example/login');
   });
 
+  it('shows the document notice for an expired Fairgate document', () => {
+    store.setState({
+      auth: { ...initialState, fairgateUserExists: false, fairgateStatus: 'expired' },
+      frontendConfig: {
+        ...frontendConfigInitialState,
+        publicConfigs: [{ variableName: 'fairgate_document_email', value: 'Info@gaerngschee.ch' }],
+      },
+      order: orderInitialState,
+    });
+    fixture.detectChanges();
+
+    expect(fixture.nativeElement.textContent).toContain('app.order.expiredFairgate.title');
+    expect(fixture.nativeElement.textContent).toContain('Info@gaerngschee.ch');
+    expect(fixture.nativeElement.textContent).not.toContain('app.order.noFairgate.title');
+  });
+
   it('shows only children when the household has children', () => {
     const personGroups = fixture.nativeElement.querySelectorAll('.person-group');
     const labels = fixture.nativeElement.querySelectorAll('mat-label');

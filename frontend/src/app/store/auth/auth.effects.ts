@@ -44,6 +44,7 @@ export const persistLoginEffect = createEffect(
         group,
         email,
         fairgateUserExists: null,
+        fairgateStatus: null,
         childrenCount: null,
         adultsCount: null,
         salutation: null,
@@ -56,12 +57,13 @@ export const persistLoginEffect = createEffect(
 export const persistRegistrationLoginEffect = createEffect(
   (actions$ = inject(Actions)) => actions$.pipe(
     ofType(AuthActions.registrationLoginSuccess),
-    tap(({ userId, email, group, fairgateUserExists, childrenCount, adultsCount, salutation }) => {
+    tap(({ userId, email, group, fairgateStatus, fairgateUserExists, childrenCount, adultsCount, salutation }) => {
       persistAuthState({
         userId,
         email,
         group,
         fairgateUserExists,
+        fairgateStatus,
         childrenCount,
         adultsCount,
         salutation,

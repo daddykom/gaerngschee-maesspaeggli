@@ -183,6 +183,7 @@ describe('loginEffect', () => {
       group: 'admin',
       email: 'admin@example.com',
       fairgateUserExists: null,
+      fairgateStatus: null,
       childrenCount: null,
       adultsCount: null,
       salutation: null,

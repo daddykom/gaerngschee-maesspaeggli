@@ -244,10 +244,12 @@ final class EmailSender implements EmailSenderInterface
     }
 
     /** @return array{subject: string, html: string, text: string} */
-    public function renderFairgateReminder(string $fairgateUrl): array
+    public function renderFairgateReminder(string $fairgateUrl, string $status = 'not_found', ?string $documentEmail = null): array
     {
         $html = $this->twig->render('fairgate-reminder.html.twig', [
             'FAIRGATE_URL' => $fairgateUrl,
+            'FAIRGATE_STATUS' => $status,
+            'DOCUMENT_EMAIL' => $documentEmail,
         ]);
 
         return [

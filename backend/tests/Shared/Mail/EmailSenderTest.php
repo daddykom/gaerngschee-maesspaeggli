@@ -182,6 +182,21 @@ final class EmailSenderTest extends TestCase
         self::assertStringContainsString('Fairgate anmelden', $message['text']);
     }
 
+    public function testRenderExpiredFairgateReminderRequestsTheDocument(): void
+    {
+        $sender = new EmailSender(
+            $this->createMock(MailerInterface::class),
+            'noreply@example.com',
+            'Gärngschee-Mässpäggli',
+        );
+
+        $message = $sender->renderFairgateReminder('https://fairgate.example/login', 'expired', 'Info@gaerngschee.ch');
+
+        self::assertStringContainsString('Bedürftigkeitsausweis', $message['html']);
+        self::assertStringContainsString('Info@gaerngschee.ch', $message['html']);
+        self::assertStringNotContainsString('Fairgate anmelden', $message['text']);
+    }
+
     public function testRenderProvisionalOrderIncludesFairgateLink(): void
     {
         $sender = new EmailSender(

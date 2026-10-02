@@ -22,8 +22,9 @@ export const clientLoginGuard: CanMatchFn = () => {
       store.dispatch(AuthActions.registrationLoginSuccess({
         userId: response.user.id,
         email: response.user.email,
-        group: response.group,
-        fairgateUserExists: response.fairgateUserExists,
+         group: response.group,
+         fairgateStatus: response.fairgateStatus,
+         fairgateUserExists: response.fairgateUserExists,
         childrenCount: response.childrenCount,
         adultsCount: response.adultsCount,
         salutation: response.salutation,

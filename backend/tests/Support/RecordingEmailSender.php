@@ -69,7 +69,7 @@ final class RecordingEmailSender implements EmailSenderInterface
         return ['subject' => 'delivery', 'html' => $qrDataUri . $deliveryUrl, 'text' => $deliveryUrl];
     }
 
-    public function renderFairgateReminder(string $fairgateUrl): array
+    public function renderFairgateReminder(string $fairgateUrl, string $status = 'not_found', ?string $documentEmail = null): array
     {
         return ['subject' => 'Fairgate', 'html' => $fairgateUrl . ' Fairgate', 'text' => $fairgateUrl];
     }

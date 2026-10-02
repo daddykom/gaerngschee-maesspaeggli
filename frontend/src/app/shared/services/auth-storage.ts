@@ -1,4 +1,5 @@
 import { UserGroup } from '../models/frontend-config.model';
+import { FairgateStatus } from '../models/fairgate.model';
 
 const STORAGE_KEY = 'gaerngschee.auth';
 
@@ -7,6 +8,7 @@ export interface PersistedAuthState {
   group: UserGroup;
   email?: string | null;
   fairgateUserExists: boolean | null;
+  fairgateStatus?: FairgateStatus | null;
   childrenCount: number | null;
   adultsCount: number | null;
   salutation: string | null;
@@ -53,6 +55,7 @@ function isValidPersistedState(state: Partial<PersistedAuthState>): state is Per
     && ['admin', 'user', 'client'].includes(state.group ?? '')
     && (state.email === undefined || state.email === null || typeof state.email === 'string')
     && (state.fairgateUserExists === null || typeof state.fairgateUserExists === 'boolean')
+    && (state.fairgateStatus === undefined || state.fairgateStatus === null || ['valid', 'not_found', 'expired'].includes(state.fairgateStatus))
     && (state.childrenCount === null || typeof state.childrenCount === 'number')
     && (state.adultsCount === null || typeof state.adultsCount === 'number')
     && (state.salutation === null || typeof state.salutation === 'string');

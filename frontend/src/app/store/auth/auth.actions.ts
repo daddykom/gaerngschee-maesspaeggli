@@ -1,5 +1,6 @@
 import { createActionGroup, emptyProps, props } from '@ngrx/store';
 import { UserGroup } from '../../shared/models/frontend-config.model';
+import { FairgateStatus } from '../../shared/models/fairgate.model';
 
 export const AuthActions = createActionGroup({
   source: 'Auth',
@@ -11,8 +12,9 @@ export const AuthActions = createActionGroup({
     'Registration Login Success': props<{
       userId: string;
       email: string;
-      group: UserGroup;
-      fairgateUserExists: boolean;
+       group: UserGroup;
+       fairgateStatus?: FairgateStatus;
+       fairgateUserExists: boolean;
       childrenCount: number;
       adultsCount: number;
       salutation: string;
