@@ -100,6 +100,9 @@ final class OrderRepository
                 'year' => $year,
             ]);
             $deleted = $statement->rowCount() === 1;
+            if ($deleted) {
+                $this->recordStatusChanges(1);
+            }
             $this->pdo->commit();
 
             return $deleted;

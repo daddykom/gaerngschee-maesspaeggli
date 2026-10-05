@@ -21,11 +21,6 @@
     @if (deletion.status === 'loading') {
       <p>{{ 'app.admin.users.clientDeletion.loading' | translate }}</p>
     }
-    @if (deletion.status === 'error') {
-      <app-info-box variant="error" [title]="'app.admin.users.clientDeletion.errorTitle' | translate">
-        {{ ('app.admin.users.errors.' + deletion.errorCode) | translate }}
-      </app-info-box>
-    }
     @if (deletion.status === 'loaded') {
       <section class="gl-stack gl-stack--group" aria-labelledby="client-deletion-order-heading">
         <h3 id="client-deletion-order-heading">{{ 'app.admin.users.clientDeletion.orderTitle' | translate }}</h3>

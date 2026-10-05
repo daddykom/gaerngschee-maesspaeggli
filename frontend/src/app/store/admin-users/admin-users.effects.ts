@@ -32,6 +32,14 @@ export const searchClientDeletionEffect = createEffect(
   { functional: true },
 );
 
+export const clearClientDeletionNotificationEffect = createEffect(
+  (actions$ = inject(Actions)) => actions$.pipe(
+    ofType(AdminUsersActions.clientDeletionSearch),
+    map(() => NotificationActions.clear()),
+  ),
+  { functional: true },
+);
+
 export const deleteClientOrderEffect = createEffect(
   (actions$ = inject(Actions), service = inject(AdminUsersService)) => actions$.pipe(
     ofType(AdminUsersActions.clientDeletion),
@@ -109,6 +117,7 @@ export const adminUsersNotificationEffect = createEffect(
       AdminUsersActions.updateFailure,
       AdminUsersActions.deleteFailure,
       AdminUsersActions.sendPasswordResetFailure,
+      AdminUsersActions.clientDeletionSearchFailure,
       AdminUsersActions.clientDeletionSuccess,
       AdminUsersActions.clientDeletionFailure,
     ),
@@ -159,7 +168,14 @@ export const adminUsersNotificationEffect = createEffect(
           variant: 'success',
           titleKey: 'app.admin.users.successTitle',
           messageKey: 'app.admin.users.clientDeletion.deleted',
-          preserveOnRoutes: ['/admin/users'],
+        });
+      }
+
+      if (action.type === AdminUsersActions.clientDeletionSearchFailure.type || action.type === AdminUsersActions.clientDeletionFailure.type) {
+        return NotificationActions.show({
+          variant: 'error',
+          titleKey: 'app.admin.users.clientDeletion.errorTitle',
+          messageKey: `app.admin.users.errors.${action.errorCode}`,
         });
       }
 
@@ -177,6 +193,7 @@ export const adminUsersNotificationEffect = createEffect(
 export const adminUsersEffects = {
   loadAdminUsersEffect,
   searchClientDeletionEffect,
+  clearClientDeletionNotificationEffect,
   deleteClientOrderEffect,
   createAdminUserEffect,
   updateAdminUserEffect,

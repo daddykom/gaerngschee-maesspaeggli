@@ -27,8 +27,15 @@ test.describe('Integration client deletion', () => {
     await expect(page.getByText(email)).toBeVisible();
     await page.getByRole('button', { name: 'Client-Bestellung löschen' }).click();
     await page.getByRole('dialog').getByRole('button', { name: 'Weiter' }).click();
+    let deleteEventValue = 0;
+    page.on('response', async (response) => {
+      if (response.request().method() === 'DELETE' && response.url().includes('/admin/client-deletion/')) {
+        deleteEventValue = Number(response.headers()['x-event-order-status-change'] ?? 0);
+      }
+    });
     await page.getByRole('dialog').getByRole('button', { name: 'Endgültig löschen' }).click();
 
     await expect(page.getByRole('alert')).toBeVisible();
+    await expect.poll(() => deleteEventValue).toBeGreaterThan(0);
   });
 });
