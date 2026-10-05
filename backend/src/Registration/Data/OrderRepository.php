@@ -63,6 +63,52 @@ final class OrderRepository
         ];
     }
 
+    /** @return array<string, mixed>|null */
+    public function findClientOrderByEmail(string $email, int $year): ?array
+    {
+        $statement = $this->pdo->prepare(
+            'SELECT users.id
+             FROM users
+             INNER JOIN orders ON orders.user_id = users.id
+             WHERE LOWER(users.email) = LOWER(:email)
+               AND users.`group` = \'client\'
+               AND orders.year = :year
+             LIMIT 1',
+        );
+        $statement->execute([
+            'email' => trim($email),
+            'year' => $year,
+        ]);
+        $userId = $statement->fetchColumn();
+
+        return is_string($userId) ? $this->findForYear($userId, $year) : null;
+    }
+
+    public function deleteCurrentYearOrder(string $userId, int $year): bool
+    {
+        $this->pdo->beginTransaction();
+
+        try {
+            $statement = $this->pdo->prepare(
+                "DELETE FROM orders
+                 WHERE user_id = :user_id
+                   AND year = :year
+                   AND status IN ('provisional', 'definitive')",
+            );
+            $statement->execute([
+                'user_id' => $userId,
+                'year' => $year,
+            ]);
+            $deleted = $statement->rowCount() === 1;
+            $this->pdo->commit();
+
+            return $deleted;
+        } catch (\Throwable $exception) {
+            $this->pdo->rollBack();
+            throw $exception;
+        }
+    }
+
     public function findStatusForEmailAndYear(string $email, int $year): ?string
     {
         $statement = $this->pdo->prepare(
