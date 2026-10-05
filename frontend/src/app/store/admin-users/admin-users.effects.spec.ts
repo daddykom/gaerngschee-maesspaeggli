@@ -10,6 +10,7 @@ import { NotificationActions } from '../notification/notification.actions';
 import { AdminUsersActions } from './admin-users.actions';
 import {
   adminUsersNotificationEffect,
+  deleteClientOrderEffect,
   createAdminUserEffect,
   deleteAdminUserEffect,
   loadAdminUsersEffect,
@@ -21,11 +22,11 @@ const user = { id: 'user-1', email: 'user@example.com', group: 'user' as const, 
 
 describe('admin users effects', () => {
   let actions$: Subject<Action>;
-  let service: { list: Mock; create: Mock; update: Mock; delete: Mock };
+  let service: { list: Mock; create: Mock; update: Mock; delete: Mock; findClientOrder: Mock; deleteClientOrder: Mock };
 
   beforeEach(() => {
     actions$ = new Subject<Action>();
-    service = { list: vi.fn(), create: vi.fn(), update: vi.fn(), delete: vi.fn() };
+    service = { list: vi.fn(), create: vi.fn(), update: vi.fn(), delete: vi.fn(), findClientOrder: vi.fn(), deleteClientOrder: vi.fn() };
     TestBed.configureTestingModule({ providers: [provideMockActions(() => actions$), { provide: AdminUsersService, useValue: service }] });
   });
 
@@ -64,6 +65,19 @@ describe('admin users effects', () => {
     const fallback = firstValueFrom(TestBed.runInInjectionContext(() => deleteAdminUserEffect()));
     actions$.next(AdminUsersActions.delete({ userId: user.id }));
     await expect(fallback).resolves.toEqual(AdminUsersActions.deleteFailure({ errorCode: 'REQUEST_FAILED' }));
+  });
+
+  it('deletes a client order and maps failures', async () => {
+    service.deleteClientOrder.mockReturnValue(of({ deleted: true, userId: user.id }));
+    const result = firstValueFrom(TestBed.runInInjectionContext(() => deleteClientOrderEffect()));
+    actions$.next(AdminUsersActions.clientDeletion({ userId: user.id }));
+    await expect(result).resolves.toEqual(AdminUsersActions.clientDeletionSuccess({ userId: user.id }));
+    expect(service.deleteClientOrder).toHaveBeenCalledWith(user.id);
+
+    service.deleteClientOrder.mockReturnValue(throwError(() => new Error('failed')));
+    const failure = firstValueFrom(TestBed.runInInjectionContext(() => deleteClientOrderEffect()));
+    actions$.next(AdminUsersActions.clientDeletion({ userId: user.id }));
+    await expect(failure).resolves.toEqual(AdminUsersActions.clientDeletionFailure({ errorCode: 'REQUEST_FAILED' }));
   });
 
   it('navigates after create/update and creates success and failure notifications', async () => {
