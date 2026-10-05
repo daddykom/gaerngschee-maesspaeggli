@@ -58,4 +58,19 @@ final class OrderStatusEventTest extends TestCase
         self::assertSame('definitive', $orders->findForYear($user['id'], 2026)['status']);
         self::assertSame(2, $events->all()['order-status-change']);
     }
+
+    public function testDeletingAnOrderIncrementsTheOrderChangeEvent(): void
+    {
+        $pdo = TestDatabase::create();
+        $events = new EventRepository($pdo);
+        $orders = new OrderRepository($pdo, $events);
+        $user = (new UserRepository($pdo))->createUser('delete-events@example.com', 'secret', 'client');
+
+        $orders->saveForYear($user['id'], 2026, 'provisional', 1, 0, []);
+        self::assertSame(1, $events->all()['order-status-change']);
+
+        self::assertTrue($orders->deleteCurrentYearOrder($user['id'], 2026));
+        self::assertSame(2, $events->all()['order-status-change']);
+        self::assertNull($orders->findForYear($user['id'], 2026));
+    }
 }
