@@ -60,4 +60,17 @@ describe('AdminUsersService', () => {
     expect(request.request.method).toBe('DELETE');
     request.flush({ deleted: true, userId: 'user-1' });
   });
+
+  it('finds and deletes a client order', () => {
+    service.findClientOrder('client@example.com').subscribe();
+    const lookup = httpTesting.expectOne((request) => request.url === 'http://localhost:8080/admin/client-deletion');
+    expect(lookup.request.method).toBe('GET');
+    expect(lookup.request.params.get('email')).toBe('client@example.com');
+    lookup.flush({});
+
+    service.deleteClientOrder('client-1').subscribe();
+    const deletion = httpTesting.expectOne('http://localhost:8080/admin/client-deletion/client-1');
+    expect(deletion.request.method).toBe('DELETE');
+    deletion.flush({ deleted: true, userId: 'client-1' });
+  });
 });

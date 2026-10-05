@@ -53,4 +53,24 @@ describe('adminUsersFeature', () => {
     expect(loading.loading).toBe(false);
     expect(saving.saving).toBe(false);
   });
+
+  it('clears the client order after successful deletion', () => {
+    const loaded = adminUsersFeature.reducer(initialState, AdminUsersActions.clientDeletionSearchSuccess({
+      result: {
+        client: { id: user.id, email: user.email },
+        year: 2026,
+        canDelete: true,
+        order: {
+          id: 'order-1', userId: user.id, year: 2026, status: 'provisional', adultsCount: 1,
+          childrenCount: 0, items: [], fairgateStatus: null, createdAt: null, updatedAt: null,
+        },
+      },
+    }));
+    const deleting = adminUsersFeature.reducer(loaded, AdminUsersActions.clientDeletion({ userId: user.id }));
+    const cleared = adminUsersFeature.reducer(deleting, AdminUsersActions.clientDeletionSuccess({ userId: user.id }));
+
+    expect(deleting.deletingClientOrder).toBe(true);
+    expect(cleared.deletingClientOrder).toBe(false);
+    expect(cleared.clientDeletion).toEqual({ status: 'initial', email: user.email });
+  });
 });

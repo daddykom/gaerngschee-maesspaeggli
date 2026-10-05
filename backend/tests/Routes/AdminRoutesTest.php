@@ -337,6 +337,81 @@ final class AdminRoutesTest extends TestCase
         self::assertSame(404, $response->getStatusCode());
     }
 
+    public function testAdminCanInspectCurrentClientOrderAndDeleteItWhenProvisional(): void
+    {
+        $admin = $this->repository->createUser('admin@example.com', 'secret', 'admin');
+        $client = $this->repository->createUser('client@example.com', 'secret', 'client');
+        $this->insertCampaignYear();
+        $this->insertOrder('current-order', $client['id'], (int) date('Y'), 'provisional', '2026-01-01 10:00:00', 2, 1);
+        (new SessionService())->setUser($admin['id'], 'admin');
+        $app = $this->createApp(null, null, new OrderRepository($this->pdo), new FrontendConfigRepository($this->pdo));
+
+        $lookup = $app->handle(
+            (new ServerRequestFactory())->createServerRequest('GET', '/admin/client-deletion?email=client%40example.com'),
+        );
+        $lookupData = json_decode((string) $lookup->getBody(), true, 512, JSON_THROW_ON_ERROR);
+
+        self::assertSame(200, $lookup->getStatusCode());
+        self::assertTrue($lookupData['canDelete']);
+        self::assertSame('provisional', $lookupData['order']['status']);
+        self::assertSame((int) date('Y'), $lookupData['year']);
+
+        $delete = $app->handle($this->request('DELETE', '/admin/client-deletion/' . $client['id']));
+
+        self::assertSame(200, $delete->getStatusCode());
+        self::assertNull((new OrderRepository($this->pdo))->findForYear($client['id'], (int) date('Y')));
+        self::assertNotNull($this->repository->findById($client['id']));
+    }
+
+    public function testAdminCannotDeleteClientOrderWithDeliveryStatus(): void
+    {
+        $admin = $this->repository->createUser('admin@example.com', 'secret', 'admin');
+        $client = $this->repository->createUser('client@example.com', 'secret', 'client');
+        $this->insertCampaignYear();
+        $this->insertOrder('delivery-order', $client['id'], (int) date('Y'), 'qrcode', '2026-01-01 10:00:00', 1, 0);
+        (new SessionService())->setUser($admin['id'], 'admin');
+        $app = $this->createApp(null, null, new OrderRepository($this->pdo), new FrontendConfigRepository($this->pdo));
+
+        $lookup = $app->handle(
+            (new ServerRequestFactory())->createServerRequest('GET', '/admin/client-deletion?email=client%40example.com'),
+        );
+        $lookupData = json_decode((string) $lookup->getBody(), true, 512, JSON_THROW_ON_ERROR);
+        $delete = $app->handle($this->request('DELETE', '/admin/client-deletion/' . $client['id']));
+
+        self::assertSame(200, $lookup->getStatusCode());
+        self::assertFalse($lookupData['canDelete']);
+        self::assertSame(409, $delete->getStatusCode());
+        self::assertNotNull((new OrderRepository($this->pdo))->findForYear($client['id'], (int) date('Y')));
+    }
+
+    public function testClientDeletionLookupDoesNotReturnAnOlderOrder(): void
+    {
+        $admin = $this->repository->createUser('admin@example.com', 'secret', 'admin');
+        $client = $this->repository->createUser('client@example.com', 'secret', 'client');
+        $this->insertCampaignYear();
+        $this->insertOrder('old-order', $client['id'], (int) date('Y') - 1, 'provisional', '2025-01-01 10:00:00', 1, 0);
+        (new SessionService())->setUser($admin['id'], 'admin');
+        $app = $this->createApp(null, null, new OrderRepository($this->pdo), new FrontendConfigRepository($this->pdo));
+
+        $response = $app->handle(
+            (new ServerRequestFactory())->createServerRequest('GET', '/admin/client-deletion?email=client%40example.com'),
+        );
+
+        self::assertSame(404, $response->getStatusCode());
+    }
+
+    public function testNormalUserCannotUseClientDeletionLookup(): void
+    {
+        $user = $this->repository->createUser('user@example.com', 'secret', 'user');
+        (new SessionService())->setUser($user['id'], 'user');
+
+        $response = $this->createApp()->handle(
+            (new ServerRequestFactory())->createServerRequest('GET', '/admin/client-deletion?email=client%40example.com'),
+        );
+
+        self::assertSame(404, $response->getStatusCode());
+    }
+
     private function createApp(
         ?EmailSenderInterface $emailSender = null,
         ?FairgateTestAction $fairgateTestAction = null,
