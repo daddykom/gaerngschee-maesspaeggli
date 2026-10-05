@@ -10,6 +10,7 @@ import { NotificationActions } from '../notification/notification.actions';
 import { AdminUsersActions } from './admin-users.actions';
 import {
   adminUsersNotificationEffect,
+  clearClientDeletionNotificationEffect,
   deleteClientOrderEffect,
   createAdminUserEffect,
   deleteAdminUserEffect,
@@ -88,5 +89,20 @@ describe('admin users effects', () => {
     const notification = firstValueFrom(TestBed.runInInjectionContext(() => adminUsersNotificationEffect()));
     actions$.next(AdminUsersActions.updateSuccess({ user, emailSentTo: null }));
     await expect(notification).resolves.toEqual(NotificationActions.show({ variant: 'success', titleKey: 'app.admin.users.successTitle', messageKey: 'app.admin.users.updated', params: {}, preserveOnRoutes: ['/admin/users'] }));
+  });
+
+  it('clears the previous notification when a client order search starts', async () => {
+    const clear = firstValueFrom(TestBed.runInInjectionContext(() => clearClientDeletionNotificationEffect()));
+    actions$.next(AdminUsersActions.clientDeletionSearch({ email: 'missing@example.com' }));
+
+    await expect(clear).resolves.toEqual(NotificationActions.clear());
+
+    const failureNotification = firstValueFrom(TestBed.runInInjectionContext(() => adminUsersNotificationEffect()));
+    actions$.next(AdminUsersActions.clientDeletionSearchFailure({ errorCode: 'CLIENT_ORDER_NOT_FOUND' }));
+    await expect(failureNotification).resolves.toEqual(NotificationActions.show({
+      variant: 'error',
+      titleKey: 'app.admin.users.clientDeletion.errorTitle',
+      messageKey: 'app.admin.users.errors.CLIENT_ORDER_NOT_FOUND',
+    }));
   });
 });
