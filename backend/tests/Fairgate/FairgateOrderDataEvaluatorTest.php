@@ -54,14 +54,14 @@ final class FairgateOrderDataEvaluatorTest extends TestCase
         self::assertSame('expired', $result['status']);
     }
 
-    public function testChildrenRequireNameBirthDateAndAgeUnderEighteenAtYearEnd(): void
+    public function testChildrenRequireNameBirthDateAndAgeUnderEighteenAtStartOfYear(): void
     {
         $result = $this->evaluator->evaluate(
             [
                 'name_und_vorname_kind1' => 'Young',
-                'geburtsdatum_kind1' => '2009-01-01',
+                'geburtsdatum_kind1' => '2008-01-02',
                 'name_und_vorname_kind2' => 'Adult',
-                'geburtsdatum_kind2' => '2008-12-31',
+                'geburtsdatum_kind2' => '2008-01-01',
                 'name_und_vorname_kind3' => 'No birth date',
                 'name_und_vorname_kind4' => '',
                 'geburtsdatum_kind4' => '2010-01-01',
