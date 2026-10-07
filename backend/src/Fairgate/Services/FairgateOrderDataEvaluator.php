@@ -43,7 +43,7 @@ final class FairgateOrderDataEvaluator
     /** @param array<string, mixed> $data */
     private function childrenCount(array $data, int $processingYear): int
     {
-        $referenceDate = new DateTimeImmutable($processingYear . '-12-31 23:59:59', new DateTimeZone('UTC'));
+        $referenceDate = new DateTimeImmutable($processingYear . '-01-01 00:00:00', new DateTimeZone('UTC'));
         $count = 0;
 
         for ($index = 1; $index <= 10; $index++) {
