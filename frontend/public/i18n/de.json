@@ -253,6 +253,19 @@
           "REQUEST_FAILED": "Die Anfrage konnte nicht durchgeführt werden."
         }
       },
+      "fairgateLookup": {
+        "title": "Fairgate-Kontaktabfrage",
+        "description": "Zeigt die Fairgate-Daten für die E-Mail-Adresse aus dem URL-Parameter an.",
+        "loading": "Fairgate-Abfrage läuft ...",
+        "missingEmail": "Es wurde keine gültige E-Mail-Adresse als URL-Parameter angegeben.",
+        "errorTitle": "Fairgate-Abfrage fehlgeschlagen",
+        "errors": {
+          "FORBIDDEN": "Du bist für diese Fairgate-Abfrage nicht berechtigt.",
+          "INVALID_EMAIL": "Die E-Mail-Adresse ist ungültig.",
+          "FAIRGATE_LOOKUP_FAILED": "Die Fairgate-Abfrage ist fehlgeschlagen.",
+          "REQUEST_FAILED": "Die Anfrage konnte nicht durchgeführt werden."
+        }
+      },
       "configuration": {
         "title": "Konfiguration",
         "loading": "Konfiguration wird geladen ...",
