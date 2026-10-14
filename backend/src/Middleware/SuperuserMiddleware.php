@@ -22,28 +22,28 @@ final class SuperuserMiddleware
     ): ResponseInterface {
         $userId = $request->getAttribute('user_id');
         if (!is_string($userId) || $userId === '') {
-            return $this->forbidden();
+            return $this->notFound();
         }
 
         if (!($this->users ?? new UserRepository())->isSuperuser($userId)) {
-            return $this->forbidden();
+            return $this->notFound();
         }
 
         return $handler->handle($request);
     }
 
-    private function forbidden(): ResponseInterface
+    private function notFound(): ResponseInterface
     {
         $response = new Response();
         $response->getBody()->write(json_encode([
             'error' => [
-                'code' => 'FORBIDDEN',
+                'code' => 'NOT_FOUND',
                 'details' => [],
             ],
         ], JSON_THROW_ON_ERROR));
 
         return $response
             ->withHeader('Content-Type', 'application/json')
-            ->withStatus(403);
+            ->withStatus(404);
     }
 }

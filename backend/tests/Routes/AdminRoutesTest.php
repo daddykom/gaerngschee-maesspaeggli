@@ -176,7 +176,7 @@ final class AdminRoutesTest extends TestCase
             ),
         );
 
-        self::assertSame(403, $response->getStatusCode());
+        self::assertSame(404, $response->getStatusCode());
         self::assertFalse($lookupCalled);
     }
 

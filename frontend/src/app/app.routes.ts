@@ -19,7 +19,9 @@ import { adminOverviewEffects } from './store/admin-overview/admin-overview.effe
 import { adminUsersEffects } from './store/admin-users/admin-users.effects';
 import { adminUsersFeature } from './store/admin-users/admin-users.feature';
 import { fairgateTestEffects } from './store/fairgate-test/fairgate-test.effects';
+import { fairgateLookupEffects } from './store/fairgate-lookup/fairgate-lookup.effects';
 import { fairgateTestFeature } from './store/fairgate-test/fairgate-test.feature';
+import { fairgateLookupFeature } from './store/fairgate-lookup/fairgate-lookup.feature';
 
 export const appRoutes: Routes = [
   {
@@ -95,10 +97,12 @@ export const appRoutes: Routes = [
           provideState(adminOverviewFeature),
           provideState(adminUsersFeature),
           provideState(fairgateTestFeature),
-          provideEffects(adminOverviewEffects, adminUsersEffects, fairgateTestEffects),
+          provideState(fairgateLookupFeature),
+          provideEffects(adminOverviewEffects, adminUsersEffects, fairgateTestEffects, fairgateLookupEffects),
         ], children: [
           { path: 'overview', resolve: { overview: adminOverviewResolver }, data: { pageTitle: 'app.admin.overview.title' }, loadComponent: () => import('./features/admin/pages/overview/admin-overview.component').then((m) => m.AdminOverviewComponent) },
           { path: 'fairgate-test', canActivate: [groupGuard(['admin'])], data: { pageTitle: 'app.admin.fairgateTest.title' }, loadComponent: () => import('./features/admin/pages/fairgate-test/fairgate-test.component').then((m) => m.FairgateTestComponent) },
+          { path: 'fairgate-lookup', canActivate: [groupGuard(['admin'])], data: { pageTitle: 'app.admin.fairgateLookup.title' }, loadComponent: () => import('./features/admin/pages/fairgate-lookup/fairgate-lookup').then((m) => m.FairgateLookup) },
           { path: 'configuration', resolve: { configuration: configurationResolver }, data: { pageTitle: 'app.admin.configuration.title' }, loadComponent: () => import('./features/admin/pages/configuration/configuration.component').then((m) => m.ConfigurationComponent) },
           { path: 'client-deletion', canActivate: [groupGuard(['admin'])], data: { pageTitle: 'app.admin.users.clientDeletion.title' }, loadComponent: () => import('./features/admin/pages/client-deletion/client-deletion').then((m) => m.ClientDeletion) },
           { path: 'users', children: [
