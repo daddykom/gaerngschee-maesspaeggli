@@ -8,6 +8,7 @@ use App\Users\Data\UserRepository;
 use App\Configuration\Data\FrontendConfigRepository;
 use App\Application;
 use App\Fairgate\Actions\FairgateTestAction;
+use App\Fairgate\Actions\FairgateLookupAction;
 use App\Registration\Data\OrderRepository;
 use App\Routes\AdminRoutes;
 use App\Shared\Mail\EmailSenderInterface;
@@ -129,6 +130,73 @@ final class AdminRoutesTest extends TestCase
 
         self::assertSame(200, $response->getStatusCode());
         self::assertSame('isabelle.joss@gaerngschee.ch', json_decode((string) $response->getBody(), true)['email']);
+    }
+
+    public function testSuperuserCanLookUpFairgateContactByEmail(): void
+    {
+        $admin = $this->repository->createUser('admin@example.com', 'secret', 'admin');
+        $this->pdo->prepare('UPDATE users SET superuser = 1 WHERE id = ?')->execute([$admin['id']]);
+        (new SessionService())->setUser($admin['id'], 'admin');
+        $app = $this->createApp(null, null, null, null, new FairgateLookupAction(static fn (string $email): array => [
+            'success' => true,
+            'data' => ['email' => $email],
+        ]));
+
+        $response = $app->handle(
+            (new ServerRequestFactory())->createServerRequest(
+                'GET',
+                '/admin/fairgate-lookup?email=%20Person%40Example.com%20',
+            ),
+        );
+
+        self::assertSame(200, $response->getStatusCode());
+        self::assertSame([
+            'email' => 'person@example.com',
+            'fairgate' => [
+                'success' => true,
+                'data' => ['email' => 'person@example.com'],
+            ],
+        ], json_decode((string) $response->getBody(), true, 512, JSON_THROW_ON_ERROR));
+    }
+
+    public function testAdminWithoutSuperuserCannotLookUpFairgateContact(): void
+    {
+        $admin = $this->repository->createUser('admin@example.com', 'secret', 'admin');
+        (new SessionService())->setUser($admin['id'], 'admin');
+        $lookupCalled = false;
+        $app = $this->createApp(null, null, null, null, new FairgateLookupAction(static function () use (&$lookupCalled): array {
+            $lookupCalled = true;
+            return [];
+        }));
+
+        $response = $app->handle(
+            (new ServerRequestFactory())->createServerRequest(
+                'GET',
+                '/admin/fairgate-lookup?email=person%40example.com',
+            ),
+        );
+
+        self::assertSame(403, $response->getStatusCode());
+        self::assertFalse($lookupCalled);
+    }
+
+    public function testFairgateLookupRejectsInvalidEmail(): void
+    {
+        $admin = $this->repository->createUser('admin@example.com', 'secret', 'admin');
+        $this->pdo->prepare('UPDATE users SET superuser = 1 WHERE id = ?')->execute([$admin['id']]);
+        (new SessionService())->setUser($admin['id'], 'admin');
+        $lookupCalled = false;
+        $app = $this->createApp(null, null, null, null, new FairgateLookupAction(static function () use (&$lookupCalled): array {
+            $lookupCalled = true;
+            return [];
+        }));
+
+        $response = $app->handle(
+            (new ServerRequestFactory())->createServerRequest('GET', '/admin/fairgate-lookup?email=invalid'),
+        );
+
+        self::assertSame(400, $response->getStatusCode());
+        self::assertFalse($lookupCalled);
     }
 
     public function testAdminOverviewAggregatesOrdersByStatusAndRecentDate(): void
@@ -417,10 +485,11 @@ final class AdminRoutesTest extends TestCase
         ?FairgateTestAction $fairgateTestAction = null,
         ?OrderRepository $orderRepository = null,
         ?FrontendConfigRepository $configRepository = null,
+        ?FairgateLookupAction $fairgateLookupAction = null,
     ): \Slim\App {
         $app = AppFactory::create();
         $app->addRoutingMiddleware();
-        AdminRoutes::register($app, $this->repository, $emailSender, $fairgateTestAction, $orderRepository, $configRepository);
+        AdminRoutes::register($app, $this->repository, $emailSender, $fairgateTestAction, $orderRepository, $configRepository, null, $fairgateLookupAction);
 
         return $app;
     }

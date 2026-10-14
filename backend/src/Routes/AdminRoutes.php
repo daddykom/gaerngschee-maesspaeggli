@@ -6,6 +6,7 @@ namespace App\Routes;
 
 use App\Users\Data\UserRepository;
 use App\Fairgate\Actions\FairgateTestAction;
+use App\Fairgate\Actions\FairgateLookupAction;
 use App\Registration\Actions\GetAdminOverviewAction;
 use App\Registration\Actions\DeliverAdminOrdersAction;
 use App\Registration\Actions\GetClientDeletionOrderAction;
@@ -14,6 +15,7 @@ use App\Registration\Data\OrderRepository;
 use App\Configuration\Data\FrontendConfigRepository;
 use App\Middleware\AuthMiddleware;
 use App\Middleware\GroupMiddleware;
+use App\Middleware\SuperuserMiddleware;
 use App\Shared\Mail\EmailSenderInterface;
 use App\Users\Actions\CreateUserAction;
 use App\Users\Actions\DeleteUserAction;
@@ -36,8 +38,9 @@ final class AdminRoutes
         ?OrderRepository $orderRepository = null,
         ?FrontendConfigRepository $configRepository = null,
         ?RateLimitService $rateLimitService = null,
+        ?FairgateLookupAction $fairgateLookupAction = null,
     ): void {
-        $app->group('/admin', function (RouteCollectorProxy $group) use ($userRepository, $emailSender, $fairgateTestAction, $orderRepository, $configRepository, $rateLimitService): void {
+        $app->group('/admin', function (RouteCollectorProxy $group) use ($userRepository, $emailSender, $fairgateTestAction, $orderRepository, $configRepository, $rateLimitService, $fairgateLookupAction): void {
             $overview = $group->get('/overview', new GetAdminOverviewAction($orderRepository, $configRepository));
             $overview->add(new GroupMiddleware(['admin', 'user'], $userRepository))->add(new AuthMiddleware());
             $deliver = $group->post('/overview/deliver', new DeliverAdminOrdersAction($orderRepository, $configRepository));
@@ -72,6 +75,9 @@ final class AdminRoutes
 
             $fairgateTest = $group->get('/fairgate/test', $fairgateTestAction ?? new FairgateTestAction());
             $fairgateTest->add(new GroupMiddleware(['admin'], $userRepository))->add(new AuthMiddleware());
+
+            $fairgateLookup = $group->get('/fairgate-lookup', $fairgateLookupAction ?? new FairgateLookupAction());
+            $fairgateLookup->add(new SuperuserMiddleware($userRepository))->add(new AuthMiddleware());
         });
     }
 }
