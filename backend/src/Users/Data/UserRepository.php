@@ -49,6 +49,15 @@ final class UserRepository
         return $row ?: null;
     }
 
+    public function isSuperuser(string $id): bool
+    {
+        $stmt = $this->pdo->prepare('SELECT superuser FROM users WHERE id = :id');
+        $stmt->execute(['id' => $id]);
+        $value = $stmt->fetchColumn();
+
+        return $value !== false && (bool) $value;
+    }
+
     public function verifyPassword(string $email, string $password): ?array
     {
         $stmt = $this->pdo->prepare('SELECT * FROM users WHERE email = :email');
