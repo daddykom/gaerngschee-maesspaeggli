@@ -70,10 +70,11 @@ final class OrderRepository
                          orders.adults_count, orders.children_count,
                          orders.fairgate_status, orders.created_at
                   FROM orders
-                  INNER JOIN users ON users.id = orders.user_id';
+                  INNER JOIN users ON users.id = orders.user_id
+                  WHERE orders.status = \'definitive\'';
         $parameters = [];
         if ($year !== null) {
-            $query .= ' WHERE orders.year = :year';
+            $query .= ' AND orders.year = :year';
             $parameters['year'] = $year;
         }
         $query .= ' ORDER BY orders.year, orders.id';
