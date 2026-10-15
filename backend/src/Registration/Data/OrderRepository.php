@@ -63,6 +63,36 @@ final class OrderRepository
         ];
     }
 
+    /** @return list<array{orderId: string, email: string, year: int, status: string, adultsCount: int, childrenCount: int, fairgateStatus: ?string, createdAt: ?string}> */
+    public function findAllForFairgatePersonCountCheck(?int $year = null): array
+    {
+        $query = 'SELECT orders.id, users.email, orders.year, orders.status,
+                         orders.adults_count, orders.children_count,
+                         orders.fairgate_status, orders.created_at
+                  FROM orders
+                  INNER JOIN users ON users.id = orders.user_id';
+        $parameters = [];
+        if ($year !== null) {
+            $query .= ' WHERE orders.year = :year';
+            $parameters['year'] = $year;
+        }
+        $query .= ' ORDER BY orders.year, orders.id';
+
+        $statement = $this->pdo->prepare($query);
+        $statement->execute($parameters);
+
+        return array_map(static fn (array $row): array => [
+            'orderId' => (string) $row['id'],
+            'email' => (string) $row['email'],
+            'year' => (int) $row['year'],
+            'status' => (string) $row['status'],
+            'adultsCount' => (int) $row['adults_count'],
+            'childrenCount' => (int) $row['children_count'],
+            'fairgateStatus' => is_string($row['fairgate_status']) ? $row['fairgate_status'] : null,
+            'createdAt' => is_string($row['created_at']) ? $row['created_at'] : null,
+        ], $statement->fetchAll());
+    }
+
     /** @return array<string, mixed>|null */
     public function findClientOrderByEmail(string $email, int $year): ?array
     {

@@ -28,7 +28,7 @@
         "text": "Möchtest Du ein Mässpäggli für Dich und deine Famile? Starte hier deine Anfrage.",
         "action": "Mässpäggli anfragen",
         "notStarted": "Die nächste Mässpäggli-Aktion beginnt am {{date}}.",
-        "ended": "Die Mässpäggli-Aktion ist bereits beendet.",
+        "ended": "Wegen zu grosser Nachfrage sind leider keine Neuanmeldungen mehr ",
         "unavailable": "Die Mässpäggli-Aktion ist momentan nicht verfügbar."
       }
     },
