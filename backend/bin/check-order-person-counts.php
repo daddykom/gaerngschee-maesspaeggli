@@ -35,10 +35,14 @@ try {
     $fairgate = FairgateContactProviderFactory::create();
     $evaluator = new FairgateOrderDataEvaluator();
     $fairgateNotFoundResponses = 0;
+    $fairgateRateLimitResponses = 0;
     $contacts = null;
     if ($fairgate instanceof FairgateBatchContactProvider) {
         try {
-            $contacts = contactMap($fairgate->findAllContacts());
+            $contacts = contactMap(fairgateRequest(
+                $fairgate->findAllContacts(...),
+                $fairgateRateLimitResponses,
+            ));
         } catch (FairgateException $exception) {
             if (!isFairgateNotFound($exception)) {
                 throw $exception;
@@ -70,9 +74,14 @@ try {
     foreach ($orders as $order) {
         $contactId = $contacts[strtolower(trim($order['email']))] ?? null;
         try {
-            $data = $contactId === null
-                ? ($contacts === null ? ($fairgate->findContactDataByEmail($order['email'])['data'] ?? null) : null)
-                : ($fairgate->findContactDataById($contactId)['data'] ?? null);
+            $response = fairgateRequest(
+                $contactId === null
+                    ? ($contacts === null ? $fairgate->findContactDataByEmail(...) : static fn (): array => ['data' => null])
+                    : $fairgate->findContactDataById(...),
+                $fairgateRateLimitResponses,
+                $contactId === null ? [$order['email']] : [$contactId],
+            );
+            $data = $response['data'] ?? null;
         } catch (FairgateException $exception) {
             if (!isFairgateNotFound($exception)) {
                 throw $exception;
@@ -107,9 +116,10 @@ try {
     fclose($handle);
 
     printf(
-        "Orders checked: %d, Fairgate 404 responses: %d, differences written: %d, output: %s\n",
+        "Orders checked: %d, Fairgate 404 responses: %d, Fairgate 429 responses: %d, differences written: %d, output: %s\n",
         count($orders),
         $fairgateNotFoundResponses,
+        $fairgateRateLimitResponses,
         $differences,
         $output,
     );
@@ -122,6 +132,25 @@ try {
 function isFairgateNotFound(FairgateException $exception): bool
 {
     return str_contains($exception->getMessage(), 'HTTP status 404');
+}
+
+/** @param callable(...mixed): array<string, mixed> $request @param list<string> $arguments */
+function fairgateRequest(callable $request, int &$rateLimitResponses, array $arguments = []): array
+{
+    foreach ([2, 5, 10] as $delay) {
+        try {
+            usleep(250000);
+            return $request(...$arguments);
+        } catch (FairgateException $exception) {
+            if (!str_contains($exception->getMessage(), 'HTTP status 429')) {
+                throw $exception;
+            }
+            $rateLimitResponses++;
+            sleep($delay);
+        }
+    }
+
+    return $request(...$arguments);
 }
 
 /** @param list<array{email: string, contactId: string}> $contacts */
