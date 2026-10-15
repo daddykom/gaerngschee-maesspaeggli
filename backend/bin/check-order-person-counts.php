@@ -5,6 +5,7 @@ declare(strict_types=1);
 use App\Configuration\Environment;
 use App\Fairgate\Services\FairgateBatchContactProvider;
 use App\Fairgate\Services\FairgateContactProviderFactory;
+use App\Fairgate\Services\FairgateException;
 use App\Fairgate\Services\FairgateOrderDataEvaluator;
 use App\Registration\Data\OrderRepository;
 use App\Shared\Database\Database;
@@ -33,9 +34,18 @@ try {
     $orders = (new OrderRepository(Database::getConnection()))->findAllForFairgatePersonCountCheck($year);
     $fairgate = FairgateContactProviderFactory::create();
     $evaluator = new FairgateOrderDataEvaluator();
-    $contacts = $fairgate instanceof FairgateBatchContactProvider
-        ? contactMap($fairgate->findAllContacts())
-        : null;
+    $fairgateNotFoundResponses = 0;
+    $contacts = null;
+    if ($fairgate instanceof FairgateBatchContactProvider) {
+        try {
+            $contacts = contactMap($fairgate->findAllContacts());
+        } catch (FairgateException $exception) {
+            if (!isFairgateNotFound($exception)) {
+                throw $exception;
+            }
+            $fairgateNotFoundResponses++;
+        }
+    }
 
     $handle = fopen($output, 'wb');
     if ($handle === false) {
@@ -59,9 +69,17 @@ try {
     $differences = 0;
     foreach ($orders as $order) {
         $contactId = $contacts[strtolower(trim($order['email']))] ?? null;
-        $data = $contactId === null
-            ? ($contacts === null ? ($fairgate->findContactDataByEmail($order['email'])['data'] ?? null) : null)
-            : ($fairgate->findContactDataById($contactId)['data'] ?? null);
+        try {
+            $data = $contactId === null
+                ? ($contacts === null ? ($fairgate->findContactDataByEmail($order['email'])['data'] ?? null) : null)
+                : ($fairgate->findContactDataById($contactId)['data'] ?? null);
+        } catch (FairgateException $exception) {
+            if (!isFairgateNotFound($exception)) {
+                throw $exception;
+            }
+            $data = null;
+            $fairgateNotFoundResponses++;
+        }
 
         if (!is_array($data)) {
             writeDifference($handle, $order, null, null, 'fairgate_not_found');
@@ -88,11 +106,22 @@ try {
     }
     fclose($handle);
 
-    printf("Orders checked: %d, differences written: %d, output: %s\n", count($orders), $differences, $output);
+    printf(
+        "Orders checked: %d, Fairgate 404 responses: %d, differences written: %d, output: %s\n",
+        count($orders),
+        $fairgateNotFoundResponses,
+        $differences,
+        $output,
+    );
     exit(0);
 } catch (Throwable $exception) {
     fwrite(STDERR, 'Order person count check failed: ' . $exception->getMessage() . PHP_EOL);
     exit(1);
+}
+
+function isFairgateNotFound(FairgateException $exception): bool
+{
+    return str_contains($exception->getMessage(), 'HTTP status 404');
 }
 
 /** @param list<array{email: string, contactId: string}> $contacts */
