@@ -72,6 +72,7 @@ async function loginAsUser(page: import('@playwright/test').Page): Promise<void>
   });
   await page.goto('/login');
   await page.locator('input[type="email"]').fill('user@example.com');
+  await page.getByRole('button', { name: 'Weiter' }).click();
   await page.locator('input[type="password"]').fill('temporary-secret');
   await page.getByRole('button', { name: 'Anmelden' }).click();
   await page.waitForURL('**/password-change');

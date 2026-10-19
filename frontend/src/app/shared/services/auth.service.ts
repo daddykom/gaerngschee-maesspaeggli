@@ -25,6 +25,13 @@ export interface RegistrationLoginResponse extends LoginResponse {
   salutation: string;
 }
 
+export type EmailCheckMode = 'password' | 'email_sent' | 'info';
+
+export interface EmailCheckResponse {
+  mode: EmailCheckMode;
+  processingYear: number;
+}
+
 export interface SessionStatusResponse {
   expiresAt: string;
   secondsRemaining: number;
@@ -47,6 +54,14 @@ export class AuthService {
     return this.http.post<LoginResponse>(
       `${environment.apiUrl}/auth/login`,
       { email, password },
+      { withCredentials: true },
+    );
+  }
+
+  checkEmail(email: string): Observable<EmailCheckResponse> {
+    return this.http.post<EmailCheckResponse>(
+      `${environment.apiUrl}/auth/email-check`,
+      { email },
       { withCredentials: true },
     );
   }

@@ -30,10 +30,11 @@ test.describe('Login route', () => {
       await route.fulfill({ status: 204 });
     });
 
-    await page.goto('/login');
-    await expectTranslatedText(page.locator('h1'), 'app.login.pageTitle');
-    await page.locator('input[type="email"]').fill('admin@example.com');
-    await page.locator('input[type="password"]').fill('secret');
+     await page.goto('/login');
+     await expectTranslatedText(page.locator('h1'), 'app.login.pageTitle');
+     await page.locator('input[type="email"]').fill('admin@example.com');
+     await page.getByRole('button', { name: 'Weiter' }).click();
+     await page.locator('input[type="password"]').fill('secret');
     await page.locator('button[type="submit"]').click();
 
     await page.waitForURL('**/admin/overview');
@@ -74,10 +75,11 @@ test.describe('Login route', () => {
       });
     });
 
-    await page.goto('/login');
-    await expectTranslatedText(page.locator('h1'), 'app.login.pageTitle');
-    await page.locator('input[type="email"]').fill('admin@example.com');
-    await page.locator('input[type="password"]').fill('wrong-password');
+     await page.goto('/login');
+     await expectTranslatedText(page.locator('h1'), 'app.login.pageTitle');
+     await page.locator('input[type="email"]').fill('admin@example.com');
+     await page.getByRole('button', { name: 'Weiter' }).click();
+     await page.locator('input[type="password"]').fill('wrong-password');
     await page.locator('button[type="submit"]').click();
 
     await expectTranslatedText(page.locator('.info-box'), 'app.auth.loginErrorTitle');
@@ -107,9 +109,10 @@ test.describe('Login route', () => {
       });
     });
 
-    await page.goto('/login');
-    await page.locator('input[type="email"]').fill('admin@example.com');
-    await page.locator('input[type="password"]').fill('secret');
+     await page.goto('/login');
+     await page.locator('input[type="email"]').fill('admin@example.com');
+     await page.getByRole('button', { name: 'Weiter' }).click();
+     await page.locator('input[type="password"]').fill('secret');
     await page.getByRole('button', { name: 'Anmelden' }).click();
 
     await page.waitForURL('**/admin/overview');
@@ -132,9 +135,10 @@ test.describe('Login route', () => {
       });
     });
 
-    await page.goto('/login');
-    await page.locator('input[type="email"]').fill('user@example.com');
-    await page.locator('input[type="password"]').fill('temporary-secret');
+     await page.goto('/login');
+     await page.locator('input[type="email"]').fill('user@example.com');
+     await page.getByRole('button', { name: 'Weiter' }).click();
+     await page.locator('input[type="password"]').fill('temporary-secret');
     await page.getByRole('button', { name: 'Anmelden' }).click();
 
     await page.waitForURL('**/password-change');

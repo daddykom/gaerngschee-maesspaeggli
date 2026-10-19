@@ -67,7 +67,9 @@
       "emailLabel": "E-Mail-Adresse",
       "passwordLabel": "Passwort",
       "submit": "Anmelden",
+      "continue": "Weiter",
       "forgotPassword": "Passwort vergessen?",
+      "orderInfo": "Falls du bereits eine Bestellung im Jahr {{ year }} erstellt hast, senden wir dir eine E-Mail mit dem Link, um die Bestellung zu ändern.",
       "errors": {
         "email": {
           "required": "Bitte gib deine E-Mail-Adresse ein.",
@@ -230,7 +232,9 @@
       "loginErrorTitle": "Anmeldung fehlgeschlagen",
       "errors": {
         "INVALID_CREDENTIALS": "E-Mail-Adresse oder Passwort ist ungültig.",
-        "LOGIN_FAILED": "Die Anmeldung konnte nicht durchgeführt werden. Bitte versuche es später erneut."
+        "LOGIN_FAILED": "Die Anmeldung konnte nicht durchgeführt werden. Bitte versuche es später erneut.",
+        "INVALID_EMAIL": "Bitte prüfe deine E-Mail-Adresse.",
+        "REQUEST_FAILED": "Die Anfrage konnte nicht durchgeführt werden. Bitte versuche es später erneut."
       },
       "sessionExpiredTitle": "Sitzung abgelaufen",
       "sessionExpiredMessage": "Deine Sitzung ist abgelaufen. Bitte melde dich erneut an.",

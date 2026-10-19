@@ -1,4 +1,4 @@
-import { Component, inject, OnInit, signal, ChangeDetectionStrategy } from '@angular/core';
+import { Component, computed, inject, OnInit, signal, ChangeDetectionStrategy } from '@angular/core';
 import { email, form, FormField, maxLength, required } from '@angular/forms/signals';
 import { MatButtonModule } from '@angular/material/button';
 import { MatInputModule } from '@angular/material/input';
@@ -6,7 +6,13 @@ import { ActivatedRoute } from '@angular/router';
 import { TranslatePipe } from '@ngx-translate/core';
 import { Store } from '@ngrx/store';
 import { AuthActions } from '../../../../store/auth/auth.actions';
-import { selectAuthLoading } from '../../../../store/auth/auth.feature';
+import {
+  selectAuthEmailCheckEmail,
+  selectAuthEmailCheckLoading,
+  selectAuthEmailCheckMode,
+  selectAuthEmailCheckYear,
+  selectAuthLoading,
+} from '../../../../store/auth/auth.feature';
 import { ControlErrorComponent } from '../../../../shared/components/control-error/control-error';
 import { NavigationActions } from '../../../../store/navigation/navigation.actions';
 import { inputLimits } from '../../../../shared/constants/input-limits';
@@ -29,6 +35,10 @@ export class Login implements OnInit {
   private readonly store = inject(Store);
 
   readonly loading = this.store.selectSignal(selectAuthLoading);
+  readonly emailCheckLoading = this.store.selectSignal(selectAuthEmailCheckLoading);
+  readonly emailCheckMode = this.store.selectSignal(selectAuthEmailCheckMode);
+  readonly emailCheckEmail = this.store.selectSignal(selectAuthEmailCheckEmail);
+  readonly emailCheckYear = this.store.selectSignal(selectAuthEmailCheckYear);
 
   readonly loginModel = signal({ email: '', password: '' });
   readonly loginForm = form(this.loginModel, (schema) => {
@@ -39,6 +49,11 @@ export class Login implements OnInit {
     maxLength(schema.password, inputLimits.password);
   });
 
+  readonly passwordRequired = computed(() => this.emailCheckMode() === 'password'
+    && this.loginModel().email.trim().toLowerCase() === this.emailCheckEmail());
+  readonly showInfo = computed(() => (this.emailCheckMode() === 'info' || this.emailCheckMode() === 'email_sent')
+    && this.loginModel().email.trim().toLowerCase() === this.emailCheckEmail());
+
   ngOnInit(): void {
     const email = this.route.snapshot.queryParamMap.get('email');
     if (email) {
@@ -47,13 +62,22 @@ export class Login implements OnInit {
   }
 
   onSubmit(): void {
-    if (!this.loginForm().valid()) {
+    if (!this.loginForm.email().valid()) {
       this.loginForm.email().markAsTouched();
-      this.loginForm.password().markAsTouched();
       return;
     }
 
     const { email, password } = this.loginModel();
+
+    if (!this.passwordRequired()) {
+      this.store.dispatch(AuthActions.checkEmail({ email }));
+      return;
+    }
+
+    if (!this.loginForm.password().valid()) {
+      this.loginForm.password().markAsTouched();
+      return;
+    }
 
     this.store.dispatch(AuthActions.login({ email, password }));
   }

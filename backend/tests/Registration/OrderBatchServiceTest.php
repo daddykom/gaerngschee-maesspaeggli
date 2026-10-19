@@ -125,6 +125,57 @@ final class OrderBatchServiceTest extends TestCase
         self::assertStringContainsString('Fairgate', $emails->orderConfirmations[0]['order']['html']);
     }
 
+    public function testDoesNotSendFairgateReminderAfterConfiguredEndDate(): void
+    {
+        $pdo = TestDatabase::create();
+        $user = (new UserRepository($pdo))->createUser('person+reminder-end@example.com', 'secret', 'client');
+        $orders = new OrderRepository($pdo);
+        $order = $orders->saveForYear($user['id'], 2026, 'provisional', 1, 0, [
+            ['personType' => 'adult', 'category' => 'catA', 'quantity' => 1],
+        ]);
+        $pdo->prepare('UPDATE orders SET created_at = :created_at WHERE id = :id')->execute([
+            'created_at' => '2000-01-01 00:00:00',
+            'id' => $order['id'],
+        ]);
+        $this->addInterval($pdo);
+        $this->addReminderEndDate($pdo, '2000-01-01');
+        $emails = new RecordingEmailSender();
+
+        $result = $this->service($pdo, $emails, new MissingFairgateProvider())->run();
+
+        self::assertSame(0, $result['sent']);
+        self::assertNull($orders->findForYear($user['id'], 2026)['fairgateReminderEmailSentAt']);
+        self::assertCount(0, $emails->orderConfirmations);
+    }
+
+    public function testRemovesQueuedFairgateReminderAfterConfiguredEndDate(): void
+    {
+        $pdo = TestDatabase::create();
+        $user = (new UserRepository($pdo))->createUser('person+reminder-queue-end@example.com', 'secret', 'client');
+        $orders = new OrderRepository($pdo);
+        $order = $orders->saveForYear($user['id'], 2026, 'provisional', 1, 0, [
+            ['personType' => 'adult', 'category' => 'catA', 'quantity' => 1],
+        ]);
+        $pdo->prepare('UPDATE orders SET created_at = :created_at WHERE id = :id')->execute([
+            'created_at' => '2000-01-01 00:00:00',
+            'id' => $order['id'],
+        ]);
+        $this->addInterval($pdo);
+        $this->addReminderEndDate($pdo, '2999-12-31');
+        $emails = new RecordingEmailSender();
+        $emails->failStoredEmail = true;
+        $service = $this->service($pdo, $emails, new MissingFairgateProvider());
+
+        $service->run();
+        $this->setReminderEndDate($pdo, '2000-01-01');
+        $emails->failStoredEmail = false;
+
+        $result = $service->run();
+
+        self::assertSame(0, $result['sent']);
+        self::assertCount(0, (new OrderEmailQueueRepository($pdo))->pending());
+    }
+
     public function testSendsDeliveryQrCodeAndMarksOrderAsQrCode(): void
     {
         $pdo = TestDatabase::create();
@@ -288,6 +339,31 @@ final class OrderBatchServiceTest extends TestCase
             'access' => json_encode([], JSON_THROW_ON_ERROR),
             'update' => json_encode([], JSON_THROW_ON_ERROR),
             'label' => 'Fairgate URL',
+        ]);
+    }
+
+    private function addReminderEndDate($pdo, string $value): void
+    {
+        $pdo->prepare(
+            'INSERT INTO frontend_config (id, variable_name, value, access_group, update_group, label)
+             VALUES (:id, :name, :value, :access, :update, :label)',
+        )->execute([
+            'id' => 'config-reminder-end-date',
+            'name' => 'fairgate_reminder_end_date',
+            'value' => json_encode($value, JSON_THROW_ON_ERROR),
+            'access' => json_encode(['admin'], JSON_THROW_ON_ERROR),
+            'update' => json_encode(['admin'], JSON_THROW_ON_ERROR),
+            'label' => 'Reminder End Date',
+        ]);
+    }
+
+    private function setReminderEndDate($pdo, string $value): void
+    {
+        $pdo->prepare(
+            'UPDATE frontend_config SET value = :value WHERE variable_name = :name',
+        )->execute([
+            'name' => 'fairgate_reminder_end_date',
+            'value' => json_encode($value, JSON_THROW_ON_ERROR),
         ]);
     }
 }

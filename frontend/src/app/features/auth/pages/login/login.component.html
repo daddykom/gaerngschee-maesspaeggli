@@ -12,6 +12,7 @@
            />
           </mat-form-field>
         </div>
+        @if (passwordRequired()) {
         <div class="auth-field-group">
           <mat-form-field appearance="outline" subscriptSizing="dynamic">
             <mat-label>{{ 'app.login.passwordLabel' | translate }}</mat-label>
@@ -23,6 +24,11 @@
            />
           </mat-form-field>
         </div>
+        }
+        @if (showInfo()) {
+          <p role="status">{{ 'app.login.orderInfo' | translate:{ year: emailCheckYear() } }}</p>
+        }
+        @if (passwordRequired()) {
         <button mat-button
           class="forgot-password-link"
           type="button"
@@ -30,16 +36,17 @@
         >
           {{ 'app.login.forgotPassword' | translate }}
         </button>
+        }
         <div class="gl-cluster">
           <button
             mat-flat-button
             color="primary"
             type="submit"
             (click)="$event.preventDefault(); onSubmit()"
-            [disabled]="loading()"
-            [attr.aria-busy]="loading()"
+            [disabled]="loading() || emailCheckLoading()"
+            [attr.aria-busy]="loading() || emailCheckLoading()"
           >
-            {{ 'app.login.submit' | translate }}
+            {{ (passwordRequired() ? 'app.login.submit' : 'app.login.continue') | translate }}
           </button>
         </div>
     </form>

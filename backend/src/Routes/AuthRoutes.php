@@ -6,6 +6,7 @@ namespace App\Routes;
 
 use App\Auth\Actions\AuthenticatedPasswordChangeAction;
 use App\Auth\Actions\LoginAction;
+use App\Auth\Actions\EmailCheckAction;
 use App\Auth\Actions\LogoutAction;
 use App\Auth\Actions\PasswordResetAction;
 use App\Auth\Actions\PasswordResetRequestAction;
@@ -31,6 +32,7 @@ final class AuthRoutes
         ?SessionService $sessionService = null,
         ?ClientRegistrationLoginService $registrationLoginService = null,
         ?RateLimitService $rateLimitService = null,
+        ?EmailCheckAction $emailCheckAction = null,
     ): void {
         $app->group('/auth', function (RouteCollectorProxy $group) use (
             $userRepository,
@@ -38,6 +40,7 @@ final class AuthRoutes
             $sessionService,
             $registrationLoginService,
             $rateLimitService,
+            $emailCheckAction,
         ): void {
             $authenticatedPasswordChange = $group->post(
                 '/password-change-authenticated',
@@ -68,6 +71,11 @@ final class AuthRoutes
             if ($rateLimitService !== null) {
                 $login->add(new RateLimitMiddleware(5, 900, static fn ($request): string => RateLimitMiddleware::ipAndEmail($request), $rateLimitService));
                 $login->add(new RateLimitMiddleware(30, 900, static fn ($request): string => RateLimitMiddleware::ip($request), $rateLimitService));
+            }
+            $emailCheck = $group->post('/email-check', $emailCheckAction ?? new EmailCheckAction());
+            if ($rateLimitService !== null) {
+                $emailCheck->add(new RateLimitMiddleware(5, 900, static fn ($request): string => RateLimitMiddleware::ipAndEmail($request), $rateLimitService));
+                $emailCheck->add(new RateLimitMiddleware(30, 900, static fn ($request): string => RateLimitMiddleware::ip($request), $rateLimitService));
             }
             $group->post('/logout', new LogoutAction());
             $group->get('/session-status', new SessionStatusAction($sessionService));

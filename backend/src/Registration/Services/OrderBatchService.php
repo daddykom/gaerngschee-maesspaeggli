@@ -23,6 +23,7 @@ use Throwable;
 final class OrderBatchService
 {
     private const INTERVAL_CONFIG = 'fairgate_email_interval_days';
+    private const REMINDER_END_DATE_CONFIG = 'fairgate_reminder_end_date';
     private const TOKEN_RETENTION_CONFIG = 'registration_token_retention_days';
 
     public function __construct(
@@ -49,6 +50,7 @@ final class OrderBatchService
         }
         $retentionDays = $this->tokenRetentionDays();
         $now = new DateTimeImmutable('now', new DateTimeZone('UTC'));
+        $reminderEndDate = $this->reminderEndDate();
         $result = [
             'loaded' => 0,
             'sent' => 0,
@@ -59,6 +61,11 @@ final class OrderBatchService
         $fairgateContacts = $this->fairgateContacts();
 
         foreach ($this->queue->pending() as $email) {
+            if (($email['email_type'] ?? null) === 'fairgate_reminder'
+                && !$this->reminderAllowed($reminderEndDate, $now)) {
+                $this->queue->remove((string) $email['id']);
+                continue;
+            }
             try {
                 $this->emails->sendStoredEmail($email['recipient'], $email['subject'], $email['html_body'], $email['text_body']);
                 $this->queue->remove($email['id']);
@@ -87,7 +94,7 @@ final class OrderBatchService
             try {
                 $data = $this->contactData($entry['email'], $fairgateContacts);
                 if (!is_array($data)) {
-                    $this->processMissingFairgate($order, $entry['email'], $result, 'not_found');
+                    $this->processMissingFairgate($order, $entry['email'], $result, 'not_found', $reminderEndDate, $now);
                     continue;
                 }
 
@@ -98,7 +105,7 @@ final class OrderBatchService
                     $this->config->findCampaignYear(),
                 );
                 if (!$evaluation['valid']) {
-                    $this->processMissingFairgate($order, $entry['email'], $result, $evaluation['status']);
+                    $this->processMissingFairgate($order, $entry['email'], $result, $evaluation['status'], $reminderEndDate, $now);
                     continue;
                 }
 
@@ -217,8 +224,18 @@ final class OrderBatchService
     }
 
     /** @param array<string, mixed> $order */
-    private function processMissingFairgate(array $order, string $email, array &$result, string $status): void
+    private function processMissingFairgate(
+        array $order,
+        string $email,
+        array &$result,
+        string $status,
+        ?DateTimeImmutable $reminderEndDate,
+        DateTimeImmutable $now,
+    ): void
     {
+        if (!$this->reminderAllowed($reminderEndDate, $now)) {
+            return;
+        }
         $last = $order['fairgateReminderEmailSentAt'] ?? null;
         $reference = is_string($last) && trim($last) !== ''
             ? $last
@@ -299,6 +316,29 @@ final class OrderBatchService
             throw new \RuntimeException('Invalid Fairgate email interval configuration.');
         }
         return (int) $value;
+    }
+
+    private function reminderEndDate(): ?DateTimeImmutable
+    {
+        $value = $this->config->findValueByVariableName(self::REMINDER_END_DATE_CONFIG);
+        if ($value === null || trim((string) $value) === '') {
+            return null;
+        }
+        $value = trim((string) $value);
+        if (preg_match('/^\d{4}-\d{2}-\d{2}$/', $value) !== 1) {
+            throw new \RuntimeException('Invalid Fairgate reminder end date configuration.');
+        }
+        $date = DateTimeImmutable::createFromFormat('!Y-m-d', $value, new DateTimeZone('UTC'));
+        $errors = DateTimeImmutable::getLastErrors();
+        if ($date === false || ($errors !== false && ($errors['warning_count'] > 0 || $errors['error_count'] > 0))) {
+            throw new \RuntimeException('Invalid Fairgate reminder end date configuration.');
+        }
+        return $date;
+    }
+
+    private function reminderAllowed(?DateTimeImmutable $endDate, DateTimeImmutable $now): bool
+    {
+        return $endDate === null || $now->format('Y-m-d') <= $endDate->format('Y-m-d');
     }
 
     private function fairgateUrl(): string

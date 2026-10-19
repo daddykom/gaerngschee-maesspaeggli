@@ -4,6 +4,7 @@ test.describe('Integration login', () => {
   test('logs in through the real backend', async ({ page }) => {
     await page.goto('/login');
     await page.locator('input[type="email"]').fill('admin@gaerngschee.ch');
+    await page.getByRole('button', { name: 'Weiter' }).click();
     await page.locator('input[type="password"]').fill('secret');
     await page.getByRole('button', { name: 'Anmelden' }).click();
 
@@ -14,6 +15,7 @@ test.describe('Integration login', () => {
   test('rejects invalid credentials through the real backend', async ({ page }) => {
     await page.goto('/login');
     await page.locator('input[type="email"]').fill('admin@gaerngschee.ch');
+    await page.getByRole('button', { name: 'Weiter' }).click();
     await page.locator('input[type="password"]').fill('wrong-password');
     await page.getByRole('button', { name: 'Anmelden' }).click();
 
