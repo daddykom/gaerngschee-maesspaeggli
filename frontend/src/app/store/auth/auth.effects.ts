@@ -1,7 +1,7 @@
 import { HttpErrorResponse } from '@angular/common/http';
 import { inject } from '@angular/core';
 import { Actions, createEffect, ofType } from '@ngrx/effects';
-import { catchError, exhaustMap, map, of, tap } from 'rxjs';
+import { catchError, exhaustMap, filter, map, of, tap } from 'rxjs';
 import { AuthService } from '../../shared/services/auth.service';
 import { AuthActions } from './auth.actions';
 import { NavigationActions } from '../navigation/navigation.actions';
@@ -44,6 +44,30 @@ export const emailCheckEffect = createEffect(
         errorCode: typeof error.error?.error?.code === 'string' ? error.error.error.code : 'REQUEST_FAILED',
       }))),
     )),
+  ),
+  { functional: true },
+);
+
+export const navigateOnEmailCheckSuccessEffect = createEffect(
+  (actions$ = inject(Actions)) => actions$.pipe(
+    ofType(AuthActions.checkEmailSuccess),
+    filter(({ mode }) => mode !== 'password'),
+    map(() => NavigationActions.navigate({ target: '/start/success' })),
+  ),
+  { functional: true },
+);
+
+export const emailCheckSuccessNotificationEffect = createEffect(
+  (actions$ = inject(Actions)) => actions$.pipe(
+    ofType(AuthActions.checkEmailSuccess),
+    filter(({ mode }) => mode !== 'password'),
+    map(({ processingYear }) => NotificationActions.show({
+      variant: 'success',
+      titleKey: 'app.anmeldung.emailSentTitle',
+      messageKey: 'app.login.orderInfo',
+      params: { year: String(processingYear) },
+      preserveOnRoutes: ['/start/success'],
+    })),
   ),
   { functional: true },
 );
@@ -218,6 +242,8 @@ export const authNotificationEffect = createEffect(
 
 export const authEffects = {
   emailCheckEffect,
+  navigateOnEmailCheckSuccessEffect,
+  emailCheckSuccessNotificationEffect,
   loginEffect,
   persistLoginEffect,
   persistRegistrationLoginEffect,

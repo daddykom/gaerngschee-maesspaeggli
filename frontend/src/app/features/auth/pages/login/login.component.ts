@@ -10,7 +10,6 @@ import {
   selectAuthEmailCheckEmail,
   selectAuthEmailCheckLoading,
   selectAuthEmailCheckMode,
-  selectAuthEmailCheckYear,
   selectAuthLoading,
 } from '../../../../store/auth/auth.feature';
 import { ControlErrorComponent } from '../../../../shared/components/control-error/control-error';
@@ -38,7 +37,6 @@ export class Login implements OnInit {
   readonly emailCheckLoading = this.store.selectSignal(selectAuthEmailCheckLoading);
   readonly emailCheckMode = this.store.selectSignal(selectAuthEmailCheckMode);
   readonly emailCheckEmail = this.store.selectSignal(selectAuthEmailCheckEmail);
-  readonly emailCheckYear = this.store.selectSignal(selectAuthEmailCheckYear);
 
   readonly loginModel = signal({ email: '', password: '' });
   readonly loginForm = form(this.loginModel, (schema) => {
@@ -50,8 +48,6 @@ export class Login implements OnInit {
   });
 
   readonly passwordRequired = computed(() => this.emailCheckMode() === 'password'
-    && this.loginModel().email.trim().toLowerCase() === this.emailCheckEmail());
-  readonly showInfo = computed(() => (this.emailCheckMode() === 'info' || this.emailCheckMode() === 'email_sent')
     && this.loginModel().email.trim().toLowerCase() === this.emailCheckEmail());
 
   ngOnInit(): void {
