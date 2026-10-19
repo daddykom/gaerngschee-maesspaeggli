@@ -25,9 +25,6 @@
           </mat-form-field>
         </div>
         }
-        @if (showInfo()) {
-          <p role="status">{{ 'app.login.orderInfo' | translate:{ year: emailCheckYear() } }}</p>
-        }
         @if (passwordRequired()) {
         <button mat-button
           class="forgot-password-link"

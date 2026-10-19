@@ -12,6 +12,8 @@ import {
   authNotificationEffect,
   clearPersistedAuthEffect,
   loginEffect,
+  navigateOnEmailCheckSuccessEffect,
+  emailCheckSuccessNotificationEffect,
   logoutEffect,
   navigateOnLoginSuccessEffect,
   navigateOnPasswordChangeSuccessEffect,
@@ -115,6 +117,56 @@ describe('loginEffect', () => {
     }));
 
     await expect(result).resolves.toEqual(NavigationActions.navigate({ target: '/admin/overview' }));
+  });
+
+  it('navigates clients to the start success page after an email check', async () => {
+    const effect$ = TestBed.runInInjectionContext(() => navigateOnEmailCheckSuccessEffect());
+    const result = firstValueFrom(effect$);
+
+    actions$.next(AuthActions.checkEmailSuccess({
+      email: 'client@example.com',
+      mode: 'email_sent',
+      processingYear: 2026,
+    }));
+
+    await expect(result).resolves.toEqual(NavigationActions.navigate({ target: '/start/success' }));
+  });
+
+  it('ignores password mode when navigating after an email check', async () => {
+    const effect$ = TestBed.runInInjectionContext(() => navigateOnEmailCheckSuccessEffect());
+    const result = firstValueFrom(effect$);
+
+    actions$.next(AuthActions.checkEmailSuccess({
+      email: 'admin@example.com',
+      mode: 'password',
+      processingYear: 2026,
+    }));
+    actions$.next(AuthActions.checkEmailSuccess({
+      email: 'client@example.com',
+      mode: 'info',
+      processingYear: 2026,
+    }));
+
+    await expect(result).resolves.toEqual(NavigationActions.navigate({ target: '/start/success' }));
+  });
+
+  it('shows a success notification with the processing year for clients', async () => {
+    const effect$ = TestBed.runInInjectionContext(() => emailCheckSuccessNotificationEffect());
+    const result = firstValueFrom(effect$);
+
+    actions$.next(AuthActions.checkEmailSuccess({
+      email: 'client@example.com',
+      mode: 'info',
+      processingYear: 2026,
+    }));
+
+    await expect(result).resolves.toEqual(NotificationActions.show({
+      variant: 'success',
+      titleKey: 'app.anmeldung.emailSentTitle',
+      messageKey: 'app.login.orderInfo',
+      params: { year: '2026' },
+      preserveOnRoutes: ['/start/success'],
+    }));
   });
 
   it('dispatches navigation to password change when a reset is required', async () => {

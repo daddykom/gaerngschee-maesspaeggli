@@ -144,4 +144,22 @@ test.describe('Login route', () => {
     await page.waitForURL('**/password-change');
     await expectTranslatedText(page.locator('h1'), 'app.passwordChange.pageTitle');
   });
+
+  test('redirects clients to the success page with a success message', async ({ page }) => {
+    await page.route('http://localhost:8080/auth/email-check', async (route) => {
+      await route.fulfill({
+        status: 200,
+        contentType: 'application/json',
+        body: JSON.stringify({ mode: 'email_sent', processingYear: 2026 }),
+      });
+    });
+
+    await page.goto('/login');
+    await page.locator('input[type="email"]').fill('client@example.com');
+    await page.getByRole('button', { name: 'Weiter' }).click();
+
+    await page.waitForURL('**/start/success');
+    await expectTranslatedText(page.locator('.info-box'), 'app.anmeldung.emailSentTitle');
+    await expectTranslatedText(page.locator('.info-box'), 'app.login.orderInfo');
+  });
 });
