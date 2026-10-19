@@ -13,6 +13,8 @@ final class RecordingEmailSender implements EmailSenderInterface
     public array $recipients = [];
     /** @var list<AnmeldungMailVariant> */
     public array $variants = [];
+    /** @var list<string|null> */
+    public array $loginUrls = [];
     /** @var list<string> */
     public array $orderStatuses = [];
     public ?string $createdRecipient = null;
@@ -26,6 +28,7 @@ final class RecordingEmailSender implements EmailSenderInterface
     {
         $this->recipients[] = $recipient;
         $this->variants[] = $variant;
+        $this->loginUrls[] = $loginUrl;
     }
 
     public function sendOrderStatus(string $recipient, string $status, string $locale = 'de'): void

@@ -9,6 +9,11 @@ export interface AuthState {
   group: UserGroup | null;
   requiredPasswordReset: boolean;
   loading: boolean;
+  emailCheckLoading: boolean;
+  emailCheckMode: 'password' | 'email_sent' | 'info' | null;
+  emailCheckEmail: string | null;
+  emailCheckYear: number | null;
+  emailCheckErrorCode: string | null;
   passwordChangeLoading: boolean;
   passwordChangeErrorCode: string | null;
   errorCode: string | null;
@@ -31,6 +36,11 @@ export const initialState: AuthState = {
   group: persistedAuth.group ?? null,
   requiredPasswordReset: false,
   loading: false,
+  emailCheckLoading: false,
+  emailCheckMode: null,
+  emailCheckEmail: null,
+  emailCheckYear: null,
+  emailCheckErrorCode: null,
   passwordChangeLoading: false,
   passwordChangeErrorCode: null,
   errorCode: null,

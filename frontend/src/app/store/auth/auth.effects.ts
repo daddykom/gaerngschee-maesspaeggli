@@ -35,6 +35,19 @@ export const loginEffect = createEffect(
   { functional: true },
 );
 
+export const emailCheckEffect = createEffect(
+  (actions$ = inject(Actions), authService = inject(AuthService)) => actions$.pipe(
+    ofType(AuthActions.checkEmail),
+    exhaustMap(({ email }) => authService.checkEmail(email).pipe(
+      map(({ mode, processingYear }) => AuthActions.checkEmailSuccess({ email, mode, processingYear })),
+      catchError((error: HttpErrorResponse) => of(AuthActions.checkEmailFailure({
+        errorCode: typeof error.error?.error?.code === 'string' ? error.error.error.code : 'REQUEST_FAILED',
+      }))),
+    )),
+  ),
+  { functional: true },
+);
+
 export const persistLoginEffect = createEffect(
   (actions$ = inject(Actions)) => actions$.pipe(
     ofType(AuthActions.loginSuccess),
@@ -169,6 +182,7 @@ export const authNotificationEffect = createEffect(
   (actions$ = inject(Actions)) => actions$.pipe(
     ofType(
       AuthActions.loginFailure,
+      AuthActions.checkEmailFailure,
       AuthActions.passwordChangeFailure,
       AuthActions.passwordResetRequestFailure,
       AuthActions.passwordResetFailure,
@@ -203,6 +217,7 @@ export const authNotificationEffect = createEffect(
 );
 
 export const authEffects = {
+  emailCheckEffect,
   loginEffect,
   persistLoginEffect,
   persistRegistrationLoginEffect,

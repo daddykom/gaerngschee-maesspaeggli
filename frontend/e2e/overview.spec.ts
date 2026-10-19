@@ -45,6 +45,7 @@ test.describe('Admin overview route', () => {
 
     await page.goto('/login');
     await page.locator('input[type="email"]').fill('admin@example.com');
+    await page.getByRole('button', { name: 'Weiter' }).click();
     await page.locator('input[type="password"]').fill('secret');
     await page.locator('button[type="submit"]').click();
     await page.waitForURL('**/admin/overview');
@@ -83,6 +84,7 @@ test.describe('Admin overview route', () => {
 
     await page.goto('/login');
     await page.locator('input[type="email"]').fill('user@example.com');
+    await page.getByRole('button', { name: 'Weiter' }).click();
     await page.locator('input[type="password"]').fill('secret');
     await page.locator('button[type="submit"]').click();
     await page.waitForURL('**/delivery');

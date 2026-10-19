@@ -34,6 +34,14 @@ export const test = base.extend({
       });
     });
 
+    await page.route('http://localhost:8080/auth/email-check', async (route) => {
+      await route.fulfill({
+        status: 200,
+        contentType: 'application/json',
+        body: JSON.stringify({ mode: 'password', processingYear: 2026 }),
+      });
+    });
+
     await page.route('**/auth/session-status**', async (route) => {
       await route.fulfill({
         status: 200,

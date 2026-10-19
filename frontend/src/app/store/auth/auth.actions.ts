@@ -1,10 +1,14 @@
 import { createActionGroup, emptyProps, props } from '@ngrx/store';
 import { UserGroup } from '../../shared/models/frontend-config.model';
 import { FairgateStatus } from '../../shared/models/fairgate.model';
+import { EmailCheckMode } from '../../shared/services/auth.service';
 
 export const AuthActions = createActionGroup({
   source: 'Auth',
   events: {
+    'Check Email': props<{ email: string }>(),
+    'Check Email Success': props<{ email: string; mode: EmailCheckMode; processingYear: number }>(),
+    'Check Email Failure': props<{ errorCode: string }>(),
     Login: props<{ email: string; password: string }>(),
     'Login Success': props<{ userId: string; group: UserGroup; requiredPasswordReset: boolean; email?: string }>(),
     'Login Failure': props<{ errorCode: string }>(),

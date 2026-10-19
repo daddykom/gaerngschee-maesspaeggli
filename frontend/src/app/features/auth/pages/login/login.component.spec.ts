@@ -13,6 +13,11 @@ describe('Login', () => {
     auth: {
       group: null,
       loading: false,
+      emailCheckLoading: false,
+      emailCheckMode: null,
+      emailCheckEmail: null,
+      emailCheckYear: null,
+      emailCheckErrorCode: null,
       errorCode: null,
     },
   };
@@ -36,6 +41,8 @@ describe('Login', () => {
 
   it('dispatches login credentials for a valid form', () => {
     component.loginModel.set({ email: 'user@example.com', password: 'secret' });
+    store.setState({ auth: { ...initialState.auth, emailCheckMode: 'password', emailCheckEmail: 'user@example.com' } });
+    fixture.detectChanges();
 
     component.onSubmit();
 
@@ -53,14 +60,14 @@ describe('Login', () => {
 
     expect(store.dispatch).not.toHaveBeenCalled();
     expect(component.loginForm.email().touched()).toBe(true);
-    expect(component.loginForm.password().touched()).toBe(true);
+    expect(component.loginForm.password().touched()).toBe(false);
   });
 
   it('shows validation errors after submitting an invalid form', () => {
     component.onSubmit();
     fixture.detectChanges();
 
-    expect(fixture.nativeElement.querySelectorAll('[role="alert"]')).toHaveLength(2);
+    expect(fixture.nativeElement.querySelectorAll('[role="alert"]')).toHaveLength(1);
   });
 
   it('disables the submit button while loading', () => {
@@ -71,6 +78,8 @@ describe('Login', () => {
   });
 
   it('dispatches forgot password when the link is clicked', () => {
+    store.setState({ auth: { ...initialState.auth, emailCheckMode: 'password', emailCheckEmail: '' } });
+    fixture.detectChanges();
     const forgotPassword = fixture.nativeElement.querySelector('.forgot-password-link');
 
     forgotPassword.click();

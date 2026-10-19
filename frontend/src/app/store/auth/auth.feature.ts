@@ -18,6 +18,28 @@ export const authFeature = createFeature({
       adultsCount: null,
       salutation: null,
     })),
+    on(AuthActions.checkEmail, (state) => ({
+      ...state,
+      emailCheckLoading: true,
+      emailCheckMode: null,
+      emailCheckEmail: null,
+      emailCheckYear: null,
+      emailCheckErrorCode: null,
+    })),
+    on(AuthActions.checkEmailSuccess, (state, { email, mode, processingYear }) => ({
+      ...state,
+      emailCheckLoading: false,
+      emailCheckMode: mode,
+      emailCheckEmail: email,
+      emailCheckYear: processingYear,
+      emailCheckErrorCode: null,
+    })),
+    on(AuthActions.checkEmailFailure, (state, { errorCode }) => ({
+      ...state,
+      emailCheckLoading: false,
+      emailCheckMode: null,
+      emailCheckErrorCode: errorCode,
+    })),
     on(AuthActions.loginSuccess, (state, { userId, group, requiredPasswordReset, email }) => ({
       ...state,
       userId,
@@ -133,3 +155,8 @@ export const {
   selectSessionRefreshLoading: selectAuthSessionRefreshLoading,
   selectEmail: selectAuthEmail,
 } = authFeature;
+
+export const selectAuthEmailCheckLoading = authFeature.selectEmailCheckLoading;
+export const selectAuthEmailCheckMode = authFeature.selectEmailCheckMode;
+export const selectAuthEmailCheckEmail = authFeature.selectEmailCheckEmail;
+export const selectAuthEmailCheckYear = authFeature.selectEmailCheckYear;

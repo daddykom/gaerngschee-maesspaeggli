@@ -59,6 +59,7 @@ async function loginAsAdmin(page: Page): Promise<void> {
   });
   await page.goto('/login');
   await page.locator('input[type="email"]').fill('admin@example.com');
+  await page.getByRole('button', { name: 'Weiter' }).click();
   await page.locator('input[type="password"]').fill('secret');
   await page.getByRole('button', { name: 'Anmelden' }).click();
   await page.waitForURL('**/admin/overview');
