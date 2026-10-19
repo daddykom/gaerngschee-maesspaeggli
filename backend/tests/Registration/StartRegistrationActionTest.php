@@ -11,6 +11,7 @@ use App\Registration\Services\AnmeldungService;
 use App\Registration\Services\RegistrationTokenService;
 use App\Shared\Mail\EmailSenderInterface;
 use Tests\Support\TestDatabase;
+use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\TestCase;
 use Slim\Psr7\Response;
 use Slim\Psr7\Stream;
@@ -52,7 +53,7 @@ final class StartRegistrationActionTest extends TestCase
         self::assertSame('CAMPAIGN_ENDED', json_decode((string) $response->getBody(), true)['error']['code']);
     }
 
-    /** @dataProvider nonEditableOrderStatuses */
+    #[DataProvider('nonEditableOrderStatuses')]
     public function testSendsStatusInformationWithoutCreatingALink(string $status): void
     {
         $pdo = TestDatabase::create();
