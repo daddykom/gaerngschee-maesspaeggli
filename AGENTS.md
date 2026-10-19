@@ -330,7 +330,7 @@ Konkrete Regeln:
 
 Für alle Datenbank-Migrationen SOLL zwingend [Phinx](https://phinx.org/) verwendet werden. Niemals manuell SQL schreiben oder die DB-Struktur direkt ändern.
 
-Wenn ein Agent eine Migration ausführt, darf ausschließlich die Developer-Datenbank (`development`) betroffen sein. Die Test- und Produktionsdatenbanken dürfen durch Agenten weder migriert noch zurückgerollt oder anderweitig strukturell verändert werden.
+Wenn ein Agent eine Migration ausführt, darf ausschließlich die Developer-Datenbank (`development`) betroffen sein. Die Pre-Production- und Produktionsdatenbanken dürfen durch Agenten weder migriert noch zurückgerollt oder anderweitig strukturell verändert werden.
 
 Siehe: [database-conventions.md](./documents/database-conventions.md)
 
