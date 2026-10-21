@@ -379,7 +379,7 @@ final class FixedFairgateProvider implements FairgateContactProvider
         return true;
     }
 
-    public function findContactDataByEmail(string $email): array
+    public function findContactDataByEmail(string $email, ?string $membership = null): array
     {
         $data = ['wohnt_im_gleichen_haushalt' => $this->adults === 2 ? 'Ja' : 'Nein'];
         for ($index = 1; $index <= $this->children; $index++) {
@@ -397,7 +397,7 @@ final class MissingFairgateProvider implements FairgateContactProvider
         return false;
     }
 
-    public function findContactDataByEmail(string $email): array
+    public function findContactDataByEmail(string $email, ?string $membership = null): array
     {
         return ['success' => false, 'data' => null];
     }
