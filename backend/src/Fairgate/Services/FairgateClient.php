@@ -150,7 +150,7 @@ final class FairgateClient implements FairgateContactProvider, FairgateBatchCont
             $query['primary_email'] = $email;
         }
         if ($membership !== null && trim($membership) !== '') {
-            $query['membership'] = trim($membership);
+            $query['membership[]'] = trim($membership);
         }
 
         try {

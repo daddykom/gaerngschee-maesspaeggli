@@ -99,7 +99,7 @@ final class FairgateClientTest extends TestCase
         $client->findContactDataByEmail('person@example.com', 'Aktivmitglied');
 
         self::assertSame(
-            'pageNo=1&pageLimit=1&primary_email=person%40example.com&membership=Aktivmitglied',
+            'pageNo=1&pageLimit=1&primary_email=person%40example.com&membership%5B%5D=Aktivmitglied',
             $history[1]['request']->getUri()->getQuery(),
         );
     }
