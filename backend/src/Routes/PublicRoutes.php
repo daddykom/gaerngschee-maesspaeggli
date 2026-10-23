@@ -37,8 +37,8 @@ final class PublicRoutes
         $app->group('/public', function (RouteCollectorProxy $group) use ($anmeldungService, $registrationTokens, $configRepository, $orderRepository, $rateLimitService): void {
             $start = $group->post('/start', new StartRegistrationAction($anmeldungService, $registrationTokens, $configRepository, null, $orderRepository));
             if ($rateLimitService !== null) {
-                $start->add(new RateLimitMiddleware(3, 900, static fn ($request): string => RateLimitMiddleware::ipAndEmail($request), $rateLimitService));
-                $start->add(new RateLimitMiddleware(20, 3600, static fn ($request): string => RateLimitMiddleware::ip($request), $rateLimitService));
+                $start->add(new RateLimitMiddleware(5, 900, static fn ($request): string => RateLimitMiddleware::ipAndEmail($request), $rateLimitService));
+                $start->add(new RateLimitMiddleware(60, 3600, static fn ($request): string => RateLimitMiddleware::ip($request), $rateLimitService));
             }
             $group->get('/configuration', new ListPublicConfigurationAction($configRepository));
         });
