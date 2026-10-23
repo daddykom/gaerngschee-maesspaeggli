@@ -7,6 +7,7 @@ namespace App\Routes;
 use App\Middleware\AuthMiddleware;
 use App\Middleware\GroupMiddleware;
 use App\Registration\Actions\GetDeliveryOrderAction;
+use App\Registration\Actions\GetDeliveryQrCodeAction;
 use App\Registration\Actions\UpdateDeliveryOrderStatusAction;
 use App\Registration\Data\OrderRepository;
 use App\Fairgate\Services\FairgateContactProvider;
@@ -29,6 +30,11 @@ final class DeliveryRoutes
     ): void
     {
         $app->group('/delivery', function (RouteCollectorProxy $group) use ($orders, $users, $fairgate, $configRepository, $rateLimitService): void {
+            $qr = $group->get('/qr', new GetDeliveryQrCodeAction($orders, $configRepository));
+            if ($rateLimitService !== null) {
+                $qr->add(new RateLimitMiddleware(30, 300, static fn ($request): string => RateLimitMiddleware::ip($request), $rateLimitService));
+            }
+
             $get = $group->get('/order', new GetDeliveryOrderAction($orders, $fairgate, $configRepository));
             if ($rateLimitService !== null) {
                 $get->add(new RateLimitMiddleware(30, 300, static fn ($request): string => RateLimitMiddleware::ip($request), $rateLimitService));

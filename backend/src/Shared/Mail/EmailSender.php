@@ -228,12 +228,12 @@ final class EmailSender implements EmailSenderInterface
     }
 
     /** @param array<string, mixed> $order */
-    public function renderDeliveryNotification(array $order, string $deliveryUrl, string $qrDataUri): array
+    public function renderDeliveryNotification(array $order, string $deliveryUrl, string $qrDataUri, string $qrImageUrl): array
     {
         $html = $this->twig->render('delivery-notification.html.twig', [
             'LOGO_CID' => 'cid:' . self::LOGO_CID,
             'QR_DATA_URI' => $qrDataUri,
-            'DELIVERY_URL' => $deliveryUrl,
+            'QR_IMAGE_URL' => $qrImageUrl,
         ]);
 
         return [

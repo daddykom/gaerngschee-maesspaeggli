@@ -29,7 +29,7 @@ interface EmailSenderInterface
     public function renderOrderConfirmation(array $order, string $mailStatus): array;
 
     /** @param array<string, mixed> $order */
-    public function renderDeliveryNotification(array $order, string $deliveryUrl, string $qrDataUri): array;
+    public function renderDeliveryNotification(array $order, string $deliveryUrl, string $qrDataUri, string $qrImageUrl): array;
 
     /** @return array{subject: string, html: string, text: string} */
     public function renderFairgateReminder(string $fairgateUrl, string $status = 'not_found', ?string $documentEmail = null): array;

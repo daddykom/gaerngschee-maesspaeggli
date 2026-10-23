@@ -46,6 +46,7 @@ final class MailpitEmailSenderTest extends TestCase
             $this->order('definitive'),
             'http://localhost:4300/delivery?token=delivery-token',
             'data:image/png;base64,qr-code',
+            'http://localhost:8082/delivery/qr?token=delivery-token',
         );
         $sender->sendStoredEmail(
             "delivery-$suffix@example.com",

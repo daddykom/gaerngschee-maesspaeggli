@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Tests\Routes;
 
 use App\Auth\Services\SessionService;
+use App\Configuration\Data\FrontendConfigRepository;
 use App\Registration\Data\OrderRepository;
 use App\Routes\DeliveryRoutes;
 use App\Users\Data\UserRepository;
@@ -19,6 +20,7 @@ final class DeliveryRoutesTest extends TestCase
     private PDO $pdo;
     private UserRepository $users;
     private OrderRepository $orders;
+    private FrontendConfigRepository $configs;
 
     protected function setUp(): void
     {
@@ -26,6 +28,7 @@ final class DeliveryRoutesTest extends TestCase
         $this->pdo = TestDatabase::create();
         $this->users = new UserRepository($this->pdo);
         $this->orders = new OrderRepository($this->pdo);
+        $this->configs = new FrontendConfigRepository($this->pdo);
     }
 
     protected function tearDown(): void
@@ -40,6 +43,24 @@ final class DeliveryRoutesTest extends TestCase
         );
 
         self::assertSame(401, $response->getStatusCode());
+    }
+
+    public function testDeliveryQrCodeReturnsPngForValidToken(): void
+    {
+        $user = $this->users->createUser('client@example.com', 'secret', 'client');
+        $this->insertOrder('order-1', $user['id'], 'qrcode', 'delivery-token');
+        $this->pdo->prepare(
+            'INSERT INTO frontend_config (id, variable_name, value, description, access_group, update_group, label)
+             VALUES (?, ?, ?, ?, ?, ?, ?)',
+        )->execute(['campaign-year', 'campaign_year', '"2026"', '', '["admin"]', '["admin"]', '']);
+
+        $response = $this->createApp()->handle(
+            (new ServerRequestFactory())->createServerRequest('GET', '/delivery/qr?token=delivery-token'),
+        );
+
+        self::assertSame(200, $response->getStatusCode());
+        self::assertSame('image/png', $response->getHeaderLine('Content-Type'));
+        self::assertStringStartsWith("\x89PNG", (string) $response->getBody());
     }
 
     public function testUserCanMarkQrCodeOrderAsDelivered(): void
@@ -102,17 +123,17 @@ final class DeliveryRoutesTest extends TestCase
     {
         $app = AppFactory::create();
         $app->addRoutingMiddleware();
-        DeliveryRoutes::register($app, $this->orders, $this->users);
+        DeliveryRoutes::register($app, $this->orders, $this->users, null, $this->configs);
 
         return $app;
     }
 
-    private function insertOrder(string $id, string $userId, string $status): void
+    private function insertOrder(string $id, string $userId, string $status, ?string $deliveryToken = null): void
     {
         $this->pdo->prepare(
-            'INSERT INTO orders (id, user_id, year, status, adults_count, children_count)
-             VALUES (?, ?, ?, ?, ?, ?)',
-        )->execute([$id, $userId, (int) date('Y'), $status, 1, 0]);
+            'INSERT INTO orders (id, user_id, year, status, adults_count, children_count, delivery_token)
+             VALUES (?, ?, ?, ?, ?, ?, ?)',
+        )->execute([$id, $userId, (int) date('Y'), $status, 1, 0, $deliveryToken]);
     }
 
     private function orderStatus(string $id): string
