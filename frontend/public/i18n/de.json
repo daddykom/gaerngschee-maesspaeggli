@@ -526,6 +526,7 @@
         "pickupImportantTitle": "Wichtig für die Abholung:",
         "pickupQrInstruction": "Bitte zeige bei der Ausgabe diesen QR-Code (ausgedruckt oder direkt auf dem Smartphone) vor:",
         "qrAlt": "QR-Code für die Abholung",
+        "qrFallbackLink": "QR-Code wird nicht angezeigt? Hier kannst du ihn öffnen.",
         "pickupProxy": "Falls du es persönlich nicht schaffst, kann auch eine Vertrauensperson dein Mässpäggli mit diesem QR-Code für dich abholen.",
         "closingMessage": "Wir wünschen dir und deinen Liebsten ganz viel Freude und tolle Erlebnisse an der Basler Herbstmesse!",
         "closing": "Herzliche Grüsse",
