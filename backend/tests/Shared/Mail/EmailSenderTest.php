@@ -155,6 +155,7 @@ final class EmailSenderTest extends TestCase
             '13:00 – 17:00 Uhr',
             'Clarastrasse 10, 4058 Basel',
             'Bitte zeige bei der Ausgabe diesen QR-Code',
+            'QR-Code wird nicht angezeigt? Hier kannst du ihn öffnen.',
             'Falls du es persönlich nicht schaffst',
             'Basler Herbstmesse',
         ] as $text) {
@@ -163,7 +164,8 @@ final class EmailSenderTest extends TestCase
         }
 
         self::assertStringContainsString('data:image/svg+xml;base64,qr-code', $message['html']);
-        self::assertStringNotContainsString('https://example.com/delivery?token=test-token', $message['html']);
+        self::assertStringContainsString('href="https://example.com/delivery?token=test-token"', $message['html']);
+        self::assertStringContainsString('https://example.com/delivery?token=test-token', $message['text']);
     }
 
     public function testRenderFairgateReminderUsesSharedTranslations(): void
