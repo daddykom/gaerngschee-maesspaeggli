@@ -67,9 +67,9 @@ final class RecordingEmailSender implements EmailSenderInterface
         return ['subject' => 'subject', 'html' => json_encode($order, JSON_THROW_ON_ERROR), 'text' => 'text'];
     }
 
-    public function renderDeliveryNotification(array $order, string $deliveryUrl, string $qrDataUri): array
+    public function renderDeliveryNotification(array $order, string $deliveryUrl, string $qrDataUri, string $qrImageUrl): array
     {
-        return ['subject' => 'delivery', 'html' => $qrDataUri . $deliveryUrl, 'text' => $deliveryUrl];
+        return ['subject' => 'delivery', 'html' => $qrDataUri . $deliveryUrl . $qrImageUrl, 'text' => $deliveryUrl . ' ' . $qrImageUrl];
     }
 
     public function renderFairgateReminder(string $fairgateUrl, string $status = 'not_found', ?string $documentEmail = null): array

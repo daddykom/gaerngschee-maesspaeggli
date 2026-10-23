@@ -146,6 +146,7 @@ final class EmailSenderTest extends TestCase
             [],
             'https://example.com/delivery?token=test-token',
             'data:image/svg+xml;base64,qr-code',
+            'https://api.example.com/delivery/qr?token=test-token',
         );
 
         foreach ([
@@ -164,8 +165,8 @@ final class EmailSenderTest extends TestCase
         }
 
         self::assertStringContainsString('data:image/svg+xml;base64,qr-code', $message['html']);
-        self::assertStringContainsString('href="https://example.com/delivery?token=test-token"', $message['html']);
-        self::assertStringContainsString('https://example.com/delivery?token=test-token', $message['text']);
+        self::assertStringContainsString('href="https://api.example.com/delivery/qr?token=test-token"', $message['html']);
+        self::assertStringContainsString('https://api.example.com/delivery/qr?token=test-token', $message['text']);
     }
 
     public function testRenderFairgateReminderUsesSharedTranslations(): void

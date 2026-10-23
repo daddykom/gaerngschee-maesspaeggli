@@ -14,6 +14,11 @@ final class QrCodeGenerator
 {
     public function generateDataUri(string $data): string
     {
+        return 'data:image/png;base64,' . base64_encode($this->generatePng($data));
+    }
+
+    public function generatePng(string $data): string
+    {
         $qrCode = new QrCode(
             data: $data,
             encoding: new Encoding('UTF-8'),
@@ -24,6 +29,6 @@ final class QrCodeGenerator
             backgroundColor: new Color(255, 255, 255),
         );
 
-        return 'data:image/png;base64,' . base64_encode((new PngWriter())->write($qrCode)->getString());
+        return (new PngWriter())->write($qrCode)->getString();
     }
 }

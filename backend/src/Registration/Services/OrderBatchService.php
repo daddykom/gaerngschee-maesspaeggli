@@ -138,8 +138,9 @@ final class OrderBatchService
                     ? $order['deliveryToken']
                     : $this->createDeliveryToken($order['id']);
                 $deliveryUrl = rtrim(getenv('FRONTEND_BASE_URL') ?: 'http://localhost:4200', '/') . '/delivery?token=' . rawurlencode($token);
+                $qrImageUrl = rtrim(getenv('PUBLIC_API_BASE_URL') ?: 'http://localhost:8080', '/') . '/delivery/qr?token=' . rawurlencode($token);
                 $qrDataUri = ($this->qrCodes ?? new QrCodeGenerator())->generateDataUri($deliveryUrl);
-                $message = $this->emails->renderDeliveryNotification($order, $deliveryUrl, $qrDataUri);
+                $message = $this->emails->renderDeliveryNotification($order, $deliveryUrl, $qrDataUri, $qrImageUrl);
                 try {
                     $this->emails->sendStoredEmail($entry['email'], $message['subject'], $message['html'], $message['text']);
                     $this->orders->markQrCodeSent($order['id']);
