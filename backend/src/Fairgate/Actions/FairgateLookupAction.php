@@ -37,7 +37,7 @@ final class FairgateLookupAction
         }
 
         try {
-            $lookup = $this->lookup ?? static fn (string $recipient, ?string $ignoredMembership = null): array => FairgateContactProviderFactory::createReal()
+            $lookup = $this->lookup ?? static fn (string $recipient, ?string $ignoredMembership = null): array => FairgateContactProviderFactory::create()
                 ->findContactDataByEmail($recipient, FairgateClient::MEMBERSHIP);
 
             return JsonResponse::success($response, [
