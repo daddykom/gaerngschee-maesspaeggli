@@ -18,6 +18,8 @@ use Psr\Http\Client\ClientInterface;
 
 final class FairgateClient implements FairgateContactProvider, FairgateBatchContactProvider
 {
+    public const MEMBERSHIP = 'Klient*innen';
+
     private const CONTACTS_PATH = '/fsa/v1.1/contact/%s/contacts';
     private const FILTERED_CONTACTS_PATH = '/fsa/v1.1/contact/%s/contacts/list';
     private const CONTACT_DATA_PATH = '/fsa/v2.0/contact/%s/data/%s';
@@ -44,7 +46,7 @@ final class FairgateClient implements FairgateContactProvider, FairgateBatchCont
 
     public function hasContactByEmail(string $email): bool
     {
-        $data = $this->findContactsByEmail($email);
+        $data = $this->findContactsByEmail($email, self::MEMBERSHIP);
         $contacts = $data['data']['contacts'] ?? [];
 
         foreach ($contacts as $contact) {
@@ -58,7 +60,7 @@ final class FairgateClient implements FairgateContactProvider, FairgateBatchCont
     }
 
     /** @return array<string, mixed> */
-    public function findContactsByEmail(string $email, ?string $membership = null): array
+    public function findContactsByEmail(string $email, ?string $membership = self::MEMBERSHIP): array
     {
         $email = strtolower(trim($email));
         if ($email === '') {
@@ -76,7 +78,7 @@ final class FairgateClient implements FairgateContactProvider, FairgateBatchCont
         $pageLimit = 100;
 
         do {
-            $data = $this->requestContacts(null, $page, $pageLimit);
+            $data = $this->requestContacts(null, $page, $pageLimit, self::MEMBERSHIP);
             $pageContacts = $data['data']['contacts'] ?? [];
             if (!is_array($pageContacts)) {
                 break;
@@ -100,7 +102,7 @@ final class FairgateClient implements FairgateContactProvider, FairgateBatchCont
     }
 
     /** @return array<string, mixed> */
-    public function findContactDataByEmail(string $email, ?string $membership = null): array
+    public function findContactDataByEmail(string $email, ?string $membership = self::MEMBERSHIP): array
     {
         $email = strtolower(trim($email));
         $contactsResponse = $this->findContactsByEmail($email, $membership);

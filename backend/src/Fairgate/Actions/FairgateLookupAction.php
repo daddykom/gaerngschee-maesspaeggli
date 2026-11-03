@@ -9,6 +9,7 @@ use App\Fairgate\Services\FairgateException;
 use App\Shared\Http\JsonResponse;
 use App\Shared\Logging\ExceptionLogger;
 use Closure;
+use App\Fairgate\Services\FairgateClient;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 
@@ -36,11 +37,12 @@ final class FairgateLookupAction
         }
 
         try {
-            $lookup = $this->lookup ?? FairgateContactProviderFactory::createReal()->findContactDataByEmail(...);
+            $lookup = $this->lookup ?? static fn (string $recipient, ?string $ignoredMembership = null): array => FairgateContactProviderFactory::createReal()
+                ->findContactDataByEmail($recipient, FairgateClient::MEMBERSHIP);
 
             return JsonResponse::success($response, [
                 'email' => $email,
-                'fairgate' => $lookup($email, $membership),
+                'fairgate' => $lookup($email, FairgateClient::MEMBERSHIP),
             ]);
         } catch (FairgateException $exception) {
             ExceptionLogger::log('Fairgate lookup failed', $exception);

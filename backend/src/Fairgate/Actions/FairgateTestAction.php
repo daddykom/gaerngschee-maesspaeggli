@@ -6,6 +6,7 @@ namespace App\Fairgate\Actions;
 
 use Closure;
 use App\Configuration\Data\FrontendConfigRepository;
+use App\Fairgate\Services\FairgateClient;
 use App\Fairgate\Services\FairgateContactProviderFactory;
 use App\Fairgate\Services\FairgateException;
 use App\Shared\Database\Database;
@@ -34,7 +35,8 @@ final class FairgateTestAction
     {
         try {
             $email = $this->testEmail();
-            $lookup = $this->lookup ?? FairgateContactProviderFactory::createReal()->findContactDataByEmail(...);
+            $lookup = $this->lookup ?? static fn (string $recipient): array => FairgateContactProviderFactory::createReal()
+                ->findContactDataByEmail($recipient, FairgateClient::MEMBERSHIP);
 
             return JsonResponse::success($response, [
                 'email' => $email,

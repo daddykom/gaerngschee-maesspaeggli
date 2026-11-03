@@ -6,6 +6,7 @@ namespace App\Registration\Services;
 
 use App\Configuration\Data\FrontendConfigRepository;
 use App\Fairgate\Services\FairgateContactProvider;
+use App\Fairgate\Services\FairgateClient;
 use App\Fairgate\Services\FairgateOrderDataEvaluator;
 use App\Registration\Data\OrderRepository;
 use App\Users\Data\UserRepository;
@@ -42,7 +43,7 @@ final class ClientRegistrationLoginService
             $user = $this->users->createUser($email, bin2hex(random_bytes(24)), 'client');
         }
 
-        $fairgateResponse = $this->fairgate->findContactDataByEmail($email);
+        $fairgateResponse = $this->fairgate->findContactDataByEmail($email, FairgateClient::MEMBERSHIP);
         $data = $fairgateResponse['data'] ?? null;
         $campaignYear = $this->config?->findCampaignYear() ?? (int) (new DateTimeImmutable('now', new DateTimeZone('UTC')))->format('Y');
         $order = $this->orders?->findForYear((string) $user['id'], $campaignYear);

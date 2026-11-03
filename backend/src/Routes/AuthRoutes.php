@@ -50,8 +50,8 @@ final class AuthRoutes
 
             $passwordResetRequest = $group->post('/password-reset-request', new PasswordResetRequestAction());
             if ($rateLimitService !== null) {
-                $passwordResetRequest->add(new RateLimitMiddleware(3, 900, static fn ($request): string => RateLimitMiddleware::ipAndEmail($request), $rateLimitService));
-                $passwordResetRequest->add(new RateLimitMiddleware(20, 3600, static fn ($request): string => RateLimitMiddleware::ip($request), $rateLimitService));
+                $passwordResetRequest->add(new RateLimitMiddleware(10, 900, static fn ($request): string => RateLimitMiddleware::ipAndEmail($request), $rateLimitService));
+                $passwordResetRequest->add(new RateLimitMiddleware(50, 3600, static fn ($request): string => RateLimitMiddleware::ip($request), $rateLimitService));
             }
 
             $passwordReset = $group->post('/password-reset', new PasswordResetAction());

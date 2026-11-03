@@ -96,20 +96,22 @@ final class FairgateClientTest extends TestCase
             static fn (string $token): bool => $token === 'test-token',
         );
 
-        $client->findContactDataByEmail('person@example.com', 'Aktivmitglied');
+        $client->findContactDataByEmail('person@example.com');
 
         self::assertSame(
-            'pageNo=1&pageLimit=1&primary_email=person%40example.com&membership%5B%5D=Aktivmitglied',
+            'pageNo=1&pageLimit=1&primary_email=person%40example.com&membership%5B%5D=Klient%2Ainnen',
             $history[1]['request']->getUri()->getQuery(),
         );
     }
 
     public function testFindAllContactsLoadsEmailAndContactIdWithoutEmailFilter(): void
     {
+        $history = [];
         $handler = HandlerStack::create(new MockHandler([
             new Response(200, [], '{"success":true,"data":{"token":"test-token"}}'),
             new Response(200, [], '{"success":true,"data":{"contacts":[{"contact_id":42,"primary_email":"person@example.com"},{"basefields":{"contact_id":43},"communication":{"primary_email":"other@example.com"}}]}}'),
         ]));
+        $handler->push(Middleware::history($history));
         $client = new FairgateClient(
             new Client(['handler' => $handler, 'base_uri' => 'https://fsa-test.fairgate.ch']),
             'https://fsa-test.fairgate.ch',
@@ -123,6 +125,10 @@ final class FairgateClientTest extends TestCase
             ['email' => 'person@example.com', 'contactId' => '42'],
             ['email' => 'other@example.com', 'contactId' => '43'],
         ], $client->findAllContacts());
+        self::assertSame(
+            'pageNo=1&pageLimit=100&membership%5B%5D=Klient%2Ainnen',
+            $history[1]['request']->getUri()->getQuery(),
+        );
     }
 
     public function testHasContactByEmailReturnsFalseWhenContactIsNotFound(): void

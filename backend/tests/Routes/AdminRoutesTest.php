@@ -154,7 +154,7 @@ final class AdminRoutesTest extends TestCase
             'email' => 'person@example.com',
             'fairgate' => [
                 'success' => true,
-                'data' => ['email' => 'person@example.com', 'membership' => 'Aktivmitglied'],
+                'data' => ['email' => 'person@example.com', 'membership' => \App\Fairgate\Services\FairgateClient::MEMBERSHIP],
             ],
         ], json_decode((string) $response->getBody(), true, 512, JSON_THROW_ON_ERROR));
     }

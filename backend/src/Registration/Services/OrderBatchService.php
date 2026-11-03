@@ -7,6 +7,7 @@ namespace App\Registration\Services;
 use App\Configuration\Data\FrontendConfigRepository;
 use App\Fairgate\Services\FairgateContactProvider;
 use App\Fairgate\Services\FairgateBatchContactProvider;
+use App\Fairgate\Services\FairgateClient;
 use App\Fairgate\Services\FairgateOrderDataEvaluator;
 use App\Registration\Data\OrderEmailQueueRepository;
 use App\Registration\Data\OrderCategories;
@@ -185,7 +186,7 @@ final class OrderBatchService
     private function contactData(string $email, ?array $contacts): ?array
     {
         if ($contacts === null) {
-            $data = $this->fairgate->findContactDataByEmail($email)['data'] ?? null;
+            $data = $this->fairgate->findContactDataByEmail($email, FairgateClient::MEMBERSHIP)['data'] ?? null;
             return is_array($data) ? $data : null;
         }
 

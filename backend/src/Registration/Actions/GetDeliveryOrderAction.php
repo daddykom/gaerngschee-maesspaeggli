@@ -7,6 +7,7 @@ namespace App\Registration\Actions;
 use App\Registration\Data\OrderRepository;
 use App\Configuration\Data\FrontendConfigRepository;
 use App\Fairgate\Services\FairgateContactProvider;
+use App\Fairgate\Services\FairgateClient;
 use App\Fairgate\Services\FairgateContactProviderFactory;
 use App\Shared\Database\Database;
 use App\Shared\Http\JsonResponse;
@@ -50,7 +51,7 @@ final class GetDeliveryOrderAction
         if (!$viaToken) {
             try {
                 $fairgate = ($this->fairgate ?? FairgateContactProviderFactory::create())
-                    ->findContactDataByEmail($email)['data'] ?? null;
+                    ->findContactDataByEmail($email, FairgateClient::MEMBERSHIP)['data'] ?? null;
             } catch (\Throwable $exception) {
                 ExceptionLogger::log('Fairgate delivery lookup failed', $exception);
                 $fairgate = null;
